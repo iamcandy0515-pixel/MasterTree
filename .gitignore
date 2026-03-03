@@ -1,0 +1,26 @@
+# Common
+node_modules/
+.DS_Store
+*.log
+.env
+.env.*
+dist/
+build/
+.turbo/
+
+# Flutter/Dart
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+
+# IDE
+.vscode/
+.idea/
+
+# Custom
+.temp_ag_kit/
+antigravity-doc
+tests
+others

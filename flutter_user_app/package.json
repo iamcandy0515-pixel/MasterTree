@@ -1,0 +1,13 @@
+{
+  "name": "flutter_user_app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "flutter build apk --release",
+    "build:web": "flutter build web --release",
+    "dev": "flutter run -d chrome",
+    "test": "flutter test",
+    "clean": "flutter clean",
+    "lint": "flutter analyze ."
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalPassThroughEnv": [
+    "LOCALAPPDATA",
+    "USERPROFILE",
+    "APPDATA",
+    "PATH",
+    "TEMP",
+    "TMP"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["build/**", "dist/**", ".next/**", "!.next/cache/**"],
+      "inputs": [
+        ".env",
+        "lib/**",
+        "bin/**",
+        "src/**",
+        "web/**",
+        "assets/**",
+        "android/**",
+        "ios/**",
+        "macos/**",
+        "linux/**",
+        "windows/**",
+        "pubspec.yaml",
+        "pubspec.lock",
+        "analysis_options.yaml",
+        "tsconfig.json",
+        "package.json"
+      ]
+    },
+    "build:web": {
+      "outputs": ["build/web/**"]
+    },
+    "test": {
+      "outputs": ["coverage/**"],
+      "inputs": [
+        "src/**/*.tsx",
+        "src/**/*.ts",
+        "test/**/*.ts",
+        "lib/**/*.dart",
+        "test/**/*.dart"
+      ]
+    },
+    "lint": {
+      "outputs": []
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "clean": {
+      "cache": false
+    }
+  },
+  "globalDependencies": [
+    "tsconfig.json",
+    "pubspec.yaml",
+    "pubspec.lock",
+    "analysis_options.yaml"
+  ]
+}

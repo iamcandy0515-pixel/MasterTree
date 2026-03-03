@@ -1,0 +1,38 @@
+[
+  {
+    "hint": "활엽수·낙엽수·양수·교목·개화 5월 | 잎: 깃꼴겹잎 | 열매: 협과 | 무엽기: 겨울눈 소형, 수피 회갈색",
+    "image_url": "https://phqnxvehlcvruaavquay.supabase.co/storage/v1/object/public/tree-images/trees/1771997916862.jpg",
+    "image_type": "main",
+    "is_quiz_enabled": true
+  },
+  {
+    "hint": "가장자리: 전연 | 배열: 호생 | 구조·형태: 겹잎·깃꼴 | 잎맥: 우상맥 | 표면: 매끈 | 기타: 잎자루 중간",
+    "image_url": "https://phqnxvehlcvruaavquay.supabase.co/storage/v1/object/public/tree-images/trees/1771997917914.jpg",
+    "image_type": "leaf",
+    "is_quiz_enabled": true
+  },
+  {
+    "hint": "비늘(아린) 개수: 2~3개 | 털 유무: 없음 | 위치: 측생 | 엽흔 모양: 반원형 | 관속흔 개수: 자료없음",
+    "image_url": "https://placehold.co/400x400/CCCCCC/666666?text=%EC%98%BB%EB%82%98%EB%AC%B4+bud",
+    "image_type": "bud",
+    "is_quiz_enabled": true
+  },
+  {
+    "hint": "6~7월 개화, 황록색",
+    "image_url": "https://phqnxvehlcvruaavquay.supabase.co/storage/v1/object/public/tree-images/trees/1771997919203.jpg",
+    "image_type": "flower",
+    "is_quiz_enabled": true
+  },
+  {
+    "hint": "핵과, 황갈색",
+    "image_url": "https://phqnxvehlcvruaavquay.supabase.co/storage/v1/object/public/tree-images/trees/1771997915065.jpg",
+    "image_type": "fruit",
+    "is_quiz_enabled": true
+  },
+  {
+    "hint": "갈라짐 형태: 얕음 | 질감·두께: 얇음 | 피목: 소형 | 가지색: 회갈색 | 가시 유무: 없음 | 단면(골수): 원형",
+    "image_url": "https://phqnxvehlcvruaavquay.supabase.co/storage/v1/object/public/tree-images/trees/1771997920349.jpg",
+    "image_type": "bark",
+    "is_quiz_enabled": true
+  }
+]
