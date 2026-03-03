@@ -1,0 +1,1474 @@
+======================================================================
+🔍 Hint Comparison Report
+======================================================================
+
+📊 Total trees analyzed: 78
+🔄 Trees with hint changes: 74
+📝 Total hint changes: 310
+
+======================================================================
+📋 Detailed Changes
+======================================================================
+
+1. 가문비나무 (ID: 2)
+----------------------------------------------------------------------
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "정보 없음"
+
+
+2. 가시나무 (ID: 8)
+----------------------------------------------------------------------
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "상록성으로 겨울눈 구분이 뚜렷하지 않음."
+
+
+3. 가죽나무 (ID: 11)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 대형 깃꼴겹잎, 소엽 기부 톱니"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 얕은 세로 균열"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "6~7월 개화, 황록색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "시과, 다수 달림"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 둔함"
+
+
+4. 감나무 (ID: 14)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 난형, 표면 광택"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "암회색, 불규칙 균열"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "5~6월 개화, 연황색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "장과, 주황색 대형"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "둥글고 크다"
+
+
+5. 거제수나무 (ID: 17)
+----------------------------------------------------------------------
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 뾰족한 겨울눈."
+
+
+6. 고로쇠나무 (ID: 20)
+----------------------------------------------------------------------
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "적갈색 겨울눈, 마주남."
+
+
+7. 곰솔 (ID: 23)
+----------------------------------------------------------------------
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "원통형, 수지 많음."
+
+
+8. 구상나무 (ID: 26)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "짧은 침엽, 끝이 뾰족"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회백색, 수지낭 산재"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "5월 개화"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "보라색 구과, 위로 섬"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 둥근 겨울눈"
+
+
+9. 굴참나무 (ID: 29)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 뒷면 회백색 털"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "두꺼운 코르크질"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4~5월 개화"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "도토리, 컵 깊음"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "둥글고 굵음"
+
+
+10. 까마귀쪽나무 (ID: 32)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 두껍고 윤기"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 매끈"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4월 개화, 황록색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "핵과, 흑색 성숙"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 둔함"
+
+
+11. 꽝꽝나무 (ID: 35)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 소형 타원형"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 매끈"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "5~6월 개화, 백색 소화"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "핵과, 흑색 성숙"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 둔함"
+
+
+12. 낙엽송 (ID: 38)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "침엽, 다발로 짧은 가지에 달림"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "적갈색, 깊은 균열"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4~5월 개화"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "구과, 난형"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "둥글고 작은 눈"
+
+
+13. 노각나무 (ID: 44)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 타원형"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회·갈·적색 반점 박락"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "6~7월 개화, 백색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "삭과, 5갈래 벌어짐"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 둔함"
+
+
+14. 녹나무 (ID: 47)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 3출맥 뚜렷"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 매끈"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4~5월, 황록색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "핵과, 흑자색"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 둔함"
+
+
+15. 느릅나무 (ID: 50)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 기부 비대칭, 거친 표면"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 깊은 세로 균열"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "3~4월 개화, 잎보다 먼저 핌"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "시과, 원형 날개"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 둔함"
+
+
+16. 느티나무 (ID: 53)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 기부 비대칭"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회백색, 조각처럼 벗겨짐"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4월 개화"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "소형 견과"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 예리함"
+
+
+17. 다릅나무 (ID: 56)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "마주나기, 3갈래 잎"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 매끈"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "5월 개화, 황록색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "시과, 날개 각도 예각"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "적갈색, 마주남"
+
+
+18. 단풍나무 (ID: 59)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "마주나기, 깊게 갈라짐"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 매끈"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4~5월 개화, 적색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "시과, 날개 벌어짐"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 적갈색"
+
+
+19. 당단풍나무 (ID: 62)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "마주나기, 9~11갈래"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 얕은 균열"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "5월 개화, 황록색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "시과, 날개 각도 둔함"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "마주나기, 둔함"
+
+
+20. 대추나무 (ID: 65)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 3출맥"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회흑색, 갈라짐"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "6월 개화, 황록색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "핵과, 적갈색"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 어긋남"
+
+
+21. 동백나무 (ID: 68)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 두껍고 광택"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 비교적 매끈"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "12~3월 개화, 적색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "삭과, 둥글고 큼"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "큰 난형, 비늘 뚜렷"
+
+
+22. 두릅나무 (ID: 71)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 대형 겹잎"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 가시 발달"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "7~8월 개화, 백색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "핵과, 흑자색"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "크고 원추형"
+
+
+23. 들메나무 (ID: 74)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "마주나기, 깃꼴겹잎"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 세로 균열"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4~5월 개화, 꽃잎 불분명"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "시과, 날개 길다"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "흑갈색, 둔두"
+
+
+24. 때죽나무 (ID: 77)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 난형"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 얇게 벗겨짐"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "5~6월 개화, 흰색 종형"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "핵과, 난형"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 둔함"
+
+
+25. 리기테타소나무 (ID: 79)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "침엽, 3개씩 속생"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "적갈색, 두껍고 갈라짐"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "5월 개화"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "구과, 난형"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "원추형, 수지 풍부"
+
+
+26. 매자나무 (ID: 9)
+----------------------------------------------------------------------
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 뾰족한 겨울눈."
+
+
+27. 물푸레나무 (ID: 12)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "마주나기, 깃꼴겹잎"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 거친 균열"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4월 개화, 꽃잎 없음"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "시과, 날개 달림"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "흑갈색, 마주남"
+
+
+28. 박달나무 (ID: 15)
+----------------------------------------------------------------------
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 뾰족한 겨울눈."
+
+
+29. 백합나무 (ID: 18)
+----------------------------------------------------------------------
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "오리부리 모양의 겨울눈."
+
+
+30. 버즘나무 (ID: 21)
+----------------------------------------------------------------------
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "잎자루 속에 숨어 있음."
+
+
+31. 버지니아소나무 (ID: 24)
+----------------------------------------------------------------------
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "난형, 수지 적음."
+
+
+32. 벚나무 (ID: 27)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 톱니 뚜렷"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "암회색, 가로 피목"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4월 개화, 연분홍 꽃"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "핵과, 소형 열매"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "난형, 붉은 갈색"
+
+
+33. 벽오동 (ID: 30)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 3~5갈래"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "녹회색, 매끈"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "6월 개화, 연황색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "삭과, 별 모양 벌어짐"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "큰 눈, 털 있음"
+
+
+34. 복자기 (ID: 33)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "마주나기, 3출엽"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 종이처럼 벗겨짐"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4~5월 개화, 황록색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "시과, 날개 좁음"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 붉은빛"
+
+
+35. 분비나무 (ID: 36)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "편평한 침엽, 끝 둔함"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회백색, 수지낭 뚜렷"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "5월 개화"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "구과, 성숙 후 비늘 탈락"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "둥글고 수지 많음"
+
+
+36. 비자나무 (ID: 39)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "침엽, 폭 넓고 끝 예리"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 세로 균열"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4월 개화"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "종자 큼, 타원형"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "둔하고 작음"
+
+
+37. 사스레피나무 (ID: 42)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 좁은 타원형"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 매끈"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "3~4월 개화, 백색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "장과, 흑색 성숙"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 뾰족"
+
+
+38. 산딸나무 (ID: 45)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "마주나기, 타원형"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 비늘처럼 벗겨짐"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "5~6월, 흰 포엽 발달"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "집합과, 붉은색"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "난형, 마주남"
+
+
+39. 산벚나무 (ID: 48)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 가장자리에 톱니"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "적갈색, 가로무늬 벗겨짐"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4월, 연분홍 꽃"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "핵과, 흑자색"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "난형, 끝 예리"
+
+
+40. 산수유 (ID: 51)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "마주나기, 타원형"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 매끈"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "3월 개화, 노란색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "핵과, 붉은색 장타원형"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "마주남, 둔함"
+
+
+41. 삼나무 (ID: 54)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "침엽, 송곳형, 나선 배열"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "적갈색, 섬유질 박락"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "3~4월 개화"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "구과, 구형"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 둔함"
+
+
+42. 상수리나무 (ID: 57)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 예리한 톱니"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "암회갈색, 세로 균열"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4~5월 개화"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "도토리, 컵 비늘 김"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "난형, 끝 뾰족"
+
+
+43. 서어나무 (ID: 60)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 평행한 잎맥"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회색, 근육질 요철"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4월 개화, 유이화서"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "포엽 달린 소견과"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "길고 뾰족"
+
+
+44. 소나무 (ID: 63)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "침엽, 2개씩 속생"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "적갈색, 상부 박리"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "5월 개화, 자웅동주"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "구과, 2년생"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "난형, 수지 많음"
+
+
+45. 쉬나무 (ID: 66)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 대형 깃꼴겹잎"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 매끈"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "6월 개화, 황백색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "시과, 붉은 기"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 털 있음"
+
+
+46. 스트로브잣나무 (ID: 69)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "침엽, 5개씩 속생, 연질"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 얕게 갈라짐"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "5월 개화"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "구과, 길고 가늘다"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "원추형, 수지 적음"
+
+
+47. 아왜나무 (ID: 72)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 피침형, 뒷면 털"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 평활"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4~5월 개화, 황록색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "핵과, 흑색"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "비늘 조밀"
+
+
+48. 오동나무 (ID: 75)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "마주나기, 매우 큰 심장형"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 거칠다"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4~5월 개화, 연보라색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "삭과, 난형"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "크고 털 많음"
+
+
+49. 오리나무 (ID: 78)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 도란형, 톱니"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "암회색, 세로 균열"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "3~4월 개화, 꼬리모양"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "목질화된 구과"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "자루 달린 난형"
+
+
+50. 옻나무 (ID: 80)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 깃꼴겹잎"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 상처 시 옻 분비"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "6~7월 개화, 황록색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "핵과, 황갈색"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 둥글다"
+
+
+51. 은행나무 (ID: 7)
+----------------------------------------------------------------------
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "짧고 둔한 겨울눈."
+
+
+52. 음나무 (ID: 10)
+----------------------------------------------------------------------
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "겨울눈은 둥글고 큼."
+
+
+53. 이태리포플러 (ID: 13)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 삼각형, 가장자리 톱니"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 세로로 갈라짐"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "3~4월 개화, 유이화서"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "삭과, 솜털 종자"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "점액질, 뾰족"
+
+
+54. 이팝나무 (ID: 16)
+----------------------------------------------------------------------
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 둔한 겨울눈."
+
+
+55. 자작나무 (ID: 19)
+----------------------------------------------------------------------
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 뾰족한 겨울눈."
+
+
+56. 잣나무 (ID: 22)
+----------------------------------------------------------------------
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "난형, 수지 많음."
+
+
+57. 전나무 (ID: 25)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "편평한 침엽, 끝이 둔함"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 비교적 매끈"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "5월 개화, 자웅동주"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "원통형 구과, 위를 향함"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "난형, 수지 적음"
+
+
+58. 졸참나무 (ID: 28)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 톱니 둔함"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 얕은 균열"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4~5월 개화"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "도토리, 긴 자루"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "난형, 끝 둔함"
+
+
+59. 주목 (ID: 31)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "침엽, 평평, 2열 배열"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "적갈색, 얇게 벗겨짐"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4월 개화"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "종자 주위 붉은 가종피"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 둔함"
+
+
+60. 쪽동백 (ID: 34)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 큰 난형"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 매끈"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "5~6월 개화, 흰색 종형"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "핵과, 타원형"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "난형, 비늘 뚜렷"
+
+
+61. 참죽나무 (ID: 37)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 큰 깃꼴겹잎"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 얕은 균열"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "6월 개화, 연분홍"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "삭과, 길쭉함"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "크고 난형"
+
+
+62. 채진목 (ID: 40)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 큰 깃꼴겹잎"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 비교적 매끈"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "6~7월 개화, 황록색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "핵과, 적갈색 성숙"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 둔함"
+
+
+63. 층층나무 (ID: 43)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "마주나기, 타원형"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 매끈"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "5~6월 개화, 백색 산방"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "핵과, 흑색 성숙"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "난형, 마주남"
+
+
+64. 칠엽수 (ID: 46)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "마주나기, 장상복엽"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 세로 균열"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "5월, 흰색 원추화서"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "삭과, 큰 종자 1~2개"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "대형, 끈적임"
+
+
+65. 편백 (ID: 49)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "비늘잎, 편평 배열"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "적갈색, 세로로 벗겨짐"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4월 개화"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "구과, 구형"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "비늘잎에 포함"
+
+
+66. 피나무 (ID: 52)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 심장형"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 얕은 균열"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "6~7월 개화, 황백색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "견과, 포엽 달림"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "적갈색, 난형"
+
+
+67. 향나무 (ID: 55)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어린 잎 침엽, 성숙 시 비늘잎"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "적갈색, 얇게 벗겨짐"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4월 개화"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "구과상 열매, 청흑색"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "뚜렷하지 않음"
+
+
+68. 호두나무 (ID: 58)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 깃꼴겹잎"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "암회색, 깊은 균열"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "5월 개화, 수꽃 이삭"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "핵과, 둥근 견과"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "큰 난형"
+
+
+69. 화살나무 (ID: 61)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "마주나기, 타원형"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 날개 발달"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "5월 개화, 연황색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "삭과, 붉은 가종피"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 마주남"
+
+
+70. 황벽나무 (ID: 64)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "마주나기, 깃꼴겹잎"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 두꺼운 코르크층"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "6월 개화, 황록색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "핵과, 흑색"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "마주남, 둔함"
+
+
+71. 황철나무 (ID: 67)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 삼각형"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회백색, 평활"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4월 개화, 유이화서"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "삭과, 솜털 종자"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "점액질, 크고 뾰족"
+
+
+72. 황칠나무 (ID: 70)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 장상 또는 난형"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "회갈색, 절단 시 황색 수액"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "6~7월 개화, 황록색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "핵과, 흑색"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 둔함"
+
+
+73. 회화나무 (ID: 73)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 깃꼴겹잎"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "암회색, 깊은 균열"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "7~8월 개화, 백색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "협과, 염주 모양"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "작고 둔함"
+
+
+74. 후박나무 (ID: 76)
+----------------------------------------------------------------------
+  [LEAF] NEW
+    Current: "(empty)"
+    New:     "어긋나기, 두껍고 광택"
+
+  [BARK] NEW
+    Current: "(empty)"
+    New:     "암회색, 매끈"
+
+  [FLOWER] NEW
+    Current: "(empty)"
+    New:     "4~5월 개화, 황록색"
+
+  [FRUIT] NEW
+    Current: "(empty)"
+    New:     "핵과, 흑자색"
+
+  [BUD] NEW
+    Current: "(empty)"
+    New:     "비늘 적고 둔함"
+
+

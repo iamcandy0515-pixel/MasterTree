@@ -1,0 +1,70 @@
+🔍 Inspecting database tables...
+
+======================================================================
+📊 TABLE: trees
+======================================================================
+
+📋 Columns:
+  1. id (number)
+  2. name_kr (string)
+  3. name_en (object)
+  4. scientific_name (string)
+  5. description (string)
+  6. difficulty (number)
+  7. created_by (object)
+  8. created_at (string)
+  9. category (string)
+  10. shape (string)
+  11. quiz_distractors (object)
+  12. is_auto_quiz_enabled (boolean)
+
+📝 Sample Data:
+{
+  "id": 11,
+  "name_kr": "가죽나무",
+  "name_en": null,
+  "scientific_name": "Ailanthus altissima",
+  "description": "[구분] 활엽수 / 낙엽 교목\n[성상] 낙엽 교목, 수고 20~25m\n[수형] 넓은 원추형\n[동정 요약] 대형 깃꼴겹잎 + 특유의 악취 → 참죽나무와 명확히 구별",
+  "difficulty": 1,
+  "created_by": null,
+  "created_at": "2026-02-07T05:25:49.252073+00:00",
+  "category": "활엽수 / 낙엽수",
+  "shape": "낙엽수",
+  "quiz_distractors": [],
+  "is_auto_quiz_enabled": true
+}
+
+
+======================================================================
+📊 TABLE: tree_images
+======================================================================
+
+📋 Columns:
+  1. id (number)
+  2. tree_id (number)
+  3. image_type (string)
+  4. image_url (string)
+  5. uploaded_by (object)
+  6. created_at (string)
+  7. hint (string)
+  8. is_quiz_enabled (boolean)
+
+📝 Sample Data:
+{
+  "id": 310,
+  "tree_id": 82,
+  "image_type": "fruit",
+  "image_url": "https://dpecidczqbbldhzzftfq.supabase.co/storage/v1/object/public/tree-images/trees/img_1770098106762_oo3gu.webp",
+  "uploaded_by": null,
+  "created_at": "2026-02-07T23:27:17.010908+00:00",
+  "hint": "[열매] 핵과, 흑자색 성숙\n[겨울눈] 비늘(아린) 개수: 2~3개 | 털 유무: 없음 | 위치: 측생 | 엽흔 모양: 반원형 | 관속흔 개수: 자료없음",
+  "is_quiz_enabled": true
+}
+
+
+======================================================================
+📈 TABLE STATISTICS
+======================================================================
+
+📊 trees: 78 rows
+📸 tree_images: 480 rows

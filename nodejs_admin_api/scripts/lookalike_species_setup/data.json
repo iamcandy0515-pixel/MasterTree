@@ -1,0 +1,224 @@
+[
+  {
+    "group_name": "침엽수 잎 형태 혼동 (가문비나무 vs 전나무 vs 분비나무)",
+    "description": "가문비나무·전나무·분비나무는 모두 전나무과 침엽수로 잎 모양이 비슷하지만, 잎 단면과 뒷면 흰줄 여부로 구별합니다.",
+    "members": [
+      {
+        "tree_id": 2,
+        "tree_name": "가문비나무",
+        "key_characteristics": "잎 단면이 4각형이며 가지에 방사형으로 돌려나 손가락 사이에서 굴러갑니다."
+      },
+      {
+        "tree_id": 25,
+        "tree_name": "전나무",
+        "key_characteristics": "잎이 편평하고 끝이 둔하며 가지에 좌우로 배열됩니다."
+      },
+      {
+        "tree_id": 36,
+        "tree_name": "분비나무",
+        "key_characteristics": "잎 뒷면에 흰 기공조선 2줄이 매우 뚜렷해 전나무와 구별됩니다."
+      }
+    ]
+  },
+  {
+    "group_name": "전나무류 잎 끝 혼동 (전나무 vs 구상나무)",
+    "description": "전나무와 구상나무는 외형이 매우 유사하지만 잎 끝 모양과 솔방울 방향이 결정적입니다.",
+    "members": [
+      {
+        "tree_id": 25,
+        "tree_name": "전나무",
+        "key_characteristics": "잎 끝이 둥글고 둔하며 홈이 없습니다."
+      },
+      {
+        "tree_id": 26,
+        "tree_name": "구상나무",
+        "key_characteristics": "잎 끝이 오목하게 패이며 솔방울이 위로 곧게 섭니다."
+      }
+    ]
+  },
+  {
+    "group_name": "5엽송 혼동 (잣나무 vs 스트로브잣나무)",
+    "description": "두 수종 모두 잎이 5개씩 묶여나는 5엽송이지만 잎 길이와 질감이 다릅니다.",
+    "members": [
+      {
+        "tree_id": 22,
+        "tree_name": "잣나무",
+        "key_characteristics": "잎이 5개씩 묶여나며 비교적 단단하고 구과가 큽니다."
+      },
+      {
+        "tree_id": 69,
+        "tree_name": "스트로브잣나무",
+        "key_characteristics": "잎이 더 길고 부드럽게 늘어져 보이며 외래종입니다."
+      }
+    ]
+  },
+  {
+    "group_name": "해송 혼동 (소나무 vs 곰솔)",
+    "description": "소나무와 곰솔은 모두 2엽송으로 비슷하지만 수피 색과 서식지가 가장 큰 차이입니다.",
+    "members": [
+      {
+        "tree_id": 63,
+        "tree_name": "소나무",
+        "key_characteristics": "수피가 적갈색이며 내륙 대표 수종입니다."
+      },
+      {
+        "tree_id": 23,
+        "tree_name": "곰솔",
+        "key_characteristics": "수피가 흑갈색이고 해안가에 주로 분포합니다."
+      }
+    ]
+  },
+  {
+    "group_name": "소나무류 잎 길이 혼동 (소나무 vs 버지니아소나무 vs 리기테타소나무)",
+    "description": "세 수종은 모두 소나무속이며 잎 길이와 굵기가 주요 판별 기준입니다.",
+    "members": [
+      {
+        "tree_id": 24,
+        "tree_name": "버지니아소나무",
+        "key_characteristics": "잎이 짧고 빽빽하게 모여 숲처럼 보입니다."
+      },
+      {
+        "tree_id": 79,
+        "tree_name": "리기테타소나무",
+        "key_characteristics": "잎이 굵고 강하며 만졌을 때 거칠고 단단합니다."
+      },
+      {
+        "tree_id": 63,
+        "tree_name": "소나무",
+        "key_characteristics": "잎이 중간 길이이며 수피는 적갈색으로 대표적입니다."
+      }
+    ]
+  },
+  {
+    "group_name": "종자 형태 혼동 (주목 vs 비자나무)",
+    "description": "주목과 비자나무는 잎이 비슷하지만 열매(종자) 구조가 확연히 다릅니다.",
+    "members": [
+      {
+        "tree_id": 31,
+        "tree_name": "주목",
+        "key_characteristics": "붉은 컵 모양 종피가 종자를 감싸 열매처럼 보입니다."
+      },
+      {
+        "tree_id": 39,
+        "tree_name": "비자나무",
+        "key_characteristics": "종자가 크고 타원형이며 올리브처럼 단단한 열매 형태입니다."
+      }
+    ]
+  },
+  {
+    "group_name": "낙엽 침엽수 혼동 (낙엽송 vs 낙우송)",
+    "description": "둘 다 침엽이 떨어지지만 잎 배열과 서식 환경이 다릅니다.",
+    "members": []
+  },
+  {
+    "group_name": "비늘잎 침엽수 혼동 (편백 vs 삼나무 vs 향나무)",
+    "description": "편백·삼나무·향나무는 조경에서 자주 혼동되며 잎 형태와 향기로 구별합니다.",
+    "members": [
+      {
+        "tree_id": 49,
+        "tree_name": "편백",
+        "key_characteristics": "잎이 부채형 비늘잎이며 향이 은은합니다."
+      },
+      {
+        "tree_id": 54,
+        "tree_name": "삼나무",
+        "key_characteristics": "잎이 바늘처럼 뾰족하고 가지가 아래로 처집니다."
+      },
+      {
+        "tree_id": 55,
+        "tree_name": "향나무",
+        "key_characteristics": "비늘잎이면서 향이 매우 강하게 납니다."
+      }
+    ]
+  },
+  {
+    "group_name": "참나무류 털 혼동 (졸참나무 vs 굴참나무 vs 상수리나무)",
+    "description": "참나무류는 잎 뒷면 털과 톱니 유무가 가장 중요한 구분 포인트입니다.",
+    "members": [
+      {
+        "tree_id": 29,
+        "tree_name": "굴참나무",
+        "key_characteristics": "잎 뒷면에 털이 많아 만지면 보송보송합니다."
+      },
+      {
+        "tree_id": 28,
+        "tree_name": "졸참나무",
+        "key_characteristics": "잎 뒷면이 비교적 매끈하며 톱니가 뚜렷합니다."
+      },
+      {
+        "tree_id": 57,
+        "tree_name": "상수리나무",
+        "key_characteristics": "잎 가장자리가 거의 밋밋하고 톱니가 약합니다."
+      }
+    ]
+  },
+  {
+    "group_name": "단풍나무류 열편 혼동 (단풍나무 vs 당단풍나무 vs 고로쇠나무)",
+    "description": "단풍나무류는 잎 열편 깊이와 잎의 두께가 주요 구별점입니다.",
+    "members": [
+      {
+        "tree_id": 59,
+        "tree_name": "단풍나무",
+        "key_characteristics": "잎 열편이 깊고 잎이 비교적 얇습니다."
+      },
+      {
+        "tree_id": 62,
+        "tree_name": "당단풍나무",
+        "key_characteristics": "잎이 두껍고 거칠며 털이 있어 단풍나무와 구별됩니다."
+      },
+      {
+        "tree_id": 20,
+        "tree_name": "고로쇠나무",
+        "key_characteristics": "잎이 둥글고 넓으며 수액 채취로 유명합니다."
+      }
+    ]
+  },
+  {
+    "group_name": "잎 냄새 혼동 (가죽나무 vs 참죽나무)",
+    "description": "두 수종은 잎이 매우 비슷하지만 냄새가 가장 확실한 판별 기준입니다.",
+    "members": [
+      {
+        "tree_id": 11,
+        "tree_name": "가죽나무",
+        "key_characteristics": "잎을 비비면 불쾌한 악취가 강하게 납니다."
+      },
+      {
+        "tree_id": 37,
+        "tree_name": "참죽나무",
+        "key_characteristics": "잎에서 향긋한 냄새가 나며 식용이 가능합니다."
+      }
+    ]
+  },
+  {
+    "group_name": "두릅나무과 가시 혼동 (음나무 vs 두릅나무)",
+    "description": "두 수종 모두 가시가 있지만 크기와 가시의 굵기에서 차이가 납니다.",
+    "members": [
+      {
+        "tree_id": 10,
+        "tree_name": "음나무",
+        "key_characteristics": "큰 교목이며 줄기에 굵고 강한 가시가 많습니다."
+      },
+      {
+        "tree_id": 71,
+        "tree_name": "두릅나무",
+        "key_characteristics": "상대적으로 작고 새순을 식용으로 이용합니다."
+      }
+    ]
+  },
+  {
+    "group_name": "느릅나무류 수피 혼동 (느릅나무 vs 느티나무)",
+    "description": "느릅나무와 느티나무는 잎 모양이 비슷하지만 잎 기부와 수피가 다릅니다.",
+    "members": [
+      {
+        "tree_id": 50,
+        "tree_name": "느릅나무",
+        "key_characteristics": "잎 기부가 비대칭이며 한쪽이 더 길게 내려옵니다."
+      },
+      {
+        "tree_id": 53,
+        "tree_name": "느티나무",
+        "key_characteristics": "수피가 얼룩처럼 벗겨지며 잎 기부는 비교적 대칭입니다."
+      }
+    ]
+  }
+]
