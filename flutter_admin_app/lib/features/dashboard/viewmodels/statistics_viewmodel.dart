@@ -13,16 +13,36 @@ class StatisticsViewModel extends ChangeNotifier {
   Map<String, dynamic> _stats = {};
   Map<String, dynamic> get stats => _stats;
 
-  List<dynamic> get examStats => List<dynamic>.from(_stats['exams'] ?? []);
-  List<dynamic> get activeUserList =>
+  List<dynamic> get _allActivityUsers =>
       List<dynamic>.from(_stats['activeUsers'] ?? []);
+
+  List<dynamic> get activeUserList => _allActivityUsers.where((u) {
+        final lastLoginStr = u['last_login']?.toString();
+        if (lastLoginStr == null) return false;
+        final lastLogin = DateTime.tryParse(lastLoginStr);
+        if (lastLogin == null) return false;
+        return DateTime.now().difference(lastLogin).inDays <= 7;
+      }).toList();
+
+  List<dynamic> get inactiveUserList => _allActivityUsers.where((u) {
+        final lastLoginStr = u['last_login']?.toString();
+        if (lastLoginStr == null) return true;
+        final lastLogin = DateTime.tryParse(lastLoginStr);
+        if (lastLogin == null) return true;
+        return DateTime.now().difference(lastLogin).inDays > 7;
+      }).toList();
+
+  List<dynamic> get examStats => List<dynamic>.from(_stats['exams'] ?? []);
   List<dynamic> get topWrongTrees =>
       List<dynamic>.from(_stats['topWrongTrees'] ?? []);
   Map<String, int> get updateSummary =>
       Map<String, int>.from(_stats['updateSummary'] ?? {});
 
-  Map<String, dynamic> get globalStats =>
-      Map<String, dynamic>.from(_stats['globalStats'] ?? {});
+  Map<String, dynamic> get globalStats {
+    final global = Map<String, dynamic>.from(_stats['globalStats'] ?? {});
+    global['activeUserCount'] = activeUserList.length;
+    return global;
+  }
 
   Future<void> loadStats() async {
     _isLoading = true;

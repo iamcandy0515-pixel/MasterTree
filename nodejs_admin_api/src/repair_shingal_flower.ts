@@ -21,7 +21,7 @@ async function repair() {
 
     try {
         // 1. Search for image in Drive
-        const url = await driveService.searchImage(treeName, imageType);
+        const url = await driveService.searchImage(treeName, imageType, "");
         if (!url) {
             console.error("❌ Image not found in Google Drive query.");
             return;
@@ -48,11 +48,12 @@ async function repair() {
         // 3. Upload to Supabase Storage
         const timestamp = Date.now();
         const fileName = `trees/${timestamp}_repair_shingal_flower.jpg`;
-        const uploadResult = await UploadService.uploadBuffer(
+        const uploadResult = await UploadService.uploadToStorage({
             buffer,
-            fileName,
-            "image/jpeg",
-        );
+            originalname: "repair_shingal_flower.jpg",
+            mimetype: "image/jpeg",
+            size: buffer.length
+        } as any);
         console.log(
             `✅ Uploaded to Supabase Storage: ${uploadResult.publicUrl}`,
         );

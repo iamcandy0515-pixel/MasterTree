@@ -7,24 +7,33 @@ class UserCheckViewModel extends ChangeNotifier {
   List<Map<String, String>> _allUsers = [];
   List<Map<String, String>> _filteredUsers = [];
   bool _isLoading = false;
+  String _currentStatus = 'pending';
 
   UserCheckViewModel() {
-    loadUsers();
+    loadUsers('pending');
   }
 
   bool get isLoading => _isLoading;
   List<Map<String, String>> get users => _filteredUsers;
+  String get currentStatus => _currentStatus;
 
-  Future<void> loadUsers() async {
+  Future<void> loadUsers(String status) async {
+    _currentStatus = status;
     _isLoading = true;
     notifyListeners();
     try {
-      final usersData = await _repo.getUsers();
+      final usersData = await _repo.getUsers(status: status);
       _allUsers = usersData.map((u) {
+        final role = u['role']?.toString() ?? 'User';
+        final name = u['name']?.toString() ?? '사용자';
+        final prefix = role == 'Master' || role == 'Admin' ? '[관] ' : '[사] ';
+        
         return {
-          'name': u['name']?.toString() ?? '사용자',
+          'id': u['id']?.toString() ?? '',
+          'name': '$prefix$name',
           'email': u['email']?.toString() ?? '',
-          'role': u['role']?.toString() ?? 'User',
+          'role': role,
+          'status': u['status']?.toString() ?? 'pending',
           'lastLogin': _formatDate(u['lastLogin']?.toString()),
         };
       }).toList();
@@ -36,10 +45,23 @@ class UserCheckViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateStatus(String userId, String newStatus) async {
+    try {
+      await _repo.updateUserStatus(userId, newStatus);
+      // Remove from current list and refresh
+      loadUsers(_currentStatus);
+    } catch (e) {
+      debugPrint('Error updating status: $e');
+    }
+  }
+
+  Future<void> approveUser(String userId) => updateStatus(userId, 'approved');
+  Future<void> rejectUser(String userId) => updateStatus(userId, 'rejected');
+
   String _formatDate(String? dateStr) {
     if (dateStr == null) return '기록 없음';
     try {
-      final date = DateTime.parse(dateStr);
+      final date = DateTime.parse(dateStr).toLocal();
       final now = DateTime.now();
       final diff = now.difference(date);
       if (diff.inMinutes < 1) return '방금 전';
@@ -58,8 +80,8 @@ class UserCheckViewModel extends ChangeNotifier {
       _filteredUsers = _allUsers
           .where(
             (user) =>
-                (user['name']?.contains(query) ?? false) ||
-                (user['email']?.contains(query) ?? false),
+                (user['name']?.toLowerCase().contains(query.toLowerCase()) ?? false) ||
+                (user['email']?.toLowerCase().contains(query.toLowerCase()) ?? false),
           )
           .toList();
     }

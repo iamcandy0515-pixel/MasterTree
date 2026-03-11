@@ -38,9 +38,27 @@ export class UsersController {
         try {
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 50;
+            const status = req.query.status as string;
 
-            const result = await usersService.listUsers(page, limit);
+            const result = await usersService.listUsers(page, limit, status);
             return successResponse(res, result, "Users retrieved successfully");
+        } catch (error: any) {
+            return errorResponse(res, error.message, 500);
+        }
+    }
+
+    // PATCH /api/users/:id/status
+    async updateUserStatus(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const { status } = req.body;
+
+            if (!status) {
+                return errorResponse(res, "Status is required", 400);
+            }
+
+            const result = await usersService.updateUserStatus(id, status);
+            return successResponse(res, result, "User status updated successfully");
         } catch (error: any) {
             return errorResponse(res, error.message, 500);
         }

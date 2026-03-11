@@ -49,8 +49,13 @@ export class UsersService {
 
     /**
      * List Users (Admin)
+     * Supports filtering by status if needed (will be handled in controller/service filter logic)
      */
-    async listUsers(page: number = 1, limit: number = 50) {
+    async listUsers(page: number = 1, limit: number = 50, status?: string) {
+        let authUsers;
+
+        // Note: auth.admin.listUsers doesn't support complex filters directly.
+        // We fetch and filter in memory for now, or use profiles table if complexity increases.
         const { data, error } = await supabase.auth.admin.listUsers({
             page,
             perPage: limit,
@@ -58,23 +63,50 @@ export class UsersService {
 
         if (error) throw error;
 
+        let users = data.users.map((u) => ({
+            id: u.id,
+            email: u.email,
+            name:
+                u.user_metadata?.full_name ||
+                u.user_metadata?.name ||
+                u.email?.split("@")[0] ||
+                "사용자",
+            role:
+                u.user_metadata?.role ||
+                (u.email?.includes("admin") ? "Master" : "User"),
+            status: u.user_metadata?.status || "pending", // Default to pending if not set
+            lastLogin: u.last_sign_in_at,
+            createdAt: u.created_at,
+        }));
+
+        // In-memory filter for status (since auth.admin.listUsers is limited)
+        if (status) {
+            users = users.filter((u) => u.status === status);
+        }
+
         return {
-            users: data.users.map((u) => ({
-                id: u.id,
-                email: u.email,
-                name:
-                    u.user_metadata?.full_name ||
-                    u.user_metadata?.name ||
-                    u.email?.split("@")[0] ||
-                    "사용자",
-                role:
-                    u.user_metadata?.role ||
-                    (u.email?.includes("admin") ? "Master" : "User"),
-                lastLogin: u.last_sign_in_at,
-                createdAt: u.created_at,
-            })),
+            users,
             total: data.total,
         };
+    }
+
+    /**
+     * Update User Status (Admin)
+     */
+    async updateUserStatus(userId: string, status: string) {
+        const { data, error } = await supabase.auth.admin.updateUserById(
+            userId,
+            {
+                user_metadata: { status },
+            },
+        );
+
+        if (error) {
+            logger.error(`Failed to update user status for ${userId}`, error);
+            throw error;
+        }
+
+        return data.user;
     }
 }
 
