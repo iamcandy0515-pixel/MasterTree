@@ -17,11 +17,25 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    _authController.loadSavedData().then((_) => setState(() {}));
+    _authController.loadSavedData().then((_) {
+      if (mounted) setState(() {});
+    });
+
+    // Add listeners for real-time check
+    _authController.nameController.addListener(_onInputChanged);
+    _authController.phoneController.addListener(_onInputChanged);
+  }
+
+  void _onInputChanged() {
+    _authController.onInputChanged(() {
+      if (mounted) setState(() {});
+    });
   }
 
   @override
   void dispose() {
+    _authController.nameController.removeListener(_onInputChanged);
+    _authController.phoneController.removeListener(_onInputChanged);
     _authController.dispose();
     super.dispose();
   }
@@ -29,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
   // Clear saved data
   Future<void> _clearSavedData() async {
     await _authController.clearSavedData();
-    setState(() {});
+    if (mounted) setState(() {});
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('저장된 테스트 데이터가 삭제되었습니다.'),
@@ -55,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   String? _validateEmail(String? value) {
-    if (!_authController.isNewUser) return null;
+    if (!_authController.showEmailField) return null;
     if (value == null || value.isEmpty) return '이메일을 입력해주세요.';
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(value)) {
@@ -73,16 +87,10 @@ class _LoginScreenState extends State<LoginScreen> {
     await _authController.handleLogin(
       formKey: _formKey,
       onSuccess: _navigateToDashboard,
-      onError: (message) {
-        if (message.contains('신규 사용자입니다')) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(message)));
-        } else {
-          _showErrorDialog(message);
-        }
+      onError: (message) => _showErrorDialog(message),
+      onUpdate: () {
+        if (mounted) setState(() {});
       },
-      onUpdate: () => setState(() {}),
     );
   }
 
@@ -91,6 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.surfaceDark,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('알림', style: TextStyle(color: AppColors.textLight)),
         content: Text(
           message,
@@ -139,17 +148,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(Icons.forest, color: AppColors.primary, size: 80),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        'Master Tree User',
-                        style: TextStyle(
-                          color: AppColors.textLight,
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: -0.5,
+                      const Flexible(
+                        child: Text(
+                          'Master Tree User',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: AppColors.textLight,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: -0.5,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -161,6 +173,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
+                  if (_authController.isCheckingServer)
+                    const Padding(
+                      padding: EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        '사용자 정보 확인 중...',
+                        style: TextStyle(color: AppColors.primary, fontSize: 12),
+                      ),
+                    ),
                   const SizedBox(height: 24),
                   _buildLoginForm(),
                 ],
@@ -216,15 +236,27 @@ class _LoginScreenState extends State<LoginScreen> {
               hint: '010-0000-0000',
               validator: _validatePhone,
             ),
-            if (_authController.isNewUser) ...[
-              const SizedBox(height: 12),
-              _buildTextField(
-                controller: _authController.emailController,
-                label: '이메일',
-                icon: Icons.email_outlined,
-                validator: _validateEmail,
-              ),
-            ],
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: SizeTransition(sizeFactor: animation, child: child),
+                );
+              },
+              child: _authController.showEmailField
+                  ? Padding(
+                      key: const ValueKey('email_field'),
+                      padding: const EdgeInsets.only(top: 12.0),
+                      child: _buildTextField(
+                        controller: _authController.emailController,
+                        label: '이메일 (신규 등록용)',
+                        icon: Icons.email_outlined,
+                        validator: _validateEmail,
+                      ),
+                    )
+                  : const SizedBox.shrink(key: ValueKey('email_empty')),
+            ),
             const SizedBox(height: 12),
             _buildTextField(
               controller: _authController.entryCodeController,
@@ -239,6 +271,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
 
   Widget _buildTextField({
     required TextEditingController controller,

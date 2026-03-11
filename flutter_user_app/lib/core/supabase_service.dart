@@ -45,7 +45,7 @@ class SupabaseService {
 
       return trees;
     } catch (e) {
-      print('Error fetching trees: $e');
+      debugPrint('Error fetching trees: $e');
       rethrow;
     }
   }
@@ -79,20 +79,33 @@ class SupabaseService {
     return response;
   }
 
-  /// Registered new user
-  static Future<void> registerUser({
+  /// Update user's auth_id after successful login
+  static Future<void> updateUserAuthId(dynamic userId, String authId) async {
+    try {
+      await client.from('users').update({'auth_id': authId}).eq('id', userId);
+    } catch (e) {
+      debugPrint('Error updating user auth_id: $e');
+    }
+  }
+
+  /// Registered new user - returns the new user data
+  static Future<Map<String, dynamic>> registerUser({
     required String name,
     required String phone,
     required String email,
     required String entryCode,
   }) async {
-    await client.from('users').insert({
-      'name': name,
-      'phone': phone,
-      'email': email,
-      'entry_code': entryCode,
-      'status': 'approved', // Assuming default approved for simplicity
-    });
+    return await client
+        .from('users')
+        .insert({
+          'name': name,
+          'phone': phone,
+          'email': email,
+          'entry_code': entryCode,
+          'status': 'approved',
+        })
+        .select()
+        .single();
   }
 
   /// Fetch the global/required entry code from the Admin API
