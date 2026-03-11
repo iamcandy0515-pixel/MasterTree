@@ -75,34 +75,55 @@ export class StatsController {
                 }),
             );
 
-            // 2. Currently Active Users (Detailed)
+            // 2. Currently Active Users (Detailed categorization)
             let activeUserList: any[] = [];
             try {
-                const { data: authUsers } =
-                    await supabase.auth.admin.listUsers();
+                // Fetch all users from Auth
+                const { data: authUsers } = await supabase.auth.admin.listUsers();
+                
+                // Fetch latest quiz activity for all users
+                const { data: latestAttempts } = await supabase
+                    .from("quiz_attempts")
+                    .select("user_id, created_at")
+                    .order("created_at", { ascending: false });
+
+                // Map of user_id -> latest_activity_time
+                const activityMap: Record<string, string> = {};
+                latestAttempts?.forEach(att => {
+                    if (!activityMap[att.user_id]) {
+                        activityMap[att.user_id] = att.created_at;
+                    }
+                });
+
                 if (authUsers?.users) {
                     activeUserList = authUsers.users
-                        .filter(
-                            (u) =>
-                                u.last_sign_in_at &&
-                                new Date(u.last_sign_in_at) > sevenDaysAgo,
-                        )
-                        .map((u) => ({
-                            id: u.id,
-                            email: u.email,
-                            last_login: u.last_sign_in_at,
-                            name:
-                                u.user_metadata?.name || u.email?.split("@")[0],
-                        }))
+                        .map((u) => {
+                            const authLogin = u.last_sign_in_at;
+                            const quizLogin = activityMap[u.id];
+                            
+                            // Get the most recent time between Login and Quiz Activity
+                            const finalLastActive = (authLogin && quizLogin) 
+                                ? (new Date(authLogin) > new Date(quizLogin) ? authLogin : quizLogin)
+                                : (authLogin || quizLogin || u.created_at);
+
+                            return {
+                                id: u.id,
+                                email: u.email,
+                                last_login: finalLastActive,
+                                name: u.user_metadata?.name || u.email?.split("@")[0],
+                                status: u.user_metadata?.status || "pending"
+                            };
+                        })
                         .sort((a, b) => {
                             return (
                                 new Date(b.last_login!).getTime() -
                                 new Date(a.last_login!).getTime()
                             );
-                        })
-                        .slice(0, 10);
+                        });
                 }
-            } catch (e) {}
+            } catch (e) {
+                console.error("Error fetching grouped active users:", e);
+            }
 
             // 3. Top 5 Wrong Trees
             const { data: wrongAttempts } = await supabase

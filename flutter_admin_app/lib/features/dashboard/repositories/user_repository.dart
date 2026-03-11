@@ -12,8 +12,10 @@ class UserRepository {
   Future<List<Map<String, dynamic>>> getUsers({
     int page = 1,
     int limit = 50,
+    String? status,
   }) async {
-    final url = Uri.parse('$_baseUrl/users?page=$page&limit=$limit');
+    final queryParams = 'page=$page&limit=$limit${status != null ? '&status=$status' : ''}';
+    final url = Uri.parse('$_baseUrl/users?$queryParams');
     final session = Supabase.instance.client.auth.currentSession;
     final token = session?.accessToken ?? '';
 
@@ -34,5 +36,24 @@ class UserRepository {
       }
     }
     throw Exception('Failed to load users: ${response.body}');
+  }
+
+  Future<void> updateUserStatus(String id, String status) async {
+    final url = Uri.parse('$_baseUrl/users/$id/status');
+    final session = Supabase.instance.client.auth.currentSession;
+    final token = session?.accessToken ?? '';
+
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'status': status}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update user status: ${response.body}');
+    }
   }
 }

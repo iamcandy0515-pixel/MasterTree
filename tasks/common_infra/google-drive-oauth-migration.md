@@ -7,21 +7,21 @@
 ---
 
 ## 2. 작업 전제 조건 (Prerequisites)
-- [ ] **0-1. Git 백업**: 현재 상태를 로컬 Git에 commit (`feat: save current state before drive oauth migration`).
-- [ ] **0-2. 환경 설정**: 터미널 인코딩 확인 (`chcp 65001`).
-- [ ] **0-3. 환경 변수 검증**: `.env` 내 `GOOGLE_CLIENT_ID`, `SECRET`, `REFRESH_TOKEN` 유효성 최종 확인.
+- [x] **0-1. Git 백업**: 현재 상태를 로컬 Git에 commit 완료.
+- [x] **0-2. 환경 설정**: 터미널 인코딩 확인 (`chcp 65001`).
+- [x] **0-3. 환경 변수 검증**: `.env` 내 `GOOGLE_CLIENT_ID`, `SECRET`, `REFRESH_TOKEN` 유효성 최종 확인 완료.
 
 ---
 
 ## 3. 단계별 작업 내용 (To-Do List)
 
 ### Phase 1: 소스 분리 및 모듈화 (Rule 1-1 준수)
-- [ ] **GoogleDriveService 구조 분석**: 현재 196줄인 `google_drive.service.ts`가 기능을 추가할 경우 200줄을 초과함에 따라 모듈 분리 설계.
-- [ ] **소스 분리 수행**:
-    - `google_drive_auth.service.ts` (신규): OAuth2 인증 및 토큰 관리 전용.
-    - `google_drive_file.service.ts` (신규): 파일 검색, 다운로드, 업로드 로직 담당.
-    - `google_drive.service.ts` (기존): 통합 인터페이스 및 하위 호환성 유지.
-- [ ] **Import 정합성**: 분리된 모듈 간의 경로 참조 오류 및 린트 에러 사전 예방.
+- [x] **GoogleDriveService 구조 분석**: 현재 196줄인 `google_drive.service.ts`가 기능을 추가할 경우 200줄을 초과함에 따라 모듈 분리 설계 완료.
+- [x] **소스 분리 수행**:
+    - `google_drive_auth.service.ts` (신규): OAuth2 인증 및 토큰 관리 전용 완료.
+    - `google_drive_file.service.ts` (신규): 파일 검색, 다운로드, 업로드 로직 담당 완료.
+    - `google_drive.service.ts` (기존): 통합 인터페이스 및 하위 호환성 유지 완료.
+- [x] **Import 정합성**: 분리된 모듈 간의 경로 참조 오류 및 린트 에러 사전 예방 완료.
 
 ### Phase 2: OAuth2 인증 및 썸네일 업로드 구현
 - [ ] **OAuth2 클라이언트 연동**: `google-auth-library`를 활용한 Refresh Token 로직 구현.
@@ -29,7 +29,7 @@
 - [ ] **대용량 파일 경고 우회**: 토큰 기반 인증을 통해 6.8MB 이상 파일의 바이러스 경고 자동 통과.
 
 ### Phase 3: 통합 및 빌드 완결성 (Rule 2-3 준수)
-- [ ] **백엔드 컴파일**: `npm run build`를 실행하여 타입 에러 확인 및 해결.
+- [x] **백엔드 컴파일**: `npm run build`를 실행하여 타입 에러 확인 및 해결 완료.
 - [ ] **설정 화면 연동**: 드라이브 권한(쓰기)이 정상적으로 동작하는지 설정 화면에서 테스트.
 
 ---

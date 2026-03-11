@@ -72,7 +72,14 @@ class _StatisticsContent extends StatelessWidget {
                   // 2. Active Users
                   _buildSectionHeader('현재 활동 중인 유저 (최근 7일)'),
                   const SizedBox(height: 12),
-                  _buildActiveUsersCard(vm.activeUserList),
+                  _buildUsersCard(vm.activeUserList, context),
+
+                  const SizedBox(height: 32),
+
+                  // 2.1. Inactive Users
+                  _buildSectionHeader('비활동 사용자 (7일 이상 기록 없음)'),
+                  const SizedBox(height: 12),
+                  _buildUsersCard(vm.inactiveUserList, context, isInactive: true),
 
                   const SizedBox(height: 32),
 
@@ -246,7 +253,8 @@ class _StatisticsContent extends StatelessWidget {
     );
   }
 
-  Widget _buildActiveUsersCard(List<dynamic> users) {
+  Widget _buildUsersCard(List<dynamic> users, BuildContext context,
+      {bool isInactive = false}) {
     return Container(
       decoration: BoxDecoration(
         color: surfaceDark,
@@ -254,20 +262,24 @@ class _StatisticsContent extends StatelessWidget {
         border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: users.isEmpty
-          ? const _EmptyState(message: '최근 활동 중인 유저가 없습니다.')
+          ? _EmptyState(
+              message: isInactive ? '비활동 사용자가 없습니다.' : '최근 활동 중인 유저가 없습니다.')
           : ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: users.length,
+              itemCount: users.length > 10 ? 10 : users.length,
               separatorBuilder: (_, __) =>
                   const Divider(color: Colors.white10, height: 1),
               itemBuilder: (context, index) {
                 final user = users[index];
+                final role = user['status'] == 'admin' ? 'Master' : 'User';
+                final prefix = role == 'Master' ? '[관] ' : '[사] ';
+
                 final lastLogin = DateTime.tryParse(
                   user['last_login'] ?? '',
                 )?.toLocal();
                 final timeStr = lastLogin != null
-                    ? DateFormat('yyyy.MM.dd HH:mm').format(lastLogin)
+                    ? DateFormat('MM.dd HH:mm').format(lastLogin)
                     : '-';
 
                 return ListTile(
@@ -285,36 +297,34 @@ class _StatisticsContent extends StatelessWidget {
                       );
                     }
                   },
-                  leading: const Icon(
-                    Icons.person,
-                    color: Colors.blueAccent,
-                    size: 20,
+                  leading: CircleAvatar(
+                    radius: 14,
+                    backgroundColor: isInactive
+                        ? Colors.grey.withOpacity(0.1)
+                        : primaryColor.withOpacity(0.1),
+                    child: Icon(
+                      Icons.person,
+                      color: isInactive ? Colors.grey : primaryColor,
+                      size: 16,
+                    ),
                   ),
                   title: Text(
-                    user['name'] ?? '알 수 없음',
-                    style: const TextStyle(color: Colors.white),
+                    '$prefix${user['name'] ?? '알 수 없음'}',
+                    style: TextStyle(
+                      color: isInactive ? Colors.white54 : Colors.white,
+                      fontSize: 13,
+                    ),
                   ),
                   subtitle: Text(
                     user['email'] ?? '',
-                    style: const TextStyle(color: Colors.white54, fontSize: 11),
+                    style: const TextStyle(color: Colors.white30, fontSize: 10),
                   ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        timeStr,
-                        style: const TextStyle(
-                          color: Colors.white38,
-                          fontSize: 11,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const Icon(
-                        Icons.chevron_right,
-                        color: Colors.white12,
-                        size: 16,
-                      ),
-                    ],
+                  trailing: Text(
+                    timeStr,
+                    style: const TextStyle(
+                      color: Colors.white38,
+                      fontSize: 10,
+                    ),
                   ),
                 );
               },
