@@ -12,6 +12,7 @@ import 'package:flutter_admin_app/features/dashboard/screens/statistics_screen.d
 import 'package:flutter_admin_app/features/dashboard/screens/settings_screen.dart';
 import 'package:flutter_admin_app/features/quiz_management/screens/quiz_management_screen.dart';
 import 'package:flutter_admin_app/features/quiz_management/screens/bulk_extraction_screen.dart';
+import 'package:flutter_admin_app/features/quiz_management/screens/quiz_extraction_step2_screen.dart';
 import 'package:flutter_admin_app/features/quiz_management/screens/bulk_similar_management_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -92,43 +93,10 @@ class _DashboardScreenState extends State<_DashboardContent> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Stats Cards - Grid layout (2x2)
-                          GridView.count(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 12,
-                            crossAxisSpacing: 12,
-                            childAspectRatio: 1.8,
-                            children: [
-                              _buildStatCard(
-                                label: '전체 수목종',
-                                value: '${vm.stats['totalTrees']}',
-                                highlight: 'Trees',
-                                highlightColor: primaryColor,
-                              ),
-                              _buildStatCard(
-                                label: '전체 유사수목',
-                                value: '${vm.stats['totalSimilarGroups']}',
-                                highlight: 'Groups',
-                                highlightColor: Colors.orangeAccent,
-                              ),
-                              _buildStatCard(
-                                label: '전체 기출문제',
-                                value: '${vm.stats['totalQuizzes']}',
-                                highlight: 'Quizzes',
-                                highlightColor: Colors.blueAccent,
-                              ),
-                              _buildStatCard(
-                                label: '현재 활동 유저',
-                                value: '${vm.stats['activeUsers']}',
-                                highlight: 'Active',
-                                highlightColor: Colors.redAccent,
-                              ),
-                            ],
-                          ),
+                          // 2. Statistics Info Section (Unified with User App Style)
+                          _buildTextStatsSection(vm),
 
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 12),
 
                           // 3. Shortcuts (Grid)
                           Row(
@@ -172,10 +140,22 @@ class _DashboardScreenState extends State<_DashboardContent> {
                             children: [
                               _buildShortcutListItem(
                                 icon: Icons.auto_awesome_motion,
-                                label: 'PDF 일괄추출',
+                                label: '기출문제 일괄 추출 (PDF)',
                                 subLabel: '범위 지정 및 AI 자동 분할 추출 (V2.6)',
                                 onTap: () {
                                   _navigateTo(const BulkExtractionScreen());
+                                },
+                                color: primaryColor,
+                              ),
+                              const SizedBox(height: 6),
+                              _buildShortcutListItem(
+                                icon: Icons.note_add_outlined,
+                                label: '기출문제 추출 (건별)',
+                                subLabel: '파일 선택 후 한 문항씩 정밀 추출',
+                                onTap: () {
+                                  _navigateTo(
+                                    const QuizExtractionStep2Screen(selectedFiles: []),
+                                  );
                                 },
                                 color: primaryColor,
                               ),
@@ -210,8 +190,8 @@ class _DashboardScreenState extends State<_DashboardContent> {
                               const SizedBox(height: 6),
                               _buildShortcutListItem(
                                 icon: Icons.add_a_photo,
-                                label: '이미지 수집',
-                                subLabel: '학습 데이터용 이미지 벌크 추가',
+                                label: '수목 이미지 소싱 관리',
+                                subLabel: '학습 데이터용 이미지 벌크 추가 및 검토',
                                 onTap: () =>
                                     _navigateTo(const TreeSourcingScreen()),
                               ),
@@ -317,78 +297,54 @@ class _DashboardScreenState extends State<_DashboardContent> {
     );
   }
 
-  Widget _buildStatCard({
-    required String label,
-    required String value,
-    String? total,
-    required String highlight,
-    required Color highlightColor,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+  Widget _buildTextStatsSection(DashboardViewModel vm) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildTextStatItem('수목', vm.stats['totalTrees'] ?? 0, '종'),
+          _buildStatDivider(),
+          _buildTextStatItem('기출', vm.stats['totalQuizzes'] ?? 0, '문'),
+          _buildStatDivider(),
+          _buildTextStatItem('유사', vm.stats['totalSimilarGroups'] ?? 0, '조합'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextStatItem(String label, int count, String unit) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Flexible(
-              child: Text(
-                label,
-                style: const TextStyle(
-                  color: Colors.yellowAccent,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            const SizedBox(width: 6),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-              decoration: BoxDecoration(
-                color: highlightColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                highlight,
-                style: TextStyle(
-                  color: highlightColor,
-                  fontSize: 8,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white38, fontSize: 13),
         ),
-        const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.baseline,
-          textBaseline: TextBaseline.alphabetic,
-          children: [
-            Text(
-              value,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            if (total != null) ...[
-              const SizedBox(width: 4),
-              Text(
-                '/',
-                style: TextStyle(color: Colors.grey[600], fontSize: 13),
-              ),
-              const SizedBox(width: 2),
-              Text(
-                total,
-                style: TextStyle(color: Colors.grey[500], fontSize: 13),
-              ),
-            ],
-          ],
+        const SizedBox(width: 8),
+        Text(
+          count.toString(),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          unit,
+          style: const TextStyle(color: Colors.white38, fontSize: 12),
         ),
       ],
+    );
+  }
+
+  Widget _buildStatDivider() {
+    return Container(
+      height: 12,
+      width: 1,
+      margin: const EdgeInsets.symmetric(horizontal: 12),
+      color: Colors.white.withOpacity(0.1),
     );
   }
 
