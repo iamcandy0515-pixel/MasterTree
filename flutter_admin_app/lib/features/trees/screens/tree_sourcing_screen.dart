@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:super_clipboard/super_clipboard.dart';
 import 'package:file_picker/file_picker.dart';
 import '../viewmodels/tree_sourcing_viewmodel.dart';
+import '../repositories/tree_repository.dart';
 import '../models/tree.dart';
 import '../../../core/theme/neo_theme.dart';
 
@@ -778,6 +779,7 @@ class _SourcingImageCardState extends State<_SourcingImageCard> {
   }
 
   void _onVmChanged() {
+    if (!mounted) return;
     final vm = context.read<TreeSourcingViewModel>();
     if (vm.searchQuery.isEmpty && _searchController.text.isNotEmpty) {
       _searchController.clear();
@@ -896,7 +898,7 @@ class _SourcingImageCardState extends State<_SourcingImageCard> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.network(
-                      treeImage.imageUrl,
+                      TreeRepository.getProxyUrl(treeImage.imageUrl),
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) => Container(
                         color: Colors.white.withOpacity(0.02),

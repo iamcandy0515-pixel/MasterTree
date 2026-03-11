@@ -22,6 +22,12 @@ class SettingsViewModel extends ChangeNotifier {
   String _googleDriveUrl = "";
   String get googleDriveUrl => _googleDriveUrl;
 
+  String _thumbnailDriveUrl = "";
+  String get thumbnailDriveUrl => _thumbnailDriveUrl;
+
+  String _examDriveUrl = "";
+  String get examDriveUrl => _examDriveUrl;
+
   Future<void> loadSettings() async {
     _isLoading = true;
     _isInitialLoading = true;
@@ -31,10 +37,14 @@ class SettingsViewModel extends ChangeNotifier {
         _repository.getEntryCode(),
         _repository.getUserAppUrl(),
         _repository.getGoogleDriveFolderUrl(),
+        _repository.getThumbnailDriveUrl(),
+        _repository.getExamDriveUrl(),
       ]);
       _entryCode = results[0];
       _userAppUrl = results[1];
       _googleDriveUrl = results[2];
+      _thumbnailDriveUrl = results[3];
+      _examDriveUrl = results[4];
       _error = null;
     } catch (e) {
       _error = "설정 정보를 불러오는데 실패했습니다.";
@@ -108,28 +118,32 @@ class SettingsViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> restartAdminServer() async {
+  Future<void> updateThumbnailDriveUrl(String newUrl) async {
     _isLoading = true;
     notifyListeners();
+
     try {
-      await _repository.restartAdminServer();
+      _thumbnailDriveUrl = await _repository.updateThumbnailDriveUrl(newUrl);
       _error = null;
     } catch (e) {
-      _error = "관리자 서버 재시작 요청 실패: $e";
+      _error = "구글 썸네일 URL 수정에 실패했습니다: $e";
+      rethrow;
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> restartUserServer() async {
+  Future<void> updateExamDriveUrl(String newUrl) async {
     _isLoading = true;
     notifyListeners();
+
     try {
-      await _repository.restartUserServer();
+      _examDriveUrl = await _repository.updateExamDriveUrl(newUrl);
       _error = null;
     } catch (e) {
-      _error = "사용자 서버 재시작 요청 실패: $e";
+      _error = "기출문제 URL 수정에 실패했습니다: $e";
+      rethrow;
     } finally {
       _isLoading = false;
       notifyListeners();

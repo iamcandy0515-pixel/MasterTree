@@ -119,7 +119,8 @@ class SupabaseService {
         final data = jsonDecode(utf8.decode(response.bodyBytes));
         debugPrint('Response Data: $data');
         if (data['success'] == true) {
-          return data['data']['entryCode'] ?? '1004';
+          // Changed fallback from '1004' to '1234' to match server default in app_settings table
+          return data['data']['entryCode'] ?? '1234';
         }
       } else {
         debugPrint('Failed to load entry code: ${response.body}');
@@ -127,7 +128,7 @@ class SupabaseService {
     } catch (e) {
       debugPrint('Error fetching global entry code from $url: $e');
     }
-    return '1004'; // Default fallback changed to 1004 to distinguish from manual 1234
+    return '1234'; // Default fallback changed to 1234 to match Admin API default
   }
 
   /// Check if global/required entry code is valid

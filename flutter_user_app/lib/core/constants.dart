@@ -1,5 +1,11 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/foundation.dart';
+
 class AppConstants {
-  static const String supabaseUrl = 'YOUR_SUPABASE_URL';
-  static const String supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
-  static const String apiUrl = 'http://localhost:4000/api';
+  static String get supabaseUrl =>
+      dotenv.env['SUPABASE_URL'] ?? 'https://your-project.supabase.co';
+  static String get supabaseAnonKey => dotenv.env['SUPABASE_ANON_KEY'] ?? '';
+  static String get apiUrl =>
+      dotenv.env['API_URL'] ??
+      (kIsWeb ? 'http://localhost:4000/api' : 'http://10.0.2.2:4000/api');
 }

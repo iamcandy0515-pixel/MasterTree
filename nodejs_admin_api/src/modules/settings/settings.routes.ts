@@ -30,4 +30,28 @@ router.post(
     SettingsController.updateGoogleDriveFolderUrl,
 );
 
+// GET /api/settings/thumbnail-drive-url
+router.get(
+    "/thumbnail-drive-url",
+    verifyAdmin,
+    SettingsController.getThumbnailDriveUrl,
+);
+
+// POST /api/settings/thumbnail-drive-url
+router.post(
+    "/thumbnail-drive-url",
+    verifyAdmin,
+    SettingsController.updateThumbnailDriveUrl,
+);
+
+// GET /api/settings/exam-drive-url
+router.get("/exam-drive-url", verifyAdmin, SettingsController.getExamDriveUrl);
+
+// POST /api/settings/exam-drive-url
+router.post(
+    "/exam-drive-url",
+    verifyAdmin,
+    SettingsController.updateExamDriveUrl,
+);
+
 export default router;

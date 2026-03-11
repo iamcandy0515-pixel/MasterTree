@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_user_app/core/design_system.dart';
@@ -9,9 +10,13 @@ import 'package:flutter_user_app/providers/quiz_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
 
   debugPrint('Supabase Init: ${AppConstants.supabaseUrl}');
-  debugPrint('Key Prefix: ${AppConstants.supabaseAnonKey.substring(0, 5)}...');
+  final key = AppConstants.supabaseAnonKey;
+  debugPrint(
+    'Key Prefix: ${key.length >= 5 ? key.substring(0, 5) : 'EMPTY'}...',
+  );
 
   await Supabase.initialize(
     url: AppConstants.supabaseUrl,

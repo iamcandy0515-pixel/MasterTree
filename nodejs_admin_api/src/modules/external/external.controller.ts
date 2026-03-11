@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import { GoogleDriveService } from "./google_drive.service";
 import { settingsService } from "../settings/settings.service";
+import { extractDriveFolderId } from "../../utils/drive-helper";
 
 const driveService = new GoogleDriveService();
 
 export const searchGoogleImage = async (req: Request, res: Response) => {
     try {
-        // Assume treeName and imageType are passed in query params or body
         const { treeName, imageType } = req.body;
 
         if (!treeName || !imageType) {
@@ -15,7 +15,30 @@ export const searchGoogleImage = async (req: Request, res: Response) => {
                 .json({ error: "Missing treeName or imageType" });
         }
 
-        const url = await driveService.searchImage(treeName, imageType);
+        // 1. Fetch Folder URL from Settings
+        const folderUrl = await settingsService.getGoogleDriveFolderUrl();
+        if (!folderUrl) {
+            return res.json({
+                success: false,
+                message: "Google Drive folder is not configured.",
+            });
+        }
+
+        // 2. Extract Folder ID
+        const folderId = extractDriveFolderId(folderUrl);
+        if (!folderId) {
+            return res.json({
+                success: false,
+                message: "Invalid Google Drive folder URL in settings.",
+            });
+        }
+
+        // 3. Search using dynamic ID
+        const url = await driveService.searchImage(
+            treeName,
+            imageType,
+            folderId,
+        );
 
         if (url) {
             return res.json({ success: true, url });
@@ -47,22 +70,9 @@ export const searchGoogleDriveFiles = async (req: Request, res: Response) => {
                 });
         }
 
-        // Extremely naive ID extraction (try to get id parameter or last path segment)
-        let folderId = "";
-        try {
-            const urlObj = new URL(folderUrl);
-            const idParam = urlObj.searchParams.get("id");
-            if (idParam) {
-                folderId = idParam;
-            } else {
-                const parts = urlObj.pathname.split("/");
-                folderId = parts[parts.length - 1];
-            }
-        } catch (e) {
-            folderId = folderUrl.split("/").pop() || "";
-        }
+        const folderId = extractDriveFolderId(folderUrl);
 
-        if (!folderId || folderId.length < 10) {
+        if (!folderId) {
             return res
                 .status(400)
                 .json({ error: "Invalid Google Drive folder URL." });
@@ -90,9 +100,20 @@ export const searchAndDownloadGoogleImage = async (
         if (!treeName || !imageType)
             return res.status(400).json({ error: "Missing parameters" });
 
+        // 1. Fetch Folder URL from Settings
+        const folderUrl = await settingsService.getGoogleDriveFolderUrl();
+        const folderId = folderUrl ? extractDriveFolderId(folderUrl) : null;
+
+        if (!folderId) {
+            return res.status(400).json({
+                error: "Google Drive folder is not configured or URL is invalid.",
+            });
+        }
+
         const buffer = await driveService.searchAndDownloadImage(
             treeName,
             imageType,
+            folderId,
         );
 
         if (buffer) {

@@ -245,6 +245,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 children: [
                   Text(
                     title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       color: AppColors.textLight,
                       fontSize: 15,
@@ -254,6 +256,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       color: AppColors.textMuted,
                       fontSize: 11,
@@ -276,15 +280,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildTextStatsSection() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildTextStatItem('수목', _controller.treeCount, '종'),
-          _buildStatDivider(),
-          _buildTextStatItem('기출', _controller.quizCount, '문'),
-          _buildStatDivider(),
-          _buildTextStatItem('유사', _controller.similarCount, '조합'),
-        ],
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildTextStatItem('수목', _controller.treeCount, '종'),
+            _buildStatDivider(),
+            _buildTextStatItem('기출', _controller.quizCount, '문'),
+            _buildStatDivider(),
+            _buildTextStatItem('유사', _controller.similarCount, '조합'),
+          ],
+        ),
       ),
     );
   }

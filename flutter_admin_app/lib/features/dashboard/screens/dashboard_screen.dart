@@ -441,16 +441,16 @@ class _DashboardScreenState extends State<_DashboardContent> {
         children: [
           _buildNavItem(Icons.dashboard, '홈', true, () {}),
           _buildNavItem(
-            Icons.storage_rounded,
-            '수목DB',
-            false,
-            () => _navigateTo(const TreeListScreen()),
-          ),
-          _buildNavItem(
             Icons.analytics_outlined,
             '통계',
             false,
             () => _navigateTo(const StatisticsScreen()),
+          ),
+          _buildNavItem(
+            Icons.people_outlined,
+            '사용자',
+            false,
+            () => _navigateTo(const UserCheckScreen()),
           ),
           _buildNavItem(
             Icons.settings_outlined,

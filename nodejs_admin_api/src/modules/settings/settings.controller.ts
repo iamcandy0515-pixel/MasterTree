@@ -121,4 +121,71 @@ export class SettingsController {
             );
         }
     }
+
+    static async getThumbnailDriveUrl(req: Request, res: Response) {
+        try {
+            const data = await settingsService.getThumbnailDriveUrl();
+            successResponse(res, { url: data || "" });
+        } catch (error: any) {
+            if (error.code === "42P01") {
+                successResponse(res, { url: "" });
+                return;
+            }
+            errorResponse(
+                res,
+                error.message || "Failed to get thumbnail drive url",
+            );
+        }
+    }
+
+    static async updateThumbnailDriveUrl(req: Request, res: Response) {
+        try {
+            const { url } = req.body;
+            if (url === undefined) {
+                return errorResponse(res, "URL is required", 400);
+            }
+
+            const updated = await settingsService.updateThumbnailDriveUrl(url);
+            successResponse(
+                res,
+                { url: updated },
+                "Thumbnail drive url updated successfully",
+            );
+        } catch (error: any) {
+            errorResponse(
+                res,
+                error.message || "Failed to update thumbnail drive url",
+            );
+        }
+    }
+
+    static async getExamDriveUrl(req: Request, res: Response) {
+        try {
+            const data = await settingsService.getExamDriveUrl();
+            successResponse(res, { url: data || "" });
+        } catch (error: any) {
+            errorResponse(res, error.message || "Failed to get exam drive url");
+        }
+    }
+
+    static async updateExamDriveUrl(req: Request, res: Response) {
+        try {
+            const { url } = req.body;
+            if (url === undefined) {
+                return errorResponse(res, "URL is required", 400);
+            }
+
+            const updated = await settingsService.updateExamDriveUrl(url);
+            successResponse(
+                res,
+                { url: updated },
+                "Exam drive url updated successfully",
+            );
+        } catch (error: any) {
+            errorResponse(
+                res,
+                error.message || "Failed to update exam drive url",
+            );
+        }
+    }
 }
