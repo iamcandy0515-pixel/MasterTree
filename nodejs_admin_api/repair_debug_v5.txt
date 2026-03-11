@@ -1,0 +1,14 @@
+﻿SUPABASE_URL: Present
+SUPABASE_SERVICE_KEY: Present
+??[DriveService] Initializing with Service Account (Primary)
+?? Repairing ?좉컝?섎Т flower (ID: 1327)...
+?뵇 [Drive] Searching: "?좉컝?섎Т_苑? in folder: 1GK_EJ3ZaJ8nzdH1JW7wD_bXn6RH6BxkT
+?뵇 [Drive] Query: '1GK_EJ3ZaJ8nzdH1JW7wD_bXn6RH6BxkT' in parents and name contains '?좉컝?섎Т_苑? and mimeType contains 'image/' and trashed = false
+??[Drive] Found 1 files.
+   - File[0]: ?좉컝?섎Т_苑?png (1BpBz1NERLxFH3JPOZimZvfXshmZRbs0M) [image/png]
+??Found Drive URL: https://drive.google.com/uc?id=1BpBz1NERLxFH3JPOZimZvfXshmZRbs0M&export=download
+燧뉛툘 [Drive] Downloading via direct link: https://drive.google.com/uc?export=download&id=1BpBz1NERLxFH3JPOZimZvfXshmZRbs0M&export=download
+??Downloaded 7111942 bytes from Google Drive.
+??Uploaded to Supabase Storage: https://phqnxvehlcvruaavquay.supabase.co/storage/v1/object/public/tree-images/trees/1773130508646_repair_shingal_flower.jpg
+?럦 Successfully updated database record!
+Updated record image_url: https://phqnxvehlcvruaavquay.supabase.co/storage/v1/object/public/tree-images/trees/1773130508646_repair_shingal_flower.jpg

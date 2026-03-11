@@ -2,6 +2,7 @@ class TreeImage {
   final int? id;
   final String imageType; // 'leaf', 'bark', etc.
   final String imageUrl;
+  final String? thumbnailUrl;
   final String? hint; // Quiz answer hint
   final bool isQuizEnabled; // Quiz activation toggle
 
@@ -9,6 +10,7 @@ class TreeImage {
     this.id,
     required this.imageType,
     required this.imageUrl,
+    this.thumbnailUrl,
     this.hint,
     this.isQuizEnabled = true,
   });
@@ -18,6 +20,7 @@ class TreeImage {
       id: json['id'] != null ? int.tryParse(json['id'].toString()) : null,
       imageType: json['image_type'] ?? '',
       imageUrl: json['image_url'] ?? '',
+      thumbnailUrl: json['thumbnail_url'],
       hint: json['hint'],
       isQuizEnabled: json['is_quiz_enabled'] ?? true,
     );
@@ -27,6 +30,7 @@ class TreeImage {
     int? id,
     String? imageType,
     String? imageUrl,
+    String? thumbnailUrl,
     String? hint,
     bool? isQuizEnabled,
   }) {
@@ -34,6 +38,7 @@ class TreeImage {
       id: id ?? this.id,
       imageType: imageType ?? this.imageType,
       imageUrl: imageUrl ?? this.imageUrl,
+      thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
       hint: hint ?? this.hint,
       isQuizEnabled: isQuizEnabled ?? this.isQuizEnabled,
     );
@@ -42,6 +47,7 @@ class TreeImage {
   Map<String, dynamic> toJson() => {
     'image_type': imageType,
     'image_url': imageUrl,
+    'thumbnail_url': thumbnailUrl,
     'hint': hint,
     'is_quiz_enabled': isQuizEnabled,
   };

@@ -3,8 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const GOOGLE_DRIVE_FOLDER_ID = "1GK_EJ3ZaJ8nzdH1JW7wD_bXn6RH6BxkT"; // TreesQuiz Folder ID
-const API_KEY = process.env.GOOGLE_DRIVE_API_KEY || process.env.GEMINI_KEY; // Fallback to Gemini Key if dedicated key is missing
+const API_KEY = process.env.GOOGLE_DRIVE_API_KEY || process.env.GEMINI_KEY;
 
 export class GoogleDriveService {
     private drive;
@@ -26,11 +25,13 @@ export class GoogleDriveService {
     async searchImage(
         treeName: string,
         imageType: string,
+        folderId: string, // Accept dynamic folderId
     ): Promise<string | null> {
         try {
-            // Mapping English types to Korean suffix conventions if necessary
-            // Assuming the files are named like "가시나무_대표", "가시나무_꽃", etc.
-            // Expected imageType from frontend: 'representative', 'flower', 'fruit', 'bark', etc.
+            if (!folderId) {
+                console.warn("⚠️ Folder ID is missing for Drive search.");
+                return null;
+            }
 
             const typeMap: Record<string, string> = {
                 main: "대표",
@@ -39,25 +40,22 @@ export class GoogleDriveService {
                 fruit: "열매",
                 bark: "수피",
                 leaf: "잎",
-                // Add more mappings as needed
             };
 
             const koreanType = typeMap[imageType] || imageType;
             const searchTerm = `${treeName}_${koreanType}`;
 
-            // Query to search for files containing the name in the specific folder
-            // 'name contains' is used for partial match, or use 'name =' for exact match if extensions vary
-            const query = `'${GOOGLE_DRIVE_FOLDER_ID}' in parents and name contains '${searchTerm}' and mimeType contains 'image/' and trashed = false`;
+            // Use the provided folderId
+            const query = `'${folderId}' in parents and name contains '${searchTerm}' and mimeType contains 'image/' and trashed = false`;
 
             console.log(
-                `🔍 [Drive] Searching: "${searchTerm}" in folder: ${GOOGLE_DRIVE_FOLDER_ID}`,
+                `🔍 [Drive] Searching: "${searchTerm}" in folder: ${folderId}`,
             );
-            console.log(`🔍 [Drive] Query: ${query}`);
 
             const response = await this.drive.files.list({
                 q: query,
                 fields: "files(id, name, mimeType)",
-                pageSize: 10, // Increase page size to see what we find
+                pageSize: 10,
             });
 
             const files = response.data.files;
@@ -181,8 +179,9 @@ export class GoogleDriveService {
     async searchAndDownloadImage(
         treeName: string,
         imageType: string,
+        folderId: string,
     ): Promise<Buffer | null> {
-        const url = await this.searchImage(treeName, imageType);
+        const url = await this.searchImage(treeName, imageType, folderId);
         if (url) {
             // Extract File ID from URL
             // URL format: https://drive.google.com/uc?export=view&id={FILE_ID}

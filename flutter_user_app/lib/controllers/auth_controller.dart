@@ -107,6 +107,39 @@ class AuthController {
 
       if (isExistingUser == true) {
         // [Existing User Flow]
+
+        // 1. Check status (if expired or denied)
+        final status = user?['status'];
+        if (status == 'expired' || status == 'denied') {
+          onError('사용기간이 만료되었습니다. 관리자에게 문의해 주세요.');
+          isLoading = false;
+          onUpdate();
+          return;
+        }
+
+        // 1-1. Check for pending approval
+        if (status != 'approved') {
+          onError('승인 대기 중입니다. 관리자 승인 후 이용 가능합니다.');
+          isLoading = false;
+          onUpdate();
+          return;
+        }
+
+        // 2. Check personal expiration date if exists
+        if (user?['expired_at'] != null) {
+          try {
+            final expiredAt = DateTime.parse(user!['expired_at']);
+            if (DateTime.now().isAfter(expiredAt)) {
+              onError('사용기간이 만료되었습니다. 관리자에게 문의해 주세요.');
+              isLoading = false;
+              onUpdate();
+              return;
+            }
+          } catch (e) {
+            debugPrint('Expiration check error: $e');
+          }
+        }
+
         final isValid = await SupabaseService.isValidEntryCode(
           entryCode,
           user: user,

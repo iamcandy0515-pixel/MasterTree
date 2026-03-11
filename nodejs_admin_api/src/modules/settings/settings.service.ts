@@ -132,6 +132,89 @@ export class SettingsService {
 
         return data.value;
     }
+
+    // Get Thumbnail Drive URL
+    async getThumbnailDriveUrl() {
+        const { data, error } = await supabase
+            .from("app_settings")
+            .select("value")
+            .eq("key", "thumbnail_drive_url")
+            .single();
+
+        if (error) {
+            if (error.code === "PGRST116") {
+                return "";
+            }
+            throw error;
+        }
+
+        return data.value;
+    }
+
+    // Update Thumbnail Drive URL
+    async updateThumbnailDriveUrl(url: string) {
+        const { data, error } = await supabase
+            .from("app_settings")
+            .upsert(
+                {
+                    key: "thumbnail_drive_url",
+                    value: url,
+                    description: "구글 드라이브 썸네일 폴더 URL",
+                    updated_at: new Date(),
+                },
+                { onConflict: "key" },
+            )
+            .select()
+            .single();
+
+        if (error) {
+            logger.error("Failed to update thumbnail drive url", error);
+            throw error;
+        }
+
+        return data.value;
+    }
+    // Get Exam Drive URL
+    async getExamDriveUrl() {
+        const { data, error } = await supabase
+            .from("app_settings")
+            .select("value")
+            .eq("key", "exam_drive_url")
+            .single();
+
+        if (error) {
+            if (error.code === "PGRST116") {
+                return "";
+            }
+            throw error;
+        }
+
+        return data.value;
+    }
+
+    // Update Exam Drive URL
+    async updateExamDriveUrl(url: string) {
+        const { data, error } = await supabase
+            .from("app_settings")
+            .upsert(
+                {
+                    key: "exam_drive_url",
+                    value: url,
+                    description: "구글 드라이브 기출문제 폴더 URL",
+                    updated_at: new Date(),
+                },
+                { onConflict: "key" },
+            )
+            .select()
+            .single();
+
+        if (error) {
+            logger.error("Failed to update exam drive url", error);
+            throw error;
+        }
+
+        return data.value;
+    }
 }
 
 export const settingsService = new SettingsService();

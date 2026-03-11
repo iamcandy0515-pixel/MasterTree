@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_admin_app/features/quiz_management/repositories/quiz_repository.dart';
+import 'package:flutter_admin_app/features/trees/repositories/tree_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BulkExtractionViewModel extends ChangeNotifier {
@@ -64,6 +65,20 @@ class BulkExtractionViewModel extends ChangeNotifier {
     fileId = prefs.getString('ext_filter_file_id');
     startNumber = prefs.getInt('ext_filter_start') ?? 0;
     endNumber = prefs.getInt('ext_filter_end') ?? 0;
+
+    // 만약 fileId가 없다면 전역 설정에서 구글 드라이브 폴더 URL 로드 시도
+    if (fileId == null || fileId!.isEmpty) {
+      try {
+        final treeRepo = TreeRepository();
+        final globalUrl = await treeRepo.getExamDriveUrl();
+        if (globalUrl.isNotEmpty) {
+          fileId = globalUrl;
+          debugPrint('🎯 로드된 전역 구글 드라이브 폴더: $fileId');
+        }
+      } catch (e) {
+        debugPrint('Error loading global drive url: $e');
+      }
+    }
     notifyListeners();
   }
 

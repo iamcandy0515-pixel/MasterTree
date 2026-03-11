@@ -26,6 +26,14 @@ class PaginatedTrees {
 class TreeRepository {
   final String _baseUrl;
 
+  static String getProxyUrl(String url) {
+    if (url.contains('drive.google.com')) {
+      final baseUrl = dotenv.env['API_URL'] ?? 'http://localhost:3000/api';
+      return '$baseUrl/uploads/proxy?url=${Uri.encodeComponent(url)}';
+    }
+    return url;
+  }
+
   TreeRepository()
     : _baseUrl = dotenv.env['API_URL'] ?? 'http://localhost:3000/api';
 
@@ -562,5 +570,79 @@ class TreeRepository {
       }
     }
     throw Exception('구글 드라이브 URL 업데이트 실패: ${response.body}');
+  }
+
+  // GET /api/settings/thumbnail-drive-url
+  Future<String> getThumbnailDriveUrl() async {
+    final url = Uri.parse('$_baseUrl/settings/thumbnail-drive-url');
+    final headers = await _getHeaders();
+    try {
+      final response = await http.get(url, headers: headers);
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+        if (jsonResponse['success'] == true) {
+          return jsonResponse['data']['url'] ?? '';
+        }
+      }
+    } catch (e) {
+      // Ignore
+    }
+    return '';
+  }
+
+  // POST /api/settings/thumbnail-drive-url
+  Future<String> updateThumbnailDriveUrl(String newUrl) async {
+    final url = Uri.parse('$_baseUrl/settings/thumbnail-drive-url');
+    final headers = await _getHeaders();
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode({'url': newUrl}),
+    );
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsonResponse['success'] == true) {
+        return jsonResponse['data']['url'];
+      }
+    }
+    throw Exception('구글 썸네일 URL 업데이트 실패: ${response.body}');
+  }
+
+  // GET /api/settings/exam-drive-url
+  Future<String> getExamDriveUrl() async {
+    final url = Uri.parse('$_baseUrl/settings/exam-drive-url');
+    final headers = await _getHeaders();
+    try {
+      final response = await http.get(url, headers: headers);
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+        if (jsonResponse['success'] == true) {
+          return jsonResponse['data']['url'] ?? '';
+        }
+      }
+    } catch (e) {
+      // Ignore
+    }
+    return '';
+  }
+
+  // POST /api/settings/exam-drive-url
+  Future<String> updateExamDriveUrl(String newUrl) async {
+    final url = Uri.parse('$_baseUrl/settings/exam-drive-url');
+    final headers = await _getHeaders();
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode({'url': newUrl}),
+    );
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsonResponse['success'] == true) {
+        return jsonResponse['data']['url'];
+      }
+    }
+    throw Exception('기출문제 폴더 URL 업데이트 실패: ${response.body}');
   }
 }

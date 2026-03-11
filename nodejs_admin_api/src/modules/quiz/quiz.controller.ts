@@ -3,6 +3,7 @@ import { quizService } from "./quiz.service";
 import { successResponse, errorResponse } from "../../utils/response";
 import { GoogleDriveService } from "../external/google_drive.service";
 import { settingsService } from "../settings/settings.service";
+import { extractDriveFolderId } from "../../utils/drive-helper";
 
 export class QuizController {
     /**
@@ -311,9 +312,10 @@ export class QuizController {
                 console.log(
                     `🔍 [Drive] Input '${fileId}' doesn't look like an ID. Searching by name...`,
                 );
-                // 설정에서 구글 드라이브 폴더 URL 가져오기
+                // 설정에서 구글 드라이브 기출문제 폴더 URL 가져오기
                 const folderUrl =
-                    await settingsService.getGoogleDriveFolderUrl();
+                    (await settingsService.getExamDriveUrl()) ||
+                    (await settingsService.getGoogleDriveFolderUrl());
 
                 if (!folderUrl) {
                     return errorResponse(
@@ -324,19 +326,7 @@ export class QuizController {
                 }
 
                 // URL에서 폴더 ID 추출
-                let folderId = "";
-                try {
-                    const urlObj = new URL(folderUrl);
-                    const idParam = urlObj.searchParams.get("id");
-                    if (idParam) {
-                        folderId = idParam;
-                    } else {
-                        const parts = urlObj.pathname.split("/");
-                        folderId = parts[parts.length - 1];
-                    }
-                } catch (e) {
-                    folderId = folderUrl.split("/").pop() || "";
-                }
+                const folderId = extractDriveFolderId(folderUrl);
 
                 if (!folderId || folderId.length < 10) {
                     return errorResponse(

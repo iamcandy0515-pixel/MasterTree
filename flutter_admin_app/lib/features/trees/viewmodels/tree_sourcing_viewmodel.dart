@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/tree.dart';
@@ -23,8 +22,9 @@ class TreeSourcingViewModel extends ChangeNotifier {
   bool get hasChanges => _hasChanges;
 
   // Staging area for locally added images before they are uploaded
-  final Map<String, Uint8List> _pendingImages = {};
-  Map<String, Uint8List> get pendingImages => _pendingImages;
+  // Key: {type}_{original|thumb}, Value: Uint8List or TreeImage
+  final Map<String, dynamic> _pendingImages = {};
+  Map<String, dynamic> get pendingImages => _pendingImages;
 
   TreeSourcingViewModel() {
     loadTrees();
@@ -146,10 +146,26 @@ class TreeSourcingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void stageImage(String type, Uint8List bytes) {
-    _pendingImages[type] = bytes;
+  void stageImage(String type, dynamic data, {bool isThumbnail = false}) {
+    final key = '${type}_${isThumbnail ? 'thumb' : 'original'}';
+    _pendingImages[key] = data;
     _hasChanges = true;
     notifyListeners();
+  }
+
+  void removePendingImage(String key) {
+    _pendingImages.remove(key);
+    _hasChanges = _pendingImages.isNotEmpty;
+    notifyListeners();
+  }
+
+  TreeImage? getImageByType(String type) {
+    if (_selectedTree == null) return null;
+    try {
+      return _selectedTree!.images.firstWhere((img) => img.imageType == type);
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<void> updateImage(String type, String url) async {
@@ -277,5 +293,14 @@ class TreeSourcingViewModel extends ChangeNotifier {
       debugPrint('Error fetching google image for $type: $e');
       return false;
     }
+  }
+
+  Future<void> fetchFromDrive() async {
+    await fetchGoogleImagesAll();
+  }
+
+  Future<void> generateThumbnailForCategory(String type) async {
+    // 썸네일 생성 로직 (백엔드 연동 예정)
+    notifyListeners();
   }
 }

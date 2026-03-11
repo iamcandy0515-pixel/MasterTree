@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/settings_viewmodel.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'dart:async';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -30,6 +29,10 @@ class _SettingsContentState extends State<_SettingsContent> {
       TextEditingController(); // New
   final TextEditingController _googleDriveUrlController =
       TextEditingController(); // New
+  final TextEditingController _thumbnailDriveUrlController =
+      TextEditingController(); // New
+  final TextEditingController _examDriveUrlController =
+      TextEditingController(); // New
 
   @override
   void initState() {
@@ -41,6 +44,8 @@ class _SettingsContentState extends State<_SettingsContent> {
     _entryCodeController.dispose();
     _userAppUrlController.dispose(); // New
     _googleDriveUrlController.dispose();
+    _thumbnailDriveUrlController.dispose();
+    _examDriveUrlController.dispose();
     super.dispose();
   }
 
@@ -65,6 +70,18 @@ class _SettingsContentState extends State<_SettingsContent> {
         !vm.isInitialLoading &&
         vm.googleDriveUrl.isNotEmpty) {
       _googleDriveUrlController.text = vm.googleDriveUrl;
+    }
+    // Sync Thumbnail URL
+    if (_thumbnailDriveUrlController.text.isEmpty &&
+        !vm.isInitialLoading &&
+        vm.thumbnailDriveUrl.isNotEmpty) {
+      _thumbnailDriveUrlController.text = vm.thumbnailDriveUrl;
+    }
+    // Sync Exam URL
+    if (_examDriveUrlController.text.isEmpty &&
+        !vm.isInitialLoading &&
+        vm.examDriveUrl.isNotEmpty) {
+      _examDriveUrlController.text = vm.examDriveUrl;
     }
 
     return Scaffold(
@@ -329,8 +346,8 @@ class _SettingsContentState extends State<_SettingsContent> {
 
                   const SizedBox(height: 48),
 
-                  // Section 2.5: Google Drive Setup
-                  _buildSectionHeader('기출문제 설정', Icons.cloud_download_outlined),
+                  // Section 2.5: Tree Image Setup (Google Drive)
+                  _buildSectionHeader('수목 이미지 설정', Icons.image_outlined),
                   const SizedBox(height: 16),
                   Container(
                     padding: const EdgeInsets.all(24),
@@ -342,8 +359,86 @@ class _SettingsContentState extends State<_SettingsContent> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Exam Folder URL
                         const Text(
-                          '구글 드라이브 폴더 URL',
+                          '구글 기출문제 폴더 url',
+                          style: TextStyle(color: Colors.white70, fontSize: 14),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: _examDriveUrlController,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                ),
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: Colors.black26,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  hintText:
+                                      'https://drive.google.com/drive/folders/...',
+                                  hintStyle: const TextStyle(
+                                    color: Colors.white30,
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            ElevatedButton(
+                              onPressed: vm.isLoading
+                                  ? null
+                                  : () async {
+                                      final newUrl = _examDriveUrlController
+                                          .text
+                                          .trim();
+                                      try {
+                                        await context
+                                            .read<SettingsViewModel>()
+                                            .updateExamDriveUrl(newUrl);
+                                        if (mounted) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                '기출문제 URL이 저장되었습니다.',
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      } catch (e) {
+                                        //
+                                      }
+                                    },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFCCFF00),
+                                foregroundColor: Colors.black87,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 16,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text('변경 저장'),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+                        // Origin Folder URL
+                        const Text(
+                          '구글 수목 이미지 폴더 url',
                           style: TextStyle(color: Colors.white70, fontSize: 14),
                         ),
                         const SizedBox(height: 12),
@@ -393,19 +488,17 @@ class _SettingsContentState extends State<_SettingsContent> {
                                           ).showSnackBar(
                                             const SnackBar(
                                               content: Text(
-                                                '구글 드라이브 URL이 저장되었습니다.',
+                                                '수목 이미지 URL이 저장되었습니다.',
                                               ),
                                             ),
                                           );
                                         }
                                       } catch (e) {
-                                        // Handle error
+                                        //
                                       }
                                     },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(
-                                  0xFF2BEE8C,
-                                ), // primaryColor
+                                backgroundColor: const Color(0xFFCCFF00),
                                 foregroundColor: Colors.black87,
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 24,
@@ -415,63 +508,94 @@ class _SettingsContentState extends State<_SettingsContent> {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
-                              child: const Text(
-                                '변경 저장',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                              child: const Text('변경 저장'),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+                        // Thumbnail Folder URL
+                        const Text(
+                          '구글 썸네일 이미지 폴더 url',
+                          style: TextStyle(color: Colors.white70, fontSize: 14),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: _thumbnailDriveUrlController,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                ),
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: Colors.black26,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  hintText:
+                                      'https://drive.google.com/drive/folders/...',
+                                  hintStyle: const TextStyle(
+                                    color: Colors.white30,
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 14,
+                                  ),
+                                ),
                               ),
+                            ),
+                            const SizedBox(width: 16),
+                            ElevatedButton(
+                              onPressed: vm.isLoading
+                                  ? null
+                                  : () async {
+                                      final newUrl =
+                                          _thumbnailDriveUrlController.text
+                                              .trim();
+                                      try {
+                                        await context
+                                            .read<SettingsViewModel>()
+                                            .updateThumbnailDriveUrl(newUrl);
+                                        if (mounted) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                '썸네일 이미지 URL이 저장되었습니다.',
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      } catch (e) {
+                                        //
+                                      }
+                                    },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFCCFF00),
+                                foregroundColor: Colors.black87,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 16,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text('변경 저장'),
                             ),
                           ],
                         ),
                         const SizedBox(height: 8),
                         const Text(
-                          '* 파일 추출에 사용할 공용 구글 드라이브 폴더의 공유 링크를 입력하세요.\n* (주의) 누구나 액세스할 수 있는 링크여야 목록 조회가 가능합니다.',
+                          '* 파일 추출 및 썸네일 생성 시 참조할 구글 드라이브 폴더의 공유 링크를 입력하세요.\n* (주의) 누구나 액세스할 수 있는 링크여야 목록 조회가 가능합니다.',
                           style: TextStyle(
                             color: Colors.white30,
                             fontSize: 12,
                             height: 1.5,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 48),
-
-                  // Section 3: System Management
-                  _buildSectionHeader('시스템 관리', Icons.settings_system_daydream),
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1A2E24),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white10),
-                    ),
-                    child: Column(
-                      children: [
-                        _buildSystemActionTile(
-                          context,
-                          title: '관리자 서버 재시작',
-                          subtitle: 'Admin API 서버를 강제로 재시작합니다.',
-                          icon: Icons.admin_panel_settings,
-                          color: Colors.orangeAccent,
-                          onTap: () => _confirmRestart(
-                            context,
-                            '관리자 서버',
-                            vm.restartAdminServer,
-                          ),
-                        ),
-                        const Divider(color: Colors.white10, height: 32),
-                        _buildSystemActionTile(
-                          context,
-                          title: '사용자 서버 재시작',
-                          subtitle: 'User App 서버를 강제로 재시작합니다.',
-                          icon: Icons.person_outline,
-                          color: Colors.blueAccent,
-                          onTap: () => _confirmRestart(
-                            context,
-                            '사용자 서버',
-                            vm.restartUserServer,
                           ),
                         ),
                       ],
@@ -498,102 +622,5 @@ class _SettingsContentState extends State<_SettingsContent> {
         ),
       ],
     );
-  }
-
-  Widget _buildSystemActionTile(
-    BuildContext context, {
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(icon, color: color, size: 28),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                style: const TextStyle(color: Colors.white54, fontSize: 13),
-              ),
-            ],
-          ),
-        ),
-        ElevatedButton(
-          onPressed: onTap,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.white10,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          ),
-          child: const Text('재시작'),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _confirmRestart(
-    BuildContext context,
-    String targetName,
-    Future<void> Function() onConfirm,
-  ) async {
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1A2E24),
-        title: Text(
-          '$targetName 재시작',
-          style: const TextStyle(color: Colors.white),
-        ),
-        content: Text(
-          '정말로 $targetName를 재시작하시겠습니까?\n잠시 동안 서비스가 중단될 수 있습니다.',
-          style: const TextStyle(color: Colors.white70),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('취소', style: TextStyle(color: Colors.white54)),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-            child: const Text('재시작 확인'),
-          ),
-        ],
-      ),
-    );
-
-    if (result == true) {
-      await onConfirm();
-      if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('$targetName 재시작 요청을 보냈습니다.')));
-      }
-    }
   }
 }
