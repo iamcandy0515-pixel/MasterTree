@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_admin_app/features/quiz_management/repositories/quiz_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../widgets/similar_quiz_review_dialog.dart';
 
 class BulkSimilarManagementScreen extends StatefulWidget {
   const BulkSimilarManagementScreen({super.key});
@@ -113,7 +114,12 @@ class _BulkSimilarManagementScreenState
       setState(() {
         _quizzes = List<Map<String, dynamic>>.from(response);
         for (var q in _quizzes) {
-          _analysisStatus[q['id'] as int] = 0; // 초기 상태: 대기
+          final relatedIds = q['related_quiz_ids'] as List?;
+          if (relatedIds != null && relatedIds.isNotEmpty) {
+            _analysisStatus[q['id'] as int] = 2;
+          } else {
+            _analysisStatus[q['id'] as int] = 0;
+          }
         }
         _statusMessage = '조회 완료: ${_quizzes.length}건';
       });
@@ -122,6 +128,31 @@ class _BulkSimilarManagementScreenState
     } finally {
       setState(() => _isFetching = false);
     }
+  }
+
+  void _showReviewDialog(Map<String, dynamic> quiz) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return SimilarQuizReviewDialog(
+          quiz: quiz,
+          selectedYear: _selectedYear,
+          selectedRound: _selectedRound,
+          initialRecommendations: _tempRecommendations[quiz['id']] ?? [],
+          quizRepo: _quizRepo,
+          onUpdate: (updatedRecommendations) {
+            setState(() {
+              _tempRecommendations[quiz['id'] as int] = updatedRecommendations;
+              if (updatedRecommendations.isNotEmpty) {
+                _analysisStatus[quiz['id'] as int] = 2;
+              } else {
+                _analysisStatus[quiz['id'] as int] = 0;
+              }
+            });
+          },
+        );
+      },
+    );
   }
 
   Future<void> _runBulkRecommendation() async {
@@ -136,10 +167,9 @@ class _BulkSimilarManagementScreenState
       _statusMessage = '현재 페이지 (5개) 분석을 시작합니다...';
     });
 
-    // 페이지 내 아이템 순차 처리 (안정성 확보)
     for (var quiz in pageQuizzes) {
       final quizId = quiz['id'] as int;
-      setState(() => _analysisStatus[quizId] = 1); // 분석중
+      setState(() => _analysisStatus[quizId] = 1);
 
       final qText = _getFullQuizText(quiz);
 
@@ -154,7 +184,6 @@ class _BulkSimilarManagementScreenState
               .where((r) => r['id'] != quizId)
               .toList();
 
-          // 연도(year)와 회차(round) 내림차순(최신순) 정렬 적용
           filteredResult.sort((a, b) {
             final yearA = a['year'] ?? 0;
             final yearB = b['year'] ?? 0;
@@ -171,17 +200,15 @@ class _BulkSimilarManagementScreenState
             _tempRecommendations[quizId] = List<Map<String, dynamic>>.from(
               filteredResult,
             );
-            _analysisStatus[quizId] = 2; // 완료
+            _analysisStatus[quizId] = 2;
           });
         } catch (e) {
           debugPrint('Error for ID $quizId: $e');
-          setState(() => _analysisStatus[quizId] = 3); // 실패
+          setState(() => _analysisStatus[quizId] = 3);
         }
       } else {
-        setState(() => _analysisStatus[quizId] = 3); // 지문 없음
+        setState(() => _analysisStatus[quizId] = 3);
       }
-
-      // AI API 과부하 방지 간격
       await Future.delayed(const Duration(milliseconds: 300));
     }
 
@@ -191,11 +218,35 @@ class _BulkSimilarManagementScreenState
     });
   }
 
+  Future<void> _saveAll() async {
+    if (_tempRecommendations.isEmpty) return;
+
+    setState(() => _isProcessing = true);
+    _statusMessage = '유사 문제를 일괄 저장 중...';
+
+    try {
+      final relatedMap = _tempRecommendations.map((key, value) {
+        return MapEntry(key, value.map((v) => v['id'] as int).toList());
+      });
+
+      await _quizRepo.upsertRelatedBulk(relatedMap);
+
+      _showSnackBar('성공적으로 저장되었습니다.');
+      setState(() {
+        _tempRecommendations = {};
+        _statusMessage = '저장 완료';
+      });
+      _fetchQuizzes();
+    } catch (e) {
+      _showSnackBar('저장 실패: $e');
+    } finally {
+      setState(() => _isProcessing = false);
+    }
+  }
+
   void _showSnackBar(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -280,9 +331,7 @@ class _BulkSimilarManagementScreenState
                 child: _buildDropDown('과목', _selectedSubject, _subjects, (v) {
                   setState(() => _selectedSubject = v);
                   _saveFilters();
-                  if (_selectedSubject != null &&
-                      _selectedYear != null &&
-                      _selectedRound != null) {
+                  if (_selectedSubject != null && _selectedYear != null && _selectedRound != null) {
                     _fetchQuizzes();
                   }
                 }),
@@ -292,9 +341,7 @@ class _BulkSimilarManagementScreenState
                 child: _buildDropDown('년도', _selectedYear, _years, (v) {
                   setState(() => _selectedYear = v);
                   _saveFilters();
-                  if (_selectedSubject != null &&
-                      _selectedYear != null &&
-                      _selectedRound != null) {
+                  if (_selectedSubject != null && _selectedYear != null && _selectedRound != null) {
                     _fetchQuizzes();
                   }
                 }),
@@ -304,9 +351,7 @@ class _BulkSimilarManagementScreenState
                 child: _buildDropDown('회차', _selectedRound, _rounds, (v) {
                   setState(() => _selectedRound = v);
                   _saveFilters();
-                  if (_selectedSubject != null &&
-                      _selectedYear != null &&
-                      _selectedRound != null) {
+                  if (_selectedSubject != null && _selectedYear != null && _selectedRound != null) {
                     _fetchQuizzes();
                   }
                 }),
@@ -354,6 +399,8 @@ class _BulkSimilarManagementScreenState
         final id = quiz['id'] as int;
         final status = _analysisStatus[id] ?? 0;
         final recs = _tempRecommendations[id] ?? [];
+        final storedCount = (quiz['related_quiz_ids'] as List?)?.length ?? 0;
+        final displayCount = max(recs.length, storedCount);
 
         return Container(
           decoration: const BoxDecoration(
@@ -361,33 +408,24 @@ class _BulkSimilarManagementScreenState
           ),
           child: ListTile(
             onTap: () => _showReviewDialog(quiz),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 4,
-            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             title: Row(
               children: [
                 Text(
                   'Q${quiz['question_number']}',
-                  style: const TextStyle(
-                    color: primaryColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
+                  style: const TextStyle(color: primaryColor, fontWeight: FontWeight.bold, fontSize: 14),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    _getFullQuizText(
-                      quiz,
-                    ).replaceAll(RegExp(r'^\d+[\.\)]?\s*'), ''),
+                    _getFullQuizText(quiz).replaceAll(RegExp(r'^\d+[\.\)]?\s*'), ''),
                     style: const TextStyle(color: Colors.white, fontSize: 13),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 const SizedBox(width: 8),
-                _buildStatusIcon(status, recs.length),
+                _buildStatusIcon(status, displayCount),
               ],
             ),
           ),
@@ -397,12 +435,13 @@ class _BulkSimilarManagementScreenState
   }
 
   Widget _buildStatusIcon(int status, int recCount) {
-    if (status == 1)
+    if (status == 1) {
       return const SizedBox(
         width: 16,
         height: 16,
         child: CircularProgressIndicator(strokeWidth: 2, color: aiColor),
       );
+    }
     if (status == 2) {
       return Row(
         mainAxisSize: MainAxisSize.min,
@@ -416,8 +455,9 @@ class _BulkSimilarManagementScreenState
         ],
       );
     }
-    if (status == 3)
+    if (status == 3) {
       return const Icon(Icons.error_outline, color: Colors.redAccent, size: 16);
+    }
     return const Icon(Icons.hourglass_empty, color: Colors.white24, size: 16);
   }
 
@@ -428,18 +468,14 @@ class _BulkSimilarManagementScreenState
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           TextButton.icon(
-            onPressed: _isProcessing || _quizzes.isEmpty
-                ? null
-                : _runBulkRecommendation,
+            onPressed: _isProcessing || _quizzes.isEmpty ? null : _runBulkRecommendation,
             icon: const Icon(Icons.flash_on, size: 18),
             label: const Text('일괄 유사문제 추출(page단위)'),
             style: TextButton.styleFrom(foregroundColor: primaryColor),
           ),
           const SizedBox(width: 8),
           TextButton.icon(
-            onPressed: _isProcessing || _tempRecommendations.isEmpty
-                ? null
-                : _saveAll,
+            onPressed: _isProcessing || _tempRecommendations.isEmpty ? null : _saveAll,
             icon: const Icon(Icons.save, size: 18),
             label: const Text('일괄 저장'),
             style: TextButton.styleFrom(foregroundColor: primaryColor),
@@ -449,33 +485,20 @@ class _BulkSimilarManagementScreenState
     );
   }
 
-  Widget _buildDropDown(
-    String hint,
-    String? value,
-    List<String> items,
-    Function(String?) onChanged,
-  ) {
+  Widget _buildDropDown(String hint, String? value, List<String> items, Function(String?) onChanged) {
     return Container(
       height: 44,
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      decoration: BoxDecoration(
-        color: backgroundDark,
-        borderRadius: BorderRadius.circular(8),
-      ),
+      decoration: BoxDecoration(color: backgroundDark, borderRadius: BorderRadius.circular(8)),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           isExpanded: true,
           value: value,
-          hint: Text(
-            hint,
-            style: const TextStyle(color: Colors.white24, fontSize: 13),
-          ),
+          hint: Text(hint, style: const TextStyle(color: Colors.white24, fontSize: 13)),
           dropdownColor: surfaceDark,
           icon: const Icon(Icons.arrow_drop_down, color: primaryColor),
           style: const TextStyle(color: Colors.white, fontSize: 13),
-          items: items
-              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-              .toList(),
+          items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
           onChanged: onChanged,
         ),
       ),
@@ -485,179 +508,10 @@ class _BulkSimilarManagementScreenState
   String _getFullQuizText(Map<String, dynamic> quiz) {
     final blocks = quiz['content_blocks'] as List?;
     if (blocks == null || blocks.isEmpty) return '';
-
-    return blocks
-        .map((block) {
-          if (block is Map<String, dynamic> && block['type'] == 'text') {
-            return block['content']?.toString() ?? '';
-          } else if (block is String) {
-            return block.toString();
-          }
-          return '';
-        })
-        .where((text) => text.isNotEmpty)
-        .join('\n')
-        .trim();
-  }
-
-  void _showReviewDialog(Map<String, dynamic> quiz) {
-    final id = quiz['id'] as int;
-    final draft = _tempRecommendations[id] ?? [];
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: surfaceDark,
-          title: Text(
-            '${_selectedYear}년 ${_selectedRound}회 - Q${quiz['question_number']}',
-            style: const TextStyle(color: Colors.white, fontSize: 16),
-          ),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  '지문 요약',
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  _getFullQuizText(
-                    quiz,
-                  ).replaceAll(RegExp(r'^\d+[\.\)]?\s*'), ''),
-                  style: const TextStyle(color: Colors.white, fontSize: 14),
-                  maxLines: 3,
-                ),
-                const Divider(color: Colors.white10, height: 24),
-                const Text(
-                  '추천된 유사 문제 리스트',
-                  style: TextStyle(
-                    color: primaryColor,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                if (draft.isEmpty)
-                  const Text(
-                    '추천된 유사 문제가 없습니다.',
-                    style: TextStyle(color: Colors.white38, fontSize: 13),
-                  )
-                else
-                  Flexible(
-                    child: ListView.separated(
-                      shrinkWrap: true,
-                      itemCount: draft.length,
-                      separatorBuilder: (_, __) =>
-                          const Divider(color: Colors.white10),
-                      itemBuilder: (context, idx) {
-                        final rec = draft[idx];
-                        return ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(
-                            '${rec['year'] ?? ''}년 ${rec['round'] ?? ''}회 ${rec['question_number'] ?? ''}번(${rec['subject'] ?? ''})',
-                            style: const TextStyle(
-                              color: primaryColor,
-                              fontSize: 11,
-                            ),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                (rec['question'] ?? '-').toString().replaceAll(
-                                  RegExp(r'^\d+[\.\)]?\s*'),
-                                  '',
-                                ),
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 13,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              if (rec['reason'] != null) ...[
-                                const SizedBox(height: 4),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                    vertical: 2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: primaryColor.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Text(
-                                    '💡 ${rec['reason']}',
-                                    style: const TextStyle(
-                                      color: primaryColor,
-                                      fontSize: 11,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                          trailing: IconButton(
-                            icon: const Icon(
-                              Icons.remove_circle_outline,
-                              color: Colors.redAccent,
-                              size: 20,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _tempRecommendations[id]!.removeAt(idx);
-                              });
-                              Navigator.pop(context);
-                              _showReviewDialog(quiz);
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('닫기', style: TextStyle(color: Colors.grey)),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _saveAll() async {
-    if (_tempRecommendations.isEmpty) return;
-
-    setState(() => _isProcessing = true);
-    _statusMessage = '유사 문제를 일괄 저장 중...';
-
-    try {
-      // Map<int, List<Map<String, dynamic>>> -> Map<int, List<int>>
-      final relatedMap = _tempRecommendations.map((key, value) {
-        return MapEntry(key, value.map((v) => v['id'] as int).toList());
-      });
-
-      await _quizRepo.upsertRelatedBulk(relatedMap);
-
-      _showSnackBar('성공적으로 저장되었습니다.');
-      setState(() {
-        _tempRecommendations = {};
-        _statusMessage = '저장 완료';
-      });
-      // Optionally re-fetch to see updated state
-      _fetchQuizzes();
-    } catch (e) {
-      _showSnackBar('저장 실패: $e');
-    } finally {
-      setState(() => _isProcessing = false);
-    }
+    return blocks.map((block) {
+      if (block is Map<String, dynamic> && block['type'] == 'text') return block['content']?.toString() ?? '';
+      if (block is String) return block.toString();
+      return '';
+    }).where((text) => text.isNotEmpty).join('\n').trim();
   }
 }
