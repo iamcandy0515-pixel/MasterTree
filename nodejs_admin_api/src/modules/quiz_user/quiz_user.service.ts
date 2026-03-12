@@ -28,6 +28,12 @@ export class QuizUserService {
             .select("*")
             .eq("status", "published");
 
+        if (mode === "pastExam") {
+            questionsQuery = questionsQuery.not("exam_id", "is", null);
+        } else if (mode === "normal") {
+            questionsQuery = questionsQuery.is("exam_id", null);
+        }
+
         const { data: rawQuestions, error: qsError } =
             await questionsQuery.limit(limit * 3);
 
@@ -47,6 +53,8 @@ export class QuizUserService {
                 category_id: q.category_id,
                 content_blocks: q.content_blocks,
                 options: q.options,
+                correct_option_index: q.correct_option_index,
+                explanation_blocks: q.explanation_blocks,
             })),
         };
     }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:flutter_user_app/core/design_system.dart';
+import 'package:flutter_user_app/core/api_service.dart';
 import '../controllers/quiz_solver_controller.dart';
 
 class QuizSolverScreen extends StatefulWidget {
@@ -19,6 +20,16 @@ class _QuizSolverScreenState extends State<QuizSolverScreen> {
   void initState() {
     super.initState();
     _controller = QuizSolverController(mode: widget.mode);
+    _controller.init(() {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    // 화면 이탈 시 남은 결과 동기화 시도
+    ApiService.syncPendingAttempts();
+    super.dispose();
   }
 
   void _submitAnswer() {
@@ -41,8 +52,48 @@ class _QuizSolverScreenState extends State<QuizSolverScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_controller.isLoading) {
+      return const Scaffold(
+        backgroundColor: AppColors.backgroundDark,
+        body: Center(child: CircularProgressIndicator(color: AppColors.primary)),
+      );
+    }
+
+    if (_controller.errorMessage != null) {
+      return Scaffold(
+        backgroundColor: AppColors.backgroundDark,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, color: Colors.redAccent, size: 48),
+              const SizedBox(height: 16),
+              Text(
+                '문제를 불러오지 못했습니다.\n${_controller.errorMessage}',
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: AppColors.textLight),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () => _controller.init(() => setState(() {})),
+                child: const Text('다시 시도'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     if (_controller.questions.isEmpty) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        backgroundColor: AppColors.backgroundDark,
+        body: Center(
+          child: Text(
+            '풀이 가능한 문제가 없습니다.',
+            style: TextStyle(color: AppColors.textLight),
+          ),
+        ),
+      );
     }
 
     final currentQ = _controller.currentQuestion;
