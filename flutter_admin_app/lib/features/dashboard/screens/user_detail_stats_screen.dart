@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../viewmodels/user_detail_viewmodel.dart';
+import '../../../core/utils/format_utils.dart';
 
 class UserDetailStatsScreen extends StatelessWidget {
   final String userId;
@@ -124,7 +125,7 @@ class _UserDetailStatsContent extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            user['email'] ?? '',
+            '${user['email'] ?? ''}${user['phone'] != null ? ' | ${FormatUtils.formatPhone(user['phone'])}' : ''}',
             style: const TextStyle(color: Colors.white54, fontSize: 12),
           ),
           const SizedBox(height: 16),

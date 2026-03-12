@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_user_app/core/design_system.dart';
 import 'package:flutter_user_app/screens/dashboard_screen.dart';
 import 'package:flutter_user_app/controllers/auth_controller.dart';
@@ -61,9 +62,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   String? _validatePhone(String? value) {
     if (value == null || value.isEmpty) return '휴대전화 번호를 입력해주세요.';
-    final phoneRegex = RegExp(r'^010-\d{3,4}-\d{4}$');
+    // Standard Korean phone number format for UI: 010-XXXX-XXXX
+    final phoneRegex = RegExp(r'^010-\d{4}-\d{4}$');
     if (!phoneRegex.hasMatch(value)) {
-      return "올바른 형식(010-0000-0000)으로 입력해주세요.";
+      return "010으로 시작하는 11자리 숫자를 입력해주세요.";
     }
     return null;
   }
@@ -95,21 +97,64 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _showErrorDialog(String message) {
+    String title = '알림';
+    String content = message;
+    bool showRefresh = false;
+
+    if (message == 'status_pending') {
+      title = '승인 대기 중';
+      content = '관리자의 승인을 기다리고 있습니다.\n승인 완료 후 서비스 이용이 가능합니다.';
+      showRefresh = true;
+    } else if (message == 'status_denied' || message == 'status_rejected') {
+      title = '접근 제한';
+      content = '관리에 의해 접근이 거부되었거나\n사용 기간이 만료되었습니다.';
+    } else if (message == 'status_expired') {
+      title = '기간 만료';
+      content = '사용 기간이 만료되었습니다.\n관리자에게 문의해 주세요.';
+    }
+
     showDialog(
       context: context,
+      barrierDismissible: !showRefresh,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.surfaceDark,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('알림', style: TextStyle(color: AppColors.textLight)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              showRefresh ? Icons.hourglass_empty : Icons.info_outline,
+              color: AppColors.primary,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(color: AppColors.textLight),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
         content: Text(
-          message,
-          style: const TextStyle(color: AppColors.textLight),
+          content,
+          style: const TextStyle(color: Colors.white70, height: 1.5),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('확인', style: TextStyle(color: AppColors.primary)),
-          ),
+          if (showRefresh)
+            TextButton.icon(
+              onPressed: () {
+                Navigator.pop(context);
+                _handleLogin(); // Retry login logic to check status
+              },
+              icon: const Icon(Icons.refresh, color: AppColors.primary),
+              label: const Text('상태 새로고침', style: TextStyle(color: AppColors.primary)),
+            )
+          else
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('확인', style: TextStyle(color: AppColors.primary)),
+            ),
         ],
       ),
     );
@@ -234,6 +279,10 @@ class _LoginScreenState extends State<LoginScreen> {
               label: '휴대전화',
               icon: Icons.phone_android_outlined,
               hint: '010-0000-0000',
+              keyboardType: TextInputType.phone,
+              inputFormatters: [
+                _PhoneNumberFormatter(),
+              ],
               validator: _validatePhone,
             ),
             AnimatedSwitcher(
@@ -279,6 +328,8 @@ class _LoginScreenState extends State<LoginScreen> {
     required IconData icon,
     String? hint,
     bool isObscure = false,
+    TextInputType keyboardType = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
     String? Function(String?)? validator,
   }) {
     return Column(
@@ -296,6 +347,8 @@ class _LoginScreenState extends State<LoginScreen> {
         TextFormField(
           controller: controller,
           obscureText: isObscure,
+          keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
           style: const TextStyle(color: AppColors.textLight),
           validator: validator,
           decoration: InputDecoration(
@@ -314,6 +367,63 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Custom formatter for Korean phone numbers (010-XXXX-XXXX) with fixed '010-' prefix
+class _PhoneNumberFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    var text = newValue.text;
+
+    // 1. Force prefix '010-'
+    if (!text.startsWith('010-')) {
+      // If user tries to delete or change prefix, restore it unless it was totally empty 
+      // which shouldn't happen with our controller setup, but safely return oldValue or base
+      if (text.length < 4) {
+        return const TextEditingValue(
+          text: '010-',
+          selection: TextSelection.collapsed(offset: 4),
+        );
+      }
+      return oldValue;
+    }
+
+    // 2. Extract only digits after '010-'
+    String suffix = text.substring(4).replaceAll(RegExp(r'\D'), '');
+    
+    // 3. Limit to 8 more digits (total 11 digits)
+    if (suffix.length > 8) {
+      suffix = suffix.substring(0, 8);
+    }
+
+    // 4. Format the suffix as XXXX-XXXX (if needed)
+    String formatted = '010-';
+    for (int i = 0; i < suffix.length; i++) {
+      formatted += suffix[i];
+      // Add hyphen after 4 digits of suffix (which is index 7 in total string)
+      if (i == 3 && suffix.length > 4) {
+        formatted += '-';
+      }
+    }
+
+    // 5. Handle backspace on hyphen specifically to avoid getting stuck
+    // (If the current formatted matches oldValue and it has a hyphen at the end 
+    // that the user might be trying to delete)
+    if (oldValue.text.length > newValue.text.length && oldValue.text.endsWith('-')) {
+        // User attempted backspace on a trailing hyphen - we've already reformatted 
+        // in 'formatted', but let's make sure we don't restore the hyphen immediately 
+        // if they just deleted a digit that triggered the hyphen. 
+        // Actually the logic above (suffix-based) handles this naturally.
+    }
+
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
     );
   }
 }
