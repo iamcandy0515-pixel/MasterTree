@@ -26,23 +26,35 @@ class _StatisticsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = context.watch<StatisticsViewModel>();
 
-    return Scaffold(
-      backgroundColor: backgroundDark,
-      appBar: AppBar(
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
         backgroundColor: backgroundDark,
-        elevation: 0,
-        title: const Text(
-          '사용자별 통계 목록',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.white70),
-            onPressed: vm.loadStats,
+        appBar: AppBar(
+          backgroundColor: backgroundDark,
+          elevation: 0,
+          title: const Text(
+            '사용자별 통계 목록',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
-        ],
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh, color: Colors.white70),
+              onPressed: vm.loadStats,
+            ),
+          ],
+          bottom: const TabBar(
+            indicatorColor: primaryColor,
+            labelColor: primaryColor,
+            unselectedLabelColor: Colors.white38,
+            tabs: [
+              Tab(text: '활동 중인 유저'),
+              Tab(text: '비활동 사용자'),
+            ],
+          ),
+        ),
+        body: _buildBody(vm),
       ),
-      body: _buildBody(vm),
     );
   }
 
@@ -52,34 +64,47 @@ class _StatisticsContent extends StatelessWidget {
     }
 
     if (vm.error != null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Text(
-            vm.error!,
-            textAlign: TextAlign.center,
-            style: const TextStyle(color: Colors.redAccent),
-          ),
-        ),
-      );
+      return _buildErrorView(vm.error!);
     }
 
-    if (vm.users.isEmpty) {
-      return const Center(
+    return TabBarView(
+      children: [
+        _buildUserList(vm.activeUsersList, '활동 중인 사용자가 없습니다.'),
+        _buildUserList(vm.inactiveUsersList, '비활동 사용자가 없습니다.'),
+      ],
+    );
+  }
+
+  Widget _buildUserList(List<dynamic> users, String emptyMessage) {
+    if (users.isEmpty) {
+      return Center(
         child: Text(
-          '등록된 사용자가 없습니다.',
-          style: TextStyle(color: Colors.white24),
+          emptyMessage,
+          style: const TextStyle(color: Colors.white24),
         ),
       );
     }
 
     return ListView.separated(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      itemCount: vm.users.length,
-      separatorBuilder: (_, __) => const Divider(color: Colors.white10, height: 1),
+      itemCount: users.length,
+      separatorBuilder: (_, index) => const Divider(color: Colors.white10, height: 1),
       itemBuilder: (context, index) {
-        return UserStatsListItem(user: vm.users[index]);
+        return UserStatsListItem(user: users[index]);
       },
+    );
+  }
+
+  Widget _buildErrorView(String msg) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Text(
+          msg,
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: Colors.redAccent),
+        ),
+      ),
     );
   }
 }
