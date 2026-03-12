@@ -26,10 +26,13 @@ class PaginatedTrees {
 class TreeRepository {
   final String _baseUrl;
 
-  static String getProxyUrl(String url) {
-    if (url.contains('drive.google.com')) {
+  static String getProxyUrl(String url, {int? width, int? height}) {
+    if (url.contains('drive.google.com') || url.startsWith('http')) {
       final baseUrl = dotenv.env['API_URL'] ?? 'http://localhost:3000/api';
-      return '$baseUrl/uploads/proxy?url=${Uri.encodeComponent(url)}';
+      String proxyUrl = '$baseUrl/uploads/proxy?url=${Uri.encodeComponent(url)}';
+      if (width != null) proxyUrl += '&w=$width';
+      if (height != null) proxyUrl += '&h=$height';
+      return proxyUrl;
     }
     return url;
   }
