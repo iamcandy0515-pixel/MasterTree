@@ -645,4 +645,42 @@ class TreeRepository {
     }
     throw Exception('기출문제 폴더 URL 업데이트 실패: ${response.body}');
   }
+  // Create Thumbnail
+  Future<String?> generateThumbnail(String treeName, String imageType) async {
+    final url = Uri.parse('$_baseUrl/external/generate-thumbnail');
+    final headers = await _getHeaders();
+
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode({'treeName': treeName, 'imageType': imageType}),
+    );
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsonResponse['success'] == true) {
+        return jsonResponse['thumbnailUrl'];
+      }
+    }
+    return null;
+  }
+
+  // Check File Existence in Drive
+  Future<bool> checkFileExists(String driveUrl) async {
+    final url = Uri.parse('$_baseUrl/external/google-drive/exists');
+    final headers = await _getHeaders();
+
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode({'url': driveUrl}),
+    );
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      return jsonResponse['exists'] == true;
+    }
+    return true; // Default to true if check fails to avoid false negatives
+  }
 }
+
