@@ -78,6 +78,37 @@ export class GoogleDriveService {
         return null;
     }
 
+    /**
+     * Search for all image types of a tree in a folder and return a map of type to URL.
+     */
+    async searchAllLinks(treeName: string, folderId: string): Promise<Record<string, string>> {
+        const query = `'${folderId}' in parents and name contains '${treeName}_' and mimeType contains 'image/' and trashed = false`;
+        const response = await googleDriveFileService.searchImages(query);
+        const files = response.data.files || [];
+
+        const typeMap: Record<string, string> = {
+            "대표": "main",
+            "꽃": "flower",
+            "열매": "fruit",
+            "수피": "bark",
+            "잎": "leaf",
+        };
+
+        const links: Record<string, string> = {};
+        files.forEach(file => {
+            const fileName = file.name || "";
+            // Find type from filename (e.g., "소나무_잎.jpg")
+            for (const [kr, en] of Object.entries(typeMap)) {
+                if (fileName.includes(kr)) {
+                    links[en] = `https://drive.google.com/uc?export=view&id=${file.id}`;
+                    break;
+                }
+            }
+        });
+
+        return links;
+    }
+
     // Expose drive for legacy scripts that access it directly
     get drive() {
         return googleDriveFileService.getDrive();

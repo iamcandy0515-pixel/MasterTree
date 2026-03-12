@@ -26,6 +26,7 @@ export class TreeService {
                 tree_images (
                     image_type,
                     image_url,
+                    thumbnail_url,
                     hint,
                     is_quiz_enabled
                 )
@@ -204,6 +205,7 @@ export class TreeService {
                 tree_id: treeId,
                 image_type: img.image_type,
                 image_url: img.image_url,
+                thumbnail_url: img.thumbnail_url,
                 hint: img.hint,
                 is_quiz_enabled: img.is_quiz_enabled ?? true,
                 uploaded_by: userId,
@@ -268,6 +270,7 @@ export class TreeService {
                 tree_id: id,
                 image_type: img.image_type,
                 image_url: img.image_url,
+                thumbnail_url: img.thumbnail_url,
                 hint: img.hint,
                 is_quiz_enabled: img.is_quiz_enabled ?? true,
                 uploaded_by: userId,
@@ -364,6 +367,7 @@ export class TreeService {
                     (i: any) => i.image_type === type,
                 );
                 row[`${type}_url`] = img?.image_url || "";
+                row[`${type}_thumb_url`] = img?.thumbnail_url || "";
                 row[`${type}_hint`] = img?.hint || "";
             });
 
@@ -449,6 +453,7 @@ export class TreeService {
                             tree_id: treeId,
                             image_type: type,
                             image_url: url,
+                            thumbnail_url: row[`${type}_thumb_url`] || null,
                             hint: hint || null,
                             is_quiz_enabled: true,
                             uploaded_by: userId,

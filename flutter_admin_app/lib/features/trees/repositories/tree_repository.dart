@@ -659,10 +659,30 @@ class TreeRepository {
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
       if (jsonResponse['success'] == true) {
-        return jsonResponse['thumbnailUrl'];
+        return jsonResponse['url']; // Updated to match backend 'url' key
       }
     }
     return null;
+  }
+
+  // Get all drive links for a tree
+  Future<Map<String, dynamic>> getDriveLinks(String treeName) async {
+    final url = Uri.parse('$_baseUrl/external/drive-links');
+    final headers = await _getHeaders();
+
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode({'treeName': treeName}),
+    );
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsonResponse['success'] == true) {
+        return jsonResponse;
+      }
+    }
+    return {'success': false};
   }
 
   // Check File Existence in Drive
@@ -680,7 +700,7 @@ class TreeRepository {
       final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
       return jsonResponse['exists'] == true;
     }
-    return true; // Default to true if check fails to avoid false negatives
+    return false; // Default to false if check fails
   }
 }
 
