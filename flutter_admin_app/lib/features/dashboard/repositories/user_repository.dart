@@ -56,4 +56,22 @@ class UserRepository {
       throw Exception('Failed to update user status: ${response.body}');
     }
   }
+
+  Future<void> deleteUser(String id) async {
+    final url = Uri.parse('$_baseUrl/users/$id');
+    final session = Supabase.instance.client.auth.currentSession;
+    final token = session?.accessToken ?? '';
+
+    final response = await http.delete(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete user: ${response.body}');
+    }
+  }
 }

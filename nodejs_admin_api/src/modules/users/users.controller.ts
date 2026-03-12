@@ -63,6 +63,17 @@ export class UsersController {
             return errorResponse(res, error.message, 500);
         }
     }
+
+    // DELETE /api/users/:id
+    async deleteUser(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            await usersService.deleteUser(id);
+            return successResponse(res, null, "User deleted successfully");
+        } catch (error: any) {
+            return errorResponse(res, error.message, 500);
+        }
+    }
 }
 
 export const usersController = new UsersController();

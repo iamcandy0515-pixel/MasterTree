@@ -58,6 +58,16 @@ class UserCheckViewModel extends ChangeNotifier {
   Future<void> approveUser(String userId) => updateStatus(userId, 'approved');
   Future<void> rejectUser(String userId) => updateStatus(userId, 'rejected');
 
+  Future<void> deleteUser(String userId) async {
+    try {
+      await _repo.deleteUser(userId);
+      loadUsers(_currentStatus);
+    } catch (e) {
+      debugPrint('Error deleting user: $e');
+      rethrow;
+    }
+  }
+
   String _formatDate(String? dateStr) {
     if (dateStr == null) return '기록 없음';
     try {

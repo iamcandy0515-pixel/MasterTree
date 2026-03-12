@@ -108,6 +108,34 @@ export class UsersService {
 
         return data.user;
     }
+
+    /**
+     * Delete User (Admin)
+     */
+    async deleteUser(userId: string) {
+        logger.info(`Attempting to delete user: ${userId}`);
+
+        // 1. Delete from Supabase Auth
+        const { error: authError } = await supabase.auth.admin.deleteUser(userId);
+        if (authError) {
+            logger.error(`Failed to delete Auth user ${userId}`, authError);
+            throw authError;
+        }
+
+        // 2. Delete from public.users table if it exists
+        // Note: Using auth_id to link with auth.users
+        const { error: publicError } = await supabase
+            .from('users')
+            .delete()
+            .eq('auth_id', userId);
+
+        if (publicError) {
+            logger.warn(`User ${userId} deleted from Auth, but failed to delete from public.users table: ${publicError.message}`);
+            // We don't throw here as the main account is already gone, but we log it.
+        }
+
+        return { success: true };
+    }
 }
 
 export const usersService = new UsersService();

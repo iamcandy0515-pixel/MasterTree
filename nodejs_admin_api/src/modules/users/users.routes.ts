@@ -17,5 +17,10 @@ router.patch(
     verifyAdmin,
     usersController.updateUserStatus.bind(usersController),
 );
+router.delete(
+    "/:id",
+    verifyAdmin,
+    usersController.deleteUser.bind(usersController),
+);
 
 export default router;
