@@ -104,47 +104,73 @@ export class QuizUserService {
     async saveBatchAttempts(userId: string, attempts: any[]) {
         if (!attempts || attempts.length === 0) return { success: true };
 
-        // 1. Validate Question IDs (Filter out non-existent questions to prevent FK violation)
-        const questionIds = [...new Set(attempts.map((a) => a.question_id))];
-        const { data: validQs, error: qsErr } = await supabase
-            .from("quiz_questions")
-            .select("id")
-            .in("id", questionIds);
-
-        if (qsErr) throw new Error(`Validation failed: ${qsErr.message}`);
-
-        const validIdSet = new Set(validQs?.map((q) => q.id) || []);
-        const filteredAttempts = attempts.filter((a) =>
-            validIdSet.has(a.question_id),
+        // 1. Separate into Question-based and Tree-based attempts
+        const qAttempts = attempts.filter(
+            (a) => a.question_id !== undefined && a.question_id !== null,
+        );
+        const tAttempts = attempts.filter(
+            (a) =>
+                a.tree_id !== undefined &&
+                a.tree_id !== null &&
+                (a.question_id === undefined || a.question_id === null),
         );
 
-        if (filteredAttempts.length === 0) {
+        // 2. Validate Question IDs
+        const qIds = [...new Set(qAttempts.map((a) => a.question_id))];
+        let validQIdSet = new Set<number>();
+        if (qIds.length > 0) {
+            const { data: vQs, error: qsErr } = await supabase
+                .from("quiz_questions")
+                .select("id")
+                .in("id", qIds);
+
+            if (qsErr) throw new Error(`Validation failed: ${qsErr.message}`);
+            validQIdSet = new Set(vQs?.map((q) => q.id) || []);
+        }
+
+        // 3. Validate Tree IDs
+        const tIds = [...new Set(tAttempts.map((a) => a.tree_id))];
+        let validTIdSet = new Set<number>();
+        if (tIds.length > 0) {
+            const { data: vTs, error: tsErr } = await supabase
+                .from("trees")
+                .select("id")
+                .in("id", tIds);
+
+            if (tsErr) throw new Error(`Tree validation failed: ${tsErr.message}`);
+            validTIdSet = new Set(vTs?.map((t) => t.id) || []);
+        }
+
+        // 4. Combine valid ones
+        const filteredQ = qAttempts.filter((a) =>
+            validQIdSet.has(a.question_id),
+        );
+        const filteredT = tAttempts.filter((a) =>
+            validTIdSet.has(a.tree_id),
+        );
+        const allFiltered = [...filteredQ, ...filteredT];
+
+        if (allFiltered.length === 0) {
             console.log(
-                `[saveBatchAttempts] All ${attempts.length} attempts were for non-existent questions. Skipping.`,
+                `[saveBatchAttempts] All ${attempts.length} attempts were invalid. Skipping.`,
             );
             return { success: true, count: 0, filtered: attempts.length };
         }
 
-        if (filteredAttempts.length < attempts.length) {
-            console.warn(
-                `[saveBatchAttempts] Filtered out ${attempts.length - filteredAttempts.length} invalid questions.`,
-            );
-        }
-
-        // 2. Get or Create Session
-        // Determine mode from the first attempt if possible, default to normal
-        const isPastExam = filteredAttempts.some(a => a.exam_id !== undefined || a.mode === 'pastExam');
-        const mode = isPastExam ? 'pastExam' : 'normal';
+        // 5. Get or Create Session
+        const isPastExam = allFiltered.some((a) => a.mode === "pastExam");
+        const mode = isPastExam ? "pastExam" : "normal";
         const sessionId = await this.getOrCreateSession(userId, mode);
 
-        // 3. Prepare attempt rows
-        const attemptRows = filteredAttempts.map((a) => ({
+        // 6. Prepare attempt rows
+        const attemptRows = allFiltered.map((a) => ({
             session_id: sessionId,
             user_id: userId,
-            question_id: a.question_id,
-            category_id: a.category_id,
+            question_id: a.question_id || null,
+            tree_id: a.tree_id || null,
+            category_id: a.category_id || null,
             is_correct: a.is_correct,
-            user_answer: a.user_answer || "",
+            user_answer: a.user_answer?.toString() || "",
             time_taken_ms: a.time_taken_ms || 0,
             created_at: a.created_at || new Date().toISOString(),
         }));
@@ -181,7 +207,7 @@ export class QuizUserService {
         return {
             success: true,
             count: attemptRows.length,
-            filtered: attempts.length - filteredAttempts.length,
+            filtered: attempts.length - allFiltered.length,
         };
     }
 

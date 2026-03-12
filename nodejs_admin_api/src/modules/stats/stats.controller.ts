@@ -295,7 +295,7 @@ export class StatsController {
             // 2. Fetch user's attempts
             const { data: attempts } = await supabase
                 .from("quiz_attempts")
-                .select("question_id, is_correct")
+                .select("question_id, tree_id, is_correct")
                 .eq("user_id", userId);
 
             // 3. Process General Quizzes (Tree Quizzes & non-exam questions)
@@ -311,15 +311,18 @@ export class StatsController {
             const examQuestionIds = new Set(totalExamIds);
 
             attempts?.forEach((att) => {
-                if (examQuestionIds.has(att.question_id)) {
+                if (att.question_id && examQuestionIds.has(att.question_id)) {
                     solvedExamSet.add(att.question_id);
                     if (att.is_correct) examCorrect++;
                     else examWrong++;
                 } else {
                     // Treat as General Quiz (Tree Quiz)
-                    solvedGeneralSet.add(att.question_id);
-                    if (att.is_correct) generalCorrect++;
-                    else generalWrong++;
+                    const id = att.tree_id || att.question_id;
+                    if (id) {
+                        solvedGeneralSet.add(id);
+                        if (att.is_correct) generalCorrect++;
+                        else generalWrong++;
+                    }
                 }
             });
 
