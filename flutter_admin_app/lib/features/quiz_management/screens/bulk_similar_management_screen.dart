@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_admin_app/features/quiz_management/repositories/quiz_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../widgets/similar_quiz_review_dialog.dart';
+import 'widgets/similar_quiz_review_dialog.dart';
 
 class BulkSimilarManagementScreen extends StatefulWidget {
   const BulkSimilarManagementScreen({super.key});
