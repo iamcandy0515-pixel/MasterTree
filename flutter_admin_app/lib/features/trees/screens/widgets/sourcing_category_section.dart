@@ -35,7 +35,12 @@ class SourcingCategorySection extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(label, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+              Expanded(
+                child: Text(label, 
+                  style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
               if (hasOriginal && !hasThumb)
                 TextButton.icon(
                   onPressed: () => vm.generateThumbnailForCategory(type),

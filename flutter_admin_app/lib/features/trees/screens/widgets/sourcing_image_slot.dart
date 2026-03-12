@@ -25,6 +25,7 @@ class SourcingImageSlot extends StatelessWidget {
   Widget build(BuildContext context) {
     final key = '${type}_${isThumb ? 'thumb' : 'original'}';
     final existing = vm.getImageByType(type);
+    final isMissing = vm.fileMissing[key] ?? false;
 
 
     // Resolve display content
@@ -53,13 +54,21 @@ class SourcingImageSlot extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.black26,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white10),
+                  border: isMissing
+                      ? Border.all(color: Colors.red.withOpacity(0.8), width: 2)
+                      : Border.all(color: Colors.white10),
                 ),
                 clipBehavior: Clip.antiAlias,
                 child: displayItem != null
                     ? _buildImageDisplay(displayItem)
                     : const Center(child: Icon(Icons.add_a_photo_outlined, color: Colors.white10, size: 32)),
               ),
+              if (isMissing)
+                const Positioned(
+                  left: 8,
+                  top: 8,
+                  child: Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 20),
+                ),
               if (displayItem != null)
                 Positioned(top: 8, right: 8, child: _buildSourceBadge(key, displayItem)),
             ],

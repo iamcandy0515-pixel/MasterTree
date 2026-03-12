@@ -1,6 +1,7 @@
 export interface TreeImageDto {
     image_type: "leaf" | "bark" | "flower" | "fruit" | "main" | "full";
     image_url: string;
+    thumbnail_url?: string; // Thumbnail image URL (mostly Google Drive or WebP)
     hint?: string; // Quiz answer hint
     is_quiz_enabled?: boolean; // Quiz activation toggle (default: true)
 }
