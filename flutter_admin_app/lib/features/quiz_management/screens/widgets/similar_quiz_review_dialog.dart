@@ -163,7 +163,7 @@ class _SimilarQuizReviewDialogState extends State<SimilarQuizReviewDialog> {
                 child: ListView.separated(
                   shrinkWrap: true,
                   itemCount: _recommendations.length,
-                  separatorBuilder: (_, __) => const Divider(color: Colors.white10),
+                  separatorBuilder: (context, index) => const Divider(color: Colors.white10),
                   itemBuilder: (context, idx) {
                     final rec = _recommendations[idx];
                     return ListTile(
