@@ -128,7 +128,12 @@ export class StatsController {
                 });
 
                 if (authUsers?.users) {
+                    const thirtyDaysAgo = new Date();
+                    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
                     activeUserList = authUsers.users
+                        // 1. 거절된(rejected) 유저 제외
+                        .filter((u) => u.user_metadata?.status !== "rejected")
                         .map((u) => {
                             const aggregates = userAggregates[u.id];
                             const authLogin = u.last_sign_in_at;
@@ -139,16 +144,21 @@ export class StatsController {
                                 ? (new Date(authLogin) > new Date(quizActivity) ? authLogin : quizActivity)
                                 : (authLogin || quizActivity || u.created_at);
 
+                            const isActive = finalLastActive ? new Date(finalLastActive) > thirtyDaysAgo : false;
+
                             return {
                                 id: u.id,
                                 email: u.email,
                                 last_login: finalLastActive,
                                 name: u.user_metadata?.name || u.email?.split("@")[0],
                                 status: u.user_metadata?.status || "pending",
+                                role: u.user_metadata?.role || "user",
                                 tree_quiz_count: aggregates?.tree_count || 0,
-                                exam_quiz_count: aggregates?.exam_count || 0
+                                exam_quiz_count: aggregates?.exam_count || 0,
+                                is_active_tab: isActive // 활동 중인 유저 탭 구분을 위한 플래그
                             };
                         })
+                        // 2. 최근 통계 데이터(활동 시점) 기반 정렬
                         .sort((a, b) => {
                             const dateA = a.last_login ? new Date(a.last_login).getTime() : 0;
                             const dateB = b.last_login ? new Date(b.last_login).getTime() : 0;

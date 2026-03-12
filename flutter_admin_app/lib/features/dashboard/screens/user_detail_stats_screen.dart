@@ -26,9 +26,6 @@ class _UserDetailStatsContent extends StatelessWidget {
   final String userName;
   const _UserDetailStatsContent({required this.userName});
 
-  static const Color primaryColor = Color(0xFF2BEE8C);
-  static const Color backgroundDark = Color(0xFF102219);
-
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<UserDetailViewModel>();
@@ -40,20 +37,27 @@ class _UserDetailStatsContent extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: backgroundDark,
           elevation: 0,
-          title: Text(
-            '$userName 통계',
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          title: const Text(
+            '상세 학습 통계',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
           bottom: const TabBar(
             indicatorColor: primaryColor,
             labelColor: primaryColor,
             unselectedLabelColor: Colors.white38,
+            indicatorSize: TabBarIndicatorSize.label,
             tabs: [
               Tab(text: '종합'),
               Tab(text: '수목퀴즈'),
               Tab(text: '기출문제'),
             ],
           ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh, color: Colors.white70),
+              onPressed: vm.loadStats,
+            ),
+          ],
         ),
         body: vm.isLoading
             ? const Center(child: CircularProgressIndicator(color: primaryColor))
@@ -64,18 +68,26 @@ class _UserDetailStatsContent extends StatelessWidget {
                     : TabBarView(
                         children: [
                           GeneralStatsTab(stats: vm.stats!),
-                          ProgressStatsTab(
-                            title: '수목 퀴즈 달성 현황',
-                            data: vm.stats!['quiz'] ?? {},
-                            accentColor: Colors.blueAccent,
-                          ),
-                          ProgressStatsTab(
-                            title: '기출 문제 풀이 현황',
-                            data: vm.stats!['pastExam'] ?? {},
-                            accentColor: Colors.orangeAccent,
-                          ),
+                          _buildSubTab('수목 식별 퀴즈 성과', vm.stats!['quiz'], primaryColor, Icons.school),
+                          _buildSubTab('기출 문제 학습 성과', vm.stats!['pastExam'], Colors.orangeAccent, Icons.history_edu),
                         ],
                       ),
+      ),
+    );
+  }
+
+  Widget _buildSubTab(String title, dynamic data, Color color, IconData icon) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          StatCard(
+            title: title,
+            data: data ?? {},
+            accentColor: color,
+            icon: icon,
+          ),
+        ],
       ),
     );
   }
