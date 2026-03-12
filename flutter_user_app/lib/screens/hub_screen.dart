@@ -8,6 +8,7 @@ import 'package:flutter_user_app/screens/login_screen.dart';
 import 'package:flutter_user_app/screens/past_exam_list_screen.dart';
 import 'package:flutter_user_app/screens/user_stats_screen.dart';
 
+import 'package:flutter_user_app/core/supabase_service.dart';
 import '../controllers/hub_controller.dart';
 
 class HubScreen extends StatefulWidget {
@@ -23,7 +24,18 @@ class _HubScreenState extends State<HubScreen> {
   @override
   void initState() {
     super.initState();
-    _controller.initializeAuth(onUpdate: () => setState(() {}));
+    _controller.initializeAuth(onUpdate: () {
+      if (mounted) {
+        setState(() {});
+        // After initialization, if not logged in, redirect to login
+        if (!_controller.isLoading && !SupabaseService.isLoggedIn) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
+          );
+        }
+      }
+    });
   }
 
   @override

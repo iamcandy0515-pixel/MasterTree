@@ -9,7 +9,7 @@ class AuthController {
   bool? isExistingUser; // null: unknown, true: existing, false: new
 
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController(text: '010-');
   final TextEditingController emailController = TextEditingController();
   final TextEditingController entryCodeController = TextEditingController();
 
@@ -20,12 +20,12 @@ class AuthController {
   Future<void> loadSavedData() async {
     final prefs = await SharedPreferences.getInstance();
     nameController.text = prefs.getString('test_name') ?? '';
-    phoneController.text = prefs.getString('test_phone') ?? '';
+    phoneController.text = prefs.getString('test_phone') ?? '010-';
     emailController.text = prefs.getString('test_email') ?? '';
     entryCodeController.text = prefs.getString('test_entry_code') ?? '';
 
     // If we have saved data, assume existing user to hide email field initially
-    if (nameController.text.isNotEmpty && phoneController.text.isNotEmpty) {
+    if (nameController.text.isNotEmpty && phoneController.text.length >= 12) {
       isExistingUser = prefs.getBool('is_existing_user') ?? true;
     }
   }
@@ -43,7 +43,7 @@ class AuthController {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
     nameController.clear();
-    phoneController.clear();
+    phoneController.text = '010-';
     emailController.clear();
     entryCodeController.clear();
     isExistingUser = null;
@@ -110,8 +110,8 @@ class AuthController {
 
         // 1. Check status (if expired or denied)
         final status = user?['status'];
-        if (status == 'expired' || status == 'denied') {
-          onError('사용기간이 만료되었습니다. 관리자에게 문의해 주세요.');
+        if (status == 'expired' || status == 'denied' || status == 'rejected') {
+          onError('status_denied'); // Special error code for UI
           isLoading = false;
           onUpdate();
           return;
@@ -119,7 +119,7 @@ class AuthController {
 
         // 1-1. Check for pending approval
         if (status != 'approved') {
-          onError('승인 대기 중입니다. 관리자 승인 후 이용 가능합니다.');
+          onError('status_pending'); // Special error code for Refresh UI
           isLoading = false;
           onUpdate();
           return;
@@ -130,7 +130,7 @@ class AuthController {
           try {
             final expiredAt = DateTime.parse(user!['expired_at']);
             if (DateTime.now().isAfter(expiredAt)) {
-              onError('사용기간이 만료되었습니다. 관리자에게 문의해 주세요.');
+              onError('status_expired');
               isLoading = false;
               onUpdate();
               return;
@@ -145,10 +145,29 @@ class AuthController {
           user: user,
         );
         if (!isValid) {
-          onError('사용기간이 만료되었거나 입장코드가 올바르지 않습니다.');
+          onError('입장코드가 올바르지 않습니다.');
           isLoading = false;
           onUpdate();
           return;
+        }
+
+        // 3. Log in or Migrate to permanent account
+        try {
+          await SupabaseService.signInPermanent(phone);
+        } catch (e) {
+          // If login fails (not yet migrated from anonymous to permanent), try signing up
+          if (e.toString().contains('invalid_credentials')) {
+            final authResponse = await SupabaseService.signUpPermanent(
+              phone,
+              name: name,
+              email: user?['email'] ?? '',
+            );
+            if (authResponse.user != null) {
+              await SupabaseService.updateUserAuthId(user!['id'], authResponse.user!.id);
+            }
+          } else {
+            rethrow;
+          }
         }
       } else {
         // [New User Flow]
@@ -160,28 +179,38 @@ class AuthController {
           return;
         }
 
+        // 1. Create permanent account in Auth first
+        final authResponse = await SupabaseService.signUpPermanent(
+          phone,
+          name: name,
+          email: email,
+        );
+
+        if (authResponse.user == null) {
+          throw '인증 계정 생성에 실패했습니다.';
+        }
+
+        // 2. Register in users table with Auth ID (status: pending)
         user = await SupabaseService.registerUser(
           name: name,
           phone: phone,
           email: email,
           entryCode: entryCode,
+          authId: authResponse.user!.id,
         );
+
+        onError('status_pending'); // Redirect to pending notice
+        isLoading = false;
+        onUpdate();
+        return;
       }
 
-      // Finalize: Save data locally and sign in
+      // Finalize: Save data locally
       await saveData();
-      final authResponse = await SupabaseService.signInAnonymously();
-      
-      // Sync Auth ID to users table for accurate tracking (Anonymous Session ID <-> User Name)
-      if (authResponse.user != null && user != null) {
-        await SupabaseService.updateUserAuthId(user['id'], authResponse.user!.id);
-      }
-      
       onSuccess();
     } catch (e) {
       String errorMessage = e.toString();
-      if (errorMessage.contains('users_phone_key') ||
-          errorMessage.contains('23505')) {
+      if (errorMessage.contains('users_phone_key') || errorMessage.contains('23505')) {
         errorMessage = '이미 등록된 번호입니다. 이름을 확인하시거나 기존 정보로 로그인해 주세요.';
       }
       debugPrint('Login Error: $e');

@@ -69,7 +69,7 @@ export class UsersService {
             name:
                 u.user_metadata?.full_name ||
                 u.user_metadata?.name ||
-                u.email?.split("@")[0] ||
+                (u.email?.startsWith("u010") ? u.email.substring(1).split("@")[0] : u.email?.split("@")[0]) ||
                 "사용자",
             role:
                 u.user_metadata?.role ||

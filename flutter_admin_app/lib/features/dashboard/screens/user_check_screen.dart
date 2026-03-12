@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/user_check_viewmodel.dart';
 import '../../../core/theme/neo_theme.dart';
+import '../../../core/utils/format_utils.dart';
 
 class UserCheckScreen extends StatelessWidget {
   const UserCheckScreen({super.key});
@@ -154,7 +155,7 @@ class _UserCheckContent extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          user['email'] ?? '',
+                          '${user['email'] ?? ''}${user['phone'] != null ? ' | ${FormatUtils.formatPhone(user['phone'])}' : ''}',
                           style: TextStyle(
                             color: Colors.grey[500],
                             fontSize: 12,

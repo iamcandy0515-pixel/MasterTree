@@ -7,9 +7,64 @@ import 'constants.dart';
 class SupabaseService {
   static SupabaseClient get client => Supabase.instance.client;
 
-  /// Performs anonymous login (Sign in Anonymously)
-  static Future<AuthResponse> signInAnonymously() async {
-    return await client.auth.signInAnonymously();
+  static const String systemFixedPassword = 'mastertree_permanent_2026';
+
+  /// Performs email login (Permanent Account)
+  static Future<AuthResponse> signInPermanent(String phone) async {
+    final cleanPhone = phone.replaceAll('-', '');
+    
+    // 1. Check if user already has a specific email in public.users
+    final existingUser = await client
+        .from('users')
+        .select('email')
+        .eq('phone', cleanPhone)
+        .maybeSingle();
+
+    // 2. Priority: Registered Email -> Fallback: Virtual Email
+    final targetEmail = existingUser?['email'] ?? 'u$cleanPhone@mastertree.app';
+
+    return await client.auth.signInWithPassword(
+      email: targetEmail,
+      password: systemFixedPassword,
+    );
+  }
+
+  /// Performs sign up (Permanent Account)
+  static Future<AuthResponse> signUpPermanent(
+    String phone, {
+    required String name,
+    required String email,
+  }) async {
+    final cleanPhone = phone.replaceAll('-', '');
+    
+    // Use the provided real email if available, otherwise fallback to virtual
+    final targetEmail = (email.isNotEmpty && email.contains('@')) 
+        ? email 
+        : 'u$cleanPhone@mastertree.app';
+
+    return await client.auth.signUp(
+      email: targetEmail,
+      password: systemFixedPassword,
+      data: {
+        'name': name,
+        'user_email': email,
+      },
+    );
+  }
+
+  /// Get user status after sign in
+  static Future<String> reloadUserStatus() async {
+    final user = client.auth.currentUser;
+    if (user == null) return 'none';
+
+    // Fetch latest status from users table
+    final response = await client
+        .from('users')
+        .select('status')
+        .eq('auth_id', user.id)
+        .maybeSingle();
+
+    return response?['status'] ?? 'pending';
   }
 
   /// Get current session
@@ -22,10 +77,7 @@ class SupabaseService {
   static Future<List<Map<String, dynamic>>> getTrees() async {
     try {
       // Fetch all trees
-      final treesResponse = await client
-          .from('trees')
-          .select('*')
-          .order('name_kr');
+      final treesResponse = await client.from('trees').select('*').order('name_kr');
 
       final trees = List<Map<String, dynamic>>.from(treesResponse);
 
@@ -55,12 +107,13 @@ class SupabaseService {
     String name,
     String phone,
   ) async {
+    final cleanPhone = phone.replaceAll('-', '');
     // 1. Exact match check
     final response = await client
         .from('users')
         .select()
         .eq('name', name)
-        .eq('phone', phone)
+        .eq('phone', cleanPhone)
         .maybeSingle();
 
     // 3. Robustness check: if not found, check if the phone is already taken by someone else
@@ -68,7 +121,7 @@ class SupabaseService {
       final phoneCheck = await client
           .from('users')
           .select('id, name')
-          .eq('phone', phone)
+          .eq('phone', cleanPhone)
           .maybeSingle();
 
       if (phoneCheck != null) {
@@ -94,15 +147,18 @@ class SupabaseService {
     required String phone,
     required String email,
     required String entryCode,
+    String? authId,
   }) async {
+    final cleanPhone = phone.replaceAll('-', '');
     return await client
         .from('users')
         .insert({
           'name': name,
-          'phone': phone,
+          'phone': cleanPhone,
           'email': email,
           'entry_code': entryCode,
-          'status': 'approved',
+          'status': 'pending', // Always pending for new users
+          'auth_id': authId,
         })
         .select()
         .single();
@@ -119,7 +175,6 @@ class SupabaseService {
         final data = jsonDecode(utf8.decode(response.bodyBytes));
         debugPrint('Response Data: $data');
         if (data['success'] == true) {
-          // Changed fallback from '1004' to '1234' to match server default in app_settings table
           return data['data']['entryCode'] ?? '1234';
         }
       } else {
@@ -128,7 +183,7 @@ class SupabaseService {
     } catch (e) {
       debugPrint('Error fetching global entry code from $url: $e');
     }
-    return '1234'; // Default fallback changed to 1234 to match Admin API default
+    return '1234';
   }
 
   /// Check if global/required entry code is valid

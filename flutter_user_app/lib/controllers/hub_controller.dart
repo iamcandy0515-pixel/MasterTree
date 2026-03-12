@@ -9,17 +9,13 @@ class HubController {
     onUpdate();
 
     try {
-      if (!SupabaseService.isLoggedIn) {
-        await SupabaseService.signInAnonymously();
-      }
+      // Background auth init - with permanent accounts, 
+      // we only check if existing session is valid.
+      // If not, the screen will handle redirection to LoginScreen.
+      final isLoggedIn = SupabaseService.isLoggedIn;
+      debugPrint('Auth check: isLoggedIn = $isLoggedIn');
     } catch (e) {
-      if (e.toString().contains('anonymous_provider_disabled')) {
-        debugPrint(
-          'CRITICAL: Supabase Anonymous Provider is disabled. Please enable it in the Supabase Dashboard.',
-        );
-      } else {
-        debugPrint('Auth initialization error: $e');
-      }
+      debugPrint('Auth initialization error: $e');
     } finally {
       isLoading = false;
       onUpdate();
