@@ -276,10 +276,12 @@ class ApiService {
         body: jsonEncode({'attempts': attempts}),
       );
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
       } else {
-        debugPrint('학습 결과 배치 저장 실패: ${response.statusCode} - ${response.body}');
+        debugPrint(
+          '학습 결과 배치 저장 실패: ${response.statusCode} - ${response.body}',
+        );
         return false;
       }
     } catch (e) {
