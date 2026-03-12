@@ -287,4 +287,39 @@ class ApiService {
       return false;
     }
   }
+
+  /// 퀴즈 세션 생성 (질문 목록 가져오기)
+  static Future<Map<String, dynamic>> generateQuizSession({
+    String mode = 'normal',
+    int limit = 10,
+  }) async {
+    final url = Uri.parse('${AppConstants.apiUrl}/user-quiz/generate');
+    final session = Supabase.instance.client.auth.currentSession;
+    final token = session?.accessToken ?? '';
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'mode': mode,
+          'limit': limit,
+        }),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+        if (jsonResponse['success'] == true) {
+          return Map<String, dynamic>.from(jsonResponse['data'] ?? {});
+        }
+      }
+      throw Exception('세션 생성 실패: ${response.body}');
+    } catch (e) {
+      debugPrint('ApiService.generateQuizSession Error: $e');
+      rethrow;
+    }
+  }
 }
