@@ -47,60 +47,84 @@ export class UploadController {
     }
 
     /**
-     * 외부 이미지 프록시 (CORS 우회용)
+     * 외부 이미지 프록시 (CORS 우회용 및 실시간 리사이징 지원)
      */
     static async proxyImage(req: Request, res: Response): Promise<void> {
         const url = req.query.url as string;
+        const width = req.query.w ? parseInt(req.query.w as string) : null;
+        const height = req.query.h ? parseInt(req.query.h as string) : null;
+
         try {
             if (!url) {
                 errorResponse(res, "URL이 필요합니다.", 400);
                 return;
             }
 
-            // [추가] 구글 드라이브 URL 여부 판단 (id=... 가 포함된 경우)
+            let imageStream;
+            let contentType = "image/jpeg";
+
+            // [1] 구글 드라이브 인증 스트림 시도
             if (url.includes("drive.google.com") && url.includes("id=")) {
                 try {
                     const fileId = url.split("id=")[1].split("&")[0];
-                    console.log(`📡 [Proxy] Attempting Authenticated Drive Stream: ${fileId}`);
+                    console.log(`📡 [Proxy] Authenticated Drive Stream: ${fileId} (Resizing: ${width}x${height})`);
                     
                     const { googleDriveFileService } = require("../external/google_drive_file.service");
                     const driveInstance = googleDriveFileService.getDrive();
                     
-                    const response = await driveInstance.files.get(
+                    const driveResponse = await driveInstance.files.get(
                         { fileId, alt: "media" },
                         { responseType: "stream" }
                     );
 
-                    res.setHeader("Content-Type", response.headers["content-type"] || "image/jpeg");
-                    res.setHeader("Cache-Control", "public, max-age=86400");
-                    response.data.pipe(res);
-                    return;
+                    imageStream = driveResponse.data;
+                    contentType = driveResponse.headers["content-type"] || "image/jpeg";
                 } catch (driveError: any) {
-                    console.warn(`⚠️ [Proxy] Authenticated Drive access failed, falling back to public: ${driveError.message}`);
-                    // Fallback to anonymous axios proxy below
+                    console.warn(`⚠️ [Proxy] Authenticated Drive failed: ${driveError.message}`);
                 }
             }
 
-            // 일반 외부 이미지 프록시 (또는 드라이브 폴백)
-            console.log(`🌐 [Proxy] Public Proxying: ${url}`);
-            const response = await axios.get(url, {
-                responseType: "stream",
-                timeout: 15000,
-                headers: {
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-                }
-            });
+            // [2] 일반 외부 이미지 또는 드라이브 폴백
+            if (!imageStream) {
+                console.log(`🌐 [Proxy] Public Proxying: ${url} (Resizing: ${width}x${height})`);
+                const response = await axios.get(url, {
+                    responseType: "stream",
+                    timeout: 15000,
+                    headers: {
+                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+                    }
+                });
+                imageStream = response.data;
+                contentType = response.headers["content-type"] || "image/jpeg";
+            }
 
-            res.setHeader(
-                "Content-Type",
-                response.headers["content-type"] || "image/jpeg",
-            );
+            // [3] 공통 헤더 설정
+            res.setHeader("Content-Type", contentType);
             res.setHeader("Cache-Control", "public, max-age=86400");
 
-            response.data.pipe(res);
+            // [4] 리사이징 적용 (sharp)
+            if (width || height) {
+                const sharp = require("sharp");
+                const resizer = sharp().resize(width, height, {
+                    fit: "inside",
+                    withoutEnlargement: true
+                });
+                
+                // 에러 핸들링 추가
+                resizer.on("error", (err: any) => {
+                    console.error("❌ [Proxy] Sharp Error:", err);
+                });
+
+                imageStream.pipe(resizer).pipe(res);
+            } else {
+                imageStream.pipe(res);
+            }
+
         } catch (error: any) {
             console.error("❌ [Proxy] Critical error loading image:", url, error.message);
-            errorResponse(res, "이미지 로딩 실패", 500);
+            if (!res.headersSent) {
+                errorResponse(res, "이미지 로딩 실패", 500);
+            }
         }
     }
 }

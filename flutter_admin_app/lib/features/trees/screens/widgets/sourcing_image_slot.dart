@@ -144,11 +144,14 @@ class SourcingImageSlot extends StatelessWidget {
       if (url == null || url.isEmpty) return const Center(child: Icon(Icons.image_not_supported));
 
       return CachedNetworkImage(
-        imageUrl: TreeRepository.getProxyUrl(url),
+        imageUrl: TreeRepository.getProxyUrl(
+          url,
+          width: isThumb ? 300 : 800, // 썸네일은 300px 정도로 요청 (Retina 대응)
+        ),
         fit: BoxFit.cover,
         placeholder: (context, url) => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
         errorWidget: (context, url, error) => const Icon(Icons.broken_image, color: Colors.redAccent, size: 24),
-        memCacheWidth: 600,
+        memCacheWidth: isThumb ? 300 : 800,
       );
     }
     return const SizedBox();
