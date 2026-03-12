@@ -132,7 +132,10 @@ export class QuizUserService {
         }
 
         // 2. Get or Create Session
-        const sessionId = await this.getOrCreateSession(userId);
+        // Determine mode from the first attempt if possible, default to normal
+        const isPastExam = filteredAttempts.some(a => a.exam_id !== undefined || a.mode === 'pastExam');
+        const mode = isPastExam ? 'pastExam' : 'normal';
+        const sessionId = await this.getOrCreateSession(userId, mode);
 
         // 3. Prepare attempt rows
         const attemptRows = filteredAttempts.map((a) => ({
@@ -185,19 +188,22 @@ export class QuizUserService {
     /**
      * Helper to find or create a daily 'normal' session for a user.
      */
-    private async getOrCreateSession(userId: string): Promise<number> {
+    private async getOrCreateSession(
+        userId: string,
+        mode: string = "normal",
+    ): Promise<number> {
         if (!userId) {
             throw new Error("User ID is missing for session creation.");
         }
 
         const today = new Date().toISOString().split("T")[0];
 
-        // Find existing 'normal' session for today
+        // Find existing session for today with the same mode
         const { data: existingSession } = await supabase
             .from("quiz_sessions")
             .select("id")
             .eq("user_id", userId)
-            .eq("mode", "normal") // Use 'mode'
+            .eq("mode", mode)
             .gte("started_at", today)
             .limit(1)
             .maybeSingle();
@@ -211,7 +217,7 @@ export class QuizUserService {
             .from("quiz_sessions")
             .insert({
                 user_id: userId,
-                mode: "normal",
+                mode: mode,
             })
             .select("id")
             .single();

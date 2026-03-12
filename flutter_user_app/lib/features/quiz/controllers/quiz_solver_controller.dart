@@ -93,6 +93,7 @@ class QuizSolverController {
       'is_correct': isCorrect,
       'user_answer': selectedOptionIndex.toString(),
       'time_taken_ms': 0,
+      'mode': 'pastExam',
     });
   }
 

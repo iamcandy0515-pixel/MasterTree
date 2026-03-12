@@ -282,8 +282,7 @@ export class StatsController {
             // 1. Fetch total published questions and tree count
             const { data: questions } = await supabase
                 .from("quiz_questions")
-                .select("id, exam_id")
-                .eq("status", "published");
+                .select("id, exam_id");
 
             const { count: treeCount } = await supabase
                 .from("trees")

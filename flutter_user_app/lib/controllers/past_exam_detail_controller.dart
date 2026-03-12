@@ -40,6 +40,7 @@ class PastExamDetailController {
         'is_correct': (index == correctOptionIndex),
         'user_answer': index,
         'time_taken_ms': 0,
+        'mode': 'pastExam',
       });
     }
 
