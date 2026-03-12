@@ -12,29 +12,29 @@
 ## 🛠️ To-Do List
 
 ### 1단계: 준비 및 소스 분리 (Structure)
-- [ ] **1-1. [Git 백업]** 작업 착수 전 현재 상태 로컬 커밋 (`0-1` 준수)
-- [ ] **1-2. [200줄 제한 준수]** `stats.controller.ts`를 다음과 같이 분리 (`1-1` 준수)
+- [x] **1-1. [Git 백업]** 작업 착수 전 현재 상태 로컬 커밋 (`0-1` 준수)
+- [x] **1-2. [200줄 제한 준수]** `stats.controller.ts`를 다음과 같이 분리 (`1-1` 준수)
     - `stats.controller.ts`: 라우팅 및 기본 요청 처리
     - `stats_admin.service.ts`: 관리자 대시보드용 집계 로직 (getDetailedStats 등)
     - `stats_user.service.ts`: 사용자별 상세 성과 로직 (getUserPerformanceStats 등)
 
 ### 2단계: 백엔드 로직 개선 (Logic)
-- [ ] **2-1. `getDetailedStats` 로직 수정**
+- [x] **2-1. `getDetailedStats` 로직 수정**
     - `userAggregates` 계산 시 `tree_id`를 포함하도록 수정하여 수목 퀴즈 데이터 누락 방지.
-- [ ] **2-2. `topWrongTrees` 집계 고도화**
+- [x] **2-2. `topWrongTrees` 집계 고도화**
     - `quiz_attempts` 테이블에서 `tree_id`가 있는 행을 우선 순위로 랭킹 산출.
-- [ ] **2-3. 소스 정합성 체크**
+- [x] **2-3. 소스 정합성 체크**
     - 분리된 파일 간의 의존성 및 응답 구조 유지 확인 (`0-4` 준수).
 
 ### 3단계: 관리자 앱 검증 및 품질 관리 (Quality)
-- [ ] **3-1. 프론트엔드 연동 확인**
+- [x] **3-1. 프론트엔드 연동 확인**
     - `StatisticsViewModel`에서 업데이트된 대시보드 데이터를 정상적으로 파싱하는지 확인.
-- [ ] **3-2. [린트 및 빌드 체크]** (`3-2`, `2-3` 준수)
+- [x] **3-2. [린트 및 빌드 체크]** (`3-2`, `2-3` 준수)
     - `flutter analyze` 명령어로 상세 통계 화면의 린트 에러 여부 확인.
     - 백엔드 `npm run build`를 통한 컴파일 안정성 검증.
 
 ### 4단계: 마무리 및 동기화 (Sync)
-- [ ] **4-1. 최종 GitHub 푸시**
+- [x] **4-1. 최종 GitHub 푸시**
     - 수정 사항 및 작업 계획 이행 완료 확인 후 서비스 재시작 및 푸시.
 
 ---
