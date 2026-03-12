@@ -178,11 +178,14 @@ class _UserCheckContent extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    '최근 활동: ${user['lastLogin']}',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 11,
+                  Flexible(
+                    child: Text(
+                      '최근 활동: ${user['lastLogin']}',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 11,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   if (viewModel.currentStatus == 'pending')

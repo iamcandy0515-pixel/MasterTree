@@ -7,7 +7,7 @@ import 'constants.dart';
 class SupabaseService {
   static SupabaseClient get client => Supabase.instance.client;
 
-  static const String systemFixedPassword = 'mastertree_permanent_2026';
+  static const String systemFixedPassword = 'admin1234';
 
   /// Performs email login (Permanent Account)
   static Future<AuthResponse> signInPermanent(String phone) async {

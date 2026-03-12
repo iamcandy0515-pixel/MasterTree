@@ -1,41 +1,33 @@
-# 🚀 이미지 로딩 최적화 작업 계획서 (Image Loading Optimization)
+# Task: 이미지 로딩 최적화 및 안정화 (Image Loading Optimization & Stabilization) - v1
 
 ## 1. 개요 (Overview)
-- **목적**: 관리자 앱의 이미지 추출 상세 화면에서 원본 이미지를 그대로 로드함에 따라 발생하는 서버 부하 및 클라이언트 메모리 점유 문제를 해결하기 위함.
-- **전략**: 백엔드 프록시 서버에서 `sharp` 라이브러리를 활용한 실시간 리사이징(On-the-fly resizing) 기능을 구현하고, 프론트엔드에서 썸네일 노출 시 최적화된 크기만 요청하도록 수정함.
+- **목표**: 서버 부하를 줄이고 관리자/사용자 앱의 이미지 로딩 성능을 개선하기 위해 서버 측 리사이징 프록시를 도입함.
+- **배경**: 현재 Google Drive 원본 파일을 직접 로딩하거나 프록시 시 원본 그대로 전달하여 메모리 및 네트워크 과부하 발생 가능성 있음.
 
-## 2. 작업 범위 (Scope)
+## 2. 세부 작업 (Detailed Tasks)
 
-### [Backend] nodejs_admin_api
-- [ ] `uploads.controller.ts`의 `proxyImage` 메서드 수정: `width` 쿼리 파라미터 처리 로직 추가.
-- [ ] `sharp` 라이브러리를 이용해 이미지 스트림 리사이징 파이프라인 구축.
+### Phase 1: 백엔드 준비 (Backend - Node.js API)
+- [x] `sharp` 라이브러리 연동 (설치 완료)
+- [x] `uploads.controller.ts`의 `proxyImage` 엔드포인트에 리사이징 쿼리 파라미터 (`w`, `h`) 추가 및 적용 (완료)
 
-### [Frontend] flutter_admin_app
-- [ ] `TreeRepository.getProxyUrl` 메서드 확장: `width` 인자를 선택적으로 받을 수 있도록 수정.
-- [ ] `SourcingImageSlot` 위젯 수정: `isThumb`가 `true`일 경우 `width=200` 옵션을 적용하여 호출.
-- [ ] `memCacheWidth` 설정을 요청 크기에 맞게 최적화.
+### Phase 2: 프론트엔드 연동 (Frontend - Flutter Admin App)
+- [x] `tree_repository.dart`: `getProxyUrl` 메서드에 `width`, `height` 선택적 파라미터 추가 (완료)
+- [x] `sourcing_image_slot.dart`: 썸네일 노출 시 리사이징 파라미터(예: 300px)를 전달하도록 수정 (완료)
+- [x] `flutter analyze` 컴파일 오류 수정 (`quiz_management` ViewModel 불일치 해결) (완료)
 
-## 3. To-Do List
-
-### Phase 1: 준비 및 백업 (Preparation)
-- [ ] 현재 작업 상태 로컬 Git 커밋 (`Pre-optimization backup`)
-
-### Phase 2: 백엔드 기능 구현 (Backend Implementation)
-- [ ] `nodejs_admin_api`에 `sharp` 설치 여부 확인 및 필요시 설치.
-- [ ] `uploads.controller.ts` 수정 및 테스트.
-
-### Phase 3: 프론트엔드 적용 (Frontend Implementation)
-- [ ] `tree_repository.dart` 수정.
-- [ ] `sourcing_image_slot.dart` 수정.
+### Phase 3: 서비스 안정화 (Service Stabilization)
+- [x] `nodejs_admin_api`, `flutter_admin_app`, `flutter_user_app` 재기동 (완료)
 
 ### Phase 4: 검증 (Verification)
-- [ ] `flutter analyze` 명령어로 린트 에러 체크.
-- [ ] 관리자 앱에서 이미지 로딩 속도 및 서버 로그(리사이징 동작 여부) 확인.
+- [ ] 관리자 앱에서 이미지 로딩 속도 및 서버 로그(리사이징 동작 여부) 확인 (진행 중)
+
+## 3. 진행 상황 (Status)
+- [x] Backend: `proxyImage` 리사이징 로직 구현 (완료)
+- [x] Frontend: `TreeRepository.getProxyUrl` 파라미터 연동 (완료)
+- [x] Frontend: `SourcingImageSlot` 썸네일/원본 최적화 호출 (완료)
+- [x] Frontend: `flutter analyze` 컴파일 오류 수정 및 재기동 (완료)
+- [ ] Verification: 이미지 로딩 성능 개선 확인 (진행 중)
 
 ## 4. 예상 리스크 및 대책 (Risk & Mitigation)
 - **CORS 이슈**: 프록시를 유지하므로 안전함.
-- **서버 CPU 부하**: 실시간 리사이징은 CPU를 소모함. 향후 부하가 커질 경우 캐싱 레이어(Redis 또는 Storage) 도입 고려.
-- **이미지 품질**: `sharp` 설정 시 적절한 quality(기본 80)를 유지함.
-
----
-**진행 가이드**: 각 단계를 완료할 때마다 체크박스를 업데이트하며 진행합니다.
+- **서버 부하**: 실시간 리사이징은 CPU를 소모하지만, 클라이언트 메모리 부족보다는 서버 자원 조절이 용이함. 향후 Redis 캐싱 검토 가능.

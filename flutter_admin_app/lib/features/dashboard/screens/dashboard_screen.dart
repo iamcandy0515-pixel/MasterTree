@@ -299,15 +299,15 @@ class _DashboardScreenState extends State<_DashboardContent> {
 
   Widget _buildTextStatsSection(DashboardViewModel vm) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildTextStatItem('수목', vm.stats['totalTrees'] ?? 0, '종'),
+          Expanded(child: _buildTextStatItem('수목', vm.stats['totalTrees'] ?? 0, '종')),
           _buildStatDivider(),
-          _buildTextStatItem('기출', vm.stats['totalQuizzes'] ?? 0, '문'),
+          Expanded(child: _buildTextStatItem('기출', vm.stats['totalQuizzes'] ?? 0, '문')),
           _buildStatDivider(),
-          _buildTextStatItem('유사', vm.stats['totalSimilarGroups'] ?? 0, '조합'),
+          Expanded(child: _buildTextStatItem('유사', vm.stats['totalSimilarGroups'] ?? 0, '조합')),
         ],
       ),
     );
@@ -321,19 +321,22 @@ class _DashboardScreenState extends State<_DashboardContent> {
           label,
           style: const TextStyle(color: Colors.white38, fontSize: 13),
         ),
-        const SizedBox(width: 8),
-        Text(
-          count.toString(),
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+        const SizedBox(width: 4),
+        Flexible(
+          child: Text(
+            count.toString(),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: 2),
         Text(
           unit,
-          style: const TextStyle(color: Colors.white38, fontSize: 12),
+          style: const TextStyle(color: Colors.white38, fontSize: 11),
         ),
       ],
     );

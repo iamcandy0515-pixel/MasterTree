@@ -50,6 +50,22 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier {
   String? _extractedFilterRawString;
   String? get extractedFilterRawString => _extractedFilterRawString;
 
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  bool _isSaving = false;
+  bool get isSaving => _isSaving;
+
+  double _extractionProgress = 0.0;
+  double get extractionProgress => _extractionProgress;
+
+  List<Map<String, dynamic>> get relatedQuizzes => _relatedQuestions;
+
+  String? get selectedSubject => _initialSubject;
+  int? get selectedYear => _initialYear;
+  int? get selectedRound => _initialRound;
+  int get selectedQuestionNumber => _selectedQuestion;
+
   int _correctOptionIndex = 0;
   int get correctOptionIndex => _correctOptionIndex;
 
@@ -112,6 +128,19 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier {
 
   void setExtractedRound(int round) {
     _extractedRound = round;
+    notifyListeners();
+  }
+
+  void updateFilters({
+    String? subject,
+    int? year,
+    int? round,
+    int? questionNumber,
+  }) {
+    if (subject != null) _initialSubject = subject;
+    if (year != null) _initialYear = year;
+    if (round != null) _initialRound = round;
+    if (questionNumber != null) _selectedQuestion = questionNumber;
     notifyListeners();
   }
 
@@ -354,6 +383,9 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier {
       throw '필수 key 에러: (과목, 년도, 회차, 문제번호) 중 누락된 정보가 있습니다.';
     }
 
+    _isSaving = true;
+    notifyListeners();
+
     final data = {
       'raw_source_text': _extractedBlock!['raw_source_text'],
       'subject': _initialSubject,
@@ -371,7 +403,7 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier {
           .map((text) => {'type': 'text', 'content': text})
           .toList(),
       'options': optionTexts
-          .take(2)
+          .take(4) // 기출문제는 보통 4지선다
           .map((text) => {'type': 'text', 'content': text})
           .toList(),
       'correct_option_index': _correctOptionIndex,
@@ -382,6 +414,56 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier {
       await _repository.upsertQuizQuestion(data);
     } catch (e) {
       throw e.toString();
+    } finally {
+      _isSaving = false;
+      notifyListeners();
+    }
+  }
+
+  // UI 호환성을 위한 래퍼 메서드들
+  Future<void> saveCurrentQuizToDbAction({
+    required String question,
+    required String explanation,
+    required List<String> options,
+    required List<String> hints,
+  }) => saveToDb(
+    questionText: question,
+    explanationText: explanation,
+    optionTexts: options,
+    hintTexts: hints,
+  );
+
+  Future<List<String>> generateOptionsAction(
+    String question,
+    String correctAnswer,
+  ) => generateDistractorsAction(question, correctAnswer);
+
+  Future<void> recommendSimilarAction(String question) =>
+      recommendRelatedAction(question);
+
+  Future<void> startBatchExtractionAction({
+    required String fileId,
+    required int singleQuestionNumber,
+    required Function(int current, int total) onProgress,
+    required Function(String message) onMessage,
+  }) async {
+    _selectedFileId = fileId;
+    _selectedQuestion = singleQuestionNumber;
+    _isLoading = true;
+    _extractionProgress = 0.0;
+    notifyListeners();
+
+    try {
+      await extractQuiz();
+      populateExtractedQuiz();
+      onProgress(1, 1);
+      _extractionProgress = 1.0;
+    } catch (e) {
+      onMessage(e.toString());
+      rethrow;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 }

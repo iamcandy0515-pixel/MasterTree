@@ -1,0 +1,37 @@
+--- ALL PUBLIC.USERS ---
+[
+  {
+    "id": "99ea5ba3-17ba-4576-8c85-9297ae86f2f8",
+    "name": "김철수",
+    "email": "chulsoo@test.co",
+    "phone": "01011112222",
+    "auth_id": null
+  },
+  {
+    "id": "fd5cf9d3-bb52-4eaa-94f6-f82ce9dd1561",
+    "name": "홍길동",
+    "email": "phjin9@gmail.com",
+    "phone": "01012345678",
+    "auth_id": "5e2586a5-33ee-40eb-bd6b-616c78802335"
+  }
+]
+
+--- ALL AUTH USERS ---
+[
+  {
+    "id": "5e2586a5-33ee-40eb-bd6b-616c78802335",
+    "email": "phjin9@gmail.com",
+    "phone": "",
+    "name": "홍길동"
+  },
+  {
+    "id": "b7d0bb50-2590-4d38-bf0d-443fa3a1afdd",
+    "email": "admin@mastertree.com",
+    "phone": ""
+  },
+  {
+    "id": "b8921ed4-2779-44d2-ba2e-c2937cfc7382",
+    "email": "deleted_1773312499717@test.com",
+    "phone": ""
+  }
+]

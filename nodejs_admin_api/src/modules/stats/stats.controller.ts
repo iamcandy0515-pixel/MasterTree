@@ -75,54 +75,88 @@ export class StatsController {
                 }),
             );
 
-            // 2. Currently Active Users (Detailed categorization)
+            // 2. Currently Active Users (Detailed categorization with stats counts)
             let activeUserList: any[] = [];
             try {
                 // Fetch all users from Auth
                 const { data: authUsers } = await supabase.auth.admin.listUsers();
                 
-                // Fetch latest quiz activity for all users
-                const { data: latestAttempts } = await supabase
-                    .from("quiz_attempts")
-                    .select("user_id, created_at")
-                    .order("created_at", { ascending: false });
+                // Fetch all published questions to differentiate types
+                const { data: questions } = await supabase
+                    .from("quiz_questions")
+                    .select("id, exam_id")
+                    .eq("status", "published");
 
-                // Map of user_id -> latest_activity_time
-                const activityMap: Record<string, string> = {};
-                latestAttempts?.forEach(att => {
-                    if (!activityMap[att.user_id]) {
-                        activityMap[att.user_id] = att.created_at;
+                const examQuestionIds = new Set(
+                    (questions || [])
+                        .filter(q => q.exam_id !== null)
+                        .map(q => q.id)
+                );
+
+                // Fetch all quiz attempts for all users to calculate stats
+                const { data: allAttempts } = await supabase
+                    .from("quiz_attempts")
+                    .select("user_id, question_id, created_at");
+
+                // Aggregates: Map of user_id -> { last_active, tree_count, exam_count, solved_set }
+                const userAggregates: Record<string, { last_active: string | null, tree_count: number, exam_count: number, solved_set: Set<number> }> = {};
+                
+                allAttempts?.forEach(att => {
+                    if (!userAggregates[att.user_id]) {
+                        userAggregates[att.user_id] = { 
+                            last_active: att.created_at, 
+                            tree_count: 0, 
+                            exam_count: 0,
+                            solved_set: new Set()
+                        };
+                    }
+                    
+                    // Update last active
+                    if (!userAggregates[att.user_id].last_active || new Date(att.created_at) > new Date(userAggregates[att.user_id].last_active!)) {
+                        userAggregates[att.user_id].last_active = att.created_at;
+                    }
+
+                    // Count unique solved questions
+                    if (!userAggregates[att.user_id].solved_set.has(att.question_id)) {
+                        userAggregates[att.user_id].solved_set.add(att.question_id);
+                        if (examQuestionIds.has(att.question_id)) {
+                            userAggregates[att.user_id].exam_count++;
+                        } else {
+                            userAggregates[att.user_id].tree_count++;
+                        }
                     }
                 });
 
                 if (authUsers?.users) {
                     activeUserList = authUsers.users
                         .map((u) => {
+                            const aggregates = userAggregates[u.id];
                             const authLogin = u.last_sign_in_at;
-                            const quizLogin = activityMap[u.id];
+                            const quizActivity = aggregates?.last_active;
                             
-                            // Get the most recent time between Login and Quiz Activity
-                            const finalLastActive = (authLogin && quizLogin) 
-                                ? (new Date(authLogin) > new Date(quizLogin) ? authLogin : quizLogin)
-                                : (authLogin || quizLogin || u.created_at);
+                            // Get the most recent time
+                            const finalLastActive = (authLogin && quizActivity) 
+                                ? (new Date(authLogin) > new Date(quizActivity) ? authLogin : quizActivity)
+                                : (authLogin || quizActivity || u.created_at);
 
                             return {
                                 id: u.id,
                                 email: u.email,
                                 last_login: finalLastActive,
                                 name: u.user_metadata?.name || u.email?.split("@")[0],
-                                status: u.user_metadata?.status || "pending"
+                                status: u.user_metadata?.status || "pending",
+                                tree_quiz_count: aggregates?.tree_count || 0,
+                                exam_quiz_count: aggregates?.exam_count || 0
                             };
                         })
                         .sort((a, b) => {
-                            return (
-                                new Date(b.last_login!).getTime() -
-                                new Date(a.last_login!).getTime()
-                            );
+                            const dateA = a.last_login ? new Date(a.last_login).getTime() : 0;
+                            const dateB = b.last_login ? new Date(b.last_login).getTime() : 0;
+                            return dateB - dateA;
                         });
                 }
             } catch (e) {
-                console.error("Error fetching grouped active users:", e);
+                console.error("Error fetching admin detailed stats users:", e);
             }
 
             // 3. Top 5 Wrong Trees
