@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_user_app/core/supabase_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthController {
   bool isLoading = false;
@@ -154,16 +155,28 @@ class AuthController {
         // 3. Log in or Migrate to permanent account
         try {
           await SupabaseService.signInPermanent(phone);
-        } catch (e) {
+        } on AuthException catch (e) {
           // If login fails (not yet migrated from anonymous to permanent), try signing up
-          if (e.toString().contains('invalid_credentials')) {
-            final authResponse = await SupabaseService.signUpPermanent(
-              phone,
-              name: name,
-              email: user?['email'] ?? '',
-            );
-            if (authResponse.user != null) {
-              await SupabaseService.updateUserAuthId(user!['id'], authResponse.user!.id);
+          // Or if it's already registered but somehow password mismatch, handle it
+          final errStr = e.toString().toLowerCase();
+          if (errStr.contains('invalid_credentials') || errStr.contains('400')) {
+            try {
+              final userData = user!; // Already checked isExistingUser == true
+              final authResponse = await SupabaseService.signUpPermanent(
+                phone,
+                name: name,
+                email: userData['email'] ?? '',
+              );
+              if (authResponse.user != null) {
+                await SupabaseService.updateUserAuthId(userData['id'], authResponse.user!.id);
+              }
+            } on AuthException catch (signUpErr) {
+              if (signUpErr.message.contains('already registered') || signUpErr.code == 'user_already_exists') {
+                // If even sign up says already registered, but sign in failed...
+                // This means the password in Auth is different from our system fixed password.
+                throw '인증 서버에 계정이 이미 존재하지만 비번이 일치하지 않습니다. 관리자 콘솔에서 해당 이메일/번호의 계정을 삭제 후 다시 시도해주세요.';
+              }
+              rethrow;
             }
           } else {
             rethrow;
@@ -180,29 +193,56 @@ class AuthController {
         }
 
         // 1. Create permanent account in Auth first
-        final authResponse = await SupabaseService.signUpPermanent(
-          phone,
-          name: name,
-          email: email,
-        );
-
-        if (authResponse.user == null) {
-          throw '인증 계정 생성에 실패했습니다.';
+        AuthResponse? authResponse;
+        try {
+          authResponse = await SupabaseService.signUpPermanent(
+            phone,
+            name: name,
+            email: email,
+          );
+        } on AuthException catch (e) {
+          final errStr = e.toString().toLowerCase();
+          if (errStr.contains('already registered') || e.code == 'user_already_exists') {
+            // If already registered in Auth but not found in users table (or mismatch)
+            // Try to sign in instead
+            try {
+              authResponse = await SupabaseService.signInPermanent(phone);
+            } on AuthException catch (signInErr) {
+              final sErrStr = signInErr.toString().toLowerCase();
+              if (sErrStr.contains('invalid_credentials') || sErrStr.contains('400')) {
+                 throw '인증 서버에 계정이 이미 존재하지만 비번이 일치하지 않습니다. 관리자 콘솔에서 해당 이메일/번호의 계정을 삭제 후 다시 시도해주세요.';
+              }
+              rethrow;
+            }
+          } else {
+            rethrow;
+          }
         }
 
-        // 2. Register in users table with Auth ID (status: pending)
-        user = await SupabaseService.registerUser(
-          name: name,
-          phone: phone,
-          email: email,
-          entryCode: entryCode,
-          authId: authResponse.user!.id,
-        );
+        final authUser = authResponse!.user;
+        if (authUser == null) {
+          throw '인증 계정 생성 또는 로그인에 실패했습니다.';
+        }
 
-        onError('status_pending'); // Redirect to pending notice
-        isLoading = false;
-        onUpdate();
-        return;
+        // 2. Register in users table if not already there (status: pending)
+        // Check finding again after potential Auth change
+        final checkAgain = await SupabaseService.findUser(name, phone);
+        if (checkAgain == null) {
+          user = await SupabaseService.registerUser(
+            name: name,
+            phone: phone,
+            email: email,
+            entryCode: entryCode,
+            authId: authUser.id,
+          );
+          onError('status_pending'); // Redirect to pending notice
+          isLoading = false;
+          onUpdate();
+          return;
+        } else {
+          // If suddenly found after Auth sync, just proceed to success flow
+          user = checkAgain;
+        }
       }
 
       // Finalize: Save data locally
