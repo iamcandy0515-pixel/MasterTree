@@ -229,10 +229,11 @@ class QuizController {
 
     // 학습 결과 큐에 추가 (배치 전송을 위해 보관)
     ApiService.addPendingAttempt({
-      'question_id': currentQuestion.id,
+      'tree_id': currentQuestion.id, // 수목퀴즈는 tree_id 사용
       'is_correct': _isCorrect,
       'user_answer': answerIndex,
-      'time_taken_ms': 0, // 나중에 측정 로직 추가 가능
+      'time_taken_ms': 0, 
+      'mode': 'normal',
     });
 
     onUpdate();
