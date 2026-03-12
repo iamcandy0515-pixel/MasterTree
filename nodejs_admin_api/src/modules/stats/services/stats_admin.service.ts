@@ -35,11 +35,16 @@ export class StatsAdminService {
 
         const { data: allAttempts } = await supabase
             .from("quiz_attempts")
-            .select("user_id, question_id, tree_id, created_at");
+            .select("user_id, question_id, tree_id, created_at, is_correct")
+            .order("created_at", { ascending: false });
 
-        const userAggregates: Record<string, { last_active: string | null, tree_count: number, exam_count: number, solved_set: Set<string | number> }> = {};
+        const userAggregates: Record<string, { last_active: string | null, tree_count: number, exam_count: number, solved_set: Set<string> }> = {};
         
+        // 3. Process Wrong Counts for Ranking
+        const wrongCounts: Record<string, number> = {};
+
         allAttempts?.forEach(att => {
+            // User stats aggregation
             if (!userAggregates[att.user_id]) {
                 userAggregates[att.user_id] = { 
                     last_active: att.created_at, 
@@ -56,16 +61,27 @@ export class StatsAdminService {
             const qId = att.question_id;
             const tId = att.tree_id;
 
+            // Past Exam Question (has exam_id)
             if (qId && examQuestionIds.has(qId)) {
-                if (!userAggregates[att.user_id].solved_set.has(`q_${qId}`)) {
-                    userAggregates[att.user_id].solved_set.add(`q_${qId}`);
+                const key = `q_${qId}`;
+                if (!userAggregates[att.user_id].solved_set.has(key)) {
+                    userAggregates[att.user_id].solved_set.add(key);
                     userAggregates[att.user_id].exam_count++;
                 }
             } else {
+                // Tree Quiz (General Identifier Quiz)
                 const globalId = tId ? `t_${tId}` : qId ? `q_${qId}` : null;
                 if (globalId && !userAggregates[att.user_id].solved_set.has(globalId)) {
                     userAggregates[att.user_id].solved_set.add(globalId);
                     userAggregates[att.user_id].tree_count++;
+                }
+            }
+
+            // Wrong counts aggregation (Global)
+            if (!att.is_correct) {
+                const wrongKey = tId ? `t_${tId}` : (qId ? `q_${qId}` : null);
+                if (wrongKey) {
+                    wrongCounts[wrongKey] = (wrongCounts[wrongKey] || 0) + 1;
                 }
             }
         });
@@ -101,19 +117,7 @@ export class StatsAdminService {
                 return dateB - dateA;
             });
 
-        // 3. Top 5 Wrong Trees
-        const { data: wrongAttempts } = await supabase
-            .from("quiz_attempts")
-            .select("question_id, tree_id")
-            .eq("is_correct", false)
-            .limit(1000);
-
-        const wrongCounts: Record<string, number> = {};
-        wrongAttempts?.forEach((a) => {
-            const key = a.tree_id ? `t_${a.tree_id}` : `q_${a.question_id}`;
-            wrongCounts[key] = (wrongCounts[key] || 0) + 1;
-        });
-
+        // 3. Top 5 Wrong Trees Ranking
         const topKeys = Object.entries(wrongCounts)
             .sort((a, b) => b[1] - a[1])
             .slice(0, 5);
