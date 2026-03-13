@@ -182,9 +182,17 @@ class SourcingImageSlot extends StatelessWidget {
       ),
     );
 
-    if (result != null && result.isNotEmpty) {
-      final image = TreeImage(imageType: type, imageUrl: isThumb ? '' : result, thumbnailUrl: isThumb ? result : null);
-      vm.stageImage(type, image, isThumbnail: isThumb, source: 'manual');
+    if (result != null) {
+      if (result.isEmpty) {
+        vm.removePendingImage(key);
+      } else {
+        final image = TreeImage(
+          imageType: type, 
+          imageUrl: isThumb ? '' : result, 
+          thumbnailUrl: isThumb ? result : null
+        );
+        vm.stageImage(type, image, isThumbnail: isThumb, source: 'manual');
+      }
     }
   }
 }
