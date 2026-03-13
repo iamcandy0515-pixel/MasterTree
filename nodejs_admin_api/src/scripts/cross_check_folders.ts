@@ -1,14 +1,7 @@
 import { google } from "googleapis";
-import path from "path";
+import { googleDriveAuthService } from "../modules/external/google_drive_auth.service";
 
-const keyPath =
-    "d:/MasterTreeApp/tree_app_monorepo/nodejs_admin_api/src/config/service-account.json";
-
-const auth = new google.auth.GoogleAuth({
-    keyFile: keyPath,
-    scopes: ["https://www.googleapis.com/auth/drive.readonly"],
-});
-
+const auth = googleDriveAuthService.getAuthClient();
 const drive = google.drive({ version: "v3", auth });
 
 async function checkFolders() {
