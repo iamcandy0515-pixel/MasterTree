@@ -14,6 +14,7 @@ import 'package:flutter_admin_app/features/quiz_management/screens/quiz_manageme
 import 'package:flutter_admin_app/features/quiz_management/screens/bulk_extraction_screen.dart';
 import 'package:flutter_admin_app/features/quiz_management/screens/quiz_extraction_step2_screen.dart';
 import 'package:flutter_admin_app/features/quiz_management/screens/bulk_similar_management_screen.dart';
+import 'package:flutter_admin_app/features/tree_registration/screens/tree_registration_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -181,9 +182,17 @@ class _DashboardScreenState extends State<_DashboardContent> {
                               ),
                               const SizedBox(height: 6),
                               _buildShortcutListItem(
+                                icon: Icons.add_task_outlined,
+                                label: '신규 수목 등록',
+                                subLabel: '부위별 이미지 및 성상 기반 등록 모듈',
+                                onTap: () => _navigateTo(const TreeRegistrationScreen()),
+                                color: primaryColor,
+                              ),
+                              const SizedBox(height: 6),
+                              _buildShortcutListItem(
                                 icon: Icons.nature_people,
-                                label: '수목 관리',
-                                subLabel: '데이터 베이스 편집 및 추가',
+                                label: '수목 현황 조회',
+                                subLabel: '데이터 베이스 편집 및 검색',
                                 onTap: () =>
                                     _navigateTo(const TreeListScreen()),
                               ),
