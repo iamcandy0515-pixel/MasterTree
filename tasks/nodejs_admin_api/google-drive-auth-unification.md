@@ -26,23 +26,23 @@
 
 ## 5. 상세 작업 To-Do List
 
-### Phase 1: 보안 강화 및 공통 모듈 고도화
-- [ ] `GoogleDriveAuthService.ts`: **GCP Default Credentials** 지원 로직 추가 (배포 환경 대응)
-- [ ] 키 파일 경로 또는 런타임 환경 변수 우선순위 최적화
-- [ ] `.env` 내 보안 주석 강화 및 `SAMPLE_ENV` 최신화
+### Phase 1: 보안 강화 및 공통 모듈 고도화 (완료)
+- [x] `GoogleDriveAuthService.ts`: **GCP Default Credentials** 지원 로직 추가 (배포 환경 대응) - 완료
+- [x] 키 파일 경로 또는 런타임 환경 변수 우선순위 최적화 - 완료
+- [x] `.env` 내 보안 주석 강화 및 `SAMPLE_ENV` 최신화 - 완료
 
-### Phase 2: 서비스 및 컨트롤러 통합
-- [ ] `GoogleDriveFileService.ts`: API Key 및 Public Fallback 로직 완전 제거 (보안 강화)
-- [ ] `GoogleDriveService.ts`: 서비스 계정 권한 전용 필터링 로직 구현
+### Phase 2: 서비스 및 컨트롤러 통합 (완료)
+- [x] `GoogleDriveFileService.ts`: API Key 및 Public Fallback 로직 완전 제거 (보안 강화) - 완료
+- [x] `GoogleDriveService.ts`: 서비스 계정 권한 전용 필터링 로직 구현 - 완료
 
-### Phase 3: 도구 및 스크립트 전면 개편
-- [ ] `src/scripts/` 내 하드코딩된 경로 제거 및 중앙 인증 서비스(`GoogleDriveAuthService`) 연동
-- [ ] 스크립트 실행 시 보안 가이드라인 준수 확인 로직 추가
+### Phase 3: 도구 및 스크립트 전면 개편 (완료)
+- [x] `src/scripts/` 내 하드코딩된 경로 제거 및 중앙 인증 서비스(`GoogleDriveAuthService`) 연동 - 완료
+- [x] 스크립트 실행 시 보안 가이드라인 준수 확인 로직 추가 - 완료
 
-### Phase 4: 배포 전략 수립 및 마무리
-- [ ] GCP/AWS Secret Manager 연동 가이드 문서 작성
-- [ ] `.env.master`에서 불필요한 레거시 키 제거
-- [ ] `flutter analyze` 및 서버 빌드 정합성 체크
+### Phase 4: 배포 전략 수립 및 마무리 (완료)
+- [x] GCP/AWS Secret Manager 연동 가이드 문서 작성 - 대안 제안 완료
+- [x] `.env.master`에서 불필요한 레거시 키 제거 - 완료
+- [x] `flutter analyze` 및 서버 빌드 정합성 체크 - 완료
 
 ## 6. 리스크 관리 (Risk Analysis)
 - **보안 유실**: Private Key가 Git에 실수로 커밋되는 위험 -> `pre-commit` 훅 또는 CI 스캔 도입 제안.
