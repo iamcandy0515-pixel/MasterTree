@@ -18,14 +18,15 @@
 - [x] 관리자 앱(`flutter_admin_app`)의 `QuizReviewDetailScreen` 내 로직 파악
 - [ ] 현재 상태 로컬 Git 커밋
 
-### Phase 2: '지문' 섹션 붙여넣기(Ctrl+V) 상자 상시 노출 및 기능 통일
-- [ ] `_buildSectionWithImages` 메서드 수정하여 '지문' 영역에도 안내 UI 강제 노출
-- [ ] '지문'과 '해설' 섹션의 안내 메시지 스타일(Border, Padding) 통일
+### Phase 2: '지문' 섹션 붙여넣기(Ctrl+V) 상자 상시 노출 및 기능 통일 (완료)
+- [x] `_buildSectionWithImages` 메서드 수정하여 '지문' 영역에도 안내 UI 강제 노출
+- [x] '지문'과 '해설' 섹션의 안내 메시지 스타일(Border, Padding) 통일
+- [x] FocusNode 중복 사용 이슈 해결 (런타임 에러 방지)
 
-### Phase 3: 이미지 레이아웃 개선 (Large Display)
-- [ ] 이미지 출력 위치를 텍스트 입력창(TextField) **아래**로 변경
-- [ ] `_buildImagePreviewRow`를 세로 나열(Vertical List) 방식으로 교체
-- [ ] 원본 비율 유지 및 최대 높이 제한 설정
+### Phase 3: 이미지 레이아웃 개선 (Large Display) (완료)
+- [x] 이미지 출력 위치를 텍스트 입력창(TextField) **아래**로 변경
+- [x] `_buildImagePreviewRow`를 세로 나열(Vertical List) 방식으로 교체
+- [x] 원본 비율 유지 및 최대 높이 제한 설정
 
 ### Phase 4: 최종 검증
 - [ ] '이미지 보기/접기' 토글 연동 확인

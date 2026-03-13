@@ -982,9 +982,11 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, {int maxLines = 1}) {
+  Widget _buildTextField(TextEditingController controller,
+      {int maxLines = 1, FocusNode? focusNode}) {
     return TextField(
       controller: controller,
+      focusNode: focusNode,
       maxLines: maxLines,
       style: const TextStyle(color: Colors.white, fontSize: 14),
       decoration: InputDecoration(
@@ -1015,151 +1017,169 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> {
     bool isReviewing = false,
   }) {
     final isContent = blocksField == 'content_blocks';
-    final hasImages = blocks.any((b) => b['type'] == 'image');
+    final imageBlocks = blocks.where((b) => b['type'] == 'image').toList();
+    final hasImages = imageBlocks.isNotEmpty;
     final isExpanded = isContent
         ? _isContentImagesExpanded
         : _isExpImagesExpanded;
     final focusNode = isContent ? _questionFocusNode : _explanationFocusNode;
     final isFocused = focusNode.hasFocus;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildSectionTitle(label),
-            Row(
-              children: [
-                if (hasImages)
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(
+          LogicalKeyboardKey.keyV,
+          control: true,
+        ): () => _handlePaste(blocksField),
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildSectionTitle(label),
+              Row(
+                children: [
+                  if (hasImages)
+                    IconButton(
+                      icon: Icon(
+                        isExpanded
+                            ? Icons.keyboard_arrow_up
+                            : Icons.photo_library,
+                        color: primaryColor.withValues(alpha: 0.8),
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          if (isContent) {
+                            _isContentImagesExpanded =
+                                !_isContentImagesExpanded;
+                          } else {
+                            _isExpImagesExpanded = !_isExpImagesExpanded;
+                          }
+                        });
+                      },
+                      tooltip: isExpanded ? '이미지 접기' : '이미지 펼치기',
+                    ),
+                  if (aiReviewAction != null) ...[
+                    isReviewing
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: primaryColor,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : _buildAIAssistantButton(
+                            'AI 검수',
+                            Icons.auto_awesome,
+                            aiReviewAction,
+                          ),
+                    const SizedBox(width: 8),
+                  ],
                   IconButton(
-                    icon: Icon(
-                      isExpanded
-                          ? Icons.keyboard_arrow_up
-                          : Icons.photo_library,
+                    icon: const Icon(
+                      Icons.add_photo_alternate,
                       color: primaryColor,
                       size: 20,
                     ),
                     onPressed: () {
-                      setState(() {
-                        if (isContent) {
-                          _isContentImagesExpanded = !_isContentImagesExpanded;
-                        } else {
-                          _isExpImagesExpanded = !_isExpImagesExpanded;
-                        }
-                      });
+                      focusNode.requestFocus();
+                      _pickAndUploadImage(blocksField);
                     },
-                    tooltip: isExpanded ? '이미지 접기' : '이미지 펼치기',
+                    tooltip: '이미지 추가',
                   ),
-                if (aiReviewAction != null) ...[
-                  isReviewing
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: primaryColor,
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : _buildAIAssistantButton(
-                          'AI 검수',
-                          Icons.auto_awesome,
-                          aiReviewAction,
-                        ),
-                  const SizedBox(width: 8),
                 ],
-                IconButton(
-                  icon: const Icon(
-                    Icons.add_photo_alternate,
-                    color: primaryColor,
-                    size: 20,
+              ),
+            ],
+          ),
+          // 1. Text Field First
+          _buildTextField(controller, maxLines: 3, focusNode: focusNode),
+          const SizedBox(height: 12),
+
+          // 2. Paste Guide & Image List
+          GestureDetector(
+            onTap: () => focusNode.requestFocus(),
+            child: Column(
+              children: [
+                // Always show guide (per Phase 2 requirement: "강제 노출")
+                // Reduced padding if images exist to save space
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(
+                    vertical: hasImages ? 12 : 24,
                   ),
-                  onPressed: () {
-                    focusNode.requestFocus();
-                    _pickAndUploadImage(blocksField);
-                  },
-                  tooltip: '이미지 추가',
-                ),
-              ],
-            ),
-          ],
-        ),
-        GestureDetector(
-          onTap: () => focusNode.requestFocus(),
-          child: CallbackShortcuts(
-            bindings: {
-              const SingleActivator(
-                LogicalKeyboardKey.keyV,
-                control: true,
-              ): () =>
-                  _handlePaste(blocksField),
-            },
-            child: Focus(
-              focusNode: focusNode,
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: isFocused ? primaryColor : Colors.transparent,
-                    width: 2,
+                  decoration: BoxDecoration(
+                    color: surfaceDark,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isFocused ? primaryColor : Colors.white10,
+                      width: 2,
+                    ),
                   ),
-                ),
-                child: Column(
-                  children: [
-                    if (isExpanded) _buildImagePreviewRow(blocks, blocksField),
-                    if (blocks.where((b) => b['type'] == 'image').isEmpty)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Text(
-                          isFocused ? '클립보드 이미지를 Ctrl+V로 붙여넣으세요' : '',
-                          style: const TextStyle(
-                            color: primaryColor,
-                            fontSize: 11,
-                          ),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.content_paste_go,
+                        color: isFocused ? primaryColor : Colors.white24,
+                        size: hasImages ? 24 : 32,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '클립보드 이미지를 Ctrl+V로 붙여넣으세요',
+                        style: TextStyle(
+                          color: isFocused ? primaryColor : Colors.white54,
+                          fontSize: hasImages ? 11 : 13,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+
+                // Image List (if expanded)
+                if (hasImages && isExpanded)
+                  _buildVerticalImageListView(blocks, blocksField),
+              ],
             ),
           ),
-        ),
-        const SizedBox(height: 8),
-        _buildTextField(controller, maxLines: 3),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _buildImagePreviewRow(List<dynamic> blocks, String blocksField) {
-    final imageBlocks = blocks
+  Widget _buildVerticalImageListView(List<dynamic> blocks, String blocksField) {
+    final imageEntries = blocks
         .asMap()
         .entries
         .where((e) => e.value['type'] == 'image')
         .toList();
-    if (imageBlocks.isEmpty) return const SizedBox.shrink();
+
+    if (imageEntries.isEmpty) return const SizedBox.shrink();
 
     return Container(
-      height: 80,
-      margin: const EdgeInsets.only(bottom: 12),
+      constraints: const BoxConstraints(maxHeight: 350), // 높이 제한 350px
+      margin: const EdgeInsets.only(top: 8),
       child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: imageBlocks.length,
+        shrinkWrap: true,
+        physics: const ClampingScrollPhysics(),
+        itemCount: imageEntries.length,
         itemBuilder: (context, index) {
-          final entry = imageBlocks[index];
+          final entry = imageEntries[index];
           final blockIdx = entry.key;
           final url = entry.value['content'].toString();
 
           return Container(
-            margin: const EdgeInsets.only(right: 8),
-            width: 80,
+            margin: const EdgeInsets.only(bottom: 12),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.white10),
+              color: Colors.black26,
             ),
             clipBehavior: Clip.antiAlias,
             child: Stack(
-              fit: StackFit.expand,
               children: [
                 GestureDetector(
                   onTap: () {
@@ -1176,24 +1196,25 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> {
                   },
                   child: CachedNetworkImage(
                     imageUrl: url,
+                    width: double.infinity,
                     fit: BoxFit.contain,
-                    placeholder: (context, url) => const Center(
-                      child: SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: primaryColor,
-                        ),
+                    placeholder: (context, url) => Container(
+                      height: 150,
+                      color: Colors.white10,
+                      child: const Center(
+                        child: CircularProgressIndicator(color: primaryColor),
                       ),
                     ),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error, color: Colors.red),
+                    errorWidget: (context, url, error) => Container(
+                      height: 100,
+                      color: Colors.white10,
+                      child: const Icon(Icons.broken_image, color: Colors.red),
+                    ),
                   ),
                 ),
                 Positioned(
-                  top: 2,
-                  right: 2,
+                  top: 8,
+                  right: 8,
                   child: GestureDetector(
                     onTap: () {
                       setState(() {
@@ -1205,15 +1226,16 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> {
                       });
                     },
                     child: Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: const BoxDecoration(
-                        color: Colors.black54,
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.6),
                         shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white24),
                       ),
                       child: const Icon(
                         Icons.close,
                         color: Colors.white,
-                        size: 14,
+                        size: 20,
                       ),
                     ),
                   ),
@@ -1304,9 +1326,9 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          color: aiColor.withOpacity(0.15),
+          color: aiColor.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: aiColor.withOpacity(0.5)),
+          border: Border.all(color: aiColor.withValues(alpha: 0.5)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
