@@ -55,7 +55,7 @@ class SourcingImageSlot extends StatelessWidget {
                   color: Colors.black26,
                   borderRadius: BorderRadius.circular(12),
                   border: isMissing
-                      ? Border.all(color: Colors.red.withOpacity(0.8), width: 2)
+                      ? Border.all(color: Colors.red.withValues(alpha: 0.8), width: 2)
                       : Border.all(color: Colors.white10),
                 ),
                 clipBehavior: Clip.antiAlias,

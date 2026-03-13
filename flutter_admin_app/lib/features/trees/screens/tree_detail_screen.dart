@@ -44,9 +44,9 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
       // Create updated images array
       List<TreeImage> updatedImages = widget.tree.images.map((img) {
         String? newHint;
-        if (img.imageType == 'main')
+        if (img.imageType == 'main') {
           newHint = _hintControllers['main']!.text;
-        else if (img.imageType == 'bark')
+        } else if (img.imageType == 'bark')
           newHint = _hintControllers['bark']!.text;
         else if (img.imageType == 'leaf')
           newHint = _hintControllers['leaf']!.text;

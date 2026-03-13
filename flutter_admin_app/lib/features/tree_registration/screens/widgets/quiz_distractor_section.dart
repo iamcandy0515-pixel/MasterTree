@@ -45,7 +45,7 @@ class QuizDistractorSection extends StatelessWidget {
               ],
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }

@@ -42,7 +42,7 @@ class BasicInfoSection extends StatelessWidget {
                   const Text('구분', style: labelStyle),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
-                    value: vm.selectedCategory,
+                    initialValue: vm.selectedCategory,
                     hint: const Text('선택 (필수)', style: TextStyle(color: Colors.white24, fontSize: 13)),
                     dropdownColor: const Color(0xFF161B12),
                     style: const TextStyle(color: Colors.white),
@@ -64,7 +64,7 @@ class BasicInfoSection extends StatelessWidget {
                   const Text('성상', style: labelStyle),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
-                    value: vm.selectedHabit,
+                    initialValue: vm.selectedHabit,
                     hint: const Text('선택 (필수)', style: TextStyle(color: Colors.white24, fontSize: 13)),
                     dropdownColor: const Color(0xFF161B12),
                     style: const TextStyle(color: Colors.white),

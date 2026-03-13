@@ -1,29 +1,6 @@
 part of '../tree_sourcing_viewmodel.dart';
 
 extension TreeSourcingDriveExtension on TreeSourcingViewModel {
-  Future<void> _loadSettings() async {
-    try {
-      final driveUrl = await _repository.getGoogleDriveFolderUrl();
-      final thumbUrl = await _repository.getThumbnailDriveUrl();
-
-      _driveFolderId = _extractId(driveUrl);
-      _thumbFolderId = _extractId(thumbUrl);
-    } catch (e) {
-      debugPrint('Error loading drive settings: $e');
-    }
-  }
-
-  String? _extractId(String url) {
-    if (url.isEmpty) return null;
-    try {
-      if (url.contains('id=')) return url.split('id=')[1];
-      final parts = url.split('/');
-      return parts.where((p) => p.isNotEmpty).last;
-    } catch (_) {
-      return null;
-    }
-  }
-
   Future<void> _checkExistence(String url, String key) async {
     if (!url.contains('drive.google.com')) return;
     try {

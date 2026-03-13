@@ -50,7 +50,7 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> {
   List<dynamic> _contentBlocks = [];
   List<dynamic> _explanationBlocks = [];
 
-  List<TextEditingController> _incorrectOptionControllers = [];
+  final List<TextEditingController> _incorrectOptionControllers = [];
   String _correctOption = '';
   int _correctOptionIndex = 0;
 
@@ -897,8 +897,9 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> {
                 (b) => b is Map && b['type'] == 'text',
                 orElse: () => {'content': ''},
               );
-              if (textBlock != null)
+              if (textBlock != null) {
                 content = textBlock['content']?.toString() ?? '';
+              }
             }
             content = content.replaceAll('\n', ' ').trim();
             // 문제 지문 앞에 있는 문항 번호 패턴(예: '3.', '2)' 등) 제거
@@ -918,7 +919,7 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> {
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      '${year}년 ${round}회 ${qNo}번(${quiz['quiz_categories']?['name'] ?? '-'})',
+                      '$year년 $round회 $qNo번(${quiz['quiz_categories']?['name'] ?? '-'})',
                       style: const TextStyle(
                         color: primaryColor,
                         fontSize: 11,
@@ -962,7 +963,7 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );

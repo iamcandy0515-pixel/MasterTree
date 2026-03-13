@@ -11,7 +11,6 @@ extension TreeSourcingDetailExtension on TreeSourcingViewModel {
     notify();
 
     try {
-      await _loadSettings();
       await syncWithDrive();
     } finally {
       _isLoading = false;
@@ -107,8 +106,11 @@ extension TreeSourcingDetailExtension on TreeSourcingViewModel {
         String? finalThumb = existing?.thumbnailUrl;
 
         if (stagedOriginal != null) {
-          if (stagedOriginal is XFile) finalUrl = await _repository.uploadImage(stagedOriginal);
-          else if (stagedOriginal is TreeImage) finalUrl = stagedOriginal.imageUrl;
+          if (stagedOriginal is XFile) {
+            finalUrl = await _repository.uploadImage(stagedOriginal);
+          } else if (stagedOriginal is TreeImage) {
+            finalUrl = stagedOriginal.imageUrl;
+          }
           else if (stagedOriginal is Uint8List) {
              final xFile = XFile.fromData(stagedOriginal, name: '${_selectedTree!.nameKr}_${type}_original.jpg');
              finalUrl = await _repository.uploadImage(xFile);
@@ -116,8 +118,11 @@ extension TreeSourcingDetailExtension on TreeSourcingViewModel {
         }
 
         if (stagedThumb != null) {
-          if (stagedThumb is XFile) finalThumb = await _repository.uploadImage(stagedThumb);
-          else if (stagedThumb is TreeImage) finalThumb = stagedThumb.thumbnailUrl;
+          if (stagedThumb is XFile) {
+            finalThumb = await _repository.uploadImage(stagedThumb);
+          } else if (stagedThumb is TreeImage) {
+            finalThumb = stagedThumb.thumbnailUrl;
+          }
           else if (stagedThumb is Uint8List) {
              final xFile = XFile.fromData(stagedThumb, name: '${_selectedTree!.nameKr}_${type}_thumb.jpg');
              finalThumb = await _repository.uploadImage(xFile);
@@ -128,7 +133,9 @@ extension TreeSourcingDetailExtension on TreeSourcingViewModel {
           newImages.add(TreeImage(imageType: type, imageUrl: finalUrl ?? '', thumbnailUrl: finalThumb));
         }
 
-        if (finalUrl != existing?.imageUrl || finalThumb != existing?.thumbnailUrl) isAnyChange = true;
+        if (finalUrl != existing?.imageUrl || finalThumb != existing?.thumbnailUrl) {
+          isAnyChange = true;
+        }
       }
 
       if (!isAnyChange) {

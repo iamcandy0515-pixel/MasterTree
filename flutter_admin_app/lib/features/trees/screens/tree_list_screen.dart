@@ -488,7 +488,7 @@ class _TreeListScreenState extends State<_TreeListContent> {
                         ...tree.category!
                             .split('/')
                             .map((c) => _buildSmallTag(c.trim(), primary))
-                            .toList(),
+                            ,
                       const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(
