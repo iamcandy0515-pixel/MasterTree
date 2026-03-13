@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 
 import treeRoutes from "./modules/trees/trees.routes";
+import treeRegistrationRoutes from "./modules/tree-registration/tree-registration.routes";
 import uploadRoutes from "./modules/uploads/uploads.routes";
 import aiRoutes from "./modules/ai/ai.routes";
 import { userRoutes } from "./modules/users";
@@ -26,6 +27,7 @@ app.use((req, res, next) => {
 
 /** Feature Routes */
 app.use("/api/trees", treeRoutes);
+app.use("/api/tree-registration", treeRegistrationRoutes);
 app.use("/api/uploads", uploadRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/users", userRoutes); // Login & Auth

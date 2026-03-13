@@ -6,7 +6,6 @@ import 'package:file_picker/file_picker.dart';
 import 'dart:html' as html;
 import 'package:flutter_admin_app/features/trees/viewmodels/tree_list_viewmodel.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
-import 'package:flutter_admin_app/features/trees/screens/add_tree_screen.dart';
 import 'package:flutter_admin_app/features/trees/screens/tree_detail_screen.dart';
 
 class TreeListScreen extends StatelessWidget {
@@ -107,17 +106,6 @@ class _TreeListScreenState extends State<_TreeListContent> {
     }
   }
 
-  void _navigateToAdd() async {
-    final vm = context.read<TreeListViewModel>();
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const AddTreeScreen()),
-    );
-    if (result == true) {
-      vm.fetchTrees();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<TreeListViewModel>();
@@ -159,20 +147,6 @@ class _TreeListScreenState extends State<_TreeListContent> {
                         color: textColor,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: _navigateToAdd,
-                    style: TextButton.styleFrom(
-                      foregroundColor: primaryColor,
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                    ),
-                    child: const Text(
-                      '신규등록',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
                       ),
                     ),
                   ),
