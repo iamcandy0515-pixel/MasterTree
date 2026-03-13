@@ -307,11 +307,8 @@ export class QuizController {
             let effectiveFileId = fileId;
 
             // 로직 검증: fileId가 전형적인 ID가 아닌 경우(파일명 등) 검색 시도
-            const isTypicalId = /^[a-zA-Z0-9_-]{25,45}$/.test(fileId);
+            const isTypicalId = /^[a-zA-Z0-9_-]{25,45}$/.test(fileId.trim());
             if (!isTypicalId) {
-                console.log(
-                    `🔍 [Drive] Input '${fileId}' doesn't look like an ID. Searching by name...`,
-                );
                 // 설정에서 구글 드라이브 기출문제 폴더 URL 가져오기
                 const folderUrl =
                     (await settingsService.getExamDriveUrl()) ||
@@ -336,20 +333,24 @@ export class QuizController {
                     );
                 }
 
+                console.log(
+                    `🔍 [Drive] Input '${fileId}' doesn't look like an ID. Searching by name in folder: ${folderId}...`,
+                );
+                
                 const files = await driveService.searchFilesInFolder(
                     folderId,
-                    fileId,
+                    fileId.trim(),
                 );
 
                 if (files && files.length > 0) {
                     effectiveFileId = files[0].id;
                     console.log(
-                        `✅ [Drive] Found file by name! Using ID: ${effectiveFileId}`,
+                        `✅ [Drive] Found file by name! Using ID: ${effectiveFileId} (Original name: ${files[0].name})`,
                     );
                 } else {
                     return errorResponse(
                         res,
-                        "파일을 찾을 수 없습니다 (파일명 검색 실패)",
+                        `구글 드라이브 폴더 내에서 파일을 찾을 수 없습니다: '${fileId}'. 폴더 공유 설정(링크가 있는 모든 사용자 권한 필요) 및 파일명을 확인해주세요.`,
                         404,
                     );
                 }
