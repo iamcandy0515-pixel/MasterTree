@@ -25,14 +25,20 @@ export class GoogleDriveAuthService {
                 this.auth = new google.auth.JWT({
                     email: SERVICE_ACCOUNT_EMAIL,
                     key: SERVICE_ACCOUNT_PRIVATE_KEY,
-                    scopes: ["https://www.googleapis.com/auth/drive.readonly"]
+                    scopes: [
+                        "https://www.googleapis.com/auth/drive.readonly",
+                        "https://www.googleapis.com/auth/drive.file",
+                    ],
                 });
                 console.log("✅ [Drive Auth] Authenticated using Service Account (JWT)");
             } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
                 // Priority 2: Application Default Credentials (ADC) - Best for GCP Production (Cloud Run, etc.)
                 // This allows auth without managing key files in environment variables
                 this.auth = new google.auth.GoogleAuth({
-                    scopes: ["https://www.googleapis.com/auth/drive.readonly"]
+                    scopes: [
+                        "https://www.googleapis.com/auth/drive.readonly",
+                        "https://www.googleapis.com/auth/drive.file",
+                    ],
                 });
                 console.log("✅ [Drive Auth] Authenticated using Application Default Credentials (ADC)");
             } else if (CLIENT_ID && CLIENT_SECRET && REFRESH_TOKEN) {
