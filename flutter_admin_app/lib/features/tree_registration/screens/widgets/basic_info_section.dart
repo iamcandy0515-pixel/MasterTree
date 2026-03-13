@@ -34,25 +34,6 @@ class BasicInfoSection extends StatelessWidget {
 
         Row(
           children: [
-            // 성상 (1: 상록수, 2: 낙엽수)
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('성상', style: labelStyle),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    value: vm.selectedHabit,
-                    dropdownColor: const Color(0xFF161B12),
-                    style: const TextStyle(color: Colors.white),
-                    decoration: _dropdownDecoration(),
-                    items: ['상록수', '낙엽수'].map((h) => DropdownMenuItem(value: h, child: Text(h))).toList(),
-                    onChanged: (v) => vm.setSelectedHabit(v ?? '상록수'),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 16),
             // 구분
             Expanded(
               child: Column(
@@ -62,11 +43,36 @@ class BasicInfoSection extends StatelessWidget {
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
                     value: vm.selectedCategory,
+                    hint: const Text('선택 (필수)', style: TextStyle(color: Colors.white24, fontSize: 13)),
                     dropdownColor: const Color(0xFF161B12),
                     style: const TextStyle(color: Colors.white),
                     decoration: _dropdownDecoration(),
-                    items: ['침엽수', '활엽수', '기타'].map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
+                    items: ['침엽수', '활엽수']
+                        .map((c) => DropdownMenuItem(value: c, child: Text(c)))
+                        .toList(),
                     onChanged: vm.setSelectedCategory,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 16),
+            // 성상
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('성상', style: labelStyle),
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<String>(
+                    value: vm.selectedHabit,
+                    hint: const Text('선택 (필수)', style: TextStyle(color: Colors.white24, fontSize: 13)),
+                    dropdownColor: const Color(0xFF161B12),
+                    style: const TextStyle(color: Colors.white),
+                    decoration: _dropdownDecoration(),
+                    items: ['상록수', '낙엽수']
+                        .map((h) => DropdownMenuItem(value: h, child: Text(h)))
+                        .toList(),
+                    onChanged: vm.setSelectedHabit,
                   ),
                 ],
               ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
+import 'package:super_clipboard/super_clipboard.dart';
 import 'package:flutter_admin_app/features/tree_registration/models/tree_registration_request.dart';
 import 'package:flutter_admin_app/features/tree_registration/repositories/tree_registration_repository.dart';
 
@@ -12,8 +13,8 @@ class TreeRegistrationViewModel extends ChangeNotifier {
   final TextEditingController scientificNameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   
-  String _selectedHabit = '상록수'; // 1: 상록수, 2: 낙엽수 (Mapped in Controller)
-  String? _selectedCategory = '활엽수'; // 기본값
+  String? _selectedHabit; // 상록수, 낙엽수
+  String? _selectedCategory; // 침엽수, 활엽수
 
   // Images & Hints (Tagged Management)
   final Map<String, TreeImage> _taggedImages = {};
@@ -30,7 +31,7 @@ class TreeRegistrationViewModel extends ChangeNotifier {
   ];
 
   // Getters
-  String get selectedHabit => _selectedHabit;
+  String? get selectedHabit => _selectedHabit;
   String? get selectedCategory => _selectedCategory;
   String get activeTag => _activeTag;
   bool get isUploading => _isUploading;
@@ -48,7 +49,7 @@ class TreeRegistrationViewModel extends ChangeNotifier {
     super.dispose();
   }
 
-  void setSelectedHabit(String value) {
+  void setSelectedHabit(String? value) {
     _selectedHabit = value;
     notifyListeners();
   }
@@ -98,13 +99,103 @@ class TreeRegistrationViewModel extends ChangeNotifier {
   }
 
   Future<void> pasteImageFromClipboard() async {
-    // Web Clipboard API integration is pending or requires super_clipboard.
-    // Focusing on gallery picking for initial module separation.
-    print('Clipboard paste requested');
+    try {
+      final clipboard = SystemClipboard.instance;
+      if (clipboard == null) return;
+
+      final reader = await clipboard.read();
+
+      if (reader.canProvide(Formats.png)) {
+        _isUploading = true;
+        notifyListeners();
+
+        reader.getFile(Formats.png, (file) async {
+          final bytes = await file.readAll();
+          final xFile = XFile.fromData(
+            bytes,
+            mimeType: 'image/png',
+            name: 'cb_${DateTime.now().millisecondsSinceEpoch}.png',
+          );
+
+          try {
+            final driveUrl = await _repo.uploadToGoogleDrive(xFile);
+            _taggedImages[_activeTag] = TreeImage(
+              imageType: _activeTag,
+              imageUrl: driveUrl,
+              hint: '',
+            );
+          } finally {
+            _isUploading = false;
+            notifyListeners();
+          }
+        });
+      } else if (reader.canProvide(Formats.jpeg)) {
+        _isUploading = true;
+        notifyListeners();
+
+        reader.getFile(Formats.jpeg, (file) async {
+          final bytes = await file.readAll();
+          final xFile = XFile.fromData(
+            bytes,
+            mimeType: 'image/jpeg',
+            name: 'cb_${DateTime.now().millisecondsSinceEpoch}.jpg',
+          );
+
+          try {
+            final driveUrl = await _repo.uploadToGoogleDrive(xFile);
+            _taggedImages[_activeTag] = TreeImage(
+              imageType: _activeTag,
+              imageUrl: driveUrl,
+              hint: '',
+            );
+          } finally {
+            _isUploading = false;
+            notifyListeners();
+          }
+        });
+      } else {
+        throw Exception('클립보드에 이미지가 없습니다.');
+      }
+    } catch (e) {
+      _isUploading = false;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<void> searchGoogleImage() async {
+    final treeName = nameKrController.text.trim();
+    if (treeName.isEmpty) throw Exception('수목명을 먼저 입력해주세요.');
+
+    try {
+      _isUploading = true;
+      notifyListeners();
+
+      // 구글 이미지는 B 방식 (다운로드 후 스토리지 업로드)
+      final url = await _repo.searchAndAttachGoogleImage(treeName, _activeTag);
+      if (url != null) {
+        _taggedImages[_activeTag] = TreeImage(
+          imageType: _activeTag,
+          imageUrl: url,
+          hint: '',
+        );
+      } else {
+        throw Exception('검색된 이미지가 없습니다.');
+      }
+
+      _isUploading = false;
+      notifyListeners();
+    } catch (e) {
+      _isUploading = false;
+      notifyListeners();
+      rethrow;
+    }
   }
 
   Future<void> submit() async {
     if (nameKrController.text.trim().isEmpty) throw Exception('수목명을 입력해주세요.');
+    if (_selectedCategory == null) throw Exception('구분을 선택해주세요.');
+    if (_selectedHabit == null) throw Exception('성상을 선택해주세요.');
     if (!_taggedImages.containsKey('main')) throw Exception('최소한 "대표" 이미지는 등록해야 합니다.');
 
     _isSubmitting = true;
@@ -115,8 +206,8 @@ class TreeRegistrationViewModel extends ChangeNotifier {
         nameKr: nameKrController.text.trim(),
         scientificName: scientificNameController.text.trim(),
         description: descriptionController.text.trim(),
-        category: _selectedCategory,
-        habit: _selectedHabit,
+        category: '$_selectedCategory,$_selectedHabit',
+        habit: _selectedHabit!,
         images: _taggedImages.values.toList(),
         quizDistractors: distractorControllers
             .map((c) => c.text.trim())
@@ -141,6 +232,8 @@ class TreeRegistrationViewModel extends ChangeNotifier {
     nameKrController.clear();
     scientificNameController.clear();
     descriptionController.clear();
+    _selectedCategory = null;
+    _selectedHabit = null;
     _taggedImages.clear();
     _activeTag = 'main';
     for (var c in distractorControllers) {

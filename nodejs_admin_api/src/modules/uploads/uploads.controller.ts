@@ -2,6 +2,10 @@ import { Request, Response } from "express";
 import axios from "axios";
 import { UploadService } from "./uploads.service";
 import { successResponse, errorResponse } from "../../utils/response";
+import { settingsService } from "../settings/settings.service";
+import { extractDriveFolderId } from "../../utils/drive-helper";
+import { googleDriveFileService } from "../external/google_drive_file.service";
+import { Readable } from "stream";
 
 export class UploadController {
     /**
@@ -125,6 +129,66 @@ export class UploadController {
             if (!res.headersSent) {
                 errorResponse(res, "이미지 로딩 실패", 500);
             }
+        }
+    }
+
+    /**
+     * 구글 드라이브 '원본 이미지 폴더'로 업로드
+     */
+    static async uploadToGoogleDrive(
+        req: Request,
+        res: Response,
+    ): Promise<void> {
+        try {
+            if (!req.file) {
+                return errorResponse(res, "파일이 없습니다.", 400);
+            }
+
+            // 1. 설정에서 폴더 URL 가져오기
+            const folderUrl = await settingsService.getGoogleDriveFolderUrl();
+            if (!folderUrl) {
+                return errorResponse(
+                    res,
+                    "설정에서 구글 드라이브 폴더 URL이 지정되지 않았습니다.",
+                    400,
+                );
+            }
+
+            const folderId = extractDriveFolderId(folderUrl);
+            if (!folderId) {
+                return errorResponse(
+                    res,
+                    "유효하지 않은 구글 드라이브 폴더 URL입니다.",
+                    400,
+                );
+            }
+
+            // 2. 구글 드라이브 업로드
+            const fileName =
+                req.body.fileName ||
+                `upload_${Date.now()}_${req.file.originalname}`;
+            const uploadResponse = await googleDriveFileService.createFile(
+                fileName,
+                folderId,
+                req.file.mimetype,
+                Readable.from(req.file.buffer),
+            );
+
+            if (uploadResponse.data.id) {
+                // view URL 생성
+                const url = `https://drive.google.com/uc?export=view&id=${uploadResponse.data.id}`;
+                return successResponse(
+                    res,
+                    { id: uploadResponse.data.id, url },
+                    "구글 드라이브 업로드 성공",
+                    201,
+                );
+            }
+
+            throw new Error("구글 드라이브 업로드 실패");
+        } catch (error: any) {
+            console.error("❌ [GoogleDriveUpload] Error:", error.message);
+            errorResponse(res, error.message || "구글 드라이브 업로드 실패", 500);
         }
     }
 }
