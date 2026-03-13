@@ -2,7 +2,8 @@ import { google } from "googleapis";
 import { googleDriveAuthService } from "./google_drive_auth.service";
 
 /**
- * Service to handle Google Drive file operations (search, download, upload).
+ * Service to handle Google Drive file operations.
+ * Enforces authenticated access using Service Account or ADC.
  */
 export class GoogleDriveFileService {
     private drive;
@@ -12,9 +13,9 @@ export class GoogleDriveFileService {
         if (auth) {
             this.drive = google.drive({ version: "v3", auth });
         } else {
-            // Fallback to API Key if OAuth2 is not configured
-            const API_KEY = process.env.GOOGLE_DRIVE_API_KEY || process.env.GEMINI_KEY;
-            this.drive = google.drive({ version: "v3", auth: API_KEY });
+            console.error("❌ [Drive File Service] Critical Error: Authentication not initialized.");
+            // We still initialize with null auth to prevent immediate crashes, but calls will fail
+            this.drive = google.drive({ version: "v3" });
         }
     }
 
@@ -29,6 +30,9 @@ export class GoogleDriveFileService {
      * Search for images in a folder.
      */
     async searchImages(query: string) {
+        if (!googleDriveAuthService.isConfigured()) {
+            throw new Error("❌ Authentication required for file operations.");
+        }
         return await this.drive.files.list({
             q: query,
             fields: "files(id, name, mimeType)",
@@ -42,6 +46,9 @@ export class GoogleDriveFileService {
      * Search for files in a folder with specific fields.
      */
     async searchFiles(query: string) {
+        if (!googleDriveAuthService.isConfigured()) {
+            throw new Error("❌ Authentication required for file operations.");
+        }
         return await this.drive.files.list({
             q: query,
             fields: "files(id, name, mimeType, webContentLink, createdTime, size, iconLink)",
@@ -53,30 +60,23 @@ export class GoogleDriveFileService {
     }
 
     /**
-     * Download a file by ID using authenticated access or public link fallback.
+     * Download a file by ID using authenticated access.
+     * Public link fallback removed for security.
      */
     async downloadFile(fileId: string): Promise<Buffer> {
-        const axios = require("axios");
-        
         try {
-            // If OAuth2 is available, we can use the API directly or authenticated direct link
-            const auth = googleDriveAuthService.getAuthClient();
-            
-            if (auth) {
-                console.log(`⬇️ [Drive] Authenticated download for file: ${fileId}`);
-                const response = await this.drive.files.get(
-                    { fileId, alt: "media" },
-                    { responseType: "arraybuffer" }
-                );
-                return Buffer.from(response.data as ArrayBuffer);
+            if (!googleDriveAuthService.isConfigured()) {
+                throw new Error("❌ Authentication required to download files.");
             }
 
-            // Fallback for public files
-            const verifiedUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
-            const response = await axios.get(verifiedUrl, { responseType: "arraybuffer" });
+            console.log(`⬇️ [Drive] Authenticated download for file: ${fileId}`);
+            const response = await this.drive.files.get(
+                { fileId, alt: "media" },
+                { responseType: "arraybuffer" }
+            );
             return Buffer.from(response.data as ArrayBuffer);
         } catch (error: any) {
-            console.error("❌ Error downloading file from Drive:", error.message);
+            console.error(`❌ Error downloading file ${fileId} from Drive:`, error.message);
             throw error;
         }
     }
@@ -86,7 +86,7 @@ export class GoogleDriveFileService {
      */
     async createFile(name: string, folderId: string, mimeType: string, body: any) {
         if (!googleDriveAuthService.isConfigured()) {
-            throw new Error("❌ OAuth2 must be configured to upload files.");
+            throw new Error("❌ Authentication required to upload files.");
         }
 
         return await this.drive.files.create({
