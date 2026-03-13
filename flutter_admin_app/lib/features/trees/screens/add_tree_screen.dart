@@ -404,7 +404,7 @@ class _AddTreeContentState extends State<_AddTreeContent> {
                     children: [
                       Flexible(
                         child: DropdownButtonFormField<String>(
-                          value: _viewModel.selectedCategory,
+                          initialValue: _viewModel.selectedCategory,
                           decoration: const InputDecoration(
                             labelText: '구분 (필수)',
                             border: InputBorder.none,
@@ -428,7 +428,7 @@ class _AddTreeContentState extends State<_AddTreeContent> {
                       const SizedBox(width: 16),
                       Flexible(
                         child: DropdownButtonFormField<int>(
-                          value: _viewModel.difficulty,
+                          initialValue: _viewModel.difficulty,
                           decoration: const InputDecoration(
                             labelText: '난이도 (1-5)',
                             border: InputBorder.none,
@@ -480,7 +480,7 @@ class _AddTreeContentState extends State<_AddTreeContent> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   DropdownButtonFormField<String>(
-                    value: _viewModel.selectedImageType,
+                    initialValue: _viewModel.selectedImageType,
                     decoration: const InputDecoration(
                       labelText: '이미지 구분',
                       border: InputBorder.none,
@@ -1101,7 +1101,7 @@ class _AddTreeContentState extends State<_AddTreeContent> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              if (action != null) action,
+              ?action,
             ],
           ),
           const SizedBox(height: 16),

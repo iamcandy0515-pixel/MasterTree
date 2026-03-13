@@ -46,7 +46,6 @@ class _QuizExtractionStep2ScreenContent extends StatefulWidget {
   final int? initialRound;
 
   const _QuizExtractionStep2ScreenContent({
-    super.key,
     required this.selectedFiles,
     this.initialSubject,
     this.initialYear,

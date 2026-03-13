@@ -179,8 +179,9 @@ class AddTreeViewModel extends ChangeNotifier {
   Future<void> pasteImageFromClipboard() async {
     try {
       final clipboardData = await html.window.navigator.clipboard!.read();
-      if (clipboardData.items == null || clipboardData.items!.length == 0)
+      if (clipboardData.items == null || clipboardData.items!.length == 0) {
         return;
+      }
 
       _isUploading = true;
       notifyListeners();

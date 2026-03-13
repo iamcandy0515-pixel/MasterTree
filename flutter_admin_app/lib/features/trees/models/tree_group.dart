@@ -1,4 +1,3 @@
-import 'package:flutter_admin_app/features/trees/models/tree.dart';
 
 class TreeGroup {
   final String id;

@@ -128,7 +128,7 @@ class _ComparisonMatrix extends StatefulWidget {
   final TreeGroup group;
   final TreeLookalikeViewModel vm;
 
-  const _ComparisonMatrix({super.key, required this.group, required this.vm});
+  const _ComparisonMatrix({required this.group, required this.vm});
 
   @override
   State<_ComparisonMatrix> createState() => _ComparisonMatrixState();

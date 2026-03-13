@@ -11,7 +11,7 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier {
   int _selectedQuestion = 1;
   int get selectedQuestion => _selectedQuestion;
 
-  bool _isExtracting = false;
+  final bool _isExtracting = false;
   bool get isExtracting => _isExtracting;
 
   bool _isSearching = false;

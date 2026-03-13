@@ -44,8 +44,7 @@ class TreeSourcingViewModel extends ChangeNotifier {
   final Map<String, bool> _fileMissing = {};
   Map<String, bool> get fileMissing => _fileMissing;
 
-  String? _driveFolderId;
-  String? _thumbFolderId;
+
 
   TreeSourcingViewModel() {
     loadTrees();
