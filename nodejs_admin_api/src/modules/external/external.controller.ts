@@ -4,6 +4,7 @@ import { settingsService } from "../settings/settings.service";
 import { extractDriveFolderId } from "../../utils/drive-helper";
 import sharp from "sharp";
 import { googleDriveFileService } from "./google_drive_file.service";
+import { UploadService } from "../uploads/uploads.service";
 
 const driveService = new GoogleDriveService();
 
@@ -140,6 +141,77 @@ export const searchAndDownloadGoogleImage = async (
         return res
             .status(500)
             .json({ error: "Download failed", details: error.message });
+    }
+};
+
+/**
+ * 드라이브에서 이미지를 검색하여 다운로드한 뒤, Supabase Storage에 업로드하고 결과를 반환 (Approach B)
+ */
+export const searchAndAttachGoogleImage = async (
+    req: Request,
+    res: Response,
+) => {
+    try {
+        const { treeName, imageType } = req.body;
+        if (!treeName || !imageType) {
+            return res.status(400).json({ error: "Missing parameters" });
+        }
+
+        // 1. 설정에서 폴더 URL 가져오기
+        const folderUrl = await settingsService.getGoogleDriveFolderUrl();
+        const folderId = folderUrl ? extractDriveFolderId(folderUrl) : null;
+
+        if (!folderId) {
+            return res.status(400).json({
+                error: "Google Drive folder is not configured or URL is invalid.",
+            });
+        }
+
+        // 2. 드라이브에서 검색 및 다운로드
+        const buffer = await driveService.searchAndDownloadImage(
+            treeName,
+            imageType,
+            folderId,
+        );
+
+        if (!buffer) {
+            return res.json({ success: false, message: "Image not found" });
+        }
+
+        // 3. Supabase Storage에 업로드 (UploadService 활용)
+        const typeMap: any = {
+            main: "대표",
+            flower: "꽃",
+            fruit: "열매",
+            bark: "수피",
+            leaf: "잎",
+        };
+        const fileName = `${treeName}_${
+            typeMap[imageType] || imageType
+        }_google.jpg`;
+
+        const uploadResult = await UploadService.uploadToStorage(
+            {
+                buffer,
+                mimetype: "image/jpeg",
+                originalname: fileName,
+                size: buffer.length,
+            } as any,
+            "tree-images",
+            "trees/google",
+        );
+
+        return res.json({
+            success: true,
+            url: uploadResult.publicUrl,
+            source: "google_drive",
+        });
+    } catch (error: any) {
+        console.error("❌ [SearchAndAttach] Error:", error);
+        return res.status(500).json({
+            error: "Search and attach failed",
+            details: error.message,
+        });
     }
 };
 

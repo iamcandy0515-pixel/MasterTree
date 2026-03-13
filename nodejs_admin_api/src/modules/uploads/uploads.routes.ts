@@ -31,6 +31,19 @@ router.post(
 );
 
 /**
+ * POST /api/uploads/google-drive
+ * 구글 드라이브 지정 폴더로 이미지 업로드 (주로 원본 보관용)
+ */
+router.post(
+    "/google-drive",
+    verifyAdmin,
+    upload.single("file"),
+    (req, res, next) => {
+        UploadController.uploadToGoogleDrive(req, res).catch(next);
+    },
+);
+
+/**
  * GET /api/uploads/proxy?url=...
  * 외부 이미지 프록시 (CORS 대응)
  */

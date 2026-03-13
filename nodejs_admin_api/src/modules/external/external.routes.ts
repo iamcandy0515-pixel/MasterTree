@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
     searchGoogleImage,
     searchAndDownloadGoogleImage,
+    searchAndAttachGoogleImage,
     searchGoogleDriveFiles,
     generateThumbnail,
     getDriveLinks,
@@ -13,6 +14,10 @@ router.post("/google-images", searchGoogleImage as unknown as any);
 router.post(
     "/google-images/download",
     searchAndDownloadGoogleImage as unknown as any,
+);
+router.post(
+    "/google-images/attach",
+    searchAndAttachGoogleImage as unknown as any,
 );
 
 router.post("/drive-files/search", searchGoogleDriveFiles as unknown as any);

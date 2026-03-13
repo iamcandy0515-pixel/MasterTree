@@ -65,4 +65,55 @@ class TreeRegistrationRepository {
     }
     throw Exception('이미지 업로드에 실패했습니다: ${response.body}');
   }
+
+  /// 구글 드라이브 업로드 (주로 붙여넣기 이미지)
+  Future<String> uploadToGoogleDrive(XFile imageFile, {String? fileName}) async {
+    final url = Uri.parse('$_baseUrl/uploads/google-drive');
+    final request = http.MultipartRequest('POST', url);
+
+    final session = Supabase.instance.client.auth.currentSession;
+    final token = session?.accessToken ?? '';
+    request.headers['Authorization'] = 'Bearer $token';
+
+    if (fileName != null) request.fields['fileName'] = fileName;
+
+    final bytes = await imageFile.readAsBytes();
+    request.files.add(
+      http.MultipartFile.fromBytes('file', bytes, filename: imageFile.name),
+    );
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsonResponse['success'] == true) {
+        return jsonResponse['data']['url'];
+      }
+    }
+    throw Exception('구글 드라이브 업로드 실패: ${response.body}');
+  }
+
+  /// 구글 이미지 검색 및 스토리지 연결 (B 방식)
+  Future<String?> searchAndAttachGoogleImage(
+    String treeName,
+    String imageType,
+  ) async {
+    final url = Uri.parse('$_baseUrl/external/google-images/attach');
+    final headers = await _getHeaders();
+
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode({'treeName': treeName, 'imageType': imageType}),
+    );
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsonResponse['success'] == true) {
+        return jsonResponse['url'];
+      }
+    }
+    return null;
+  }
 }
