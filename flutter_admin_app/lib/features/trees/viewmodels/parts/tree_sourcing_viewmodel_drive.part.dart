@@ -86,40 +86,39 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
           // Original Link Sync
           final driveOriginalUrl = original[type];
           if (driveOriginalUrl != null) {
-            if (dbImage == null || dbImage.imageUrl.isEmpty) {
-              // DB is empty, fill from Drive
-              stageImage(type, TreeImage(imageType: type, imageUrl: driveOriginalUrl), source: 'google');
-            } else if (dbImage.imageUrl == driveOriginalUrl) {
-              // DB exists, but let's check if it exists in drive really (usually yes if it's in the list)
-              _fileMissing.remove('${type}_original');
-            } else {
-              // DB exists but different? User might want to overwrite manually if needed, 
-              // but for now we just mark existence for the DB URL
-              _checkExistence(dbImage.imageUrl, '${type}_original');
+            _fileMissing.remove('${type}_original');
+            // Drive에서 정보가 발견되면 박스와 URL 설정에 매치 (구글 정보 배지 포함)
+            if (dbImage == null || dbImage.imageUrl != driveOriginalUrl) {
+              stageImage(
+                type, 
+                TreeImage(imageType: type, imageUrl: driveOriginalUrl, thumbnailUrl: dbImage?.thumbnailUrl), 
+                source: 'google'
+              );
             }
           } else if (dbImage != null && dbImage.imageUrl.isNotEmpty) {
-             // DB has URL but not found in Drive list
-             _fileMissing['${type}_original'] = true;
+             _checkExistence(dbImage.imageUrl, '${type}_original');
           }
 
           // Thumbnail Link Sync
           final driveThumbUrl = thumb[type];
           if (driveThumbUrl != null) {
-            if (dbImage == null || dbImage.thumbnailUrl == null || dbImage.thumbnailUrl!.isEmpty) {
-              // Stage it
+            _fileMissing.remove('${type}_thumb');
+            // Drive에서 썸네일 정보가 발견되면 박스와 URL 설정에 매치 (구글 정보 배지 포함)
+            if (dbImage == null || dbImage.thumbnailUrl != driveThumbUrl) {
               final currentStaged = _pendingImages['${type}_original'] as TreeImage?;
-              stageImage(type, TreeImage(
-                imageType: type, 
-                imageUrl: currentStaged?.imageUrl ?? dbImage?.imageUrl ?? '',
-                thumbnailUrl: driveThumbUrl
-              ), isThumbnail: true, source: 'google');
-            } else if (dbImage.thumbnailUrl == driveThumbUrl) {
-              _fileMissing.remove('${type}_thumb');
-            } else {
-              _checkExistence(dbImage.thumbnailUrl!, '${type}_thumb');
+              stageImage(
+                type, 
+                TreeImage(
+                  imageType: type, 
+                  imageUrl: currentStaged?.imageUrl ?? dbImage?.imageUrl ?? '',
+                  thumbnailUrl: driveThumbUrl
+                ), 
+                isThumbnail: true, 
+                source: 'google'
+              );
             }
           } else if (dbImage != null && dbImage.thumbnailUrl != null && dbImage.thumbnailUrl!.isNotEmpty) {
-             _fileMissing['${type}_thumb'] = true;
+             _checkExistence(dbImage.thumbnailUrl!, '${type}_thumb');
           }
         }
       }
