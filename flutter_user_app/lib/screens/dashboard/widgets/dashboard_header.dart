@@ -15,9 +15,12 @@ class DashboardHeader extends StatelessWidget {
       automaticallyImplyLeading: false,
       titleSpacing: 0,
       leading: IconButton(
-        onPressed: () => Navigator.maybePop(context),
+        onPressed: () => Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+        ),
         icon: const Icon(
-          Icons.arrow_back_ios_new,
+          Icons.logout_rounded,
           color: AppColors.textLight,
           size: 20,
         ),
@@ -30,7 +33,7 @@ class DashboardHeader extends StatelessWidget {
             '사용자 대시보드',
             style: TextStyle(
               color: AppColors.textLight,
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
               letterSpacing: -0.5,
             ),
@@ -45,15 +48,8 @@ class DashboardHeader extends StatelessWidget {
           ),
         ],
       ),
-      actions: [
-        IconButton(
-          onPressed: () => Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const LoginScreen()),
-          ),
-          icon: const Icon(Icons.logout_rounded, color: AppColors.textMuted),
-        ),
-        const SizedBox(width: 12),
+      actions: const [
+        SizedBox(width: 12),
       ],
     );
   }
