@@ -142,7 +142,7 @@ class _TreeListScreenState extends State<_TreeListContent> {
                   const SizedBox(width: 8),
                   const Expanded(
                     child: Text(
-                      '수목현황 일람',
+                      '수목도감 일람',
                       style: TextStyle(
                         color: textColor,
                         fontSize: 18,
@@ -487,8 +487,7 @@ class _TreeListScreenState extends State<_TreeListContent> {
                       if (tree.category != null && tree.category!.isNotEmpty)
                         ...tree.category!
                             .split('/')
-                            .map((c) => _buildSmallTag(c.trim(), primary))
-                            ,
+                            .map((c) => _buildSmallTag(c.trim(), primary)),
                       const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(

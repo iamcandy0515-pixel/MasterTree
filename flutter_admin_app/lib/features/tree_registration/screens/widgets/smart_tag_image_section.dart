@@ -11,7 +11,7 @@ class SmartTagImageSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<TreeRegistrationViewModel>();
-    
+
     final tags = {
       'main': '대표',
       'leaf': '잎',
@@ -28,11 +28,14 @@ class SmartTagImageSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('2. 부위별 이미지 및 힌트',
-              style: TextStyle(
-                  color: Color(0xFF80F20D),
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold)),
+          const Text(
+            '2. 부위별 이미지 및 힌트',
+            style: TextStyle(
+              color: Color(0xFF80F20D),
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 16),
 
           // Tag Selection (Chips)
@@ -57,8 +60,11 @@ class SmartTagImageSection extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                     avatar: hasImage
-                        ? const Icon(Icons.check_circle,
-                            size: 16, color: Colors.green)
+                        ? const Icon(
+                            Icons.check_circle,
+                            size: 16,
+                            color: Colors.green,
+                          )
                         : null,
                   ),
                 );
@@ -74,9 +80,12 @@ class SmartTagImageSection extends StatelessWidget {
     );
   }
 
-  Widget _buildActiveTagEditor(BuildContext context, TreeRegistrationViewModel vm) {
+  Widget _buildActiveTagEditor(
+    BuildContext context,
+    TreeRegistrationViewModel vm,
+  ) {
     final image = vm.taggedImages[vm.activeTag];
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -91,26 +100,38 @@ class SmartTagImageSection extends StatelessWidget {
             _buildUploadBox(context, vm)
           else
             _buildImageItem(vm, image),
-          
+
           const SizedBox(height: 20),
-          
+
           // Hint Area
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('이 부위의 퀴즈 힌트', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12)),
+              const Text(
+                '이 부위의 퀴즈 힌트',
+                style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12),
+              ),
               const SizedBox(height: 8),
               TextField(
                 onChanged: (v) => vm.updateHint(vm.activeTag, v),
-                controller: TextEditingController(text: image?.hint)..selection = TextSelection.collapsed(offset: (image?.hint ?? '').length),
+                controller: TextEditingController(text: image?.hint)
+                  ..selection = TextSelection.collapsed(
+                    offset: (image?.hint ?? '').length,
+                  ),
                 style: const TextStyle(color: Colors.white, fontSize: 14),
                 maxLines: 2,
                 decoration: InputDecoration(
                   hintText: '문제가 나왔을 때 사용자에게 보여줄 힌트를 입력하세요.',
-                  hintStyle: const TextStyle(color: Colors.white24, fontSize: 12),
+                  hintStyle: const TextStyle(
+                    color: Colors.white24,
+                    fontSize: 12,
+                  ),
                   filled: true,
                   fillColor: Colors.black26,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
             ],
@@ -130,7 +151,8 @@ class SmartTagImageSection extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: const Center(
-            child: CircularProgressIndicator(color: Color(0xFF80F20D))),
+          child: CircularProgressIndicator(color: Color(0xFF80F20D)),
+        ),
       );
     }
 
@@ -148,16 +170,24 @@ class SmartTagImageSection extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.black26,
               borderRadius: BorderRadius.circular(12),
-              border:
-                  Border.all(color: Colors.white10, style: BorderStyle.solid),
+              border: Border.all(
+                color: Colors.white10,
+                style: BorderStyle.solid,
+              ),
             ),
             child: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.add_a_photo_outlined, color: Colors.white38, size: 28),
+                Icon(
+                  Icons.add_a_photo_outlined,
+                  color: Colors.white38,
+                  size: 28,
+                ),
                 SizedBox(height: 8),
-                Text('클릭하여 이미지 파일 추가',
-                    style: TextStyle(color: Colors.white38, fontSize: 12)),
+                Text(
+                  '클릭하여 이미지 파일 추가',
+                  style: TextStyle(color: Colors.white38, fontSize: 12),
+                ),
               ],
             ),
           ),
@@ -175,7 +205,8 @@ class SmartTagImageSection extends StatelessWidget {
                   side: const BorderSide(color: Colors.white10),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               ),
             ),
@@ -187,9 +218,9 @@ class SmartTagImageSection extends StatelessWidget {
                     await vm.searchGoogleImage();
                   } catch (e) {
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(e.toString())),
-                      );
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(e.toString())));
                     }
                   }
                 },
@@ -200,7 +231,8 @@ class SmartTagImageSection extends StatelessWidget {
                   side: const BorderSide(color: Colors.white10),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               ),
             ),
@@ -220,7 +252,9 @@ class SmartTagImageSection extends StatelessWidget {
             height: 150,
             width: double.infinity,
             fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.broken_image, color: Colors.white10)),
+            errorBuilder: (_, __, ___) => const Center(
+              child: Icon(Icons.broken_image, color: Colors.white10),
+            ),
           ),
         ),
         Positioned(

@@ -1,17 +1,15 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../viewmodels/quiz_extraction_step2_viewmodel.dart';
 
 class GoogleDriveSearchModule extends StatefulWidget {
   final Function(dynamic file) onFileSelected;
 
-  const GoogleDriveSearchModule({
-    super.key,
-    required this.onFileSelected,
-  });
+  const GoogleDriveSearchModule({super.key, required this.onFileSelected});
 
   @override
-  State<GoogleDriveSearchModule> createState() => _GoogleDriveSearchModuleState();
+  State<GoogleDriveSearchModule> createState() =>
+      _GoogleDriveSearchModuleState();
 }
 
 class _GoogleDriveSearchModuleState extends State<GoogleDriveSearchModule> {
@@ -29,9 +27,9 @@ class _GoogleDriveSearchModuleState extends State<GoogleDriveSearchModule> {
       await vm.searchFiles(keyword);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('검색 중 오류가 발생했습니다: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('검색 중 오류가 발생했습니다: $e')));
       }
     } finally {
       if (mounted) {
@@ -72,7 +70,10 @@ class _GoogleDriveSearchModuleState extends State<GoogleDriveSearchModule> {
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,
                   ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                 ),
                 onSubmitted: (_) => _performSearch(),
               ),
@@ -84,7 +85,10 @@ class _GoogleDriveSearchModuleState extends State<GoogleDriveSearchModule> {
                   ? const SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(primaryColor)),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation(primaryColor),
+                      ),
                     )
                   : const Icon(Icons.search, color: primaryColor),
             ),
@@ -105,7 +109,11 @@ class _GoogleDriveSearchModuleState extends State<GoogleDriveSearchModule> {
                 final file = vm.driveFiles[index];
                 return ListTile(
                   dense: true,
-                  leading: const Icon(Icons.picture_as_pdf, color: Colors.redAccent, size: 20),
+                  leading: const Icon(
+                    Icons.picture_as_pdf,
+                    color: Colors.redAccent,
+                    size: 20,
+                  ),
                   title: Text(
                     file.name,
                     style: const TextStyle(color: Colors.white, fontSize: 13),
@@ -113,7 +121,11 @@ class _GoogleDriveSearchModuleState extends State<GoogleDriveSearchModule> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   onTap: () => widget.onFileSelected(file),
-                  trailing: const Icon(Icons.chevron_right, color: Colors.white24, size: 16),
+                  trailing: const Icon(
+                    Icons.chevron_right,
+                    color: Colors.white24,
+                    size: 16,
+                  ),
                 );
               },
             ),
@@ -122,7 +134,10 @@ class _GoogleDriveSearchModuleState extends State<GoogleDriveSearchModule> {
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 20),
             child: Center(
-              child: Text('검색 결과가 없습니다.', style: TextStyle(color: Colors.white24, fontSize: 12)),
+              child: Text(
+                '검색 결과가 없습니다.',
+                style: TextStyle(color: Colors.white24, fontSize: 12),
+              ),
             ),
           ),
       ],

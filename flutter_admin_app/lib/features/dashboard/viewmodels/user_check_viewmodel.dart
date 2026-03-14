@@ -27,7 +27,7 @@ class UserCheckViewModel extends ChangeNotifier {
         final role = u['role']?.toString() ?? 'User';
         final name = u['name']?.toString() ?? '사용자';
         final prefix = role == 'Master' || role == 'Admin' ? '[관] ' : '[사] ';
-        
+
         return {
           'id': u['id']?.toString() ?? '',
           'name': '$prefix$name',
@@ -90,8 +90,10 @@ class UserCheckViewModel extends ChangeNotifier {
       _filteredUsers = _allUsers
           .where(
             (user) =>
-                (user['name']?.toLowerCase().contains(query.toLowerCase()) ?? false) ||
-                (user['email']?.toLowerCase().contains(query.toLowerCase()) ?? false),
+                (user['name']?.toLowerCase().contains(query.toLowerCase()) ??
+                    false) ||
+                (user['email']?.toLowerCase().contains(query.toLowerCase()) ??
+                    false),
           )
           .toList();
     }

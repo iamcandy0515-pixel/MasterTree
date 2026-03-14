@@ -33,7 +33,10 @@ class _RegistrationScaffold extends StatelessWidget {
             const RegistrationHeader(),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
                 children: const [
                   BasicInfoSection(),
                   SizedBox(height: 32),

@@ -48,7 +48,7 @@ class _TreeGroupListContent extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      '비교 수목 리스트',
+                      '비교 수목 일람',
                       style: GoogleFonts.notoSansKr(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

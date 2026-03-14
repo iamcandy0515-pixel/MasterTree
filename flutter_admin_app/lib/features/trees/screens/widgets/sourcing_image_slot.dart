@@ -27,12 +27,13 @@ class SourcingImageSlot extends StatelessWidget {
     final existing = vm.getImageByType(type);
     final isMissing = vm.fileMissing[key] ?? false;
 
-
     // Resolve display content
     final stagedData = vm.pendingImages[key];
-    final displayItem = stagedData ?? 
-        (isThumb ? (existing?.thumbnailUrl?.isNotEmpty == true ? existing : null) 
-                 : (existing?.imageUrl.isNotEmpty == true ? existing : null));
+    final displayItem =
+        stagedData ??
+        (isThumb
+            ? (existing?.thumbnailUrl?.isNotEmpty == true ? existing : null)
+            : (existing?.imageUrl.isNotEmpty == true ? existing : null));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,7 +41,10 @@ class SourcingImageSlot extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: const TextStyle(color: Colors.white60, fontSize: 13)),
+            Text(
+              label,
+              style: const TextStyle(color: Colors.white60, fontSize: 13),
+            ),
             _buildActions(context),
           ],
         ),
@@ -55,22 +59,39 @@ class SourcingImageSlot extends StatelessWidget {
                   color: Colors.black26,
                   borderRadius: BorderRadius.circular(12),
                   border: isMissing
-                      ? Border.all(color: Colors.red.withValues(alpha: 0.8), width: 2)
+                      ? Border.all(
+                          color: Colors.red.withValues(alpha: 0.8),
+                          width: 2,
+                        )
                       : Border.all(color: Colors.white10),
                 ),
                 clipBehavior: Clip.antiAlias,
                 child: displayItem != null
                     ? _buildImageDisplay(displayItem)
-                    : const Center(child: Icon(Icons.add_a_photo_outlined, color: Colors.white10, size: 32)),
+                    : const Center(
+                        child: Icon(
+                          Icons.add_a_photo_outlined,
+                          color: Colors.white10,
+                          size: 32,
+                        ),
+                      ),
               ),
               if (isMissing)
                 const Positioned(
                   left: 8,
                   top: 8,
-                  child: Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 20),
+                  child: Icon(
+                    Icons.warning_amber_rounded,
+                    color: Colors.redAccent,
+                    size: 20,
+                  ),
                 ),
               if (displayItem != null)
-                Positioned(top: 8, right: 8, child: _buildSourceBadge(key, displayItem)),
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: _buildSourceBadge(key, displayItem),
+                ),
             ],
           ),
         ),
@@ -86,7 +107,11 @@ class SourcingImageSlot extends StatelessWidget {
       children: [
         IconButton(
           onPressed: () => vm.pickImage(type, isThumbnail: isThumb),
-          icon: const Icon(Icons.photo_library, size: 16, color: Colors.white38),
+          icon: const Icon(
+            Icons.photo_library,
+            size: 16,
+            color: Colors.white38,
+          ),
           tooltip: '갤러리',
           constraints: const BoxConstraints(minWidth: 32),
         ),
@@ -122,11 +147,16 @@ class SourcingImageSlot extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4)),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(4),
+      ),
       child: Text(
         text,
         style: TextStyle(
-          color: color == NeoColors.acidLime.withValues(alpha: 0.9) ? Colors.black : Colors.white,
+          color: color == NeoColors.acidLime.withValues(alpha: 0.9)
+              ? Colors.black
+              : Colors.white,
           fontSize: 10,
           fontWeight: FontWeight.bold,
         ),
@@ -136,12 +166,17 @@ class SourcingImageSlot extends StatelessWidget {
 
   Widget _buildImageDisplay(dynamic displayItem) {
     if (displayItem is XFile) {
-      return Image.network(displayItem.path, fit: BoxFit.cover, errorBuilder: (c, e, s) => const Icon(Icons.broken_image));
+      return Image.network(
+        displayItem.path,
+        fit: BoxFit.cover,
+        errorBuilder: (c, e, s) => const Icon(Icons.broken_image),
+      );
     } else if (displayItem is Uint8List) {
       return Image.memory(displayItem, fit: BoxFit.cover);
     } else if (displayItem is TreeImage) {
       final url = isThumb ? displayItem.thumbnailUrl : displayItem.imageUrl;
-      if (url == null || url.isEmpty) return const Center(child: Icon(Icons.image_not_supported));
+      if (url == null || url.isEmpty)
+        return const Center(child: Icon(Icons.image_not_supported));
 
       return CachedNetworkImage(
         imageUrl: TreeRepository.getProxyUrl(
@@ -149,8 +184,10 @@ class SourcingImageSlot extends StatelessWidget {
           width: isThumb ? 300 : 800, // 썸네일은 300px 정도로 요청 (Retina 대응)
         ),
         fit: BoxFit.cover,
-        placeholder: (context, url) => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-        errorWidget: (context, url, error) => const Icon(Icons.broken_image, color: Colors.redAccent, size: 24),
+        placeholder: (context, url) =>
+            const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+        errorWidget: (context, url, error) =>
+            const Icon(Icons.broken_image, color: Colors.redAccent, size: 24),
         memCacheWidth: isThumb ? 300 : 800,
       );
     }
@@ -163,7 +200,8 @@ class SourcingImageSlot extends StatelessWidget {
     final current = vm.pendingImages[key] ?? vm.getImageByType(type);
 
     if (current is TreeImage) {
-      controller.text = (isThumb ? current.thumbnailUrl : current.imageUrl) ?? '';
+      controller.text =
+          (isThumb ? current.thumbnailUrl : current.imageUrl) ?? '';
     }
 
     final result = await showDialog<String>(
@@ -176,8 +214,14 @@ class SourcingImageSlot extends StatelessWidget {
           maxLines: 2,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('취소')),
-          TextButton(onPressed: () => Navigator.pop(context, controller.text.trim()), child: const Text('적용')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('취소'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, controller.text.trim()),
+            child: const Text('적용'),
+          ),
         ],
       ),
     );
@@ -187,9 +231,9 @@ class SourcingImageSlot extends StatelessWidget {
         vm.removePendingImage(key);
       } else {
         final image = TreeImage(
-          imageType: type, 
-          imageUrl: isThumb ? '' : result, 
-          thumbnailUrl: isThumb ? result : null
+          imageType: type,
+          imageUrl: isThumb ? '' : result,
+          thumbnailUrl: isThumb ? result : null,
         );
         vm.stageImage(type, image, isThumbnail: isThumb, source: 'manual');
       }

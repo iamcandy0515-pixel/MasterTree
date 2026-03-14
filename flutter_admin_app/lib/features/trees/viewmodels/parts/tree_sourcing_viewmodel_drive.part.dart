@@ -16,12 +16,15 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
 
   Future<void> generateThumbnailForCategory(String type) async {
     if (_selectedTree == null) return;
-    
+
     _isLoading = true;
     notify();
 
     try {
-      final thumbUrl = await _repository.generateThumbnail(_selectedTree!.nameKr, type);
+      final thumbUrl = await _repository.generateThumbnail(
+        _selectedTree!.nameKr,
+        type,
+      );
       if (thumbUrl != null) {
         final image = TreeImage(
           imageType: type,
@@ -56,10 +59,10 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
         final Map<String, dynamic> thumb = result['thumb'] ?? {};
 
         final types = ['main', 'leaf', 'bark', 'fruit', 'flower'];
-        
+
         for (final type in types) {
           final dbImage = getImageByType(type);
-          
+
           // Original Link Sync
           final driveOriginalUrl = original[type];
           if (driveOriginalUrl != null) {
@@ -67,13 +70,17 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
             // Drive에서 정보가 발견되면 박스와 URL 설정에 매치 (구글 정보 배지 포함)
             if (dbImage == null || dbImage.imageUrl != driveOriginalUrl) {
               stageImage(
-                type, 
-                TreeImage(imageType: type, imageUrl: driveOriginalUrl, thumbnailUrl: dbImage?.thumbnailUrl), 
-                source: 'google'
+                type,
+                TreeImage(
+                  imageType: type,
+                  imageUrl: driveOriginalUrl,
+                  thumbnailUrl: dbImage?.thumbnailUrl,
+                ),
+                source: 'google',
               );
             }
           } else if (dbImage != null && dbImage.imageUrl.isNotEmpty) {
-             _checkExistence(dbImage.imageUrl, '${type}_original');
+            _checkExistence(dbImage.imageUrl, '${type}_original');
           }
 
           // Thumbnail Link Sync
@@ -82,20 +89,23 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
             _fileMissing.remove('${type}_thumb');
             // Drive에서 썸네일 정보가 발견되면 박스와 URL 설정에 매치 (구글 정보 배지 포함)
             if (dbImage == null || dbImage.thumbnailUrl != driveThumbUrl) {
-              final currentStaged = _pendingImages['${type}_original'] as TreeImage?;
+              final currentStaged =
+                  _pendingImages['${type}_original'] as TreeImage?;
               stageImage(
-                type, 
+                type,
                 TreeImage(
-                  imageType: type, 
+                  imageType: type,
                   imageUrl: currentStaged?.imageUrl ?? dbImage?.imageUrl ?? '',
-                  thumbnailUrl: driveThumbUrl
-                ), 
-                isThumbnail: true, 
-                source: 'google'
+                  thumbnailUrl: driveThumbUrl,
+                ),
+                isThumbnail: true,
+                source: 'google',
               );
             }
-          } else if (dbImage != null && dbImage.thumbnailUrl != null && dbImage.thumbnailUrl!.isNotEmpty) {
-             _checkExistence(dbImage.thumbnailUrl!, '${type}_thumb');
+          } else if (dbImage != null &&
+              dbImage.thumbnailUrl != null &&
+              dbImage.thumbnailUrl!.isNotEmpty) {
+            _checkExistence(dbImage.thumbnailUrl!, '${type}_thumb');
           }
         }
       }

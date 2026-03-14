@@ -125,24 +125,18 @@ class BulkExtractionFilterPanel extends StatelessWidget {
                     '범위:',
                     style: TextStyle(color: Colors.white70, fontSize: 12),
                   ),
-                  _buildNumberInput(
-                    '시작',
-                    startController,
-                    onStartChanged,
-                  ),
+                  _buildNumberInput('시작', startController, onStartChanged),
                   const Text(
                     '~',
                     style: TextStyle(color: Colors.white, fontSize: 12),
                   ),
-                  _buildNumberInput(
-                    '종료',
-                    endController,
-                    onEndChanged,
-                  ),
+                  _buildNumberInput('종료', endController, onEndChanged),
                 ],
               ),
               TextButton.icon(
-                onPressed: isLoading || !isFilterComplete ? null : onExtractPressed,
+                onPressed: isLoading || !isFilterComplete
+                    ? null
+                    : onExtractPressed,
                 icon: Icon(
                   Icons.auto_awesome,
                   size: 18,
@@ -165,7 +159,9 @@ class BulkExtractionFilterPanel extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                     side: BorderSide(
-                      color: isFilterComplete ? Colors.white10 : Colors.transparent,
+                      color: isFilterComplete
+                          ? Colors.white10
+                          : Colors.transparent,
                     ),
                   ),
                 ),

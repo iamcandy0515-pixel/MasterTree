@@ -983,8 +983,11 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller,
-      {int maxLines = 1, FocusNode? focusNode}) {
+  Widget _buildTextField(
+    TextEditingController controller, {
+    int maxLines = 1,
+    FocusNode? focusNode,
+  }) {
     return TextField(
       controller: controller,
       focusNode: focusNode,
@@ -1028,10 +1031,8 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> {
 
     return CallbackShortcuts(
       bindings: {
-        const SingleActivator(
-          LogicalKeyboardKey.keyV,
-          control: true,
-        ): () => _handlePaste(blocksField),
+        const SingleActivator(LogicalKeyboardKey.keyV, control: true): () =>
+            _handlePaste(blocksField),
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1109,9 +1110,7 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> {
                 // Reduced padding if images exist to save space
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.symmetric(
-                    vertical: hasImages ? 12 : 24,
-                  ),
+                  padding: EdgeInsets.symmetric(vertical: hasImages ? 12 : 24),
                   decoration: BoxDecoration(
                     color: surfaceDark,
                     borderRadius: BorderRadius.circular(12),

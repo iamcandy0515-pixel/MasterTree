@@ -6,11 +6,7 @@ class UserStatsListItem extends StatelessWidget {
   final Map<String, dynamic> user;
   final VoidCallback? onTap;
 
-  const UserStatsListItem({
-    super.key,
-    required this.user,
-    this.onTap,
-  });
+  const UserStatsListItem({super.key, required this.user, this.onTap});
 
   static const Color primaryColor = Color(0xFF2BEE8C);
 
@@ -36,10 +32,8 @@ class UserStatsListItem extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => UserDetailStatsScreen(
-              userId: user['id'],
-              userName: name,
-            ),
+            builder: (_) =>
+                UserDetailStatsScreen(userId: user['id'], userName: name),
           ),
         );
       },

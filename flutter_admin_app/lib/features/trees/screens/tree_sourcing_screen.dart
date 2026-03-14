@@ -85,7 +85,9 @@ class _TreeSourcingContentState extends State<_TreeSourcingContent> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.02),
-        border: Border(bottom: BorderSide(color: primaryColor.withOpacity(0.1))),
+        border: Border(
+          bottom: BorderSide(color: primaryColor.withOpacity(0.1)),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -93,13 +95,21 @@ class _TreeSourcingContentState extends State<_TreeSourcingContent> {
           Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
+                icon: const Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Colors.white,
+                  size: 20,
+                ),
                 onPressed: () => Navigator.pop(context),
               ),
               const SizedBox(width: 8),
               Text(
-                '수목 이미지 소싱 관리',
-                style: TextStyle(color: primaryColor, fontSize: 18, fontWeight: FontWeight.bold),
+                '수목 이미지 추출(수목별)',
+                style: TextStyle(
+                  color: primaryColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -118,7 +128,10 @@ class _TreeSourcingContentState extends State<_TreeSourcingContent> {
         }
       },
       icon: Icon(Icons.open_in_new, size: 14, color: primaryColor),
-      label: Text('국가생물정보', style: TextStyle(color: primaryColor, fontSize: 11)),
+      label: Text(
+        '국가생물정보',
+        style: TextStyle(color: primaryColor, fontSize: 11),
+      ),
     );
   }
 

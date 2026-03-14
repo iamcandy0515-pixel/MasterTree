@@ -10,15 +10,16 @@ class TreeRegistrationViewModel extends ChangeNotifier {
 
   // Form Fields
   final TextEditingController nameKrController = TextEditingController();
-  final TextEditingController scientificNameController = TextEditingController();
+  final TextEditingController scientificNameController =
+      TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-  
+
   String? _selectedHabit; // 상록수, 낙엽수
   String? _selectedCategory; // 침엽수, 활엽수
 
   // Images & Hints (Tagged Management)
   final Map<String, TreeImage> _taggedImages = {};
-  
+
   // Current UI State
   String _activeTag = 'main'; // 'main' | 'leaf' | 'bark' | 'flower' | 'fruit'
   bool _isUploading = false;
@@ -196,7 +197,8 @@ class TreeRegistrationViewModel extends ChangeNotifier {
     if (nameKrController.text.trim().isEmpty) throw Exception('수목명을 입력해주세요.');
     if (_selectedCategory == null) throw Exception('구분을 선택해주세요.');
     if (_selectedHabit == null) throw Exception('성상을 선택해주세요.');
-    if (!_taggedImages.containsKey('main')) throw Exception('최소한 "대표" 이미지는 등록해야 합니다.');
+    if (!_taggedImages.containsKey('main'))
+      throw Exception('최소한 "대표" 이미지는 등록해야 합니다.');
 
     _isSubmitting = true;
     notifyListeners();
@@ -217,7 +219,7 @@ class TreeRegistrationViewModel extends ChangeNotifier {
       );
 
       await _repo.registerTree(request);
-      
+
       _isSubmitting = false;
       notifyListeners();
       clearForm();

@@ -21,7 +21,6 @@ class _StatisticsContent extends StatelessWidget {
   static const Color primaryColor = Color(0xFF2BEE8C);
   static const Color backgroundDark = Color(0xFF102219);
 
-
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<StatisticsViewModel>();
@@ -60,7 +59,9 @@ class _StatisticsContent extends StatelessWidget {
 
   Widget _buildBody(StatisticsViewModel vm) {
     if (vm.isLoading) {
-      return const Center(child: CircularProgressIndicator(color: primaryColor));
+      return const Center(
+        child: CircularProgressIndicator(color: primaryColor),
+      );
     }
 
     if (vm.error != null) {
@@ -88,7 +89,8 @@ class _StatisticsContent extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: users.length,
-      separatorBuilder: (_, index) => const Divider(color: Colors.white10, height: 1),
+      separatorBuilder: (_, index) =>
+          const Divider(color: Colors.white10, height: 1),
       itemBuilder: (context, index) {
         return UserStatsListItem(user: users[index]);
       },

@@ -11,7 +11,8 @@ class TreeSourcingDetailScreen extends StatefulWidget {
   const TreeSourcingDetailScreen({super.key, required this.tree});
 
   @override
-  State<TreeSourcingDetailScreen> createState() => _TreeSourcingDetailScreenState();
+  State<TreeSourcingDetailScreen> createState() =>
+      _TreeSourcingDetailScreenState();
 }
 
 class _TreeSourcingDetailScreenState extends State<TreeSourcingDetailScreen> {
@@ -44,18 +45,27 @@ class _TreeSourcingDetailScreenState extends State<TreeSourcingDetailScreen> {
               SourcingCategorySection(vm: vm, type: 'main', label: '대표 이미지'),
               SourcingCategorySection(vm: vm, type: 'bark', label: '수피 (Bark)'),
               SourcingCategorySection(vm: vm, type: 'leaf', label: '잎 (Leaf)'),
-              SourcingCategorySection(vm: vm, type: 'flower', label: '꽃 (Flower)'),
+              SourcingCategorySection(
+                vm: vm,
+                type: 'flower',
+                label: '꽃 (Flower)',
+              ),
               SourcingCategorySection(vm: vm, type: 'fruit', label: '열매 / 겨울눈'),
             ],
           ),
           if (vm.isLoading)
-            const Center(child: CircularProgressIndicator(color: NeoColors.acidLime)),
+            const Center(
+              child: CircularProgressIndicator(color: NeoColors.acidLime),
+            ),
         ],
       ),
     );
   }
 
-  List<Widget> _buildAppBarActions(BuildContext context, TreeSourcingViewModel vm) {
+  List<Widget> _buildAppBarActions(
+    BuildContext context,
+    TreeSourcingViewModel vm,
+  ) {
     return [
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -63,12 +73,20 @@ class _TreeSourcingDetailScreenState extends State<TreeSourcingDetailScreen> {
           onPressed: vm.isLoading || !vm.hasChanges
               ? null
               : () => _handleSave(context, vm),
-          style: TextButton.styleFrom(
-            foregroundColor: NeoColors.acidLime,
-          ),
+          style: TextButton.styleFrom(foregroundColor: NeoColors.acidLime),
           child: vm.isLoading
-              ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: NeoColors.acidLime))
-              : const Text('전체 저장', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: NeoColors.acidLime,
+                  ),
+                )
+              : const Text(
+                  '전체 저장',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
         ),
       ),
     ];
@@ -82,19 +100,33 @@ class _TreeSourcingDetailScreenState extends State<TreeSourcingDetailScreen> {
         children: [
           Text(
             widget.tree.nameKr,
-            style: const TextStyle(color: NeoColors.acidLime, fontSize: 24, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              color: NeoColors.acidLime,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           TextButton.icon(
             onPressed: vm.isLoading ? null : () => vm.fetchFromDrive(),
-            icon: const Icon(Icons.cloud_download, size: 16, color: NeoColors.acidLime),
-            label: const Text('드라이브 추출', style: TextStyle(color: NeoColors.acidLime, fontSize: 13)),
+            icon: const Icon(
+              Icons.cloud_download,
+              size: 16,
+              color: NeoColors.acidLime,
+            ),
+            label: const Text(
+              '드라이브 추출',
+              style: TextStyle(color: NeoColors.acidLime, fontSize: 13),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Future<void> _handleSave(BuildContext context, TreeSourcingViewModel vm) async {
+  Future<void> _handleSave(
+    BuildContext context,
+    TreeSourcingViewModel vm,
+  ) async {
     try {
       await vm.saveChanges(
         onMessage: (msg) {
@@ -114,7 +146,11 @@ class _TreeSourcingDetailScreenState extends State<TreeSourcingDetailScreen> {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('저장 실패: $e'), backgroundColor: Colors.red, behavior: SnackBarBehavior.floating),
+          SnackBar(
+            content: Text('저장 실패: $e'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
         );
       }
     }

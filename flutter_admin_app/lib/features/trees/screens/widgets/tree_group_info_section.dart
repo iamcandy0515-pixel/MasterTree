@@ -25,18 +25,33 @@ class TreeGroupInfoSection extends StatelessWidget {
           children: [
             const Text(
               '그룹 정보',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
             if (vm.isEditing)
               TextButton.icon(
                 onPressed: () => _handleDelete(context, vm),
-                icon: Icon(Icons.delete_outline, size: 16, color: Colors.red[400]),
+                icon: Icon(
+                  Icons.delete_outline,
+                  size: 16,
+                  color: Colors.red[400],
+                ),
                 label: Text(
                   '그룹 삭제',
-                  style: TextStyle(color: Colors.red[400], fontSize: 12, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: Colors.red[400],
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
@@ -82,7 +97,10 @@ class TreeGroupInfoSection extends StatelessWidget {
     );
   }
 
-  Future<void> _handleDelete(BuildContext context, TreeGroupEditViewModel vm) async {
+  Future<void> _handleDelete(
+    BuildContext context,
+    TreeGroupEditViewModel vm,
+  ) async {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -104,9 +122,9 @@ class TreeGroupInfoSection extends StatelessWidget {
     if (confirm == true) {
       final success = await vm.deleteGroup();
       if (success && context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('그룹이 삭제되었습니다.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('그룹이 삭제되었습니다.')));
         Navigator.pop(context, true);
       }
     }

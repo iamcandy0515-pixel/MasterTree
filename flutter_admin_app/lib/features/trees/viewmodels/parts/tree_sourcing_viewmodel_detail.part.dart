@@ -24,7 +24,8 @@ extension TreeSourcingDetailExtension on TreeSourcingViewModel {
     _pendingImages.clear();
     _imageSources.clear();
     for (final img in tree.images) {
-      if (img.imageUrl.isNotEmpty) _imageSources['${img.imageType}_original'] = 'db';
+      if (img.imageUrl.isNotEmpty)
+        _imageSources['${img.imageType}_original'] = 'db';
       if (img.thumbnailUrl != null && img.thumbnailUrl!.isNotEmpty) {
         _imageSources['${img.imageType}_thumb'] = 'db';
       }
@@ -32,7 +33,12 @@ extension TreeSourcingDetailExtension on TreeSourcingViewModel {
     notify();
   }
 
-  void stageImage(String type, dynamic data, {bool isThumbnail = false, String source = 'manual'}) {
+  void stageImage(
+    String type,
+    dynamic data, {
+    bool isThumbnail = false,
+    String source = 'manual',
+  }) {
     final key = '${type}_${isThumbnail ? 'thumb' : 'original'}';
     _pendingImages[key] = data;
     _imageSources[key] = source;
@@ -45,7 +51,7 @@ extension TreeSourcingDetailExtension on TreeSourcingViewModel {
     final type = key.split('_')[0];
     final isThumb = key.split('_')[1] == 'thumb';
     final existing = getImageByType(type);
-    
+
     if (isThumb) {
       if (existing?.thumbnailUrl?.isNotEmpty == true) {
         _imageSources[key] = 'db';
@@ -116,10 +122,12 @@ extension TreeSourcingDetailExtension on TreeSourcingViewModel {
             finalUrl = await _repository.uploadImage(stagedOriginal);
           } else if (stagedOriginal is TreeImage) {
             finalUrl = stagedOriginal.imageUrl;
-          }
-          else if (stagedOriginal is Uint8List) {
-             final xFile = XFile.fromData(stagedOriginal, name: '${_selectedTree!.nameKr}_${type}_original.jpg');
-             finalUrl = await _repository.uploadImage(xFile);
+          } else if (stagedOriginal is Uint8List) {
+            final xFile = XFile.fromData(
+              stagedOriginal,
+              name: '${_selectedTree!.nameKr}_${type}_original.jpg',
+            );
+            finalUrl = await _repository.uploadImage(xFile);
           }
         }
 
@@ -128,28 +136,42 @@ extension TreeSourcingDetailExtension on TreeSourcingViewModel {
             finalThumb = await _repository.uploadImage(stagedThumb);
           } else if (stagedThumb is TreeImage) {
             finalThumb = stagedThumb.thumbnailUrl;
-          }
-          else if (stagedThumb is Uint8List) {
-             final xFile = XFile.fromData(stagedThumb, name: '${_selectedTree!.nameKr}_${type}_thumb.jpg');
-             finalThumb = await _repository.uploadImage(xFile);
+          } else if (stagedThumb is Uint8List) {
+            final xFile = XFile.fromData(
+              stagedThumb,
+              name: '${_selectedTree!.nameKr}_${type}_thumb.jpg',
+            );
+            finalThumb = await _repository.uploadImage(xFile);
           }
         }
 
         // URL 유효성 검사 (입력된 URL이 구글 드라이브 형식인지 확인)
-        if (finalUrl != null && !isValidDriveUrl(finalUrl) && !finalUrl.contains('supabase.co')) {
+        if (finalUrl != null &&
+            !isValidDriveUrl(finalUrl) &&
+            !finalUrl.contains('supabase.co')) {
           onMessage?.call('원본 이미지 URL 형식이 올바르지 않습니다. 구글 드라이브 URL인지 확인하세요.');
           return;
         }
-        if (finalThumb != null && !isValidDriveUrl(finalThumb) && !finalThumb.contains('supabase.co')) {
+        if (finalThumb != null &&
+            !isValidDriveUrl(finalThumb) &&
+            !finalThumb.contains('supabase.co')) {
           onMessage?.call('썸네일 이미지 URL 형식이 올바르지 않습니다. 구글 드라이브 URL인지 확인하세요.');
           return;
         }
 
-        if ((finalUrl != null && finalUrl.isNotEmpty) || (finalThumb != null && finalThumb.isNotEmpty)) {
-          newImages.add(TreeImage(imageType: type, imageUrl: finalUrl ?? '', thumbnailUrl: finalThumb));
+        if ((finalUrl != null && finalUrl.isNotEmpty) ||
+            (finalThumb != null && finalThumb.isNotEmpty)) {
+          newImages.add(
+            TreeImage(
+              imageType: type,
+              imageUrl: finalUrl ?? '',
+              thumbnailUrl: finalThumb,
+            ),
+          );
         }
 
-        if (finalUrl != existing?.imageUrl || finalThumb != existing?.thumbnailUrl) {
+        if (finalUrl != existing?.imageUrl ||
+            finalThumb != existing?.thumbnailUrl) {
           isAnyChange = true;
         }
       }
@@ -162,10 +184,14 @@ extension TreeSourcingDetailExtension on TreeSourcingViewModel {
       await _repository.updateTree(
         _selectedTree!.id,
         CreateTreeRequest(
-          nameKr: _selectedTree!.nameKr, nameEn: _selectedTree!.nameEn,
-          scientificName: _selectedTree!.scientificName, description: _selectedTree!.description,
-          category: _selectedTree!.category, difficulty: _selectedTree!.difficulty,
-          images: newImages, quizDistractors: _selectedTree!.quizDistractors,
+          nameKr: _selectedTree!.nameKr,
+          nameEn: _selectedTree!.nameEn,
+          scientificName: _selectedTree!.scientificName,
+          description: _selectedTree!.description,
+          category: _selectedTree!.category,
+          difficulty: _selectedTree!.difficulty,
+          images: newImages,
+          quizDistractors: _selectedTree!.quizDistractors,
           isAutoQuizEnabled: _selectedTree!.isAutoQuizEnabled,
         ),
       );

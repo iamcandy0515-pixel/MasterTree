@@ -60,18 +60,35 @@ class _UserDetailStatsContent extends StatelessWidget {
           ],
         ),
         body: vm.isLoading
-            ? const Center(child: CircularProgressIndicator(color: primaryColor))
+            ? const Center(
+                child: CircularProgressIndicator(color: primaryColor),
+              )
             : vm.error != null
-                ? _buildErrorView(vm.error!)
-                : vm.stats == null
-                    ? const Center(child: Text('데이터가 없습니다.', style: TextStyle(color: Colors.white24)))
-                    : TabBarView(
-                        children: [
-                          GeneralStatsTab(stats: vm.stats!),
-                          _buildSubTab('수목 식별 퀴즈 성과', vm.stats!['quiz'], primaryColor, Icons.school),
-                          _buildSubTab('기출 문제 학습 성과', vm.stats!['pastExam'], Colors.orangeAccent, Icons.history_edu),
-                        ],
-                      ),
+            ? _buildErrorView(vm.error!)
+            : vm.stats == null
+            ? const Center(
+                child: Text(
+                  '데이터가 없습니다.',
+                  style: TextStyle(color: Colors.white24),
+                ),
+              )
+            : TabBarView(
+                children: [
+                  GeneralStatsTab(stats: vm.stats!),
+                  _buildSubTab(
+                    '수목 식별 퀴즈 성과',
+                    vm.stats!['quiz'],
+                    primaryColor,
+                    Icons.school,
+                  ),
+                  _buildSubTab(
+                    '기출 문제 학습 성과',
+                    vm.stats!['pastExam'],
+                    Colors.orangeAccent,
+                    Icons.history_edu,
+                  ),
+                ],
+              ),
       ),
     );
   }

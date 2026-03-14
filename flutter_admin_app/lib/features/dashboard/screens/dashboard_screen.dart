@@ -5,7 +5,7 @@ import 'package:flutter_admin_app/features/auth/screens/login_screen.dart';
 import 'package:flutter_admin_app/features/trees/screens/tree_list_screen.dart';
 import 'package:flutter_admin_app/features/trees/screens/tree_group_management_screen.dart';
 import 'package:flutter_admin_app/features/dashboard/screens/user_check_screen.dart';
-import 'package:flutter_admin_app/features/dashboard/screens/log_check_screen.dart';
+// Note: LogCheckScreen import removed since its shortcut is deleted
 import 'package:flutter_admin_app/features/dashboard/screens/notification_screen.dart';
 import 'package:flutter_admin_app/features/trees/screens/tree_sourcing_screen.dart';
 import 'package:flutter_admin_app/features/dashboard/screens/statistics_screen.dart';
@@ -40,6 +40,7 @@ class _DashboardScreenState extends State<_DashboardContent> {
   static const primaryColor = Color(0xFF2BEE8C);
   static const backgroundDark = Color(0xFF102219);
   static const surfaceDark = Color(0xFF1A2E24);
+  static const secondaryBlue = Color(0xFF3B82F6);
 
   @override
   void initState() {
@@ -85,137 +86,37 @@ class _DashboardScreenState extends State<_DashboardContent> {
                   _buildHeader(context),
                   const Divider(color: Colors.white10, height: 1),
 
+                  // 2. Statistics Info Section (Unified with User App Style)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: _buildTextStatsSection(vm),
+                  ),
+
+                  // 3. 2-Tab Layout (기출문제 / 수목관리)
                   Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
+                    child: DefaultTabController(
+                      length: 2,
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // 2. Statistics Info Section (Unified with User App Style)
-                          _buildTextStatsSection(vm),
-
-                          const SizedBox(height: 12),
-
-                          // 3. Shortcuts (Grid)
-                          Row(
-                            children: [
-                              const Expanded(
-                                child: Text(
-                                  '바로가기',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                          const TabBar(
+                            indicatorColor: primaryColor,
+                            labelColor: Colors.white,
+                            unselectedLabelColor: Colors.grey,
+                            tabs: [
+                              Tab(
+                                icon: Icon(Icons.description, size: 20),
+                                text: '기출문제',
                               ),
-                              _buildSmallHeaderButton(
-                                icon: Icons.person_search,
-                                label: '사용자',
-                                onTap: () =>
-                                    _navigateTo(const UserCheckScreen()),
-                              ),
-                              const SizedBox(width: 4),
-                              Container(
-                                width: 1,
-                                height: 12,
-                                color: Colors.white10,
-                              ),
-                              const SizedBox(width: 4),
-                              _buildSmallHeaderButton(
-                                icon: Icons.terminal,
-                                label: '로그',
-                                onTap: () =>
-                                    _navigateTo(const LogCheckScreen()),
-                                color: primaryColor,
+                              Tab(
+                                icon: Icon(Icons.nature, size: 20),
+                                text: '수목관리',
                               ),
                             ],
                           ),
-                          const SizedBox(height: 8),
-
-                          Column(
-                            children: [
-                              _buildShortcutListItem(
-                                icon: Icons.auto_awesome_motion,
-                                label: '기출문제 일괄 추출 (PDF)',
-                                subLabel: '범위 지정 및 AI 자동 분할 추출 (V2.6)',
-                                onTap: () {
-                                  _navigateTo(const BulkExtractionScreen());
-                                },
-                                color: primaryColor,
-                              ),
-                              const SizedBox(height: 6),
-                              _buildShortcutListItem(
-                                icon: Icons.note_add_outlined,
-                                label: '기출문제 추출 (건별)',
-                                subLabel: '파일 선택 후 한 문항씩 정밀 추출',
-                                onTap: () {
-                                  _navigateTo(
-                                    const QuizExtractionStep2Screen(selectedFiles: []),
-                                  );
-                                },
-                                color: primaryColor,
-                              ),
-                              const SizedBox(height: 6),
-                              _buildShortcutListItem(
-                                icon: Icons.psychology_outlined,
-                                label: '기출 유사문제 추출',
-                                subLabel: '회차별 5개 단위 순차 유사도 분석 (V1.0)',
-                                onTap: () {
-                                  _navigateTo(
-                                    const BulkSimilarManagementScreen(),
-                                  );
-                                },
-                                color: Colors.orangeAccent,
-                              ),
-                              const SizedBox(height: 6),
-                              _buildShortcutListItem(
-                                icon: Icons.quiz_outlined,
-                                label: '기출문제 현황',
-                                subLabel: 'AI 파싱 결과 및 오답 보기 검토',
-                                onTap: () =>
-                                    _navigateTo(const QuizManagementScreen()),
-                              ),
-                              const SizedBox(height: 6),
-                              _buildShortcutListItem(
-                                icon: Icons.add_task_outlined,
-                                label: '신규 수목 등록',
-                                subLabel: '부위별 이미지 및 성상 기반 등록 모듈',
-                                onTap: () => _navigateTo(const TreeRegistrationScreen()),
-                                color: primaryColor,
-                              ),
-                              const SizedBox(height: 6),
-                              _buildShortcutListItem(
-                                icon: Icons.nature_people,
-                                label: '수목 현황 조회',
-                                subLabel: '데이터 베이스 편집 및 검색',
-                                onTap: () =>
-                                    _navigateTo(const TreeListScreen()),
-                              ),
-                              const SizedBox(height: 6),
-                              _buildShortcutListItem(
-                                icon: Icons.add_a_photo,
-                                label: '수목 이미지 소싱 관리',
-                                subLabel: '학습 데이터용 이미지 벌크 추가 및 검토',
-                                onTap: () =>
-                                    _navigateTo(const TreeSourcingScreen()),
-                              ),
-                              const SizedBox(height: 6),
-                              _buildShortcutListItem(
-                                icon: Icons.schema,
-                                label: '비교 수목 리스트',
-                                subLabel: '유사 수목 그룹 관리',
-                                onTap: () => _navigateTo(
-                                  const TreeGroupManagementScreen(),
-                                ),
-                              ),
-
-                              const SizedBox(height: 12),
-                            ],
+                          Expanded(
+                            child: TabBarView(
+                              children: [_buildExamTab(), _buildTreeTab()],
+                            ),
                           ),
                         ],
                       ),
@@ -223,6 +124,98 @@ class _DashboardScreenState extends State<_DashboardContent> {
                   ),
                 ],
               ),
+      ),
+    );
+  }
+
+  Widget _buildExamTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildShortcutListItem(
+            icon: Icons.auto_awesome_motion,
+            label: '기출문제 추출(일괄)',
+            subLabel: '범위 지정 및 AI 자동 분할 추출 (V2.6)',
+            onTap: () {
+              _navigateTo(const BulkExtractionScreen());
+            },
+            color: secondaryBlue,
+          ),
+          const SizedBox(height: 6),
+          _buildShortcutListItem(
+            icon: Icons.note_add_outlined,
+            label: '기출문제 추출(건별)',
+            subLabel: '파일 선택 후 한 문항씩 정밀 추출',
+            onTap: () {
+              _navigateTo(const QuizExtractionStep2Screen(selectedFiles: []));
+            },
+            color: secondaryBlue,
+          ),
+          const SizedBox(height: 6),
+          _buildShortcutListItem(
+            icon: Icons.psychology_outlined,
+            label: '기출문제 유사문제 추출(일괄)',
+            subLabel: '회차별 5개 단위 순차 유사도 분석 (V1.0)',
+            onTap: () {
+              _navigateTo(const BulkSimilarManagementScreen());
+            },
+            color: Colors.orangeAccent,
+          ),
+          const SizedBox(height: 6),
+          _buildShortcutListItem(
+            icon: Icons.quiz_outlined,
+            label: '기출문제 일람',
+            subLabel: 'AI 파싱 결과 및 오답 보기 검토',
+            onTap: () => _navigateTo(const QuizManagementScreen()),
+            color: secondaryBlue,
+          ),
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTreeTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildShortcutListItem(
+            icon: Icons.add_task_outlined,
+            label: '신규 수목 등록',
+            subLabel: '부위별 이미지 및 성상 기반 등록 모듈',
+            onTap: () => _navigateTo(const TreeRegistrationScreen()),
+            color: primaryColor,
+          ),
+          const SizedBox(height: 6),
+          _buildShortcutListItem(
+            icon: Icons.add_a_photo,
+            label: '수목 이미지 추출(수목별)',
+            subLabel: '학습 데이터용 이미지 벌크 추가 및 구글 검색',
+            onTap: () => _navigateTo(const TreeSourcingScreen()),
+            color: primaryColor,
+          ),
+          const SizedBox(height: 6),
+          _buildShortcutListItem(
+            icon: Icons.schema,
+            label: '비교 수목 일람',
+            subLabel: '유사 수목 그룹 관리',
+            onTap: () => _navigateTo(const TreeGroupManagementScreen()),
+            color: primaryColor,
+          ),
+          const SizedBox(height: 6),
+          _buildShortcutListItem(
+            icon: Icons.nature_people,
+            label: '수목도감 일람',
+            subLabel: '데이터 베이스 편집 및 검색',
+            onTap: () => _navigateTo(const TreeListScreen()),
+            color: primaryColor,
+          ),
+          const SizedBox(height: 16),
+        ],
       ),
     );
   }
@@ -308,15 +301,25 @@ class _DashboardScreenState extends State<_DashboardContent> {
 
   Widget _buildTextStatsSection(DashboardViewModel vm) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Expanded(child: _buildTextStatItem('수목', vm.stats['totalTrees'] ?? 0, '종')),
+          Expanded(
+            child: _buildTextStatItem('수목', vm.stats['totalTrees'] ?? 0, '종'),
+          ),
           _buildStatDivider(),
-          Expanded(child: _buildTextStatItem('기출', vm.stats['totalQuizzes'] ?? 0, '문')),
+          Expanded(
+            child: _buildTextStatItem('기출', vm.stats['totalQuizzes'] ?? 0, '문'),
+          ),
           _buildStatDivider(),
-          Expanded(child: _buildTextStatItem('유사', vm.stats['totalSimilarGroups'] ?? 0, '조합')),
+          Expanded(
+            child: _buildTextStatItem(
+              '유사',
+              vm.stats['totalSimilarGroups'] ?? 0,
+              '조합',
+            ),
+          ),
         ],
       ),
     );
@@ -325,12 +328,13 @@ class _DashboardScreenState extends State<_DashboardContent> {
   Widget _buildTextStatItem(String label, int count, String unit) {
     return Row(
       mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
           label,
           style: const TextStyle(color: Colors.white38, fontSize: 13),
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: 6),
         Flexible(
           child: Text(
             count.toString(),
@@ -343,10 +347,7 @@ class _DashboardScreenState extends State<_DashboardContent> {
           ),
         ),
         const SizedBox(width: 2),
-        Text(
-          unit,
-          style: const TextStyle(color: Colors.white38, fontSize: 11),
-        ),
+        Text(unit, style: const TextStyle(color: Colors.white38, fontSize: 11)),
       ],
     );
   }
@@ -407,34 +408,6 @@ class _DashboardScreenState extends State<_DashboardContent> {
               ),
             ),
             Icon(Icons.chevron_right, color: Colors.grey[700], size: 20),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSmallHeaderButton({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-    Color color = Colors.grey,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-        child: Row(
-          children: [
-            Icon(icon, size: 16, color: color),
-            const SizedBox(width: 4),
-            Text(
-              label,
-              style: TextStyle(
-                color: color,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
           ],
         ),
       ),

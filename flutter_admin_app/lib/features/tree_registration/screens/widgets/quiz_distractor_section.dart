@@ -12,13 +12,20 @@ class QuizDistractorSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('3. 퀴즈 오답 설정 (오답 2개)', style: TextStyle(color: Color(0xFF80F20D), fontSize: 16, fontWeight: FontWeight.bold)),
+        const Text(
+          '3. 퀴즈 오답 설정 (오답 2개)',
+          style: TextStyle(
+            color: Color(0xFF80F20D),
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 16),
-        
+
         ...vm.distractorControllers.asMap().entries.map((entry) {
           final index = entry.key;
           final controller = entry.value;
-          
+
           return Container(
             margin: const EdgeInsets.only(bottom: 12),
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -29,7 +36,13 @@ class QuizDistractorSection extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Text('${index + 1}', style: const TextStyle(color: Color(0xFF80F20D), fontWeight: FontWeight.bold)),
+                Text(
+                  '${index + 1}',
+                  style: const TextStyle(
+                    color: Color(0xFF80F20D),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: TextFormField(

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../viewmodels/quiz_extraction_step2_viewmodel.dart';
 
@@ -27,16 +27,19 @@ class _DistractorModuleState extends State<DistractorModule> {
     final explanationText = widget.explanationController.text;
 
     if (questionText.isEmpty || explanationText.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('문제와 해설을 먼저 입력해주세요.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('문제와 해설을 먼저 입력해주세요.')));
       return;
     }
 
     setState(() => _isGenerating = true);
 
     try {
-      final options = await vm.generateOptionsAction(questionText, explanationText);
+      final options = await vm.generateOptionsAction(
+        questionText,
+        explanationText,
+      );
       if (mounted && options.isNotEmpty) {
         for (int i = 0; i < widget.optionControllers.length; i++) {
           if (i < options.length) {
@@ -46,9 +49,9 @@ class _DistractorModuleState extends State<DistractorModule> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('보기 생성 중 오류가 발생했습니다: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('보기 생성 중 오류가 발생했습니다: $e')));
       }
     } finally {
       if (mounted) {
@@ -107,7 +110,9 @@ class _DistractorModuleState extends State<DistractorModule> {
                 fillColor: Colors.white.withValues(alpha: 0.05),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: isCorrect ? BorderSide(color: primaryColor.withValues(alpha: 0.3)) : BorderSide.none,
+                  borderSide: isCorrect
+                      ? BorderSide(color: primaryColor.withValues(alpha: 0.3))
+                      : BorderSide.none,
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
