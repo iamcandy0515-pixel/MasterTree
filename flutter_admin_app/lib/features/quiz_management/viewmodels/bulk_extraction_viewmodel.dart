@@ -212,8 +212,9 @@ class BulkExtractionViewModel extends ChangeNotifier {
   bool hasImage(int qNum, [String? field]) {
     if (!_extractedQuizzes.containsKey(qNum)) return false;
     final quiz = _extractedQuizzes[qNum]!;
-    if (field != null)
+    if (field != null) {
       return (quiz[field] as List).any((b) => b['type'] == 'image');
+    }
     return (quiz['question'] as List).any((b) => b['type'] == 'image') ||
         (quiz['explanation'] as List).any((b) => b['type'] == 'image');
   }
@@ -232,8 +233,9 @@ class BulkExtractionViewModel extends ChangeNotifier {
     void Function(int current, int total)? onProgress,
     void Function(String message)? onMessage,
   }) async {
-    if (_extractedQuizzes.isEmpty || subject == null)
+    if (_extractedQuizzes.isEmpty || subject == null) {
       return {'total': 0, 'success': 0, 'failed': 0};
+    }
 
     _isLoading = true;
     _statusMessage = '데이터베이스 등록 중...';

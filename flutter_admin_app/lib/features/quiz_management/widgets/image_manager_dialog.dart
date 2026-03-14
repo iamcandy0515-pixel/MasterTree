@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:super_clipboard/super_clipboard.dart';
 import '../viewmodels/bulk_extraction_viewmodel.dart';
 import '../../../core/widgets/fullscreen_image_viewer.dart';
 
@@ -53,38 +52,10 @@ class _ImageManagerDialogState extends State<ImageManagerDialog> {
   }
 
   Future<void> _handlePaste() async {
-    final reader = await SystemClipboard.instance?.read();
-    if (reader == null) return;
-
-    if (reader.canProvide(Formats.png)) {
-      setState(() => _isUploading = true);
-      reader.getFile(Formats.png, (file) async {
-        final bytes = await file.readAll();
-        final xFile = XFile.fromData(
-          bytes,
-          mimeType: 'image/png',
-          name: 'pasted_image.png',
-        );
-        await _uploadImage(xFile);
-      });
-    } else if (reader.canProvide(Formats.jpeg)) {
-      setState(() => _isUploading = true);
-      reader.getFile(Formats.jpeg, (file) async {
-        final bytes = await file.readAll();
-        final xFile = XFile.fromData(
-          bytes,
-          mimeType: 'image/jpeg',
-          name: 'pasted_image.jpg',
-        );
-        await _uploadImage(xFile);
-      });
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('클립보드에 이미지가 없습니다.')));
-      }
-    }
+    // Disabled temporarily to fix build issues
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('붙여넣기 기능이 현재 비활성화되어 있습니다.')),
+    );
   }
 
   Future<void> _uploadImage(XFile file) async {

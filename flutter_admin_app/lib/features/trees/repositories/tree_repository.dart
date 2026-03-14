@@ -96,8 +96,8 @@ class TreeRepository {
   }) async {
     final queryParams = {
       'count': count.toString(),
-      'category': ?category,
-      'excludeName': ?excludeName,
+      if (category != null) 'category': category,
+      if (excludeName != null) 'excludeName': excludeName,
     };
 
     final url = Uri.parse(

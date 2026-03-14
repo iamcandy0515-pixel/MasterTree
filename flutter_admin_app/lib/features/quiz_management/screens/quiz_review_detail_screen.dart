@@ -5,7 +5,6 @@ import 'package:flutter_admin_app/core/utils/snackbar_util.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
-import 'package:super_clipboard/super_clipboard.dart';
 import 'package:flutter_admin_app/core/widgets/fullscreen_image_viewer.dart';
 
 class QuizReviewDetailScreen extends StatefulWidget {
@@ -1249,34 +1248,8 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> {
   }
 
   Future<void> _handlePaste(String blocksField) async {
-    final reader = await SystemClipboard.instance?.read();
-    if (reader == null) return;
-
-    if (reader.canProvide(Formats.png)) {
-      reader.getFile(Formats.png, (file) async {
-        final bytes = await file.readAll();
-        final xFile = XFile.fromData(
-          bytes,
-          mimeType: 'image/png',
-          name: 'pasted_image.png',
-        );
-        _uploadImage(blocksField, xFile);
-      });
-    } else if (reader.canProvide(Formats.jpeg)) {
-      reader.getFile(Formats.jpeg, (file) async {
-        final bytes = await file.readAll();
-        final xFile = XFile.fromData(
-          bytes,
-          mimeType: 'image/jpeg',
-          name: 'pasted_image.jpg',
-        );
-        _uploadImage(blocksField, xFile);
-      });
-    } else {
-      if (mounted) {
-        SnackBarUtil.showFloating(context, '클립보드에 이미지가 없습니다.', isError: true);
-      }
-    }
+    // Disabled temporarily to fix build issues
+    SnackBarUtil.showFloating(context, '붙여넣기 기능이 현재 비활성화되어 있습니다.', isError: true);
   }
 
   Future<void> _pickAndUploadImage(String blocksField) async {

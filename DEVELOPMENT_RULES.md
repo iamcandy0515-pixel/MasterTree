@@ -32,6 +32,15 @@
 - **3-1. [Clean Code 준수]** `@[skills/clean-code]` 규칙을 따르며, 과도한 엔지니어링을 피하고 직관적인 코드를 작성한다.
 - **3-2. [린트 및 보안 체크]** 모든 작업 종료 전 `flutter analyze`와 보안 스캔 스크립트를 실행하여 'Critical' 블로커를 해결한다.
 
+## 4. 빌드 및 인프라 설정 (Build & Infrastructure)
+
+- **4-1. [Flutter Admin App 빌드 버전 고정]** 안드로이드 빌드 안정성과 플랫폼 간(Web/App) 호환성을 위해 아래 버전을 **절대 변경하지 않는다.**
+    - **Gradle**: `8.5` (gradle-wrapper.properties)
+    - **Android Gradle Plugin (AGP)**: `8.2.1` (settings.gradle.kts)
+    - **Kotlin**: `1.9.22` (settings.gradle.kts)
+- **4-2. [의존성 충돌 해결 (Resolution Strategy)]** 특정 라이브러리가 상위 AGP 버전을 요구하여 빌드가 실패할 경우, 버전 업그레이드 대신 `app/build.gradle.kts`의 `configurations.all { resolutionStrategy { ... } }` 블록을 통해 하위 호환 버전을 강제(force)한다.
+- **4-3. [웹 전용 코드 격리]** `dart:html` 등 웹 전용 라이브러리는 직접 임포트하지 않고, `WebUtils` (web_utils.dart) 추상화 레이어를 통해 조건부 임포트(Conditional Import)를 사용하여 모바일 빌드 컴파일 오류를 원천 차단한다.
+
 ---
 
 **주의:** 본 규칙을 어기는 작업 방식은 용납되지 않으며, 모든 에이전트(Antigravity)는 이 규칙을 최우선 순위로 설정한다.
