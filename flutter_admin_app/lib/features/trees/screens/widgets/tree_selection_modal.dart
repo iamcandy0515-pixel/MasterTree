@@ -8,10 +8,7 @@ import 'package:flutter_admin_app/features/trees/viewmodels/tree_group_edit_view
 class TreeSelectionModal extends StatelessWidget {
   final TreeGroupEditViewModel parentVm;
 
-  const TreeSelectionModal({
-    super.key,
-    required this.parentVm,
-  });
+  const TreeSelectionModal({super.key, required this.parentVm});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +16,7 @@ class TreeSelectionModal extends StatelessWidget {
     String? initialCat;
     if (parentVm.members.isNotEmpty) {
       // Find category... ideally we could fetch it, but let's leave it null
-      // if not strictly available from member class. 
+      // if not strictly available from member class.
       // User requested "침엽수, 활엽수 정도의 구분자를 활용하여 자동 선택"
       // TreeGroupMember only contains treeName and keyCharacteristics.
       // E.g., if member name contains "구상나무" it's 침엽수, but best is to rely on actual data.
@@ -72,9 +69,7 @@ class _ModalContentState extends State<_ModalContent> {
           _buildCategoryFilters(vm),
           _buildPagination(vm),
           const Divider(color: Colors.white10, height: 1),
-          Flexible(
-            child: _buildTreeList(vm),
-          ),
+          Flexible(child: _buildTreeList(vm)),
         ],
       ),
     );
@@ -98,11 +93,17 @@ class _ModalContentState extends State<_ModalContent> {
             children: [
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context, vm.selectedTrees); // 모달 화면은 닫고 추가한 수목명을 셋으로 넘겨줌
+                  Navigator.pop(
+                    context,
+                    vm.selectedTrees,
+                  ); // 모달 화면은 닫고 추가한 수목명을 셋으로 넘겨줌
                 },
                 style: TextButton.styleFrom(
                   minimumSize: Size.zero,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: const Text(
@@ -140,7 +141,11 @@ class _ModalContentState extends State<_ModalContent> {
               child: Chip(
                 label: Text(
                   tree.nameKr,
-                  style: const TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 backgroundColor: NeoColors.acidLime,
                 deleteIcon: const Icon(Icons.close, size: 16),
@@ -248,7 +253,10 @@ class _ModalContentState extends State<_ModalContent> {
 
         return ListTile(
           visualDensity: VisualDensity.compact,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 0,
+          ),
           title: Row(
             children: [
               Expanded(
@@ -301,8 +309,16 @@ class _ModalContentState extends State<_ModalContent> {
           trailing: isAlreadyMember
               ? Icon(Icons.check_circle, color: Colors.grey[600], size: 20)
               : isSelected
-                  ? const Icon(Icons.check_circle, color: NeoColors.acidLime, size: 20)
-                  : const Icon(Icons.circle_outlined, color: Colors.white30, size: 20),
+              ? const Icon(
+                  Icons.check_circle,
+                  color: NeoColors.acidLime,
+                  size: 20,
+                )
+              : const Icon(
+                  Icons.circle_outlined,
+                  color: Colors.white30,
+                  size: 20,
+                ),
           onTap: isAlreadyMember ? null : () => vm.toggleSelection(tree),
           tileColor: Colors.transparent,
         );

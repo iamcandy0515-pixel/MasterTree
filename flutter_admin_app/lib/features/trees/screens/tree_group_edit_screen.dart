@@ -99,7 +99,8 @@ class _TreeGroupEditContentState extends State<_TreeGroupEditContent> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => TreeLookalikeDetailScreen(group: vm.toGroup()),
+                  builder: (context) =>
+                      TreeLookalikeDetailScreen(group: vm.toGroup()),
                 ),
               );
             },
