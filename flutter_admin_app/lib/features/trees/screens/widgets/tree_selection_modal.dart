@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_admin_app/core/theme/neo_theme.dart';
-import 'package:flutter_admin_app/features/trees/models/tree.dart';
 import 'package:flutter_admin_app/features/trees/viewmodels/tree_selection_modal_viewmodel.dart';
 import 'package:flutter_admin_app/features/trees/viewmodels/tree_group_edit_viewmodel.dart';
 
@@ -71,11 +70,11 @@ class _ModalContentState extends State<_ModalContent> {
           _buildSearchBar(vm),
           const Divider(color: Colors.white10, height: 1),
           _buildCategoryFilters(vm),
+          _buildPagination(vm),
+          const Divider(color: Colors.white10, height: 1),
           Flexible(
             child: _buildTreeList(vm),
           ),
-          const Divider(color: Colors.white10, height: 1),
-          _buildPagination(vm),
         ],
       ),
     );
@@ -253,38 +252,59 @@ class _ModalContentState extends State<_ModalContent> {
           title: Row(
             children: [
               Expanded(
-                child: Text(
-                  tree.nameKr,
-                  style: GoogleFonts.notoSansKr(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                flex: 3,
+                child: Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        tree.nameKr,
+                        style: GoogleFonts.notoSansKr(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if (tree.category != null && tree.category!.isNotEmpty) ...[
+                      const SizedBox(width: 8),
+                      Text(
+                        '[${tree.category}]',
+                        style: const TextStyle(
+                          color: NeoColors.acidLime,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
+              const SizedBox(width: 8),
+              if (tree.scientificName != null)
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    tree.scientificName!,
+                    style: TextStyle(
+                      color: Colors.grey[500],
+                      fontStyle: FontStyle.italic,
+                      fontSize: 12,
+                    ),
+                    textAlign: TextAlign.right,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
             ],
           ),
-          subtitle: tree.scientificName != null
-              ? Text(
-                  tree.scientificName!,
-                  style: TextStyle(
-                    color: Colors.grey[500],
-                    fontStyle: FontStyle.italic,
-                    fontSize: 12,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                )
-              : null,
           trailing: isAlreadyMember
               ? Icon(Icons.check_circle, color: Colors.grey[600], size: 20)
               : isSelected
                   ? const Icon(Icons.check_circle, color: NeoColors.acidLime, size: 20)
                   : const Icon(Icons.circle_outlined, color: Colors.white30, size: 20),
           onTap: isAlreadyMember ? null : () => vm.toggleSelection(tree),
-          tileColor: isSelected ? const Color(0xFF1E2518) : Colors.transparent,
+          tileColor: Colors.transparent,
         );
       },
     );
