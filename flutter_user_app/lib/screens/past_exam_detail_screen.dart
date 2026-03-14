@@ -58,7 +58,7 @@ class _PastExamDetailScreenState extends State<PastExamDetailScreen> {
       child: Scaffold(
         backgroundColor: AppColors.backgroundDark,
         appBar: AppBar(
-          title: const Text('기출문제 상세'),
+          title: const Text('기출 / 학습 상세'),
           backgroundColor: AppColors.backgroundDark,
           elevation: 0,
           leading: IconButton(
