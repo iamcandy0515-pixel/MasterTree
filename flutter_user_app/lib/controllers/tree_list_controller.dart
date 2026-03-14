@@ -6,20 +6,23 @@ class TreeListController {
   List<Map<String, dynamic>> allTrees = [];
   List<Map<String, dynamic>> filteredTrees = [];
   bool isLoading = true;
-  String selectedCategory = '전체';
+  String selectedType = '전체';
+  String selectedHabit = '전체';
   String searchQuery = '';
   int currentPage = 0;
   static const int itemsPerPage = 5;
 
   Future<void> loadSavedFilters() async {
     final prefs = await SharedPreferences.getInstance();
-    selectedCategory = prefs.getString('user_tree_category') ?? '전체';
+    selectedType = prefs.getString('user_tree_type') ?? '전체';
+    selectedHabit = prefs.getString('user_tree_habit') ?? '전체';
     searchQuery = prefs.getString('user_tree_search') ?? '';
   }
 
   Future<void> _saveFilters() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('user_tree_category', selectedCategory);
+    await prefs.setString('user_tree_type', selectedType);
+    await prefs.setString('user_tree_habit', selectedHabit);
     await prefs.setString('user_tree_search', searchQuery);
   }
 
@@ -45,24 +48,27 @@ class TreeListController {
       final scientificName = (tree['scientific_name'] ?? '')
           .toString()
           .toLowerCase();
-      final category = tree['category'] ?? '';
-      final shape = tree['shape'] ?? '';
+      final category = (tree['category'] ?? '').toString();
       final lowerQuery = query.toLowerCase();
 
       final matchesSearch =
           name.contains(lowerQuery) || scientificName.contains(lowerQuery);
-      final matchesCategory =
-          selectedCategory == '전체' ||
-          category == selectedCategory ||
-          shape == selectedCategory;
+      
+      final matchesType = selectedType == '전체' || category.contains(selectedType);
+      final matchesHabit = selectedHabit == '전체' || category.contains(selectedHabit);
 
-      return matchesSearch && matchesCategory;
+      return matchesSearch && matchesType && matchesHabit;
     }).toList();
     onUpdate();
   }
 
-  void changeCategory(String category, String query, VoidCallback onUpdate) {
-    selectedCategory = category;
+  void changeType(String type, String query, VoidCallback onUpdate) {
+    selectedType = type;
+    filterTrees(query, onUpdate);
+  }
+
+  void changeHabit(String habit, String query, VoidCallback onUpdate) {
+    selectedHabit = habit;
     filterTrees(query, onUpdate);
   }
 

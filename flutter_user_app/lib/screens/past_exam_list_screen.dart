@@ -40,7 +40,7 @@ class _PastExamListScreenState extends State<PastExamListScreen> {
         backgroundColor: AppColors.backgroundDark,
         elevation: 0,
         title: const Text(
-          '기출문제 일람',
+          '기출 / 학습',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
