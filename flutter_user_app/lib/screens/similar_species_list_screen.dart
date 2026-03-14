@@ -98,14 +98,20 @@ class _SimilarSpeciesListScreenState extends State<SimilarSpeciesListScreen> {
     if (_controller.totalPages <= 1) return const SizedBox.shrink();
     return Row(
       children: [
+        _buildPageNavButton(Icons.first_page, _controller.currentPage > 1, 
+            () => _controller.setPage(1, onUpdate: () => setState(() {}))),
+        const SizedBox(width: 4),
         _buildPageNavButton(Icons.chevron_left, _controller.currentPage > 1, 
             () => _controller.prevPage(onUpdate: () => setState(() {}))),
-        const SizedBox(width: 8),
+        const SizedBox(width: 12),
         Text('${_controller.currentPage} / ${_controller.totalPages}',
             style: const TextStyle(color: AppColors.textLight, fontSize: 13, fontWeight: FontWeight.bold)),
-        const SizedBox(width: 8),
+        const SizedBox(width: 12),
         _buildPageNavButton(Icons.chevron_right, _controller.currentPage < _controller.totalPages,
             () => _controller.nextPage(onUpdate: () => setState(() {}))),
+        const SizedBox(width: 4),
+        _buildPageNavButton(Icons.last_page, _controller.currentPage < _controller.totalPages,
+            () => _controller.setPage(_controller.totalPages, onUpdate: () => setState(() {}))),
       ],
     );
   }

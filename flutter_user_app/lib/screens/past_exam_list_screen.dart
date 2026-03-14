@@ -105,6 +105,24 @@ class _PastExamListScreenState extends State<PastExamListScreen> {
               ],
             ),
           ),
+          if (_controller.hasSearched && !_controller.isLoading)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: Row(
+                children: [
+                  const Icon(Icons.info_outline, color: AppColors.primary, size: 14),
+                  const SizedBox(width: 6),
+                  Text(
+                    '검색 결과: 총 ${_controller.totalResults}건',
+                    style: const TextStyle(
+                      color: AppColors.primary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           const Divider(color: Colors.white10, height: 1),
           if (!_controller.isLoading &&
               _controller.hasSearched &&

@@ -34,6 +34,7 @@ class PastExamListController {
 
   int currentPage = 1;
   int totalPages = 1;
+  int totalResults = 0;
   static const int itemsPerPage = 5;
 
   bool hasSearched = false;
@@ -105,6 +106,7 @@ class PastExamListController {
       final totalItems = (allIds as List).length;
 
       quizzes = List<Map<String, dynamic>>.from(response);
+      totalResults = totalItems;
       totalPages = (totalItems / itemsPerPage).ceil();
       if (totalPages == 0) totalPages = 1;
 

@@ -120,7 +120,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   ),
                 ),
                 const Text(
-                  '수목 식별 학습',
+                  '수목 / 퀴즈',
                   style: TextStyle(
                     color: AppColors.textLight,
                     fontSize: 16,
