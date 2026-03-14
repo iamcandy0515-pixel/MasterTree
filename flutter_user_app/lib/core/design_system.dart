@@ -38,3 +38,41 @@ class AppDesign {
     border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
   );
 }
+
+class AppTypography {
+  static const TextStyle titleLarge = TextStyle(
+    color: AppColors.textLight,
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+    letterSpacing: -0.5,
+  );
+
+  static const TextStyle titleMedium = TextStyle(
+    color: AppColors.textLight,
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  );
+
+  static const TextStyle titleSmall = TextStyle(
+    color: AppColors.textLight,
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+  );
+
+  static const TextStyle bodyMedium = TextStyle(
+    color: AppColors.textLight,
+    fontSize: 14,
+    height: 1.5,
+  );
+
+  static const TextStyle bodySmall = TextStyle(
+    color: AppColors.textMuted,
+    fontSize: 12,
+  );
+
+  static const TextStyle labelSmall = TextStyle(
+    color: AppColors.textMuted,
+    fontSize: 11,
+    fontWeight: FontWeight.w500,
+  );
+}

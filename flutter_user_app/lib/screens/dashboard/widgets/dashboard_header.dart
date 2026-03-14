@@ -31,20 +31,11 @@ class DashboardHeader extends StatelessWidget {
         children: [
           const Text(
             '사용자 대시보드',
-            style: TextStyle(
-              color: AppColors.textLight,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              letterSpacing: -0.5,
-            ),
+            style: AppTypography.titleSmall,
           ),
-          Text(
+          const Text(
             'Master Tree User',
-            style: TextStyle(
-              color: AppColors.textMuted.withValues(alpha: 0.7),
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-            ),
+            style: AppTypography.labelSmall,
           ),
         ],
       ),
