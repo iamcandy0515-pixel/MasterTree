@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_admin_app/core/theme/neo_theme.dart';
 import 'package:flutter_admin_app/features/trees/models/tree_group.dart';
 import 'package:flutter_admin_app/features/trees/viewmodels/tree_group_edit_viewmodel.dart';
+import 'package:flutter_admin_app/features/trees/models/tree.dart';
 import 'tree_selection_modal.dart';
 
 class TreeGroupMemberList extends StatelessWidget {
@@ -120,10 +121,23 @@ class TreeGroupMemberList extends StatelessWidget {
   Future<void> _showSelectionModal(BuildContext context, TreeGroupEditViewModel vm) async {
     // 1건 이상 존재하는 경우 첫 번째 멤버 정보를 활용해 카테고리(침/활엽수) 정보 전달
     // 이 작업은 나중에 추가될 모달에서 처리하도록 인자를 추후 수정합니다.
-    await showDialog(
+    final selectedTrees = await showDialog<List<Tree>>(
       context: context,
       barrierDismissible: false, // 닫기 버튼으로만 닫히게 함
       builder: (ctx) => TreeSelectionModal(parentVm: vm),
     );
+
+    if (selectedTrees != null && selectedTrees.isNotEmpty) {
+      for (final tree in selectedTrees) {
+        vm.addMember(
+          TreeGroupMember(
+            treeId: tree.id.toString(),
+            treeName: tree.nameKr,
+            keyCharacteristics: '',
+            isAutoQuizEnabled: tree.isAutoQuizEnabled,
+          ),
+        );
+      }
+    }
   }
 }
