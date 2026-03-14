@@ -47,11 +47,13 @@ class _QuizScreenState extends State<QuizScreen> {
 
     final question = _controller.currentQuestion;
 
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
         // 뒤로가기 시 보류 중인 결과 동기화 시도
-        ApiService.syncPendingAttempts();
-        return true;
+        await ApiService.syncPendingAttempts();
+        if (context.mounted) Navigator.pop(context);
       },
       child: Scaffold(
         backgroundColor: AppColors.backgroundDark,
@@ -93,7 +95,7 @@ class _QuizScreenState extends State<QuizScreen> {
     return Container(
       padding: const EdgeInsets.only(top: 12, left: 12, right: 12, bottom: 8),
       decoration: BoxDecoration(
-        color: AppColors.backgroundDark.withOpacity(0.8),
+        color: AppColors.backgroundDark.withValues(alpha: 0.8),
       ),
       child: SafeArea(
         bottom: false,
@@ -166,7 +168,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   value: _controller.totalQuestions > 0
                       ? _controller.solvedCount / _controller.totalQuestions
                       : 0.0,
-                  backgroundColor: Colors.white.withOpacity(0.1),
+                  backgroundColor: Colors.white.withValues(alpha: 0.1),
                   valueColor: const AlwaysStoppedAnimation<Color>(
                     AppColors.primary,
                   ),
@@ -190,7 +192,7 @@ class _QuizScreenState extends State<QuizScreen> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 15,
               offset: const Offset(0, 5),
             ),
@@ -250,7 +252,7 @@ class _QuizScreenState extends State<QuizScreen> {
                     child: ClipRect(
                       child: BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                        child: Container(color: Colors.black.withOpacity(0.35)),
+                        child: Container(color: Colors.black.withValues(alpha: 0.35)),
                       ),
                     ),
                   ),
@@ -265,13 +267,13 @@ class _QuizScreenState extends State<QuizScreen> {
                         filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.35),
+                            color: Colors.black.withValues(alpha: 0.35),
                             gradient: LinearGradient(
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [
                                 Colors.transparent,
-                                Colors.black.withOpacity(0.5),
+                                Colors.black.withValues(alpha: 0.5),
                               ],
                             ),
                           ),
@@ -286,7 +288,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.4),
+                      color: Colors.black.withValues(alpha: 0.4),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -322,7 +324,7 @@ class _QuizScreenState extends State<QuizScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -376,7 +378,7 @@ class _QuizScreenState extends State<QuizScreen> {
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.redAccent,
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  backgroundColor: Colors.redAccent.withOpacity(0.05),
+                  backgroundColor: Colors.redAccent.withValues(alpha: 0.05),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -405,7 +407,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   }
                 },
                 style: TextButton.styleFrom(
-                  backgroundColor: AppColors.primary.withOpacity(0.1),
+                  backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                   foregroundColor: AppColors.primary,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
@@ -451,7 +453,7 @@ class _QuizScreenState extends State<QuizScreen> {
               decoration: BoxDecoration(
                 color: isActive
                     ? AppColors.primary
-                    : Colors.white.withOpacity(0.08),
+                    : Colors.white.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
                 boxShadow: isActive ? [AppDesign.glowPrimary] : null,
               ),
@@ -484,15 +486,15 @@ class _QuizScreenState extends State<QuizScreen> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.backgroundDark.withOpacity(0.95),
+            color: AppColors.backgroundDark.withValues(alpha: 0.95),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: AppColors.primary.withOpacity(0.5),
+              color: AppColors.primary.withValues(alpha: 0.5),
               width: 2,
             ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withOpacity(0.3),
+                color: AppColors.primary.withValues(alpha: 0.3),
                 blurRadius: 20,
                 spreadRadius: 2,
               ),
@@ -506,7 +508,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.2),
+                      color: AppColors.primary.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -570,15 +572,15 @@ class _QuizScreenState extends State<QuizScreen> {
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: AppColors.backgroundDark.withOpacity(0.95),
+            color: AppColors.backgroundDark.withValues(alpha: 0.95),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: AppColors.primary.withOpacity(0.6),
+              color: AppColors.primary.withValues(alpha: 0.6),
               width: 2,
             ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withOpacity(0.4),
+                color: AppColors.primary.withValues(alpha: 0.4),
                 blurRadius: 25,
                 spreadRadius: 3,
               ),
@@ -592,7 +594,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.2),
+                      color: AppColors.primary.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -627,7 +629,7 @@ class _QuizScreenState extends State<QuizScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
+                  color: Colors.white.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -672,17 +674,17 @@ class _QuizScreenState extends State<QuizScreen> {
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         decoration: BoxDecoration(
           color: showCorrect
-              ? AppColors.primary.withOpacity(0.12)
+              ? AppColors.primary.withValues(alpha: 0.12)
               : showWrong
-              ? Colors.red.withOpacity(0.1)
+              ? Colors.red.withValues(alpha: 0.1)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: showCorrect
-                ? AppColors.primary.withOpacity(0.3)
+                ? AppColors.primary.withValues(alpha: 0.3)
                 : showWrong
-                ? Colors.red.withOpacity(0.3)
-                : Colors.white.withOpacity(0.03),
+                ? Colors.red.withValues(alpha: 0.3)
+                : Colors.white.withValues(alpha: 0.03),
             width: 1,
           ),
         ),
@@ -697,7 +699,7 @@ class _QuizScreenState extends State<QuizScreen> {
                       ? AppColors.primary
                       : showWrong
                       ? Colors.redAccent
-                      : Colors.white.withOpacity(0.6),
+                      : Colors.white.withValues(alpha: 0.6),
                   fontSize: 13,
                   fontWeight: showCorrect || showWrong
                       ? FontWeight.bold
@@ -708,7 +710,7 @@ class _QuizScreenState extends State<QuizScreen> {
             if (showCorrect)
               const Icon(Icons.check_circle, color: AppColors.primary, size: 18)
             else if (showWrong)
-              Icon(Icons.cancel, color: Colors.red.withOpacity(0.8), size: 18),
+              Icon(Icons.cancel, color: Colors.red.withValues(alpha: 0.8), size: 18),
           ],
         ),
       ),

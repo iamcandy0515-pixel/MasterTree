@@ -326,7 +326,7 @@ class _TreeGroupListContent extends StatelessWidget {
                           ),
                           child: CircleAvatar(
                             radius: 12,
-                            backgroundColor: NeoColors.acidLime.withOpacity(
+                            backgroundColor: NeoColors.acidLime.withValues(alpha: 
                               0.2,
                             ),
                             child: const Icon(

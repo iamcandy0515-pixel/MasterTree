@@ -76,9 +76,9 @@ class _SimilarSpeciesListScreenState extends State<SimilarSpeciesListScreen> {
     return Container(
       padding: const EdgeInsets.only(top: 16, bottom: 8),
       decoration: BoxDecoration(
-        color: AppColors.backgroundDark.withOpacity(0.8),
+        color: AppColors.backgroundDark.withValues(alpha: 0.8),
         border: Border(
-          bottom: BorderSide(color: Colors.white.withOpacity(0.05)),
+          bottom: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
         ),
       ),
       child: SafeArea(
@@ -118,7 +118,7 @@ class _SimilarSpeciesListScreenState extends State<SimilarSpeciesListScreen> {
   Widget _buildSearchField() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
       ),
       child: TextField(
@@ -230,7 +230,7 @@ class _SimilarSpeciesListScreenState extends State<SimilarSpeciesListScreen> {
         width: 32,
         height: 32,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
@@ -260,9 +260,9 @@ class _SimilarSpeciesListScreenState extends State<SimilarSpeciesListScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
+            color: Colors.white.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withOpacity(0.05)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
           ),
           child: Row(
             children: [
@@ -342,7 +342,7 @@ class _SimilarSpeciesListScreenState extends State<SimilarSpeciesListScreen> {
                       const AssetImage('assets/images/placeholder.png'),
                 )
               : null,
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
         ),
         child: url.isEmpty
             ? const Center(

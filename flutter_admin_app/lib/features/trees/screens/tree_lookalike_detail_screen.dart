@@ -98,13 +98,13 @@ class _SmartTagsSection extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? primaryColor : Colors.white.withOpacity(0.05),
+          color: isSelected ? primaryColor : Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: isSelected ? primaryColor : Colors.white24),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: primaryColor.withOpacity(0.3),
+                    color: primaryColor.withValues(alpha: 0.3),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -234,7 +234,7 @@ class _ComparisonMatrixState extends State<_ComparisonMatrix> {
                 Container(
                   width: 100,
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withValues(alpha: 0.3),
                     border: const Border(
                       right: BorderSide(color: Colors.white10),
                     ),
@@ -300,7 +300,7 @@ class _ComparisonMatrixState extends State<_ComparisonMatrix> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
+              color: Colors.white.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(20),
             ),
             child: const Row(
@@ -340,7 +340,7 @@ class _ComparisonMatrixState extends State<_ComparisonMatrix> {
       height: height,
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      color: isHeader ? Colors.white.withOpacity(0.02) : null,
+      color: isHeader ? Colors.white.withValues(alpha: 0.02) : null,
       child: Text(
         text,
         style: const TextStyle(
@@ -484,7 +484,7 @@ class _NavButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: Colors.white10),
         ),

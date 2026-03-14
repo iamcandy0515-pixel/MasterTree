@@ -67,7 +67,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildHeader(BuildContext context) {
     return SliverAppBar(
-      backgroundColor: AppColors.backgroundDark.withOpacity(0.8),
+      backgroundColor: AppColors.backgroundDark.withValues(alpha: 0.8),
       floating: true,
       pinned: false,
       elevation: 0,
@@ -165,9 +165,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.04),
+        color: Colors.white.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(AppRadius.base),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,7 +175,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Text(
             '학습 가이드',
             style: TextStyle(
-              color: AppColors.textLight.withOpacity(0.4),
+              color: AppColors.textLight.withValues(alpha: 0.4),
               fontSize: 12,
               fontWeight: FontWeight.bold,
               letterSpacing: 2.0,
@@ -226,14 +226,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
         decoration: BoxDecoration(
           color: AppColors.surfaceDark,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withOpacity(0.05)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color, size: 20),
@@ -327,7 +327,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       height: 12,
       width: 1,
       margin: const EdgeInsets.symmetric(horizontal: 12),
-      color: Colors.white.withOpacity(0.1),
+      color: Colors.white.withValues(alpha: 0.1),
     );
   }
 
@@ -335,7 +335,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.backgroundDark,
-        border: Border(top: BorderSide(color: Colors.white.withOpacity(0.05))),
+        border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.05))),
       ),
       child: BottomNavigationBar(
         currentIndex: _controller.currentIndex,

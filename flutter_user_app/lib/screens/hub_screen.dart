@@ -57,7 +57,7 @@ class _HubScreenState extends State<HubScreen> {
           decoration: BoxDecoration(
             border: Border.symmetric(
               horizontal: BorderSide.none,
-              vertical: BorderSide(color: Colors.white.withOpacity(0.05)),
+              vertical: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
             ),
           ),
           child: Stack(
@@ -173,7 +173,7 @@ class _HubScreenState extends State<HubScreen> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
+                  color: Colors.white.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
@@ -187,7 +187,7 @@ class _HubScreenState extends State<HubScreen> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
+                  color: Colors.white.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: IconButton(
@@ -230,7 +230,7 @@ class _HubScreenState extends State<HubScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.03),
+              color: Colors.white.withValues(alpha: 0.03),
               borderRadius: BorderRadius.circular(AppRadius.base),
               // Border removed as requested
             ),
@@ -240,7 +240,7 @@ class _HubScreenState extends State<HubScreen> {
                   width: 52,
                   height: 52,
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.2),
+                    color: AppColors.primary.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(icon, color: AppColors.primary, size: 28),
@@ -287,9 +287,9 @@ class _HubScreenState extends State<HubScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.04),
+        color: Colors.white.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(AppRadius.base),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -297,7 +297,7 @@ class _HubScreenState extends State<HubScreen> {
           Text(
             '학습 가이드',
             style: TextStyle(
-              color: AppColors.textLight.withOpacity(0.4),
+              color: AppColors.textLight.withValues(alpha: 0.4),
               fontSize: 12,
               fontWeight: FontWeight.bold,
               letterSpacing: 2.0,
@@ -342,9 +342,9 @@ class _HubScreenState extends State<HubScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.03),
+            color: Colors.white.withValues(alpha: 0.03),
             border: Border(
-              top: BorderSide(color: Colors.white.withOpacity(0.1)),
+              top: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
             ),
           ),
           child: Row(

@@ -253,7 +253,7 @@ class _TreeListScreenState extends State<_TreeListContent> {
                       Text(
                         '수목 현황',
                         style: TextStyle(
-                          color: textColor.withOpacity(0.5),
+                          color: textColor.withValues(alpha: 0.5),
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                         ),
@@ -300,10 +300,10 @@ class _TreeListScreenState extends State<_TreeListContent> {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: primaryColor.withOpacity(0.1),
+                            color: primaryColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
-                              color: primaryColor.withOpacity(0.3),
+                              color: primaryColor.withValues(alpha: 0.3),
                             ),
                           ),
                           child: Text(
@@ -390,11 +390,11 @@ class _TreeListScreenState extends State<_TreeListContent> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
-              ? primary.withOpacity(0.2)
-              : Colors.white.withOpacity(0.05),
+              ? primary.withValues(alpha: 0.2)
+              : Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? primary.withOpacity(0.3) : Colors.transparent,
+            color: isSelected ? primary.withValues(alpha: 0.3) : Colors.transparent,
           ),
         ),
         child: Row(
@@ -427,7 +427,7 @@ class _TreeListScreenState extends State<_TreeListContent> {
     // Mock status logic
     const status = '게시됨';
     final statusColor = primary;
-    final statusBg = primary.withOpacity(0.2);
+    final statusBg = primary.withValues(alpha: 0.2);
 
     return InkWell(
       onTap: () => _navigateToEdit(tree),
@@ -463,10 +463,10 @@ class _TreeListScreenState extends State<_TreeListContent> {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.15),
+                            color: Colors.red.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(4),
                             border: Border.all(
-                              color: Colors.red.withOpacity(0.3),
+                              color: Colors.red.withValues(alpha: 0.3),
                             ),
                           ),
                           child: const Text(
@@ -513,7 +513,7 @@ class _TreeListScreenState extends State<_TreeListContent> {
                       _buildCountBadge(
                         icon: Icons.image_outlined,
                         count: tree.images.length,
-                        color: Colors.blueAccent.withOpacity(0.8),
+                        color: Colors.blueAccent.withValues(alpha: 0.8),
                       ),
                       const SizedBox(width: 12),
                       _buildCountBadge(
@@ -523,7 +523,7 @@ class _TreeListScreenState extends State<_TreeListContent> {
                               (img) => img.hint != null && img.hint!.isNotEmpty,
                             )
                             .length,
-                        color: Colors.orangeAccent.withOpacity(0.8),
+                        color: Colors.orangeAccent.withValues(alpha: 0.8),
                       ),
                     ],
                   ),
@@ -561,7 +561,7 @@ class _TreeListScreenState extends State<_TreeListContent> {
         Text(
           count.toString(),
           style: TextStyle(
-            color: color.withOpacity(0.9),
+            color: color.withValues(alpha: 0.9),
             fontSize: 12,
             fontWeight: FontWeight.bold,
           ),
@@ -575,9 +575,9 @@ class _TreeListScreenState extends State<_TreeListContent> {
       margin: const EdgeInsets.only(right: 4),
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: primary.withOpacity(0.1),
+        color: primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: primary.withOpacity(0.3), width: 0.5),
+        border: Border.all(color: primary.withValues(alpha: 0.3), width: 0.5),
       ),
       child: Text(
         label,

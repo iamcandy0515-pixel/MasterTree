@@ -24,7 +24,7 @@ class DashboardViewModel extends ChangeNotifier {
       await Supabase.instance.client.auth.signOut();
       return true;
     } catch (e) {
-      print('Sign out error: $e');
+      debugPrint('Sign out error: $e');
       return false;
     } finally {
       _isLoading = false;
@@ -44,7 +44,7 @@ class DashboardViewModel extends ChangeNotifier {
       final data = await _repo.getDashboardStats();
       _stats = data;
     } catch (e) {
-      print('Dashboard VM Error: $e');
+      debugPrint('Dashboard VM Error: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -73,7 +73,7 @@ class DashboardViewModel extends ChangeNotifier {
     try {
       await _repo.restartUserServer();
     } catch (e) {
-      print('Restart User Server Error: $e');
+      debugPrint('Restart User Server Error: $e');
     } finally {
       _isLoading = false;
       notifyListeners();

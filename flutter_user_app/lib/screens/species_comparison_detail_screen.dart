@@ -96,9 +96,9 @@ class _SpeciesComparisonDetailScreenState
     return Container(
       padding: const EdgeInsets.only(top: 16, bottom: 8),
       decoration: BoxDecoration(
-        color: AppColors.backgroundDark.withOpacity(0.8),
+        color: AppColors.backgroundDark.withValues(alpha: 0.8),
         border: Border(
-          bottom: BorderSide(color: Colors.white.withOpacity(0.05)),
+          bottom: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
         ),
       ),
       child: SafeArea(
@@ -145,7 +145,7 @@ class _SpeciesComparisonDetailScreenState
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary
-              : Colors.white.withOpacity(0.05),
+              : Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected ? AppColors.primary : Colors.white24,
@@ -175,7 +175,7 @@ class _SpeciesComparisonDetailScreenState
     return Container(
       height: 250, // Fixed height to prevent layout jumps
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: Row(
         children: [
@@ -220,7 +220,7 @@ class _SpeciesComparisonDetailScreenState
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) return child;
                 return Container(
-                  color: Colors.white.withOpacity(0.05),
+                  color: Colors.white.withValues(alpha: 0.05),
                   child: const Center(
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
@@ -231,7 +231,7 @@ class _SpeciesComparisonDetailScreenState
               },
               errorBuilder: (context, error, stackTrace) {
                 return Container(
-                  color: Colors.white.withOpacity(0.05),
+                  color: Colors.white.withValues(alpha: 0.05),
                   child: const Center(
                     child: Icon(
                       Icons.broken_image_outlined,
@@ -250,9 +250,9 @@ class _SpeciesComparisonDetailScreenState
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
-                color: AppColors.backgroundDark.withOpacity(0.6),
+                color: AppColors.backgroundDark.withValues(alpha: 0.6),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.white.withOpacity(0.2)),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
               ),
               child: Text(
                 name,
@@ -272,7 +272,7 @@ class _SpeciesComparisonDetailScreenState
             child: Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.4),
+                color: Colors.black.withValues(alpha: 0.4),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.zoom_in, color: Colors.white, size: 16),

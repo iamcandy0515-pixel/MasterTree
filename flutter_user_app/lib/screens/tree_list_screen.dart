@@ -70,7 +70,7 @@ class _TreeListScreenState extends State<TreeListScreen> {
         Icon(
           Icons.forest_outlined,
           size: 64,
-          color: AppColors.textMuted.withOpacity(0.3),
+          color: AppColors.textMuted.withValues(alpha: 0.3),
         ),
         const SizedBox(height: 16),
         const Text(
@@ -85,7 +85,7 @@ class _TreeListScreenState extends State<TreeListScreen> {
     return Container(
       padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 8),
       decoration: BoxDecoration(
-        color: AppColors.backgroundDark.withOpacity(0.8),
+        color: AppColors.backgroundDark.withValues(alpha: 0.8),
       ),
       child: SafeArea(
         bottom: false,
@@ -215,7 +215,7 @@ class _TreeListScreenState extends State<TreeListScreen> {
             style: TextStyle(
               color: isActive
                   ? Colors.black
-                  : AppColors.textLight.withOpacity(0.7),
+                  : AppColors.textLight.withValues(alpha: 0.7),
               fontSize: 13,
               fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
             ),
@@ -290,7 +290,7 @@ class _TreeListScreenState extends State<TreeListScreen> {
       physics: const NeverScrollableScrollPhysics(),
       itemCount: pagedTrees.length,
       separatorBuilder: (context, index) =>
-          Divider(color: Colors.white.withOpacity(0.05), height: 1),
+          Divider(color: Colors.white.withValues(alpha: 0.05), height: 1),
       itemBuilder: (context, index) {
         final tree = pagedTrees[index];
         final name = tree['name_kr'] ?? '이름 없음';
@@ -323,7 +323,7 @@ class _TreeListScreenState extends State<TreeListScreen> {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.primary.withOpacity(0.1),
+                              color: AppColors.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
@@ -411,7 +411,7 @@ class _TreeDetailSheetState extends State<_TreeDetailSheet> {
             width: 48,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -460,7 +460,7 @@ class _TreeDetailSheetState extends State<_TreeDetailSheet> {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: Colors.white.withOpacity(0.02),
+            color: Colors.white.withValues(alpha: 0.02),
           ),
           clipBehavior: Clip.antiAlias,
           child: GestureDetector(
@@ -490,7 +490,7 @@ class _TreeDetailSheetState extends State<_TreeDetailSheet> {
                             ? loadingProgress.cumulativeBytesLoaded /
                                   loadingProgress.expectedTotalBytes!
                             : null,
-                        color: AppColors.primary.withOpacity(0.5),
+                        color: AppColors.primary.withValues(alpha: 0.5),
                       ),
                     );
                   },
@@ -502,7 +502,7 @@ class _TreeDetailSheetState extends State<_TreeDetailSheet> {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        Colors.black.withOpacity(0.7),
+                        Colors.black.withValues(alpha: 0.7),
                       ],
                     ),
                   ),
@@ -513,7 +513,7 @@ class _TreeDetailSheetState extends State<_TreeDetailSheet> {
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.4),
+                      color: Colors.black.withValues(alpha: 0.4),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -578,13 +578,13 @@ class _TreeDetailSheetState extends State<_TreeDetailSheet> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? AppColors.primary.withOpacity(0.1)
-                    : Colors.white.withOpacity(0.02),
+                    ? AppColors.primary.withValues(alpha: 0.1)
+                    : Colors.white.withValues(alpha: 0.02),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: isSelected
-                      ? AppColors.primary.withOpacity(0.5)
-                      : Colors.white.withOpacity(0.05),
+                      ? AppColors.primary.withValues(alpha: 0.5)
+                      : Colors.white.withValues(alpha: 0.05),
                   width: 1,
                 ),
               ),
@@ -614,9 +614,9 @@ class _TreeDetailSheetState extends State<_TreeDetailSheet> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.03),
+            color: Colors.white.withValues(alpha: 0.03),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withOpacity(0.05)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
           ),
           child: Row(
             children: [
@@ -642,9 +642,9 @@ class _TreeDetailSheetState extends State<_TreeDetailSheet> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.primary.withOpacity(0.1),
+          color: AppColors.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+          border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -709,7 +709,7 @@ class _TreeDetailSheetState extends State<_TreeDetailSheet> {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: AppColors.primary.withOpacity(0.1),
+            color: AppColors.primary.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(icon, color: AppColors.primary, size: 20),

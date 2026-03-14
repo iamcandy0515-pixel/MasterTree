@@ -84,9 +84,9 @@ class _TreeSourcingContentState extends State<_TreeSourcingContent> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.02),
+        color: Colors.white.withValues(alpha: 0.02),
         border: Border(
-          bottom: BorderSide(color: primaryColor.withOpacity(0.1)),
+          bottom: BorderSide(color: primaryColor.withValues(alpha: 0.1)),
         ),
       ),
       child: Row(
@@ -140,9 +140,9 @@ class _TreeSourcingContentState extends State<_TreeSourcingContent> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: primaryColor.withOpacity(0.2)),
+        border: Border.all(color: primaryColor.withValues(alpha: 0.2)),
       ),
       child: TextField(
         controller: _searchController,

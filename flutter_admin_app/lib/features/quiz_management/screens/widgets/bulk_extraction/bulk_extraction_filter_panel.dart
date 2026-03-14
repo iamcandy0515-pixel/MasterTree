@@ -43,7 +43,7 @@ class BulkExtractionFilterPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-      color: surfaceDark.withOpacity(0.5),
+      color: surfaceDark.withValues(alpha: 0.5),
       child: Column(
         children: [
           TextField(

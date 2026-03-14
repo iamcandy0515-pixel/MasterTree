@@ -47,11 +47,13 @@ class _PastExamDetailScreenState extends State<PastExamDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
         // 뒤로가기 시 보류 중인 결과 동기화 시도
-        ApiService.syncPendingAttempts();
-        return true;
+        await ApiService.syncPendingAttempts();
+        if (context.mounted) Navigator.pop(context);
       },
       child: Scaffold(
         backgroundColor: AppColors.backgroundDark,
@@ -289,7 +291,7 @@ class _PastExamDetailScreenState extends State<PastExamDetailScreen> {
         style: TextStyle(
           color: isHighlight
               ? AppColors.primary
-              : Colors.white.withOpacity(0.85),
+              : Colors.white.withValues(alpha: 0.85),
           fontSize: 14,
           height: 1.4,
           fontStyle: isItalic ? FontStyle.italic : FontStyle.normal,
@@ -311,11 +313,11 @@ class _PastExamDetailScreenState extends State<PastExamDetailScreen> {
 
         if (isAnswered) {
           if (isCorrect) {
-            bgColor = AppColors.primary.withOpacity(0.12);
+            bgColor = AppColors.primary.withValues(alpha: 0.12);
             textColor = AppColors.primary;
             fontWeight = FontWeight.bold;
           } else if (isSelected) {
-            bgColor = Colors.red.withOpacity(0.12);
+            bgColor = Colors.red.withValues(alpha: 0.12);
             textColor = Colors.redAccent;
             fontWeight = FontWeight.bold;
           }
@@ -332,9 +334,9 @@ class _PastExamDetailScreenState extends State<PastExamDetailScreen> {
               color: bgColor,
               borderRadius: BorderRadius.circular(8),
               border: isAnswered && isSelected && !isCorrect
-                  ? Border.all(color: Colors.redAccent.withOpacity(0.3))
+                  ? Border.all(color: Colors.redAccent.withValues(alpha: 0.3))
                   : (isAnswered && isCorrect
-                        ? Border.all(color: AppColors.primary.withOpacity(0.3))
+                        ? Border.all(color: AppColors.primary.withValues(alpha: 0.3))
                         : null),
             ),
             child: Row(
@@ -436,11 +438,11 @@ class _PastExamDetailScreenState extends State<PastExamDetailScreen> {
             alignment: Alignment.center,
             padding: const EdgeInsets.symmetric(vertical: 4),
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
+              color: AppColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
-              '${year}년 ${round}회 ${qNo}번($subject)',
+              '$year년 $round회 $qNo번($subject)',
               style: const TextStyle(
                 color: AppColors.primary,
                 fontSize: 10,

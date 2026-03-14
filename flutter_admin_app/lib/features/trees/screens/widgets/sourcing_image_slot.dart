@@ -175,8 +175,9 @@ class SourcingImageSlot extends StatelessWidget {
       return Image.memory(displayItem, fit: BoxFit.cover);
     } else if (displayItem is TreeImage) {
       final url = isThumb ? displayItem.thumbnailUrl : displayItem.imageUrl;
-      if (url == null || url.isEmpty)
+      if (url == null || url.isEmpty) {
         return const Center(child: Icon(Icons.image_not_supported));
+      }
 
       return CachedNetworkImage(
         imageUrl: TreeRepository.getProxyUrl(
