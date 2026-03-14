@@ -219,7 +219,7 @@ class AuthController {
           }
         }
 
-        final authUser = authResponse!.user;
+        final authUser = authResponse.user;
         if (authUser == null) {
           throw '인증 계정 생성 또는 로그인에 실패했습니다.';
         }

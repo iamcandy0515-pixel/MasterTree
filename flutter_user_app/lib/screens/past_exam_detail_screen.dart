@@ -66,20 +66,20 @@ class _PastExamDetailScreenState extends State<PastExamDetailScreen> {
             onPressed: () async {
               // 뒤로가기 시에도 동기화 트리거
               await ApiService.syncPendingAttempts();
-              if (mounted) Navigator.pop(context);
+              if (!context.mounted) return;
+              Navigator.pop(context);
             },
           ),
           actions: [
             TextButton(
               onPressed: () async {
                 await ApiService.syncPendingAttempts();
-                if (mounted) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (_) => const UserStatsScreen(initialIndex: 2),
-                    ),
-                  );
-                }
+                if (!context.mounted) return;
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (_) => const UserStatsScreen(initialIndex: 2),
+                  ),
+                );
               },
               child: const Text(
                 '학습통계',
