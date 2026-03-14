@@ -66,8 +66,8 @@ class PastExamDetailController {
       final exam = response['quiz_exams'] as Map<String, dynamic>?;
       final category = response['quiz_categories'] as Map<String, dynamic>?;
 
-      this.quizId = quizId;
-      this.categoryId = category?['id'] as int?;
+      quizId = quizId;
+      categoryId = category?['id'] as int?;
 
       subject = category?['name']?.toString() ?? '-';
       year = exam?['year']?.toString() ?? '-';

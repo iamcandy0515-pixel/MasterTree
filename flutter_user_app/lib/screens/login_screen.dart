@@ -44,7 +44,8 @@ class _LoginScreenState extends State<LoginScreen> {
   // Clear saved data
   Future<void> _clearSavedData() async {
     await _authController.clearSavedData();
-    if (mounted) setState(() {});
+    if (!mounted) return;
+    setState(() {});
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('저장된 테스트 데이터가 삭제되었습니다.'),

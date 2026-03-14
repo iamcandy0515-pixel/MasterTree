@@ -56,10 +56,12 @@ class SpeciesComparisonDetailController {
             }
           }
 
-          if (t1 == null)
+          if (t1 == null) {
             debugPrint('[DEBUG] Tree1 data is NULL after matching');
-          if (t2 == null)
+          }
+          if (t2 == null) {
             debugPrint('[DEBUG] Tree2 data is NULL after matching');
+          }
 
           // 비즈니스 로직 프로세서를 통한 데이터 가공
           tree1Data = TreeComparisonProcessor.processTreeData(t1);
