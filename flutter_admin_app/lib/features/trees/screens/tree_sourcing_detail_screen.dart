@@ -40,7 +40,7 @@ class _TreeSourcingDetailScreenState extends State<TreeSourcingDetailScreen> {
           ListView(
             padding: const EdgeInsets.all(24),
             children: [
-              _buildTreeHeader(),
+              _buildTreeHeader(vm),
               SourcingCategorySection(vm: vm, type: 'main', label: '대표 이미지'),
               SourcingCategorySection(vm: vm, type: 'bark', label: '수피 (Bark)'),
               SourcingCategorySection(vm: vm, type: 'leaf', label: '잎 (Leaf)'),
@@ -57,36 +57,39 @@ class _TreeSourcingDetailScreenState extends State<TreeSourcingDetailScreen> {
 
   List<Widget> _buildAppBarActions(BuildContext context, TreeSourcingViewModel vm) {
     return [
-      TextButton.icon(
-        onPressed: vm.isLoading ? null : () => vm.fetchFromDrive(),
-        icon: const Icon(Icons.cloud_download, color: NeoColors.acidLime),
-        label: const Text('드라이브 추출', style: TextStyle(color: NeoColors.acidLime)),
-      ),
-      const SizedBox(width: 8),
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        child: ElevatedButton(
+        child: TextButton(
           onPressed: vm.isLoading || !vm.hasChanges
               ? null
               : () => _handleSave(context, vm),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: NeoColors.acidLime,
-            foregroundColor: Colors.black,
+          style: TextButton.styleFrom(
+            foregroundColor: NeoColors.acidLime,
           ),
           child: vm.isLoading
-              ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black))
-              : const Text('전체 저장'),
+              ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: NeoColors.acidLime))
+              : const Text('전체 저장', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         ),
       ),
     ];
   }
 
-  Widget _buildTreeHeader() {
+  Widget _buildTreeHeader(TreeSourcingViewModel vm) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child: Text(
-        widget.tree.nameKr,
-        style: const TextStyle(color: NeoColors.acidLime, fontSize: 24, fontWeight: FontWeight.bold),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            widget.tree.nameKr,
+            style: const TextStyle(color: NeoColors.acidLime, fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          TextButton.icon(
+            onPressed: vm.isLoading ? null : () => vm.fetchFromDrive(),
+            icon: const Icon(Icons.cloud_download, size: 16, color: NeoColors.acidLime),
+            label: const Text('드라이브 추출', style: TextStyle(color: NeoColors.acidLime, fontSize: 13)),
+          ),
+        ],
       ),
     );
   }

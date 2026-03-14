@@ -97,6 +97,12 @@ extension TreeSourcingDetailExtension on TreeSourcingViewModel {
       final types = ['main', 'bark', 'leaf', 'flower', 'fruit'];
       bool isAnyChange = false;
 
+      // URL 형식 검사 함수
+      bool isValidDriveUrl(String url) {
+        if (url.isEmpty) return true; // 비어있는 경우는 삭제로 간주, 형식 통과
+        return url.contains('https://drive.google.com/uc?export=view&id=');
+      }
+
       for (final type in types) {
         final existing = getImageByType(type);
         final stagedOriginal = _pendingImages['${type}_original'];
@@ -127,6 +133,16 @@ extension TreeSourcingDetailExtension on TreeSourcingViewModel {
              final xFile = XFile.fromData(stagedThumb, name: '${_selectedTree!.nameKr}_${type}_thumb.jpg');
              finalThumb = await _repository.uploadImage(xFile);
           }
+        }
+
+        // URL 유효성 검사 (입력된 URL이 구글 드라이브 형식인지 확인)
+        if (finalUrl != null && !isValidDriveUrl(finalUrl) && !finalUrl.contains('supabase.co')) {
+          onMessage?.call('원본 이미지 URL 형식이 올바르지 않습니다. 구글 드라이브 URL인지 확인하세요.');
+          return;
+        }
+        if (finalThumb != null && !isValidDriveUrl(finalThumb) && !finalThumb.contains('supabase.co')) {
+          onMessage?.call('썸네일 이미지 URL 형식이 올바르지 않습니다. 구글 드라이브 URL인지 확인하세요.');
+          return;
         }
 
         if ((finalUrl != null && finalUrl.isNotEmpty) || (finalThumb != null && finalThumb.isNotEmpty)) {
