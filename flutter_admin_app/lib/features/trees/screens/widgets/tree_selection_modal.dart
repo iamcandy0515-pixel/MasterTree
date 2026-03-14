@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_admin_app/core/theme/neo_theme.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
-import 'package:flutter_admin_app/features/trees/models/tree_group.dart';
 import 'package:flutter_admin_app/features/trees/viewmodels/tree_selection_modal_viewmodel.dart';
 import 'package:flutter_admin_app/features/trees/viewmodels/tree_group_edit_viewmodel.dart';
 
@@ -88,9 +87,9 @@ class _ModalContentState extends State<_ModalContent> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text(
-            '비교수목 리스트',
-            style: TextStyle(
+          Text(
+            '비교수목 리스트${vm.selectedTrees.isNotEmpty ? ' (${vm.selectedTrees.length})' : ''}',
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -98,33 +97,9 @@ class _ModalContentState extends State<_ModalContent> {
           ),
           Row(
             children: [
-              if (vm.selectedTrees.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Text(
-                    '${vm.selectedTrees.length}건',
-                    style: const TextStyle(
-                      color: NeoColors.acidLime,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
               TextButton(
                 onPressed: () {
-                  // Add directly to parent VM
-                  final parentVm = context.read<TreeGroupEditViewModel>();
-                  for (final tree in vm.selectedTrees) {
-                    parentVm.addMember(
-                      TreeGroupMember(
-                        treeId: tree.id.toString(),
-                        treeName: tree.nameKr,
-                        keyCharacteristics: '',
-                        isAutoQuizEnabled: tree.isAutoQuizEnabled,
-                      ),
-                    );
-                  }
-                  Navigator.pop(context); // Close modal
+                  Navigator.pop(context, vm.selectedTrees); // 모달 화면은 닫고 추가한 수목명을 셋으로 넘겨줌
                 },
                 style: TextButton.styleFrom(
                   minimumSize: Size.zero,
