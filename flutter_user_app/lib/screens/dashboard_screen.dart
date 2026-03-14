@@ -3,6 +3,7 @@ import 'package:flutter_user_app/core/design_system.dart';
 
 import 'package:flutter_user_app/screens/quiz_screen.dart';
 import 'package:flutter_user_app/screens/user_stats_screen.dart';
+import 'package:flutter_user_app/screens/past_exam_list_screen.dart';
 
 import 'package:flutter_user_app/controllers/dashboard_controller.dart';
 import 'dashboard/widgets/dashboard_header.dart';
@@ -115,20 +116,17 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
             _controller.currentIndex = index;
           });
 
-          if (index == 0) {
-            // 메인 대시보드 (이미 현재 화면인 경우 스크롤 업 등 처리 가능)
-          } else if (index == index) {
-             // 기존 네비게이션 로직 유지 (기출/수목/통계)
-             // 하지만 대시보드 내에 탭이 생겼으므로 하단 네비게이션의 역할을 재검토할 필요가 있음.
-             // 계획서에는 하단 네비게이션 변경은 언급되지 않았으므로 그대로 둡니다.
-          }
-
           if (index == 1) {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const QuizScreen()),
             ).then((_) => setState(() => _controller.currentIndex = 0));
           } else if (index == 2) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const PastExamListScreen()),
+            ).then((_) => setState(() => _controller.currentIndex = 0));
+          } else if (index == 3) {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const UserStatsScreen()),
@@ -144,11 +142,15 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard_outlined),
-            label: '대시보드',
+            label: '홈',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.school_outlined),
             label: '수목/퀴즈',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history_edu_outlined),
+            label: '기출/학습',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.bar_chart),

@@ -49,8 +49,65 @@ class DashboardTreeTab extends StatelessWidget {
               MaterialPageRoute(builder: (_) => const SimilarSpeciesListScreen()),
             ),
           ),
+          const SizedBox(height: 16),
+          _buildGuideSection(),
         ],
       ),
+    );
+  }
+
+  Widget _buildGuideSection() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.03),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.tips_and_updates_outlined, 
+                color: AppColors.primary.withValues(alpha: 0.7), size: 16),
+              const SizedBox(width: 8),
+              Text(
+                '수목학습 가이드',
+                style: TextStyle(
+                  color: AppColors.textLight.withValues(alpha: 0.6),
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          _buildGuideItem('수목의 특징적인 동정 포인트를 위주로 암기해보세요.'),
+          const SizedBox(height: 8),
+          _buildGuideItem('유사한 수목들을 비교하며 차이점을 파악하는 것이 중요합니다.'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGuideItem(String text) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(Icons.check_circle_outline, color: AppColors.primary.withValues(alpha: 0.5), size: 14),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              color: AppColors.textMuted.withValues(alpha: 0.8),
+              fontSize: 12,
+              height: 1.4,
+            ),
+          ),
+        ),
+      ],
     );
   }
 

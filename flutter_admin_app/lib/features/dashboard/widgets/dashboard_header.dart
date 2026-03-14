@@ -29,7 +29,7 @@ class DashboardHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '관리 대시보드',
+                  '관리자 대시보드',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,

@@ -6,27 +6,25 @@ import { statsUserService } from "./services/stats_user.service";
 
 export class StatsController {
     async getDashboardStats(req: Request, res: Response) {
+        console.log("[Stats] getDashboardStats started");
         try {
-            const { count: totalTrees } = await supabase.from("trees").select("*", { count: "exact", head: true });
-            const { count: totalQuizzes } = await supabase.from("quiz_questions").select("*", { count: "exact", head: true });
-            const { count: totalGroups } = await supabase.from("tree_groups").select("*", { count: "exact", head: true });
+            const [treesRes, quizRes, groupsRes] = await Promise.all([
+                supabase.from("trees").select("*", { count: "exact", head: true }),
+                supabase.from("quiz_questions").select("*", { count: "exact", head: true }),
+                supabase.from("tree_groups").select("*", { count: "exact", head: true })
+            ]);
 
-            let activeUsers = 0;
-            const sevenDaysAgo = new Date();
-            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+            const totalTrees = treesRes.count || 0;
+            const totalQuizzes = quizRes.count || 0;
+            const totalGroups = groupsRes.count || 0;
+            const activeUsers = 0; // Temporarily disabled for performance check
 
-            try {
-                const { data: usersData } = await supabase.auth.admin.listUsers();
-                if (usersData?.users) {
-                    activeUsers = usersData.users.filter(u => u.last_sign_in_at && new Date(u.last_sign_in_at) > sevenDaysAgo).length;
-                }
-            } catch (e) {}
-
+            console.log("[Stats] getDashboardStats success:", { totalTrees, totalQuizzes, totalGroups, activeUsers });
             return successResponse(res, {
-                totalTrees: totalTrees || 0,
-                totalQuizzes: totalQuizzes || 0,
-                totalSimilarGroups: totalGroups || 0,
-                activeUsers: activeUsers,
+                totalTrees,
+                totalQuizzes,
+                totalSimilarGroups: totalGroups,
+                activeUsers,
             }, "Dashboard stats retrieved");
         } catch (error) {
             console.error("Dashboard Stats Error:", error);
