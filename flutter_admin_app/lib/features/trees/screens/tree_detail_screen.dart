@@ -46,13 +46,13 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
         String? newHint;
         if (img.imageType == 'main') {
           newHint = _hintControllers['main']!.text;
-        } else if (img.imageType == 'bark')
+        } else if (img.imageType == 'bark') {
           newHint = _hintControllers['bark']!.text;
-        else if (img.imageType == 'leaf')
+        } else if (img.imageType == 'leaf') {
           newHint = _hintControllers['leaf']!.text;
-        else if (img.imageType == 'flower')
+        } else if (img.imageType == 'flower') {
           newHint = _hintControllers['flower']!.text;
-        else if (img.imageType == 'fruit') {
+        } else if (img.imageType == 'fruit') {
           newHint = _hintControllers['fruit']!.text;
         }
 
@@ -201,7 +201,7 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
       decoration: BoxDecoration(
         color: Colors.grey[900],
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
@@ -220,7 +220,7 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
               left: 0,
               right: 0,
               child: Container(
-                color: Colors.black.withOpacity(0.6),
+                color: Colors.black.withValues(alpha: 0.6),
                 padding: const EdgeInsets.all(8),
                 child: Text(
                   hint,
@@ -334,17 +334,17 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
               maxLines: 4,
               decoration: InputDecoration(
                 hintText: '나무에 대한 기본 설명을 입력하세요...',
-                hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
+                hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
                 filled: true,
                 fillColor: const Color(0xFF1E2518),
                 contentPadding: const EdgeInsets.all(16),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide(color: Colors.white.withOpacity(0.05)),
+                  borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide(color: Colors.white.withOpacity(0.05)),
+                  borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -436,9 +436,9 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
             maxLines: 2,
             decoration: InputDecoration(
               hintText: '$label 힌트 입력...',
-              hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
+              hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
               filled: true,
-              fillColor: Colors.white.withOpacity(0.05),
+              fillColor: Colors.white.withValues(alpha: 0.05),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 12,
@@ -460,10 +460,10 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
       width: double.infinity,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           style: BorderStyle.solid,
         ),
       ),

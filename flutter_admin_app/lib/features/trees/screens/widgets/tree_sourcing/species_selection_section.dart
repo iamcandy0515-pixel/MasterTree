@@ -52,7 +52,7 @@ class SpeciesSelectionSection extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.02),
+        color: Colors.white.withValues(alpha: 0.02),
         borderRadius: BorderRadius.circular(12),
       ),
       child: const Column(
@@ -89,9 +89,9 @@ class SpeciesSelectionSection extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white.withOpacity(0.1)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
         ),
         child: Row(
           children: [
@@ -111,7 +111,7 @@ class SpeciesSelectionSection extends StatelessWidget {
                   Text(
                     '${tree.scientificName} / ${tree.category}',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white.withValues(alpha: 0.5),
                       fontSize: 11,
                     ),
                   ),
@@ -152,7 +152,7 @@ class SpeciesSelectionSection extends StatelessWidget {
         child: Icon(
           icon,
           size: 16,
-          color: active ? primaryColor : Colors.white.withOpacity(0.1),
+          color: active ? primaryColor : Colors.white.withValues(alpha: 0.1),
         ),
       ),
     );

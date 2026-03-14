@@ -38,8 +38,9 @@
     - **Gradle**: `8.5` (gradle-wrapper.properties)
     - **Android Gradle Plugin (AGP)**: `8.2.1` (settings.gradle.kts)
     - **Kotlin**: `1.9.22` (settings.gradle.kts)
-- **4-2. [의존성 충돌 해결 (Resolution Strategy)]** 특정 라이브러리가 상위 AGP 버전을 요구하여 빌드가 실패할 경우, 버전 업그레이드 대신 `app/build.gradle.kts`의 `configurations.all { resolutionStrategy { ... } }` 블록을 통해 하위 호환 버전을 강제(force)한다.
-- **4-3. [웹 전용 코드 격리]** `dart:html` 등 웹 전용 라이브러리는 직접 임포트하지 않고, `WebUtils` (web_utils.dart) 추상화 레이어를 통해 조건부 임포트(Conditional Import)를 사용하여 모바일 빌드 컴파일 오류를 원천 차단한다.
+- **4-2. [의존성 충돌 해결 (Resolution Strategy)]** 특정 라이브러리가 상위 AGP 버전을 요구하여 빌드가 실패할 경우, 무리한 AGP 업그레이드 대신 `app/build.gradle.kts`의 `configurations.all { ... }` 블록을 통해 안정적인 하위 호환 버전을 강제(force)하여 빌드 정합성을 유지한다.
+- **4-3. [웹 관련 코드 격리 (Web Independence)]** `dart:html` 또는 `dart:ui_web`을 직접 사용하지 않는다. 반드시 `WebUtils` 추상화 레이어를 사용하여 모바일 빌드 시 발생하는 컴파일 에러를 원천 차단한다.
+- **4-4. [AndroidX 의존성 강제 지정 (Resolution Strategy)]** 최신 AndroidX 라이브러리들이 높은 AGP 버전을 요구하는 문제를 해결하기 위해, `app/build.gradle.kts`에 `resolutionStrategy`를 추가하여 안정적인 버전(예: `browser:1.8.0`, `activity:1.8.0`, `core:1.13.1` 등)을 사용하도록 강제한다.
 
 ---
 

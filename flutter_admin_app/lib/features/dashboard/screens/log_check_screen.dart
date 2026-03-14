@@ -122,7 +122,7 @@ class _LogCheckContent extends StatelessWidget {
                     ),
                     Container(
                       padding: const EdgeInsets.all(12),
-                      color: Colors.white.withOpacity(0.02),
+                      color: Colors.white.withValues(alpha: 0.02),
                       child: Row(
                         children: [
                           const Icon(

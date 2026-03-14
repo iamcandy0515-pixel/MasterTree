@@ -18,9 +18,9 @@ class LoginViewModel extends ChangeNotifier {
       _savedPassword = prefs.getString('saved_password') ?? '';
       notifyListeners();
 
-      print('🔐 [LoginViewModel] Credentials loaded: Email=$_savedEmail');
+      debugPrint('🔐 [LoginViewModel] Credentials loaded: Email=$_savedEmail');
     } catch (e) {
-      print('❌ [LoginViewModel] Error loading credentials: $e');
+      debugPrint('❌ [LoginViewModel] Error loading credentials: $e');
     }
   }
 
@@ -29,7 +29,7 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      print('🚀 [LoginViewModel] Attempting login with: $email');
+      debugPrint('🚀 [LoginViewModel] Attempting login with: $email');
 
       final response = await Supabase.instance.client.auth.signInWithPassword(
         email: email,
@@ -42,18 +42,18 @@ class LoginViewModel extends ChangeNotifier {
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('saved_email', email);
           await prefs.setString('saved_password', password);
-          print('✅ [LoginViewModel] Credentials saved successfully.');
+          debugPrint('✅ [LoginViewModel] Credentials saved successfully.');
         } catch (e) {
-          print('❌ [LoginViewModel] Error saving credentials: $e');
+          debugPrint('❌ [LoginViewModel] Error saving credentials: $e');
         }
         return true;
       }
       return false;
     } on AuthException catch (e) {
-      print('❌ [LoginViewModel] Auth Error: ${e.message}');
+      debugPrint('❌ [LoginViewModel] Auth Error: ${e.message}');
       throw e.message;
     } catch (e) {
-      print('❌ [LoginViewModel] Unexpected Error: $e');
+      debugPrint('❌ [LoginViewModel] Unexpected Error: $e');
       throw 'Unexpected error occurred';
     } finally {
       _isLoading = false;
@@ -70,17 +70,17 @@ class LoginViewModel extends ChangeNotifier {
         throw 'Email and password required';
       }
 
-      print('🚀 [LoginViewModel] Attempting signup with: $email');
+      debugPrint('🚀 [LoginViewModel] Attempting signup with: $email');
       await Supabase.instance.client.auth.signUp(
         email: email,
         password: password,
       );
       return true;
     } on AuthException catch (e) {
-      print('❌ [LoginViewModel] Signup Auth Error: ${e.message}');
+      debugPrint('❌ [LoginViewModel] Signup Auth Error: ${e.message}');
       throw e.message;
     } catch (e) {
-      print('❌ [LoginViewModel] Signup Unexpected Error: $e');
+      debugPrint('❌ [LoginViewModel] Signup Unexpected Error: $e');
       throw 'Signup failed: $e';
     } finally {
       _isLoading = false;

@@ -130,7 +130,7 @@ class _QuizSolverScreenState extends State<QuizSolverScreen> {
                     Text(
                       'Question ${_controller.currentQuestionIndex + 1}.',
                       style: TextStyle(
-                        color: AppColors.primary.withOpacity(0.8),
+                        color: AppColors.primary.withValues(alpha: 0.8),
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -161,8 +161,8 @@ class _QuizSolverScreenState extends State<QuizSolverScreen> {
                           color:
                               _controller.selectedOptionIndex ==
                                   currentQ['correct_index']
-                              ? Colors.green.withOpacity(0.1)
-                              : Colors.red.withOpacity(0.1),
+                              ? Colors.green.withValues(alpha: 0.1)
+                              : Colors.red.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color:
@@ -337,14 +337,14 @@ class _QuizSolverScreenState extends State<QuizSolverScreen> {
     if (_controller.isAnswerSubmitted) {
       if (showCorrect) {
         borderColor = Colors.green;
-        bgColor = Colors.green.withOpacity(0.1);
+        bgColor = Colors.green.withValues(alpha: 0.1);
       } else if (showWrong) {
         borderColor = Colors.red;
-        bgColor = Colors.red.withOpacity(0.1);
+        bgColor = Colors.red.withValues(alpha: 0.1);
       }
     } else if (isSelected) {
       borderColor = AppColors.primary;
-      bgColor = AppColors.primary.withOpacity(0.1);
+      bgColor = AppColors.primary.withValues(alpha: 0.1);
     }
 
     return GestureDetector(

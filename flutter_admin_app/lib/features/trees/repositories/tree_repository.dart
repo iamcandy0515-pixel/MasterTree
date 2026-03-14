@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
@@ -341,7 +342,7 @@ class TreeRepository {
         }
       }
     } catch (e) {
-      print('Stats error: $e');
+      debugPrint('Stats error: $e');
     }
     return {
       'totalTrees': 0,
@@ -421,7 +422,7 @@ class TreeRepository {
           .timeout(const Duration(seconds: 2));
     } catch (e) {
       // Expected since server restarts
-      print('Admin restart triggered: $e');
+      debugPrint('Admin restart triggered: $e');
     }
   }
 

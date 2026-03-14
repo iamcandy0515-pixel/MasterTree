@@ -528,8 +528,8 @@ class _AddTreeContentState extends State<_AddTreeContent> {
                                             _uploadBoxFocusNode.hasFocus
                                         ? const Color(
                                             0xFFCCFF00,
-                                          ).withOpacity(0.05)
-                                        : Colors.white.withOpacity(0.02),
+                                          ).withValues(alpha: 0.05)
+                                        : Colors.white.withValues(alpha: 0.02),
                                   ),
                                   child: _viewModel.isUploading
                                       ? const Center(
@@ -708,7 +708,7 @@ class _AddTreeContentState extends State<_AddTreeContent> {
                       margin: const EdgeInsets.only(bottom: 8),
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.05),
+                        color: Colors.white.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
@@ -745,7 +745,7 @@ class _AddTreeContentState extends State<_AddTreeContent> {
                               ),
                               onPressed: () =>
                                   _viewModel.removeDistractor(index),
-                              color: Colors.redAccent.withOpacity(0.6),
+                              color: Colors.redAccent.withValues(alpha: 0.6),
                             ),
                         ],
                       ),
@@ -921,12 +921,12 @@ class _AddTreeContentState extends State<_AddTreeContent> {
                                       margin: const EdgeInsets.only(right: 12),
                                       decoration: BoxDecoration(
                                         color: isMain
-                                            ? primaryColor.withOpacity(0.15)
+                                            ? primaryColor.withValues(alpha: 0.15)
                                             : surfaceDark,
                                         shape: BoxShape.circle,
                                         border: Border.all(
                                           color: isMain
-                                              ? primaryColor.withOpacity(0.5)
+                                              ? primaryColor.withValues(alpha: 0.5)
                                               : Colors.white10,
                                           width: 1.5,
                                         ),
@@ -999,13 +999,13 @@ class _AddTreeContentState extends State<_AddTreeContent> {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
         color: isCorrect
-            ? primaryColor.withOpacity(0.12)
-            : surfaceDark.withOpacity(0.5),
+            ? primaryColor.withValues(alpha: 0.12)
+            : surfaceDark.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: isCorrect
-              ? primaryColor.withOpacity(0.3)
-              : Colors.white.withOpacity(0.05),
+              ? primaryColor.withValues(alpha: 0.3)
+              : Colors.white.withValues(alpha: 0.05),
         ),
       ),
       child: Row(
@@ -1063,7 +1063,7 @@ class _AddTreeContentState extends State<_AddTreeContent> {
       decoration: BoxDecoration(
         color: const Color(0xFF1E1E1E),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

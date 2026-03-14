@@ -257,13 +257,13 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isProgress
-                  ? primaryColor.withOpacity(0.5)
+                  ? primaryColor.withValues(alpha: 0.5)
                   : Colors.white24,
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.black.withValues(alpha: 0.5),
                 blurRadius: 20,
                 spreadRadius: 5,
               ),

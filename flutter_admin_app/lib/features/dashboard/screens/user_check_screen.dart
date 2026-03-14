@@ -120,7 +120,7 @@ class _UserCheckContent extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: NeoColors.darkGray.withOpacity(0.5),
+            color: NeoColors.darkGray.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: Colors.white10),
           ),
@@ -129,7 +129,7 @@ class _UserCheckContent extends StatelessWidget {
               Row(
                 children: [
                   CircleAvatar(
-                    backgroundColor: primaryColor.withOpacity(0.1),
+                    backgroundColor: primaryColor.withValues(alpha: 0.1),
                     child: Text(
                       initial,
                       style: TextStyle(
@@ -256,7 +256,7 @@ class _UserCheckContent extends StatelessWidget {
         ),
         content: Text(
           '삭제시 사용자의 정보가 사라집니다, 그래도 삭제하시겠습니까',
-          style: TextStyle(color: Colors.white.withOpacity(0.7), height: 1.5),
+          style: TextStyle(color: Colors.white.withValues(alpha: 0.7), height: 1.5),
         ),
         actions: [
           TextButton(
@@ -298,7 +298,7 @@ class _UserCheckContent extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(

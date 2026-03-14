@@ -108,7 +108,7 @@ class ContentBlockRenderer extends StatelessWidget {
             GoogleFonts.inter(
               color: isHighlight
                   ? AppColors.primary
-                  : Colors.white.withOpacity(0.85),
+                  : Colors.white.withValues(alpha: 0.85),
               fontSize: 14,
               height: 1.5,
             ),

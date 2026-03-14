@@ -79,7 +79,7 @@ class BulkExtractionQuestionTabs extends StatelessWidget {
                         size: 8,
                         color: isSelected
                             ? backgroundDark
-                            : primaryColor.withOpacity(0.8),
+                            : primaryColor.withValues(alpha: 0.8),
                       ),
                     ),
                 ],
