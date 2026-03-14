@@ -544,8 +544,9 @@ class _BulkSimilarManagementScreenState
     if (blocks == null || blocks.isEmpty) return '';
     return blocks
         .map((block) {
-          if (block is Map<String, dynamic> && block['type'] == 'text')
+          if (block is Map<String, dynamic> && block['type'] == 'text') {
             return block['content']?.toString() ?? '';
+          }
           if (block is String) return block.toString();
           return '';
         })

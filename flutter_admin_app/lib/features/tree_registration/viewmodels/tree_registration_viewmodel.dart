@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
-import 'package:super_clipboard/super_clipboard.dart';
 import 'package:flutter_admin_app/features/tree_registration/models/tree_registration_request.dart';
 import 'package:flutter_admin_app/features/tree_registration/repositories/tree_registration_repository.dart';
 
@@ -100,68 +99,8 @@ class TreeRegistrationViewModel extends ChangeNotifier {
   }
 
   Future<void> pasteImageFromClipboard() async {
-    try {
-      final clipboard = SystemClipboard.instance;
-      if (clipboard == null) return;
-
-      final reader = await clipboard.read();
-
-      if (reader.canProvide(Formats.png)) {
-        _isUploading = true;
-        notifyListeners();
-
-        reader.getFile(Formats.png, (file) async {
-          final bytes = await file.readAll();
-          final xFile = XFile.fromData(
-            bytes,
-            mimeType: 'image/png',
-            name: 'cb_${DateTime.now().millisecondsSinceEpoch}.png',
-          );
-
-          try {
-            final driveUrl = await _repo.uploadToGoogleDrive(xFile);
-            _taggedImages[_activeTag] = TreeImage(
-              imageType: _activeTag,
-              imageUrl: driveUrl,
-              hint: '',
-            );
-          } finally {
-            _isUploading = false;
-            notifyListeners();
-          }
-        });
-      } else if (reader.canProvide(Formats.jpeg)) {
-        _isUploading = true;
-        notifyListeners();
-
-        reader.getFile(Formats.jpeg, (file) async {
-          final bytes = await file.readAll();
-          final xFile = XFile.fromData(
-            bytes,
-            mimeType: 'image/jpeg',
-            name: 'cb_${DateTime.now().millisecondsSinceEpoch}.jpg',
-          );
-
-          try {
-            final driveUrl = await _repo.uploadToGoogleDrive(xFile);
-            _taggedImages[_activeTag] = TreeImage(
-              imageType: _activeTag,
-              imageUrl: driveUrl,
-              hint: '',
-            );
-          } finally {
-            _isUploading = false;
-            notifyListeners();
-          }
-        });
-      } else {
-        throw Exception('클립보드에 이미지가 없습니다.');
-      }
-    } catch (e) {
-      _isUploading = false;
-      notifyListeners();
-      rethrow;
-    }
+    // Disabled temporarily
+    debugPrint('Clipboard paste is temporarily disabled');
   }
 
   Future<void> searchGoogleImage() async {

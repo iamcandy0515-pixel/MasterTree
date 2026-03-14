@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/drive_file.dart';
 import '../../quiz_management/repositories/quiz_repository.dart';
+import 'package:image_picker/image_picker.dart';
 
 class QuizExtractionStep2ViewModel extends ChangeNotifier {
   final QuizRepository _repository = QuizRepository();
@@ -463,6 +464,45 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier {
       rethrow;
     } finally {
       _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> addImageToQuiz(String field, XFile file) async {
+    if (_validatedQuizData == null) return;
+    try {
+      _isLoading = true;
+      notifyListeners();
+      final bytes = await file.readAsBytes();
+      final url = await _repository.uploadQuizImage(bytes, file.name);
+
+      final key =
+          (field == 'question') ? 'content_blocks' : 'explanation_blocks';
+      List blocks = List.from(_validatedQuizData![key] ?? []);
+      blocks.add({'type': 'image', 'content': url});
+      _validatedQuizData![key] = blocks;
+      notifyListeners();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  bool hasImage(String field) {
+    if (_validatedQuizData == null) return false;
+    final key = (field == 'question') ? 'content_blocks' : 'explanation_blocks';
+    final blocks = _validatedQuizData![key] as List?;
+    if (blocks == null) return false;
+    return blocks.any((b) => b['type'] == 'image');
+  }
+
+  void removeImage(String field, int index) {
+    if (_validatedQuizData == null) return;
+    final key = (field == 'question') ? 'content_blocks' : 'explanation_blocks';
+    List blocks = List.from(_validatedQuizData![key] ?? []);
+    if (index >= 0 && index < blocks.length) {
+      blocks.removeAt(index);
+      _validatedQuizData![key] = blocks;
       notifyListeners();
     }
   }

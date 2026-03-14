@@ -1,0 +1,128 @@
+Analyzing flutter_admin_app...                                  
+
+   info - Statements in an if should be enclosed in a block - lib\core\utils\format_utils.dart:21:7 - curly_braces_in_flow_control_structures
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\core\utils\snackbar_util.dart:46:18 - deprecated_member_use
+   info - Don't invoke 'print' in production code - lib\features\auth\viewmodels\login_viewmodel.dart:21:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\features\auth\viewmodels\login_viewmodel.dart:23:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\features\auth\viewmodels\login_viewmodel.dart:32:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\features\auth\viewmodels\login_viewmodel.dart:45:11 - avoid_print
+   info - Don't invoke 'print' in production code - lib\features\auth\viewmodels\login_viewmodel.dart:47:11 - avoid_print
+   info - Don't invoke 'print' in production code - lib\features\auth\viewmodels\login_viewmodel.dart:53:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\features\auth\viewmodels\login_viewmodel.dart:56:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\features\auth\viewmodels\login_viewmodel.dart:73:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\features\auth\viewmodels\login_viewmodel.dart:80:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\features\auth\viewmodels\login_viewmodel.dart:83:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\features\dashboard\screens\dashboard_screen.dart:48:5 - avoid_print
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\dashboard\screens\dashboard_screen.dart:360:27 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\dashboard\screens\dashboard_screen.dart:384:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\dashboard\screens\dashboard_screen.dart:421:28 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\dashboard\screens\log_check_screen.dart:125:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\dashboard\screens\notification_screen.dart:58:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\dashboard\screens\notification_screen.dart:102:28 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\dashboard\screens\notification_screen.dart:109:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\dashboard\screens\settings_screen.dart:109:49 - deprecated_member_use
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\dashboard\screens\settings_screen.dart:175:45 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\dashboard\screens\settings_screen.dart:300:53 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\dashboard\screens\settings_screen.dart:410:45 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\dashboard\screens\settings_screen.dart:487:45 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\dashboard\screens\settings_screen.dart:564:45 - use_build_context_synchronously
+   info - Unnecessary use of multiple underscores - lib\features\dashboard\screens\user_check_screen.dart:112:29 - unnecessary_underscores
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\dashboard\screens\user_check_screen.dart:123:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\dashboard\screens\user_check_screen.dart:132:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\dashboard\screens\user_check_screen.dart:259:48 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\dashboard\screens\user_check_screen.dart:301:22 - deprecated_member_use
+   info - Don't invoke 'print' in production code - lib\features\dashboard\viewmodels\dashboard_viewmodel.dart:27:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\features\dashboard\viewmodels\dashboard_viewmodel.dart:47:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\features\dashboard\viewmodels\dashboard_viewmodel.dart:76:7 - avoid_print
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\quiz_management\screens\bulk_extraction_screen.dart:260:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\quiz_management\screens\bulk_extraction_screen.dart:266:37 - deprecated_member_use
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\quiz_management\screens\bulk_extraction_screen.dart:333:35 - use_build_context_synchronously
+   info - Statements in an if should be enclosed in a block - lib\features\quiz_management\screens\bulk_similar_management_screen.dart:548:13 - curly_braces_in_flow_control_structures
+   info - Unnecessary use of multiple underscores - lib\features\quiz_management\screens\quiz_review_detail_screen.dart:714:41 - unnecessary_underscores
+   info - Don't use 'BuildContext's across async gaps - lib\features\quiz_management\screens\quiz_review_detail_screen.dart:1290:31 - use_build_context_synchronously
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\quiz_management\screens\widgets\bulk_extraction\bulk_extraction_filter_panel.dart:46:26 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\quiz_management\screens\widgets\bulk_extraction\bulk_extraction_question_tabs.dart:82:44 - deprecated_member_use
+   info - The file name '1_google_drive_search_module.dart' isn't a lower_case_with_underscores identifier - lib\features\quiz_management\screens\widgets\quiz_extraction\1_google_drive_search_module.dart:1:1 - file_names
+   info - The file name '2_pdf_extraction_module.dart' isn't a lower_case_with_underscores identifier - lib\features\quiz_management\screens\widgets\quiz_extraction\2_pdf_extraction_module.dart:1:1 - file_names
+   info - The file name '3_question_explanation_module.dart' isn't a lower_case_with_underscores identifier - lib\features\quiz_management\screens\widgets\quiz_extraction\3_question_explanation_module.dart:1:1 - file_names
+   info - The file name '4_distractor_module.dart' isn't a lower_case_with_underscores identifier - lib\features\quiz_management\screens\widgets\quiz_extraction\4_distractor_module.dart:1:1 - file_names
+   info - The file name '5_hint_module.dart' isn't a lower_case_with_underscores identifier - lib\features\quiz_management\screens\widgets\quiz_extraction\5_hint_module.dart:1:1 - file_names
+   info - The file name '6_related_question_module.dart' isn't a lower_case_with_underscores identifier - lib\features\quiz_management\screens\widgets\quiz_extraction\6_related_question_module.dart:1:1 - file_names
+   info - The file name '7_db_registration_module.dart' isn't a lower_case_with_underscores identifier - lib\features\quiz_management\screens\widgets\quiz_extraction\7_db_registration_module.dart:1:1 - file_names
+   info - Statements in an if should be enclosed in a block - lib\features\quiz_management\viewmodels\bulk_extraction_viewmodel.dart:216:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\quiz_management\viewmodels\bulk_extraction_viewmodel.dart:236:7 - curly_braces_in_flow_control_structures
+   info - Unnecessary use of multiple underscores - lib\features\tree_registration\screens\widgets\smart_tag_image_section.dart:255:31 - unnecessary_underscores
+   info - Unnecessary use of multiple underscores - lib\features\tree_registration\screens\widgets\smart_tag_image_section.dart:255:35 - unnecessary_underscores
+   info - Statements in an if should be enclosed in a block - lib\features\tree_registration\viewmodels\tree_registration_viewmodel.dart:201:7 - curly_braces_in_flow_control_structures
+   info - Use the null-aware marker '?' rather than a null check via an 'if' - lib\features\trees\repositories\tree_repository.dart:99:7 - use_null_aware_elements
+   info - Use the null-aware marker '?' rather than a null check via an 'if' - lib\features\trees\repositories\tree_repository.dart:100:7 - use_null_aware_elements
+   info - Don't invoke 'print' in production code - lib\features\trees\repositories\tree_repository.dart:344:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\features\trees\repositories\tree_repository.dart:424:7 - avoid_print
+   info - 'dart:html' is deprecated and shouldn't be used. Use package:web and dart:js_interop instead - lib\features\trees\screens\add_tree_screen.dart:3:1 - deprecated_member_use
+   info - Don't use web-only libraries outside Flutter web plugins - lib\features\trees\screens\add_tree_screen.dart:3:1 - avoid_web_libraries_in_flutter
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\add_tree_screen.dart:553:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\add_tree_screen.dart:554:56 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\add_tree_screen.dart:733:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\add_tree_screen.dart:770:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\add_tree_screen.dart:946:60 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\add_tree_screen.dart:951:62 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\add_tree_screen.dart:1024:28 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\add_tree_screen.dart:1025:27 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\add_tree_screen.dart:1029:30 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\add_tree_screen.dart:1030:30 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\add_tree_screen.dart:1088:48 - deprecated_member_use
+   info - Use the null-aware marker '?' rather than a null check via an 'if' - lib\features\trees\screens\add_tree_screen.dart:1104:15 - use_null_aware_elements
+   info - Statements in an if should be enclosed in a block - lib\features\trees\screens\tree_detail_screen.dart:50:11 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\trees\screens\tree_detail_screen.dart:52:11 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\trees\screens\tree_detail_screen.dart:54:11 - curly_braces_in_flow_control_structures
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_detail_screen.dart:204:48 - deprecated_member_use
+   info - Unnecessary use of multiple underscores - lib\features\trees\screens\tree_detail_screen.dart:213:31 - unnecessary_underscores
+   info - Unnecessary use of multiple underscores - lib\features\trees\screens\tree_detail_screen.dart:213:35 - unnecessary_underscores
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_detail_screen.dart:223:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_detail_screen.dart:337:58 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_detail_screen.dart:343:62 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_detail_screen.dart:347:62 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_detail_screen.dart:439:56 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_detail_screen.dart:441:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_detail_screen.dart:463:29 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_detail_screen.dart:466:31 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_group_management_screen.dart:329:65 - deprecated_member_use
+   info - 'dart:html' is deprecated and shouldn't be used. Use package:web and dart:js_interop instead - lib\features\trees\screens\tree_list_screen.dart:6:1 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_list_screen.dart:259:44 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_list_screen.dart:306:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_list_screen.dart:309:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_list_screen.dart:396:25 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_list_screen.dart:397:30 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_list_screen.dart:400:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_list_screen.dart:433:30 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_list_screen.dart:469:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_list_screen.dart:472:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_list_screen.dart:519:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_list_screen.dart:529:52 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_list_screen.dart:567:26 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_list_screen.dart:581:24 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_list_screen.dart:583:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_lookalike_detail_screen.dart:101:59 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_lookalike_detail_screen.dart:107:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_lookalike_detail_screen.dart:237:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_lookalike_detail_screen.dart:303:35 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_lookalike_detail_screen.dart:343:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_lookalike_detail_screen.dart:487:31 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_sourcing_screen.dart:87:29 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_sourcing_screen.dart:89:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_sourcing_screen.dart:143:29 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\tree_sourcing_screen.dart:145:48 - deprecated_member_use
+   info - Statements in an if should be enclosed in a block - lib\features\trees\screens\widgets\sourcing_image_slot.dart:179:9 - curly_braces_in_flow_control_structures
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\widgets\tree_group_member_list.dart:111:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\widgets\tree_group_member_list.dart:113:56 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\widgets\tree_sourcing\species_selection_section.dart:55:29 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\widgets\tree_sourcing\species_selection_section.dart:92:31 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\widgets\tree_sourcing\species_selection_section.dart:94:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\widgets\tree_sourcing\species_selection_section.dart:114:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\features\trees\screens\widgets\tree_sourcing\species_selection_section.dart:155:55 - deprecated_member_use
+   info - 'dart:html' is deprecated and shouldn't be used. Use package:web and dart:js_interop instead - lib\features\trees\viewmodels\add_tree_viewmodel.dart:1:1 - deprecated_member_use
+   info - Don't use web-only libraries outside Flutter web plugins - lib\features\trees\viewmodels\add_tree_viewmodel.dart:1:1 - avoid_web_libraries_in_flutter
+   info - Statements in an if should be enclosed in a block - lib\features\trees\viewmodels\parts\tree_sourcing_viewmodel_detail.part.dart:28:9 - curly_braces_in_flow_control_structures
+warning - The value of the field '_totalCount' isn't used - lib\features\trees\viewmodels\tree_selection_modal_viewmodel.dart:16:7 - unused_field
+
+124 issues found. (ran in 4.3s)

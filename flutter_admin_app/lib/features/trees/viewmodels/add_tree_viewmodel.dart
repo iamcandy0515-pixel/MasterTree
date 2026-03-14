@@ -1,4 +1,5 @@
-import 'dart:html' as html;
+import 'package:flutter/foundation.dart';
+import 'package:flutter_admin_app/core/utils/web_utils.dart';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
@@ -116,17 +117,19 @@ class AddTreeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> handleDroppedFiles(html.File file) async {
+  Future<void> handleDroppedFiles(dynamic file) async {
     try {
       _isUploading = true;
       notifyListeners();
 
-      final reader = html.FileReader();
-      reader.readAsArrayBuffer(file);
-      await reader.onLoad.first;
-      final bytes = reader.result as Uint8List;
+      final bytes = await WebUtils.readFileAsBytes(file);
+      if (bytes == null) throw Exception('파일을 읽을 수 없습니다.');
 
-      final xFile = XFile.fromData(bytes, name: file.name, mimeType: file.type);
+      final xFile = XFile.fromData(
+        Uint8List.fromList(bytes),
+        name: kIsWeb ? (file as dynamic).name : 'dropped_file',
+        mimeType: kIsWeb ? (file as dynamic).type : 'image/jpeg',
+      );
       final publicUrl = await _repo.uploadImage(xFile);
 
       _uploadedImages.add(
@@ -177,46 +180,28 @@ class AddTreeViewModel extends ChangeNotifier {
   }
 
   Future<void> pasteImageFromClipboard() async {
-    try {
-      final clipboardData = await html.window.navigator.clipboard!.read();
-      if (clipboardData.items == null || clipboardData.items!.length == 0) {
-        return;
-      }
+    if (!kIsWeb) {
+      throw Exception('모바일에서는 클립보드 붙여넣기가 지원되지 않습니다.');
+    }
 
+    try {
       _isUploading = true;
       notifyListeners();
 
-      final itemsLength = clipboardData.items!.length ?? 0;
       bool imageFound = false;
+      await WebUtils.pasteImageFromClipboard((bytes, name, type) async {
+        final xFile = XFile.fromData(
+          Uint8List.fromList(bytes),
+          name: name,
+          mimeType: type,
+        );
 
-      for (var i = 0; i < itemsLength; i++) {
-        final item = clipboardData.items![i];
-        final type = item.type;
-
-        if (type == 'image/png' || type == 'image/jpeg') {
-          final blob = item.getAsFile();
-          if (blob == null) continue;
-
-          final reader = html.FileReader();
-          reader.readAsArrayBuffer(blob);
-          await reader.onLoad.first;
-          final bytes = reader.result as Uint8List;
-
-          final xFile = XFile.fromData(
-            bytes,
-            name:
-                'clipboard_image_${DateTime.now().millisecondsSinceEpoch}.${type == 'image/png' ? 'png' : 'jpg'}',
-            mimeType: type,
-          );
-
-          final publicUrl = await _repo.uploadImage(xFile);
-          _uploadedImages.add(
-            TreeImage(imageType: _selectedImageType, imageUrl: publicUrl),
-          );
-          imageFound = true;
-          break;
-        }
-      }
+        final publicUrl = await _repo.uploadImage(xFile);
+        _uploadedImages.add(
+          TreeImage(imageType: _selectedImageType, imageUrl: publicUrl),
+        );
+        imageFound = true;
+      });
 
       _isUploading = false;
       notifyListeners();

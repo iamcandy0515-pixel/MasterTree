@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:html' as html;
-import 'dart:ui_web' as ui_web;
+import 'package:flutter/foundation.dart';
+import 'package:flutter_admin_app/core/utils/web_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
 import '../viewmodels/add_tree_viewmodel.dart';
@@ -61,80 +61,57 @@ class _AddTreeContentState extends State<_AddTreeContent> {
     _dropZoneViewId =
         'upload-drop-zone-${DateTime.now().millisecondsSinceEpoch}';
 
-    // ignore: undefined_prefixed_name
-    ui_web.platformViewRegistry.registerViewFactory(_dropZoneViewId, (
-      int viewId,
-    ) {
-      final element = html.DivElement()
-        ..style.width = '100%'
-        ..style.height = '100%'
-        ..style.cursor = 'pointer';
-
-      // Drag and drop event listeners
-      element.onDragOver.listen((event) {
-        event.preventDefault();
-        if (!_isDragging) {
-          setState(() => _isDragging = true);
-        }
-      });
-
-      element.onDragLeave.listen((event) {
-        if (_isDragging) {
-          setState(() => _isDragging = false);
-        }
-      });
-
-      element.onDrop.listen((event) async {
-        event.preventDefault();
-        setState(() => _isDragging = false);
-
-        final files = event.dataTransfer.files;
-        if (files != null && files.isNotEmpty) {
-          final file = files[0];
-          if (file.type.startsWith('image/')) {
-            try {
-              await _readViewModel.handleDroppedFiles(file);
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('이미지가 성공적으로 업로드되었습니다!'),
-                    backgroundColor: Colors.green,
-                  ),
-                );
-              }
-            } catch (e) {
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('업로드 실패: $e'),
-                    backgroundColor: Colors.red,
-                  ),
-                );
+    if (kIsWeb) {
+      WebUtils.registerViewFactory(_dropZoneViewId, (int viewId) {
+        return WebUtils.createDropZoneElement(
+          onDragOver: () {
+            if (!_isDragging) {
+              setState(() => _isDragging = true);
+            }
+          },
+          onDragLeave: () {
+            if (_isDragging) {
+              setState(() => _isDragging = false);
+            }
+          },
+          onDrop: (files) async {
+            setState(() => _isDragging = false);
+            if (files != null && files.isNotEmpty) {
+              final file = files[0];
+              // On web, file.type is available
+              if ((file as dynamic).type.startsWith('image/')) {
+                try {
+                  await _readViewModel.handleDroppedFiles(file);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('이미지가 성공적으로 업로드되었습니다!'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('업로드 실패: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
               }
             }
-          } else {
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('이미지 파일만 업로드 가능합니다.'),
-                  backgroundColor: Colors.orange,
-                ),
-              );
+          },
+          onClick: () {
+            _uploadBoxFocusNode.requestFocus();
+            if (!_readViewModel.isUploading) {
+              _pickAndUploadImage();
             }
-          }
-        }
+          },
+        );
       });
-
-      // Click event
-      element.onClick.listen((event) {
-        _uploadBoxFocusNode.requestFocus();
-        if (!_readViewModel.isUploading) {
-          _pickAndUploadImage();
-        }
-      });
-
-      return element;
-    });
+    }
   }
 
   @override
@@ -522,12 +499,13 @@ class _AddTreeContentState extends State<_AddTreeContent> {
                         builder: (context) {
                           return Stack(
                             children: [
-                              SizedBox(
-                                height: 100,
-                                child: HtmlElementView(
-                                  viewType: _dropZoneViewId,
+                              if (kIsWeb)
+                                SizedBox(
+                                  height: 100,
+                                  child: HtmlElementView(
+                                    viewType: _dropZoneViewId,
+                                  ),
                                 ),
-                              ),
                               IgnorePointer(
                                 child: Container(
                                   height: 100,
@@ -1101,7 +1079,7 @@ class _AddTreeContentState extends State<_AddTreeContent> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              ?action,
+              if (action != null) action,
             ],
           ),
           const SizedBox(height: 16),

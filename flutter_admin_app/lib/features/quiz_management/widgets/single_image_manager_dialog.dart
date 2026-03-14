@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:super_clipboard/super_clipboard.dart';
 import '../viewmodels/quiz_extraction_step2_viewmodel.dart';
 import '../../../core/widgets/fullscreen_image_viewer.dart';
 
@@ -53,6 +52,7 @@ class _SingleQuizImageManagerDialogState
   }
 
   Future<void> _handlePaste() async {
+    /*
     final reader = await SystemClipboard.instance?.read();
     if (reader == null) return;
 
@@ -82,9 +82,10 @@ class _SingleQuizImageManagerDialogState
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('?�립보드???��?지가 ?�습?�다.')));
+        ).showSnackBar(const SnackBar(content: Text('클립보드에 이미지가 없습니다.')));
       }
     }
+    */
   }
 
   Future<void> _uploadImage(XFile file) async {
@@ -94,21 +95,21 @@ class _SingleQuizImageManagerDialogState
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('???��?지가 ?�공?�으�?추�??�었?�니??')));
+        ).showSnackBar(const SnackBar(content: Text('새 이미지가 성공적으로 추가되었습니다.')));
       }
     } catch (e) {
       if (mounted) {
         final errorLog = e.toString();
-        String displayMsg = '?��?지 ?�로??�??�류가 발생?�습?�다.';
+        String displayMsg = '이미지 업로드 중 오류가 발생했습니다.';
         if (errorLog.contains('Exception:')) {
           displayMsg = errorLog.split('Exception:').last.trim();
-        } else if (errorLog.contains('조정?�서')) {
+        } else if (errorLog.contains('조정해서')) {
           displayMsg = errorLog;
         }
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('??$displayMsg'),
+            content: Text('🚩 $displayMsg'),
             backgroundColor: Colors.redAccent,
           ),
         );
@@ -121,7 +122,7 @@ class _SingleQuizImageManagerDialogState
   @override
   Widget build(BuildContext context) {
     // Current quiz blocks
-    final List blocks = widget.viewModel.currentQuiz[widget.field] ?? [];
+    final List blocks = widget.viewModel.extractedBlock?[widget.field] ?? [];
     final imageBlocks = blocks.where((b) => b['type'] == 'image').toList();
 
     return AlertDialog(
@@ -131,7 +132,7 @@ class _SingleQuizImageManagerDialogState
           const Icon(Icons.image_outlined, color: primaryColor),
           const SizedBox(width: 10),
           Text(
-            '${widget.field == 'question' ? '문제' : '?�설'} ?��?지 관�?,
+            '${widget.field == 'question' ? '문제' : '해설'} 이미지 관리',
             style: const TextStyle(color: Colors.white, fontSize: 18),
           ),
         ],
@@ -143,7 +144,7 @@ class _SingleQuizImageManagerDialogState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '?�래 ?�역???�릭?�여 ?�일???�택?�거?? ?�역???�릭(?�커??????Ctrl+V�??�러 ?��?지�?붙여?�으?�요.',
+              '아래 영역을 클릭하여 파일을 선택하거나, 영역을 클릭(포커스) 후 Ctrl+V를 눌러 이미지를 붙여넣으세요.',
               style: TextStyle(color: Colors.white70, fontSize: 12),
             ),
             const SizedBox(height: 20),
@@ -191,7 +192,7 @@ class _SingleQuizImageManagerDialogState
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  '?��?지 추�? ?�는 Ctrl+V',
+                                  '이미지 추가 또는 Ctrl+V',
                                   style: TextStyle(
                                     color: _isFocused
                                         ? primaryColor
@@ -232,9 +233,9 @@ class _SingleQuizImageManagerDialogState
                                                     imageUrl: block['content'],
                                                     title:
                                                         widget.field ==
-                                                            'question'
-                                                        ? '문제 ?��?지'
-                                                        : '?�답�??�설 ?��?지',
+                                                                'question'
+                                                            ? '문제 이미지'
+                                                            : '정답 및 해설 이미지',
                                                   ),
                                             ),
                                           );
@@ -305,7 +306,7 @@ class _SingleQuizImageManagerDialogState
                     LinearProgressIndicator(color: primaryColor),
                     SizedBox(height: 8),
                     Text(
-                      '?��?지 처리 �?..',
+                      '이미지 처리 중...',
                       style: TextStyle(color: primaryColor, fontSize: 11),
                     ),
                   ],
@@ -317,7 +318,7 @@ class _SingleQuizImageManagerDialogState
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('?�기', style: TextStyle(color: Colors.white70)),
+          child: const Text('닫기', style: TextStyle(color: Colors.white70)),
         ),
       ],
     );

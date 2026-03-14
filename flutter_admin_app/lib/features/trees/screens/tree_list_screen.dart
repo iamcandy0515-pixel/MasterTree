@@ -1,9 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
+import 'package:flutter/foundation.dart';
+import 'package:flutter_admin_app/core/utils/web_utils.dart';
 import 'package:flutter_admin_app/features/trees/viewmodels/tree_list_viewmodel.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
 import 'package:flutter_admin_app/features/trees/screens/tree_detail_screen.dart';
@@ -48,16 +47,14 @@ class _TreeListScreenState extends State<_TreeListContent> {
     final vm = context.read<TreeListViewModel>();
     final csvData = await vm.exportData();
     if (csvData != null) {
-      final bytes = utf8.encode(csvData);
-      final blob = html.Blob([bytes]);
-      final url = html.Url.createObjectUrlFromBlob(blob);
-      html.AnchorElement(href: url)
-        ..setAttribute(
-          "download",
+      if (kIsWeb) {
+        WebUtils.downloadFile(
+          csvData,
           "trees_export_${DateTime.now().millisecondsSinceEpoch}.csv",
-        )
-        ..click();
-      html.Url.revokeObjectUrl(url);
+        );
+      } else {
+        debugPrint('CSV Export is only supported on Web currently.');
+      }
 
       if (mounted) {
         ScaffoldMessenger.of(
