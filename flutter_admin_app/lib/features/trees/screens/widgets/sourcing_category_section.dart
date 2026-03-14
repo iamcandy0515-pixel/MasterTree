@@ -18,8 +18,15 @@ class SourcingCategorySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final existing = vm.getImageByType(type);
-    final hasOriginal = vm.pendingImages.containsKey('${type}_original') || (existing?.imageUrl.isNotEmpty == true);
-    final hasThumb = vm.pendingImages.containsKey('${type}_thumb') || (existing?.thumbnailUrl?.isNotEmpty == true);
+    final isOriginalMissing = vm.fileMissing['${type}_original'] ?? false;
+    final isThumbMissing = vm.fileMissing['${type}_thumb'] ?? false;
+
+    final hasOriginal = vm.pendingImages.containsKey('${type}_original') || (existing?.imageUrl.isNotEmpty == true && !isOriginalMissing);
+    
+    // 썸네일 버튼 노출 조건 (hasThumb이 false면 버튼 활성화됨)
+    // 1. db정보는 있으나 구글에 파일이 없는 경우 (isThumbMissing = true -> hasThumb = false)
+    // 2. db나 pending에 url이 아예 없는경우 (false)
+    final hasThumb = vm.pendingImages.containsKey('${type}_thumb') || (existing?.thumbnailUrl?.isNotEmpty == true && !isThumbMissing);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 32),
