@@ -10,7 +10,7 @@ class RegistrationHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<TreeRegistrationViewModel>();
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: const BoxDecoration(
@@ -20,7 +20,7 @@ class RegistrationHeader extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.close, color: Colors.white70),
+            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white70),
             onPressed: () => Navigator.pop(context),
           ),
           const Expanded(
@@ -51,22 +51,31 @@ class RegistrationHeader extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
               ),
-              child: const Text('등록하기', style: TextStyle(fontWeight: FontWeight.bold)),
+              child: const Text(
+                'DB등록',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
         ],
       ),
     );
   }
 
-  Future<void> _handleRegister(BuildContext context, TreeRegistrationViewModel vm) async {
+  Future<void> _handleRegister(
+    BuildContext context,
+    TreeRegistrationViewModel vm,
+  ) async {
     try {
       await vm.submit();
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('수목이 성공적으로 등록되었습니다.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('수목이 성공적으로 등록되었습니다.')));
         Navigator.pop(context, true);
       }
     } catch (e) {

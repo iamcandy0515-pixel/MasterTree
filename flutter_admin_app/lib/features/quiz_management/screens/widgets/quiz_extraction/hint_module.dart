@@ -27,9 +27,9 @@ class _HintModuleState extends State<HintModule> {
     final explanationText = widget.explanationController.text;
 
     if (questionText.isEmpty || explanationText.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('문제와 해설을 먼저 입력해주세요.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('문제와 해설을 먼저 입력해주세요.')));
       return;
     }
 
@@ -46,9 +46,9 @@ class _HintModuleState extends State<HintModule> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('힌트 생성 중 오류가 발생했습니다: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('힌트 생성 중 오류가 발생했습니다: $e')));
       }
     } finally {
       if (mounted) {
@@ -121,7 +121,9 @@ class _HintModuleState extends State<HintModule> {
                 labelStyle: const TextStyle(color: Colors.white54),
                 filled: true,
                 fillColor: Colors.white.withValues(alpha: 0.05),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
             ),
           );

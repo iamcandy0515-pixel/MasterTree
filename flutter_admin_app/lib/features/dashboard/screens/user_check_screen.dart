@@ -78,7 +78,8 @@ class _UserCheckContent extends StatelessWidget {
             ),
             Expanded(
               child: TabBarView(
-                physics: const NeverScrollableScrollPhysics(), // Handle via onTap load
+                physics:
+                    const NeverScrollableScrollPhysics(), // Handle via onTap load
                 children: [
                   _buildUserList(viewModel, primaryColor),
                   _buildUserList(viewModel, primaryColor),
@@ -101,10 +102,7 @@ class _UserCheckContent extends StatelessWidget {
 
     if (viewModel.users.isEmpty) {
       return Center(
-        child: Text(
-          '사용자가 없습니다.',
-          style: TextStyle(color: Colors.grey[500]),
-        ),
+        child: Text('사용자가 없습니다.', style: TextStyle(color: Colors.grey[500])),
       );
     }
 
@@ -115,8 +113,8 @@ class _UserCheckContent extends StatelessWidget {
       itemBuilder: (context, index) {
         final user = viewModel.users[index];
         final name = user['name'] ?? '사용자';
-        final initial = name.replaceAll(RegExp(r'\[.*?\]\s*'), '').isNotEmpty 
-            ? name.replaceAll(RegExp(r'\[.*?\]\s*'), '')[0] 
+        final initial = name.replaceAll(RegExp(r'\[.*?\]\s*'), '').isNotEmpty
+            ? name.replaceAll(RegExp(r'\[.*?\]\s*'), '')[0]
             : '?';
 
         return Container(
@@ -167,8 +165,17 @@ class _UserCheckContent extends StatelessWidget {
                   _buildStatusBadge(user['role'] ?? 'User', primaryColor),
                   const SizedBox(width: 8),
                   IconButton(
-                    icon: const Icon(Icons.delete_outline, color: Colors.white38, size: 20),
-                    onPressed: () => _showDeleteConfirm(context, viewModel, user['id']!, user['name']!),
+                    icon: const Icon(
+                      Icons.delete_outline,
+                      color: Colors.white38,
+                      size: 20,
+                    ),
+                    onPressed: () => _showDeleteConfirm(
+                      context,
+                      viewModel,
+                      user['id']!,
+                      user['name']!,
+                    ),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                   ),
@@ -181,10 +188,7 @@ class _UserCheckContent extends StatelessWidget {
                   Flexible(
                     child: Text(
                       '최근 활동: ${user['lastLogin']}',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 11,
-                      ),
+                      style: TextStyle(color: Colors.grey[600], fontSize: 11),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -193,7 +197,10 @@ class _UserCheckContent extends StatelessWidget {
                       children: [
                         TextButton(
                           onPressed: () => viewModel.rejectUser(user['id']!),
-                          child: const Text('거절', style: TextStyle(color: Colors.redAccent)),
+                          child: const Text(
+                            '거절',
+                            style: TextStyle(color: Colors.redAccent),
+                          ),
                         ),
                         const SizedBox(width: 8),
                         ElevatedButton(
@@ -203,7 +210,10 @@ class _UserCheckContent extends StatelessWidget {
                             foregroundColor: Colors.black,
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                           ),
-                          child: const Text('승인', style: TextStyle(fontWeight: FontWeight.bold)),
+                          child: const Text(
+                            '승인',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ),
                       ],
                     )
@@ -215,7 +225,10 @@ class _UserCheckContent extends StatelessWidget {
                   else
                     TextButton(
                       onPressed: () => viewModel.rejectUser(user['id']!),
-                      child: const Text('활동 정지', style: TextStyle(color: Colors.redAccent)),
+                      child: const Text(
+                        '활동 정지',
+                        style: TextStyle(color: Colors.redAccent),
+                      ),
                     ),
                 ],
               ),
@@ -226,7 +239,12 @@ class _UserCheckContent extends StatelessWidget {
     );
   }
 
-  void _showDeleteConfirm(BuildContext context, UserCheckViewModel viewModel, String userId, String userName) {
+  void _showDeleteConfirm(
+    BuildContext context,
+    UserCheckViewModel viewModel,
+    String userId,
+    String userName,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -257,13 +275,19 @@ class _UserCheckContent extends StatelessWidget {
                 }
               } catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('삭제 실패: $e')),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text('삭제 실패: $e')));
                 }
               }
             },
-            child: const Text('확인', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+            child: const Text(
+              '확인',
+              style: TextStyle(
+                color: Colors.redAccent,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),

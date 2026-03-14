@@ -8,18 +8,33 @@ class BasicInfoSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<TreeRegistrationViewModel>();
-    const labelStyle = TextStyle(color: Color(0xFF94A3B8), fontSize: 13, fontWeight: FontWeight.bold);
+    const labelStyle = TextStyle(
+      color: Color(0xFF94A3B8),
+      fontSize: 13,
+      fontWeight: FontWeight.bold,
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('1. 기본 정보', style: TextStyle(color: Color(0xFF80F20D), fontSize: 16, fontWeight: FontWeight.bold)),
+        const Text(
+          '1. 기본 정보',
+          style: TextStyle(
+            color: Color(0xFF80F20D),
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 16),
-        
+
         // 수목명
         TextFormField(
           controller: vm.nameKrController,
-          style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
           decoration: _inputDecoration('수목명 (필수)', '예) 소나무'),
         ),
         const SizedBox(height: 16),
@@ -27,7 +42,10 @@ class BasicInfoSection extends StatelessWidget {
         // 학명
         TextFormField(
           controller: vm.scientificNameController,
-          style: const TextStyle(color: Colors.white70, fontStyle: FontStyle.italic),
+          style: const TextStyle(
+            color: Colors.white70,
+            fontStyle: FontStyle.italic,
+          ),
           decoration: _inputDecoration('학명', '예) Pinus densiflora'),
         ),
         const SizedBox(height: 16),
@@ -43,7 +61,10 @@ class BasicInfoSection extends StatelessWidget {
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
                     initialValue: vm.selectedCategory,
-                    hint: const Text('선택 (필수)', style: TextStyle(color: Colors.white24, fontSize: 13)),
+                    hint: const Text(
+                      '선택 (필수)',
+                      style: TextStyle(color: Colors.white24, fontSize: 13),
+                    ),
                     dropdownColor: const Color(0xFF161B12),
                     style: const TextStyle(color: Colors.white),
                     decoration: _dropdownDecoration(),
@@ -65,7 +86,10 @@ class BasicInfoSection extends StatelessWidget {
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
                     initialValue: vm.selectedHabit,
-                    hint: const Text('선택 (필수)', style: TextStyle(color: Colors.white24, fontSize: 13)),
+                    hint: const Text(
+                      '선택 (필수)',
+                      style: TextStyle(color: Colors.white24, fontSize: 13),
+                    ),
                     dropdownColor: const Color(0xFF161B12),
                     style: const TextStyle(color: Colors.white),
                     decoration: _dropdownDecoration(),
@@ -89,8 +113,12 @@ class BasicInfoSection extends StatelessWidget {
       hintText: hint,
       labelStyle: const TextStyle(color: Color(0xFF94A3B8)),
       hintStyle: const TextStyle(color: Colors.white10),
-      enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.white10)),
-      focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFF80F20D))),
+      enabledBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.white10),
+      ),
+      focusedBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: Color(0xFF80F20D)),
+      ),
     );
   }
 
@@ -99,7 +127,10 @@ class BasicInfoSection extends StatelessWidget {
       filled: true,
       fillColor: const Color(0xFF161B12),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide.none,
+      ),
     );
   }
 }

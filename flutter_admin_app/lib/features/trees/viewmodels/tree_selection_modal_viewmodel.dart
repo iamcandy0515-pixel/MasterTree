@@ -10,7 +10,7 @@ class TreeSelectionModalViewModel extends ChangeNotifier {
   bool _isLoading = false;
   String _searchQuery = '';
   String? _selectedCategory;
-  
+
   int _currentPage = 1;
   final int _limit = 20;
   int _totalCount = 0;

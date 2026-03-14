@@ -14,7 +14,8 @@ class UserRepository {
     int limit = 50,
     String? status,
   }) async {
-    final queryParams = 'page=$page&limit=$limit${status != null ? '&status=$status' : ''}';
+    final queryParams =
+        'page=$page&limit=$limit${status != null ? '&status=$status' : ''}';
     final url = Uri.parse('$_baseUrl/users?$queryParams');
     final session = Supabase.instance.client.auth.currentSession;
     final token = session?.accessToken ?? '';

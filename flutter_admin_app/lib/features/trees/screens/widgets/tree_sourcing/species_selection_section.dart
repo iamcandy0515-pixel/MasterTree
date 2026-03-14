@@ -65,7 +65,11 @@ class SpeciesSelectionSection extends StatelessWidget {
     );
   }
 
-  Widget _buildTreeCard(BuildContext context, Tree tree, TreeSourcingViewModel vm) {
+  Widget _buildTreeCard(
+    BuildContext context,
+    Tree tree,
+    TreeSourcingViewModel vm,
+  ) {
     return InkWell(
       onTap: () async {
         final result = await Navigator.push(
@@ -106,7 +110,10 @@ class SpeciesSelectionSection extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     '${tree.scientificName} / ${tree.category}',
-                    style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 11),
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.5),
+                      fontSize: 11,
+                    ),
                   ),
                 ],
               ),
@@ -132,7 +139,9 @@ class SpeciesSelectionSection extends StatelessWidget {
   }
 
   bool _hasImage(Tree tree, String type) {
-    return tree.images.any((img) => img.imageType == type && img.imageUrl.isNotEmpty);
+    return tree.images.any(
+      (img) => img.imageType == type && img.imageUrl.isNotEmpty,
+    );
   }
 
   Widget _buildIcon(IconData icon, String label, bool active) {
@@ -167,7 +176,11 @@ class SpeciesSelectionSection extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             '${vm.currentPage} / ${vm.totalPages == 0 ? 1 : vm.totalPages}',
-            style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         IconButton(
@@ -176,7 +189,9 @@ class SpeciesSelectionSection extends StatelessWidget {
           color: primaryColor,
         ),
         IconButton(
-          onPressed: vm.currentPage < vm.totalPages ? () => vm.loadTrees(page: vm.totalPages) : null,
+          onPressed: vm.currentPage < vm.totalPages
+              ? () => vm.loadTrees(page: vm.totalPages)
+              : null,
           icon: const Icon(Icons.keyboard_double_arrow_right, size: 18),
           color: primaryColor,
         ),

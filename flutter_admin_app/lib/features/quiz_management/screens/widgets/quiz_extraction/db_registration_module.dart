@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../viewmodels/quiz_extraction_step2_viewmodel.dart';
 
@@ -39,31 +39,40 @@ class _DbRegistrationModuleState extends State<DbRegistrationModule> {
         ),
         const SizedBox(height: 16),
         ElevatedButton(
-          onPressed: vm.isSaving ? null : () async {
-            if (widget.questionController.text.isEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('문제를 입력해주세요.')),
-              );
-              return;
-            }
-            await vm.saveCurrentQuizToDbAction(
-              question: widget.questionController.text,
-              explanation: widget.explanationController.text,
-              options: widget.optionControllers.map((c) => c.text).toList(),
-              hints: widget.hintControllers.map((c) => c.text).toList(),
-            );
-          },
+          onPressed: vm.isSaving
+              ? null
+              : () async {
+                  if (widget.questionController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('문제를 입력해주세요.')),
+                    );
+                    return;
+                  }
+                  await vm.saveCurrentQuizToDbAction(
+                    question: widget.questionController.text,
+                    explanation: widget.explanationController.text,
+                    options: widget.optionControllers
+                        .map((c) => c.text)
+                        .toList(),
+                    hints: widget.hintControllers.map((c) => c.text).toList(),
+                  );
+                },
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor,
             foregroundColor: Colors.black,
             padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
           child: vm.isSaving
               ? const SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(Colors.black)),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation(Colors.black),
+                  ),
                 )
               : const Text(
                   '이 문제만 즉시 저장',

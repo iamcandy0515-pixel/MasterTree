@@ -29,7 +29,8 @@ class TreeRepository {
   static String getProxyUrl(String url, {int? width, int? height}) {
     if (url.contains('drive.google.com') || url.startsWith('http')) {
       final baseUrl = dotenv.env['API_URL'] ?? 'http://localhost:3000/api';
-      String proxyUrl = '$baseUrl/uploads/proxy?url=${Uri.encodeComponent(url)}';
+      String proxyUrl =
+          '$baseUrl/uploads/proxy?url=${Uri.encodeComponent(url)}';
       if (width != null) proxyUrl += '&w=$width';
       if (height != null) proxyUrl += '&h=$height';
       return proxyUrl;
@@ -648,6 +649,7 @@ class TreeRepository {
     }
     throw Exception('기출문제 폴더 URL 업데이트 실패: ${response.body}');
   }
+
   // Create Thumbnail
   Future<String?> generateThumbnail(String treeName, String imageType) async {
     final url = Uri.parse('$_baseUrl/external/generate-thumbnail');
@@ -706,4 +708,3 @@ class TreeRepository {
     return false; // Default to false if check fails
   }
 }
-

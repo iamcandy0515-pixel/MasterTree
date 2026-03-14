@@ -92,7 +92,7 @@ class _TreeGroupEditContentState extends State<_TreeGroupEditContent> {
     return Scaffold(
       backgroundColor: NeoTheme.darkTheme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('유사 수목 그룹 편집'),
+        title: const Text('유사수목 그룹 등록'),
         actions: [
           IconButton(
             onPressed: () {

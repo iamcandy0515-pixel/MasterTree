@@ -103,7 +103,7 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
               backgroundColor: backgroundDark,
               elevation: 0,
               title: Text(
-                'PDF 일괄 추출',
+                '기출문제 추출(일괄)',
                 style: GoogleFonts.inter(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -115,8 +115,15 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
                   onPressed: vm.isLoading || vm.extractedQuizzes.isEmpty
                       ? null
                       : () => _showSaveConfirmDialog(context, vm),
-                  icon: const Icon(Icons.cloud_upload, size: 18, color: Colors.white70),
-                  label: const Text('DB등록', style: TextStyle(color: Colors.white, fontSize: 13)),
+                  icon: const Icon(
+                    Icons.cloud_upload,
+                    size: 18,
+                    color: Colors.white70,
+                  ),
+                  label: const Text(
+                    'DB등록',
+                    style: TextStyle(color: Colors.white, fontSize: 13),
+                  ),
                 ),
                 const SizedBox(width: 8),
               ],
@@ -140,17 +147,28 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
                       isFilterComplete: vm.isFilterComplete,
                       onFileIdChanged: (val) => vm.updateFilters(fileId: val),
                       onSubjectChanged: (val) => vm.updateFilters(subject: val),
-                      onYearChanged: (val) => vm.updateFilters(year: int.tryParse(val ?? '')),
-                      onRoundChanged: (val) => vm.updateFilters(round: int.tryParse(val ?? '')),
-                      onStartChanged: (val) => vm.updateFilters(start: int.tryParse(val)),
-                      onEndChanged: (val) => vm.updateFilters(end: int.tryParse(val)),
+                      onYearChanged: (val) =>
+                          vm.updateFilters(year: int.tryParse(val ?? '')),
+                      onRoundChanged: (val) =>
+                          vm.updateFilters(round: int.tryParse(val ?? '')),
+                      onStartChanged: (val) =>
+                          vm.updateFilters(start: int.tryParse(val)),
+                      onEndChanged: (val) =>
+                          vm.updateFilters(end: int.tryParse(val)),
                       onExtractPressed: () => vm.startBatchExtraction(
                         onProgress: (current, total) {
                           if (current % 5 == 0 || current == total) {
-                            _showFloatingMessage(context, '✅ $current / $total 문항 추출 완료');
-                            if (vm.extractedQuizzes.containsKey(_selectedTabIndex) &&
+                            _showFloatingMessage(
+                              context,
+                              '✅ $current / $total 문항 추출 완료',
+                            );
+                            if (vm.extractedQuizzes.containsKey(
+                                  _selectedTabIndex,
+                                ) &&
                                 _questionController.text.isEmpty) {
-                              _updateEditorFields(vm.extractedQuizzes[_selectedTabIndex]);
+                              _updateEditorFields(
+                                vm.extractedQuizzes[_selectedTabIndex],
+                              );
                             }
                           }
                         },
@@ -172,7 +190,9 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
                                   hasImage: vm.hasImage,
                                   onTabSelected: (qNum) {
                                     setState(() => _selectedTabIndex = qNum);
-                                    _updateEditorFields(vm.extractedQuizzes[qNum]);
+                                    _updateEditorFields(
+                                      vm.extractedQuizzes[qNum],
+                                    );
                                     _scrollToSelectedTab(qNum, vm.startNumber);
                                   },
                                 ),
@@ -183,7 +203,8 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
                                     questionController: _questionController,
                                     answerController: _answerController,
                                     hintController: _hintController,
-                                    wrongAnswerController: _wrongAnswerController,
+                                    wrongAnswerController:
+                                        _wrongAnswerController,
                                     vm: vm,
                                   ),
                                 ),
@@ -192,9 +213,13 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
                     ),
                   ],
                 ),
-                if (vm.isLoading) _buildCenterOverlay(vm.statusMessage, isProgress: true),
+                if (vm.isLoading)
+                  _buildCenterOverlay(vm.statusMessage, isProgress: true),
                 if (_isSuccessShowing)
-                  _buildCenterOverlay(_completionMessage ?? '', isProgress: false),
+                  _buildCenterOverlay(
+                    _completionMessage ?? '',
+                    isProgress: false,
+                  ),
               ],
             ),
           );
@@ -231,7 +256,9 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
             color: surfaceDark,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: isProgress ? primaryColor.withOpacity(0.5) : Colors.white24,
+              color: isProgress
+                  ? primaryColor.withOpacity(0.5)
+                  : Colors.white24,
               width: 1,
             ),
             boxShadow: [
@@ -246,9 +273,16 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (isProgress)
-                const CircularProgressIndicator(color: primaryColor, strokeWidth: 3)
+                const CircularProgressIndicator(
+                  color: primaryColor,
+                  strokeWidth: 3,
+                )
               else
-                const Icon(Icons.check_circle_outline, color: primaryColor, size: 48),
+                const Icon(
+                  Icons.check_circle_outline,
+                  color: primaryColor,
+                  size: 48,
+                ),
               const SizedBox(height: 20),
               Text(
                 message,
@@ -267,12 +301,18 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
     );
   }
 
-  void _showSaveConfirmDialog(BuildContext context, BulkExtractionViewModel vm) {
+  void _showSaveConfirmDialog(
+    BuildContext context,
+    BulkExtractionViewModel vm,
+  ) {
     showDialog(
       context: context,
       builder: (dctx) => AlertDialog(
         backgroundColor: surfaceDark,
-        title: const Text('일괄 DB 등록', style: TextStyle(color: Colors.white, fontSize: 18)),
+        title: const Text(
+          '일괄 DB 등록',
+          style: TextStyle(color: Colors.white, fontSize: 18),
+        ),
         content: const Text(
           '편집한 모든 문항을 데이터베이스에 등록하시겠습니까?\n이미 등록된 문항은 업데이트됩니다.',
           style: TextStyle(color: Colors.white70, fontSize: 14),
@@ -293,28 +333,50 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
                 _showResultDialog(context, 'DB 등록 결과', stats);
               }
             },
-            child: const Text('등록하기', style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold)),
+            child: const Text(
+              '등록하기',
+              style: TextStyle(
+                color: primaryColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  void _showResultDialog(BuildContext context, String title, Map<String, int> stats) {
+  void _showResultDialog(
+    BuildContext context,
+    String title,
+    Map<String, int> stats,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: surfaceDark,
-        title: Text(title, style: const TextStyle(color: Colors.white, fontSize: 18)),
+        title: Text(
+          title,
+          style: const TextStyle(color: Colors.white, fontSize: 18),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('• 총 문항: ${stats['total']}건', style: const TextStyle(color: Colors.white70)),
+            Text(
+              '• 총 문항: ${stats['total']}건',
+              style: const TextStyle(color: Colors.white70),
+            ),
             const SizedBox(height: 4),
-            Text('• 성공: ${stats['success']}건', style: const TextStyle(color: primaryColor)),
+            Text(
+              '• 성공: ${stats['success']}건',
+              style: const TextStyle(color: primaryColor),
+            ),
             const SizedBox(height: 4),
-            Text('• 실패: ${stats['failed']}건', style: const TextStyle(color: Colors.redAccent)),
+            Text(
+              '• 실패: ${stats['failed']}건',
+              style: const TextStyle(color: Colors.redAccent),
+            ),
           ],
         ),
         actions: [
@@ -339,8 +401,14 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(message,
-              style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.white)),
+          content: Text(
+            message,
+            style: GoogleFonts.inter(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
+          ),
           backgroundColor: surfaceDark,
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 2),

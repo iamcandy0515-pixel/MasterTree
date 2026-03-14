@@ -1,14 +1,11 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../viewmodels/quiz_extraction_step2_viewmodel.dart';
 
 class RelatedQuestionModule extends StatefulWidget {
   final TextEditingController questionController;
 
-  const RelatedQuestionModule({
-    super.key,
-    required this.questionController,
-  });
+  const RelatedQuestionModule({super.key, required this.questionController});
 
   @override
   State<RelatedQuestionModule> createState() => _RelatedQuestionModuleState();
@@ -20,9 +17,9 @@ class _RelatedQuestionModuleState extends State<RelatedQuestionModule> {
   Future<void> _recommendSimilar() async {
     final questionText = widget.questionController.text;
     if (questionText.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('문제를 먼저 입력해주세요.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('문제를 먼저 입력해주세요.')));
       return;
     }
 
@@ -32,15 +29,15 @@ class _RelatedQuestionModuleState extends State<RelatedQuestionModule> {
     try {
       await vm.recommendSimilarAction(questionText);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('유사 문제가 추천되었습니다.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('유사 문제가 추천되었습니다.')));
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('추천 중 오류가 발생했습니다: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('추천 중 오류가 발생했습니다: $e')));
       }
     } finally {
       if (mounted) {
@@ -74,7 +71,10 @@ class _RelatedQuestionModuleState extends State<RelatedQuestionModule> {
                   ? const SizedBox(
                       width: 14,
                       height: 14,
-                      child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation(aiColor)),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation(aiColor),
+                      ),
                     )
                   : const Icon(Icons.hub_outlined, size: 16),
               label: const Text('AI 유사문제 분석'),
@@ -105,12 +105,19 @@ class _RelatedQuestionModuleState extends State<RelatedQuestionModule> {
                     children: [
                       Text(
                         '${quiz['year'] ?? ''}년 회',
-                        style: const TextStyle(color: aiColor, fontSize: 10, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          color: aiColor,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         quiz['question_text'] ?? '',
-                        style: const TextStyle(color: Colors.white70, fontSize: 12),
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                        ),
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                       ),

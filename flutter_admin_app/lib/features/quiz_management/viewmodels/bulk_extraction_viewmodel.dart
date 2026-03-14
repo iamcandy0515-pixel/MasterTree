@@ -126,7 +126,11 @@ class BulkExtractionViewModel extends ChangeNotifier {
     }
   }
 
-  void _showExtractionResult(int extractedCount, int totalToExtract, Function(String) onMessage) {
+  void _showExtractionResult(
+    int extractedCount,
+    int totalToExtract,
+    Function(String) onMessage,
+  ) {
     if (extractedCount == totalToExtract) {
       _statusMessage = '추출 완료';
       onMessage('🎊 모든 문항($extractedCount건) 추출이 완료되었습니다!');
@@ -138,7 +142,7 @@ class BulkExtractionViewModel extends ChangeNotifier {
 
   void updateQuizContent(int qNum, String field, dynamic value) {
     if (!_extractedQuizzes.containsKey(qNum)) return;
-    
+
     final item = _extractedQuizzes[qNum]!;
     if (field == 'question' || field == 'explanation') {
       _updateBlockContent(item, field, value.toString());
@@ -150,7 +154,11 @@ class BulkExtractionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _updateBlockContent(Map<String, dynamic> item, String field, String value) {
+  void _updateBlockContent(
+    Map<String, dynamic> item,
+    String field,
+    String value,
+  ) {
     List blocks = List.from(item[field] ?? []);
     int firstTextIdx = blocks.indexWhere((b) => b['type'] == 'text');
     final newBlock = {'type': 'text', 'content': value};
@@ -183,9 +191,15 @@ class BulkExtractionViewModel extends ChangeNotifier {
       final bytes = await file.readAsBytes();
       final url = await _quizRepo.uploadQuizImage(bytes, file.name);
 
-      final item = _extractedQuizzes.putIfAbsent(qNum, () => {
-        'question_number': qNum, 'question': [], 'explanation': [], 'options': [],
-      });
+      final item = _extractedQuizzes.putIfAbsent(
+        qNum,
+        () => {
+          'question_number': qNum,
+          'question': [],
+          'explanation': [],
+          'options': [],
+        },
+      );
       List blocks = List.from(item[field] ?? []);
       blocks.add({'type': 'image', 'content': url});
       item[field] = blocks;
@@ -198,9 +212,10 @@ class BulkExtractionViewModel extends ChangeNotifier {
   bool hasImage(int qNum, [String? field]) {
     if (!_extractedQuizzes.containsKey(qNum)) return false;
     final quiz = _extractedQuizzes[qNum]!;
-    if (field != null) return (quiz[field] as List).any((b) => b['type'] == 'image');
+    if (field != null)
+      return (quiz[field] as List).any((b) => b['type'] == 'image');
     return (quiz['question'] as List).any((b) => b['type'] == 'image') ||
-           (quiz['explanation'] as List).any((b) => b['type'] == 'image');
+        (quiz['explanation'] as List).any((b) => b['type'] == 'image');
   }
 
   void removeImage(int qNum, String field, int index) {
@@ -217,21 +232,36 @@ class BulkExtractionViewModel extends ChangeNotifier {
     void Function(int current, int total)? onProgress,
     void Function(String message)? onMessage,
   }) async {
-    if (_extractedQuizzes.isEmpty || subject == null) return {'total': 0, 'success': 0, 'failed': 0};
+    if (_extractedQuizzes.isEmpty || subject == null)
+      return {'total': 0, 'success': 0, 'failed': 0};
 
     _isLoading = true;
     _statusMessage = '데이터베이스 등록 중...';
     notifyListeners();
 
     try {
-      final entries = _extractedQuizzes.values.toList()..sort((a, b) => (a['question_number'] as int).compareTo(b['question_number'] as int));
+      final entries = _extractedQuizzes.values.toList()
+        ..sort(
+          (a, b) => (a['question_number'] as int).compareTo(
+            b['question_number'] as int,
+          ),
+        );
       final batchData = _extractionService.prepareBatchForDatabase(entries);
-      
-      final examFilter = {'subject': subject, 'year': year, 'round': round};
-      final success = await _quizRepo.upsertBatch(quizItems: batchData, examFilter: examFilter);
 
-      onMessage?.call(success ? '✅ 모든 문항이 성공적으로 등록되었습니다.' : '❌ 등록 중 오류가 발생했습니다.');
-      return {'total': entries.length, 'success': success ? entries.length : 0, 'failed': success ? 0 : entries.length};
+      final examFilter = {'subject': subject, 'year': year, 'round': round};
+      final success = await _quizRepo.upsertBatch(
+        quizItems: batchData,
+        examFilter: examFilter,
+      );
+
+      onMessage?.call(
+        success ? '✅ 모든 문항이 성공적으로 등록되었습니다.' : '❌ 등록 중 오류가 발생했습니다.',
+      );
+      return {
+        'total': entries.length,
+        'success': success ? entries.length : 0,
+        'failed': success ? 0 : entries.length,
+      };
     } finally {
       _isLoading = false;
       notifyListeners();

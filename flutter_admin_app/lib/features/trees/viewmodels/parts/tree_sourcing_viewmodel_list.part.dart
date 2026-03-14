@@ -21,7 +21,7 @@ extension TreeSourcingListExtension on TreeSourcingViewModel {
       _trees = result.trees;
       _totalCount = result.total;
       _hasMore = _trees.length >= TreeSourcingViewModel._pageSize;
-      
+
       debugPrint('Loaded ${_trees.length} trees. Total: $_totalCount');
 
       if (_trees.isNotEmpty) {

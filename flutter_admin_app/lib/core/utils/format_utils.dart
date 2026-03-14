@@ -17,7 +17,8 @@ class FormatUtils {
 
   /// Clean virtual email for display: u01012345678@mastertree.app -> 010-1234-5678
   static String formatVirtualEmail(String? email) {
-    if (email == null || !email.endsWith('@mastertree.app')) return email ?? '-';
+    if (email == null || !email.endsWith('@mastertree.app'))
+      return email ?? '-';
     final localPart = email.split('@')[0];
     return formatPhone(localPart);
   }

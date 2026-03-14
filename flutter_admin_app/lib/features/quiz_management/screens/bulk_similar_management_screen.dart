@@ -246,7 +246,9 @@ class _BulkSimilarManagementScreenState
 
   void _showSnackBar(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -256,7 +258,7 @@ class _BulkSimilarManagementScreenState
       appBar: AppBar(
         backgroundColor: backgroundDark,
         title: const Text(
-          '기출 유사문제 추출 (5개씩)',
+          '기출문제 유사문제 추출(일괄)',
           style: TextStyle(color: Colors.white, fontSize: 16),
         ),
       ),
@@ -331,7 +333,9 @@ class _BulkSimilarManagementScreenState
                 child: _buildDropDown('과목', _selectedSubject, _subjects, (v) {
                   setState(() => _selectedSubject = v);
                   _saveFilters();
-                  if (_selectedSubject != null && _selectedYear != null && _selectedRound != null) {
+                  if (_selectedSubject != null &&
+                      _selectedYear != null &&
+                      _selectedRound != null) {
                     _fetchQuizzes();
                   }
                 }),
@@ -341,7 +345,9 @@ class _BulkSimilarManagementScreenState
                 child: _buildDropDown('년도', _selectedYear, _years, (v) {
                   setState(() => _selectedYear = v);
                   _saveFilters();
-                  if (_selectedSubject != null && _selectedYear != null && _selectedRound != null) {
+                  if (_selectedSubject != null &&
+                      _selectedYear != null &&
+                      _selectedRound != null) {
                     _fetchQuizzes();
                   }
                 }),
@@ -351,7 +357,9 @@ class _BulkSimilarManagementScreenState
                 child: _buildDropDown('회차', _selectedRound, _rounds, (v) {
                   setState(() => _selectedRound = v);
                   _saveFilters();
-                  if (_selectedSubject != null && _selectedYear != null && _selectedRound != null) {
+                  if (_selectedSubject != null &&
+                      _selectedYear != null &&
+                      _selectedRound != null) {
                     _fetchQuizzes();
                   }
                 }),
@@ -408,17 +416,26 @@ class _BulkSimilarManagementScreenState
           ),
           child: ListTile(
             onTap: () => _showReviewDialog(quiz),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 4,
+            ),
             title: Row(
               children: [
                 Text(
                   'Q${quiz['question_number']}',
-                  style: const TextStyle(color: primaryColor, fontWeight: FontWeight.bold, fontSize: 14),
+                  style: const TextStyle(
+                    color: primaryColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    _getFullQuizText(quiz).replaceAll(RegExp(r'^\d+[\.\)]?\s*'), ''),
+                    _getFullQuizText(
+                      quiz,
+                    ).replaceAll(RegExp(r'^\d+[\.\)]?\s*'), ''),
                     style: const TextStyle(color: Colors.white, fontSize: 13),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -468,14 +485,18 @@ class _BulkSimilarManagementScreenState
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           TextButton.icon(
-            onPressed: _isProcessing || _quizzes.isEmpty ? null : _runBulkRecommendation,
+            onPressed: _isProcessing || _quizzes.isEmpty
+                ? null
+                : _runBulkRecommendation,
             icon: const Icon(Icons.flash_on, size: 18),
             label: const Text('일괄 유사문제 추출(page단위)'),
             style: TextButton.styleFrom(foregroundColor: primaryColor),
           ),
           const SizedBox(width: 8),
           TextButton.icon(
-            onPressed: _isProcessing || _tempRecommendations.isEmpty ? null : _saveAll,
+            onPressed: _isProcessing || _tempRecommendations.isEmpty
+                ? null
+                : _saveAll,
             icon: const Icon(Icons.save, size: 18),
             label: const Text('일괄 저장'),
             style: TextButton.styleFrom(foregroundColor: primaryColor),
@@ -485,20 +506,33 @@ class _BulkSimilarManagementScreenState
     );
   }
 
-  Widget _buildDropDown(String hint, String? value, List<String> items, Function(String?) onChanged) {
+  Widget _buildDropDown(
+    String hint,
+    String? value,
+    List<String> items,
+    Function(String?) onChanged,
+  ) {
     return Container(
       height: 44,
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      decoration: BoxDecoration(color: backgroundDark, borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(
+        color: backgroundDark,
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           isExpanded: true,
           value: value,
-          hint: Text(hint, style: const TextStyle(color: Colors.white24, fontSize: 13)),
+          hint: Text(
+            hint,
+            style: const TextStyle(color: Colors.white24, fontSize: 13),
+          ),
           dropdownColor: surfaceDark,
           icon: const Icon(Icons.arrow_drop_down, color: primaryColor),
           style: const TextStyle(color: Colors.white, fontSize: 13),
-          items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+          items: items
+              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+              .toList(),
           onChanged: onChanged,
         ),
       ),
@@ -508,10 +542,15 @@ class _BulkSimilarManagementScreenState
   String _getFullQuizText(Map<String, dynamic> quiz) {
     final blocks = quiz['content_blocks'] as List?;
     if (blocks == null || blocks.isEmpty) return '';
-    return blocks.map((block) {
-      if (block is Map<String, dynamic> && block['type'] == 'text') return block['content']?.toString() ?? '';
-      if (block is String) return block.toString();
-      return '';
-    }).where((text) => text.isNotEmpty).join('\n').trim();
+    return blocks
+        .map((block) {
+          if (block is Map<String, dynamic> && block['type'] == 'text')
+            return block['content']?.toString() ?? '';
+          if (block is String) return block.toString();
+          return '';
+        })
+        .where((text) => text.isNotEmpty)
+        .join('\n')
+        .trim();
   }
 }

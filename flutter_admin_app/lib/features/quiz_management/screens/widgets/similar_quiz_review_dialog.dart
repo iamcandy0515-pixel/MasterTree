@@ -21,21 +21,24 @@ class SimilarQuizReviewDialog extends StatefulWidget {
   });
 
   @override
-  State<SimilarQuizReviewDialog> createState() => _SimilarQuizReviewDialogState();
+  State<SimilarQuizReviewDialog> createState() =>
+      _SimilarQuizReviewDialogState();
 }
 
 class _SimilarQuizReviewDialogState extends State<SimilarQuizReviewDialog> {
   static const primaryColor = Color(0xFF2BEE8C);
   static const surfaceDark = Color(0xFF1A2E24);
-  
+
   late List<Map<String, dynamic>> _recommendations;
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _recommendations = List<Map<String, dynamic>>.from(widget.initialRecommendations);
-    
+    _recommendations = List<Map<String, dynamic>>.from(
+      widget.initialRecommendations,
+    );
+
     // If no session recommendations but has stored IDs, fetch them
     if (_recommendations.isEmpty) {
       final relatedIds = widget.quiz['related_quiz_ids'] as List?;
@@ -50,14 +53,18 @@ class _SimilarQuizReviewDialogState extends State<SimilarQuizReviewDialog> {
     try {
       final response = await Supabase.instance.client
           .from('quiz_questions')
-          .select('id, question_number, quiz_exams(year, round, title), quiz_categories(name), content_blocks')
+          .select(
+            'id, question_number, quiz_exams(year, round, title), quiz_categories(name), content_blocks',
+          )
           .filter('id', 'in', ids);
 
       if (mounted) {
-        final List<Map<String, dynamic>> fetched = (response as List).map((item) {
+        final List<Map<String, dynamic>> fetched = (response as List).map((
+          item,
+        ) {
           final exam = item['quiz_exams'] as Map<String, dynamic>?;
           final category = item['quiz_categories'] as Map<String, dynamic>?;
-          
+
           return {
             'id': item['id'],
             'year': exam?['year'],
@@ -128,7 +135,9 @@ class _SimilarQuizReviewDialogState extends State<SimilarQuizReviewDialog> {
             ),
             const SizedBox(height: 4),
             Text(
-              _getFullQuizText(widget.quiz).replaceAll(RegExp(r'^\d+[\.\)]?\s*'), ''),
+              _getFullQuizText(
+                widget.quiz,
+              ).replaceAll(RegExp(r'^\d+[\.\)]?\s*'), ''),
               style: const TextStyle(color: Colors.white, fontSize: 14),
               maxLines: 3,
             ),
@@ -148,7 +157,10 @@ class _SimilarQuizReviewDialogState extends State<SimilarQuizReviewDialog> {
                   const SizedBox(
                     width: 12,
                     height: 12,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: primaryColor),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: primaryColor,
+                    ),
                   ),
               ],
             ),
@@ -163,23 +175,37 @@ class _SimilarQuizReviewDialogState extends State<SimilarQuizReviewDialog> {
                 child: ListView.separated(
                   shrinkWrap: true,
                   itemCount: _recommendations.length,
-                  separatorBuilder: (context, index) => const Divider(color: Colors.white10),
+                  separatorBuilder: (context, index) =>
+                      const Divider(color: Colors.white10),
                   itemBuilder: (context, idx) {
                     final rec = _recommendations[idx];
                     return ListTile(
                       contentPadding: EdgeInsets.zero,
                       title: Text(
                         '${rec['year'] ?? ''}년 ${rec['round'] ?? ''}회 ${rec['question_number'] ?? ''}번(${rec['subject'] ?? ''})',
-                        style: const TextStyle(color: primaryColor, fontSize: 11),
+                        style: const TextStyle(
+                          color: primaryColor,
+                          fontSize: 11,
+                        ),
                       ),
                       subtitle: Text(
-                        (rec['question'] ?? '-').toString().replaceAll(RegExp(r'^\d+[\.\)]?\s*'), ''),
-                        style: const TextStyle(color: Colors.white70, fontSize: 13),
+                        (rec['question'] ?? '-').toString().replaceAll(
+                          RegExp(r'^\d+[\.\)]?\s*'),
+                          '',
+                        ),
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 13,
+                        ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                       trailing: IconButton(
-                        icon: const Icon(Icons.remove_circle_outline, color: Colors.redAccent, size: 20),
+                        icon: const Icon(
+                          Icons.remove_circle_outline,
+                          color: Colors.redAccent,
+                          size: 20,
+                        ),
                         onPressed: () {
                           setState(() {
                             _recommendations.removeAt(idx);

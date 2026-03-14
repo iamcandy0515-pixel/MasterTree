@@ -82,7 +82,7 @@ class _ModalContentState extends State<_ModalContent> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            '비교수목 리스트${vm.selectedTrees.isNotEmpty ? ' (${vm.selectedTrees.length})' : ''}',
+            '비교수목 추가${vm.selectedTrees.isNotEmpty ? ' (${vm.selectedTrees.length})' : ''}',
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,

@@ -46,7 +46,11 @@ class GeneralStatsTab extends StatelessWidget {
       children: [
         Text(
           '안녕하세요, $name님!',
-          style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 4),
         const Text(
@@ -100,7 +104,11 @@ class StatCard extends StatelessWidget {
                 child: Text(
                   title,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],
@@ -112,9 +120,21 @@ class StatCard extends StatelessWidget {
           const SizedBox(height: 24),
           Row(
             children: [
-              _SimpleStat(label: '정답', value: '$correct', color: Colors.greenAccent),
-              _SimpleStat(label: '오답', value: '$wrong', color: Colors.redAccent),
-              _SimpleStat(label: '정답률', value: '${accuracy.toStringAsFixed(0)}%', color: Colors.white),
+              _SimpleStat(
+                label: '정답',
+                value: '$correct',
+                color: Colors.greenAccent,
+              ),
+              _SimpleStat(
+                label: '오답',
+                value: '$wrong',
+                color: Colors.redAccent,
+              ),
+              _SimpleStat(
+                label: '정답률',
+                value: '${accuracy.toStringAsFixed(0)}%',
+                color: Colors.white,
+              ),
             ],
           ),
         ],
@@ -122,13 +142,27 @@ class StatCard extends StatelessWidget {
     );
   }
 
-  Widget _buildProgressInfo(int solved, int total, double progress, Color accentColor) {
+  Widget _buildProgressInfo(
+    int solved,
+    int total,
+    double progress,
+    Color accentColor,
+  ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text('진행률 ($solved / $total)', style: const TextStyle(color: textMuted, fontSize: 12)),
-        Text('${(progress * 100).toStringAsFixed(1)}%',
-            style: TextStyle(color: accentColor, fontSize: 12, fontWeight: FontWeight.bold)),
+        Text(
+          '진행률 ($solved / $total)',
+          style: const TextStyle(color: textMuted, fontSize: 12),
+        ),
+        Text(
+          '${(progress * 100).toStringAsFixed(1)}%',
+          style: TextStyle(
+            color: accentColor,
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ],
     );
   }
@@ -151,7 +185,11 @@ class _SimpleStat extends StatelessWidget {
   final String value;
   final Color color;
 
-  const _SimpleStat({required this.label, required this.value, required this.color});
+  const _SimpleStat({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -160,7 +198,14 @@ class _SimpleStat extends StatelessWidget {
         children: [
           FittedBox(
             fit: BoxFit.scaleDown,
-            child: Text(value, style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold)),
+            child: Text(
+              value,
+              style: TextStyle(
+                color: color,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
           const SizedBox(height: 4),
           Text(label, style: const TextStyle(color: textMuted, fontSize: 11)),
