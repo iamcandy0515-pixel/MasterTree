@@ -1,42 +1,46 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_user_app/core/design_system.dart';
 import 'package:flutter_user_app/models/quiz_model.dart';
 import 'package:flutter_user_app/screens/quiz_result_screen.dart';
 import 'package:flutter_user_app/screens/user_stats_screen.dart';
-import 'package:flutter_user_app/controllers/quiz_controller.dart';
+import 'package:flutter_user_app/viewmodels/quiz_viewmodel.dart';
 import 'package:flutter_user_app/core/api_service.dart';
 import 'package:flutter_user_app/core/widgets/fullscreen_image_viewer.dart';
 
-class QuizScreen extends StatefulWidget {
+class QuizScreen extends StatelessWidget {
   const QuizScreen({super.key});
 
   @override
-  State<QuizScreen> createState() => _QuizScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => QuizViewModel()..initialize(),
+      child: const _QuizScreenContent(),
+    );
+  }
 }
 
-class _QuizScreenState extends State<QuizScreen> {
-  final QuizController _controller = QuizController();
+class _QuizScreenContent extends StatefulWidget {
+  const _QuizScreenContent();
 
   @override
-  void initState() {
-    super.initState();
-    _controller.initialize(() {
-      if (mounted) setState(() {});
-    });
-  }
+  State<_QuizScreenContent> createState() => _QuizScreenContentState();
+}
 
+class _QuizScreenContentState extends State<_QuizScreenContent> {
   @override
   void dispose() {
-    // 화면 이탈 시 남은 학습 결과 동기화 (네트워크 상황에 따라 보장되지는 않을 수 있음)
+    // 화면 이탈 시 남은 학습 결과 동기화
     ApiService.syncPendingAttempts();
-    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_controller.isLoading) {
+    final vm = context.watch<QuizViewModel>();
+
+    if (vm.isLoading) {
       return const Scaffold(
         backgroundColor: AppColors.backgroundDark,
         body: Center(
@@ -45,13 +49,12 @@ class _QuizScreenState extends State<QuizScreen> {
       );
     }
 
-    final question = _controller.currentQuestion;
+    final question = vm.currentQuestion;
 
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
-        // 뒤로가기 시 보류 중인 결과 동기화 시도
         await ApiService.syncPendingAttempts();
         if (context.mounted) Navigator.pop(context);
       },
@@ -61,7 +64,7 @@ class _QuizScreenState extends State<QuizScreen> {
           children: [
             Column(
               children: [
-                _buildHeader(),
+                _buildHeader(vm),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -72,26 +75,25 @@ class _QuizScreenState extends State<QuizScreen> {
                         const SizedBox(height: 12),
                         _buildMainImage(question.imageUrl),
                         const SizedBox(height: 16),
-                        _buildHintSectionWithButton(question),
+                        _buildHintSectionWithButton(vm, question),
                         const SizedBox(height: 16),
-                        _buildOptions(question),
-                        const SizedBox(height: 100), // Footer space
+                        _buildOptions(vm, question),
+                        const SizedBox(height: 100),
                       ],
                     ),
                   ),
                 ),
               ],
             ),
-            if (_controller.showHintMessage) _buildFloatingHint(),
-            if (_controller.showDescription)
-              _buildFloatingDescription(question),
+            if (vm.showHintMessage) _buildFloatingHint(vm),
+            if (vm.showDescription) _buildFloatingDescription(vm, question),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(QuizViewModel vm) {
     return Container(
       padding: const EdgeInsets.only(top: 12, left: 12, right: 12, bottom: 8),
       decoration: BoxDecoration(
@@ -108,7 +110,6 @@ class _QuizScreenState extends State<QuizScreen> {
                   alignment: Alignment.centerLeft,
                   child: IconButton(
                     onPressed: () {
-                      // 뒤로가기 버튼 클릭 시에도 동기화 트리거
                       ApiService.syncPendingAttempts();
                       Navigator.pop(context);
                     },
@@ -131,13 +132,11 @@ class _QuizScreenState extends State<QuizScreen> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () async {
-                      // 통계 화면 진입 전 동기화 완료 대기
                       await ApiService.syncPendingAttempts();
                       if (mounted) {
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
-                            builder: (_) =>
-                                const UserStatsScreen(initialIndex: 1),
+                            builder: (_) => const UserStatsScreen(initialIndex: 1),
                           ),
                         );
                       }
@@ -165,13 +164,11 @@ class _QuizScreenState extends State<QuizScreen> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: LinearProgressIndicator(
-                  value: _controller.totalQuestions > 0
-                      ? _controller.solvedCount / _controller.totalQuestions
+                  value: vm.totalQuestions > 0
+                      ? vm.solvedCount / vm.totalQuestions
                       : 0.0,
                   backgroundColor: Colors.white.withValues(alpha: 0.1),
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                    AppColors.primary,
-                  ),
+                  valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
                   minHeight: 4,
                 ),
               ),
@@ -291,11 +288,7 @@ class _QuizScreenState extends State<QuizScreen> {
                       color: Colors.black.withValues(alpha: 0.4),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
-                      Icons.zoom_in,
-                      color: Colors.white,
-                      size: 20,
-                    ),
+                    child: const Icon(Icons.zoom_in, color: Colors.white, size: 20),
                   ),
                 ),
               ],
@@ -306,7 +299,7 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
-  Widget _buildHintSectionWithButton(QuizQuestion question) {
+  Widget _buildHintSectionWithButton(QuizViewModel vm, QuizQuestion question) {
     return Column(
       children: [
         Row(
@@ -330,14 +323,10 @@ class _QuizScreenState extends State<QuizScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
-                    Icons.lightbulb,
-                    size: 10,
-                    color: AppColors.primary,
-                  ),
+                  const Icon(Icons.lightbulb, size: 10, color: AppColors.primary),
                   const SizedBox(width: 4),
                   Text(
-                    '${_controller.viewedHintsCount}',
+                    '${vm.viewedHintsCount}',
                     style: const TextStyle(
                       color: AppColors.primary,
                       fontSize: 10,
@@ -359,20 +348,19 @@ class _QuizScreenState extends State<QuizScreen> {
                 physics: const BouncingScrollPhysics(),
                 child: Row(
                   children: [
-                    _buildHintItem(Icons.energy_savings_leaf, '잎'),
-                    _buildHintItem(Icons.texture, '수피'),
-                    _buildHintItem(Icons.local_florist, '꽃'),
-                    _buildHintItem(Icons.eco, '열매/겨울눈'),
-                    _buildHintItem(Icons.category, '대표'),
+                    _buildHintItem(vm, Icons.energy_savings_leaf, '잎'),
+                    _buildHintItem(vm, Icons.texture, '수피'),
+                    _buildHintItem(vm, Icons.local_florist, '꽃'),
+                    _buildHintItem(vm, Icons.eco, '열매/겨울눈'),
+                    _buildHintItem(vm, Icons.category, '대표'),
                   ],
                 ),
               ),
             ),
             const SizedBox(width: 12),
-            if (_controller.selectedAnswer != null &&
-                !_controller.isCorrect) ...[
+            if (vm.selectedAnswer != null && !vm.isCorrect) ...[
               TextButton.icon(
-                onPressed: () => _controller.retry(() => setState(() {})),
+                onPressed: () => vm.retry(),
                 icon: const Icon(Icons.refresh, size: 16),
                 label: const Text('다시 풀기'),
                 style: TextButton.styleFrom(
@@ -386,21 +374,19 @@ class _QuizScreenState extends State<QuizScreen> {
               ),
               const SizedBox(width: 4),
             ],
-            if (_controller.selectedAnswer != null &&
-                _controller.isCorrect) ...[
+            if (vm.selectedAnswer != null && vm.isCorrect) ...[
               const SizedBox(width: 8),
               TextButton(
                 onPressed: () {
-                  if (_controller.hasNext) {
-                    _controller.nextQuestion(() => setState(() {}));
+                  if (vm.hasNext) {
+                    vm.nextQuestion();
                   } else {
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
                         builder: (_) => QuizResultScreen(
-                          correctCount: _controller.correctCount,
-                          accumulatedHintCount:
-                              _controller.accumulatedHintCount,
-                          solvedCount: _controller.solvedCount,
+                          correctCount: vm.correctCount,
+                          accumulatedHintCount: vm.accumulatedHintCount,
+                          solvedCount: vm.solvedCount,
                         ),
                       ),
                     );
@@ -409,10 +395,7 @@ class _QuizScreenState extends State<QuizScreen> {
                 style: TextButton.styleFrom(
                   backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                   foregroundColor: AppColors.primary,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -421,11 +404,8 @@ class _QuizScreenState extends State<QuizScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      _controller.hasNext ? '다음문제' : '결과보기',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      vm.hasNext ? '다음문제' : '결과보기',
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(width: 4),
                     const Icon(Icons.arrow_forward_ios, size: 12),
@@ -439,21 +419,19 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
-  Widget _buildHintItem(IconData icon, String label) {
-    bool isActive = _controller.selectedHint == label;
+  Widget _buildHintItem(QuizViewModel vm, IconData icon, String label) {
+    bool isActive = vm.selectedHint == label;
     return Padding(
       padding: const EdgeInsets.only(right: 12),
       child: GestureDetector(
-        onTap: () => _controller.selectHint(label, () => setState(() {})),
+        onTap: () => vm.selectHint(label),
         child: Column(
           children: [
             Container(
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: isActive
-                    ? AppColors.primary
-                    : Colors.white.withValues(alpha: 0.08),
+                color: isActive ? AppColors.primary : Colors.white.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
                 boxShadow: isActive ? [AppDesign.glowPrimary] : null,
               ),
@@ -469,7 +447,7 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
-  Widget _buildFloatingHint() {
+  Widget _buildFloatingHint(QuizViewModel vm) {
     return Positioned(
       top: MediaQuery.of(context).size.height * 0.35,
       left: 20,
@@ -488,10 +466,7 @@ class _QuizScreenState extends State<QuizScreen> {
           decoration: BoxDecoration(
             color: AppColors.backgroundDark.withValues(alpha: 0.95),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: AppColors.primary.withValues(alpha: 0.5),
-              width: 2,
-            ),
+            border: Border.all(color: AppColors.primary.withValues(alpha: 0.5), width: 2),
             boxShadow: [
               BoxShadow(
                 color: AppColors.primary.withValues(alpha: 0.3),
@@ -511,16 +486,12 @@ class _QuizScreenState extends State<QuizScreen> {
                       color: AppColors.primary.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
-                      Icons.lightbulb,
-                      color: AppColors.primary,
-                      size: 20,
-                    ),
+                    child: const Icon(Icons.lightbulb, color: AppColors.primary, size: 20),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      '${_controller.selectedHint} 힌트',
+                      '${vm.selectedHint} 힌트',
                       style: const TextStyle(
                         color: AppColors.primary,
                         fontSize: 14,
@@ -529,24 +500,15 @@ class _QuizScreenState extends State<QuizScreen> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () =>
-                        _controller.hideHintMessage(() => setState(() {})),
-                    icon: const Icon(
-                      Icons.close,
-                      color: AppColors.textMuted,
-                      size: 20,
-                    ),
+                    onPressed: () => vm.hideHintMessage(),
+                    icon: const Icon(Icons.close, color: AppColors.textMuted, size: 20),
                   ),
                 ],
               ),
               const SizedBox(height: 12),
               Text(
-                _controller.currentHintText,
-                style: const TextStyle(
-                  color: AppColors.textLight,
-                  fontSize: 13,
-                  height: 1.5,
-                ),
+                vm.currentHintText,
+                style: const TextStyle(color: AppColors.textLight, fontSize: 13, height: 1.5),
               ),
             ],
           ),
@@ -555,7 +517,7 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
-  Widget _buildFloatingDescription(QuizQuestion question) {
+  Widget _buildFloatingDescription(QuizViewModel vm, QuizQuestion question) {
     return Positioned(
       top: MediaQuery.of(context).size.height * 0.3,
       left: 20,
@@ -574,10 +536,7 @@ class _QuizScreenState extends State<QuizScreen> {
           decoration: BoxDecoration(
             color: AppColors.backgroundDark.withValues(alpha: 0.95),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: AppColors.primary.withValues(alpha: 0.6),
-              width: 2,
-            ),
+            border: Border.all(color: AppColors.primary.withValues(alpha: 0.6), width: 2),
             boxShadow: [
               BoxShadow(
                 color: AppColors.primary.withValues(alpha: 0.4),
@@ -597,11 +556,7 @@ class _QuizScreenState extends State<QuizScreen> {
                       color: AppColors.primary.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
-                      Icons.check_circle,
-                      color: AppColors.primary,
-                      size: 24,
-                    ),
+                    child: const Icon(Icons.check_circle, color: AppColors.primary, size: 24),
                   ),
                   const SizedBox(width: 12),
                   const Expanded(
@@ -615,13 +570,8 @@ class _QuizScreenState extends State<QuizScreen> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () =>
-                        _controller.hideDescription(() => setState(() {})),
-                    icon: const Icon(
-                      Icons.close,
-                      color: AppColors.textMuted,
-                      size: 22,
-                    ),
+                    onPressed: () => vm.hideDescription(),
+                    icon: const Icon(Icons.close, color: AppColors.textMuted, size: 22),
                   ),
                 ],
               ),
@@ -634,11 +584,7 @@ class _QuizScreenState extends State<QuizScreen> {
                 ),
                 child: Text(
                   question.description,
-                  style: const TextStyle(
-                    color: AppColors.textLight,
-                    fontSize: 13,
-                    height: 1.6,
-                  ),
+                  style: const TextStyle(color: AppColors.textLight, fontSize: 13, height: 1.6),
                 ),
               ),
             ],
@@ -648,28 +594,26 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
-  Widget _buildOptions(QuizQuestion question) {
+  Widget _buildOptions(QuizViewModel vm, QuizQuestion question) {
     return Column(
       children: List.generate(question.options.length, (index) {
         final label = question.options[index];
         return Padding(
           padding: const EdgeInsets.only(bottom: 4),
-          child: _buildOptionItem(index, label),
+          child: _buildOptionItem(vm, index, label),
         );
       }),
     );
   }
 
-  Widget _buildOptionItem(int index, String label) {
-    final isSelected = _controller.selectedAnswer == index;
-    final isCorrect = _controller.currentQuestion.correctAnswerIndex == index;
+  Widget _buildOptionItem(QuizViewModel vm, int index, String label) {
+    final isSelected = vm.selectedAnswer == index;
+    final isCorrect = vm.currentQuestion.correctAnswerIndex == index;
     final showCorrect = isSelected && isCorrect;
-    final showWrong = isSelected && !_controller.isCorrect;
+    final showWrong = isSelected && !vm.isCorrect;
 
     return GestureDetector(
-      onTap: _controller.selectedAnswer == null
-          ? () => _controller.selectAnswer(index, () => setState(() {}))
-          : null,
+      onTap: vm.selectedAnswer == null ? () => vm.selectAnswer(index) : null,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         decoration: BoxDecoration(
@@ -701,9 +645,7 @@ class _QuizScreenState extends State<QuizScreen> {
                       ? Colors.redAccent
                       : Colors.white.withValues(alpha: 0.6),
                   fontSize: 13,
-                  fontWeight: showCorrect || showWrong
-                      ? FontWeight.bold
-                      : FontWeight.w400,
+                  fontWeight: showCorrect || showWrong ? FontWeight.bold : FontWeight.w400,
                 ),
               ),
             ),
