@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../viewmodels/quiz_management_viewmodel.dart';
+import 'package:flutter_admin_app/core/theme/neo_theme.dart';
+import 'package:flutter_admin_app/features/quiz_management/viewmodels/quiz_management_viewmodel.dart';
 
 class QuizPaginationBar extends StatelessWidget {
   const QuizPaginationBar({super.key});
@@ -31,7 +32,7 @@ class QuizPaginationBar extends StatelessWidget {
                 ),
                 child: Text(
                   '$cur / $total',
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                  style: const TextStyle(color: NeoColors.acidLime, fontWeight: FontWeight.bold, fontSize: 13),
                 ),
               ),
               IconButton(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../viewmodels/quiz_management_viewmodel.dart';
+import 'package:flutter_admin_app/core/theme/neo_theme.dart';
+import 'package:flutter_admin_app/features/quiz_management/viewmodels/quiz_management_viewmodel.dart';
 import '../../quiz_review_detail_screen.dart';
 
 class QuizListItem extends StatelessWidget {
@@ -8,7 +9,6 @@ class QuizListItem extends StatelessWidget {
   const QuizListItem({super.key, required this.quiz});
 
   static const surfaceDark = Color(0xFF1A2E24);
-  static const primaryColor = Color(0xFF2BEE8C);
 
   @override
   Widget build(BuildContext context) {
@@ -18,27 +18,70 @@ class QuizListItem extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: surfaceDark,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => QuizReviewDetailScreen(quizId: quiz['id'])),
-          ).then((_) => viewModel.fetchQuizzes());
-        },
-        title: Text(
-          qText,
-          style: const TextStyle(color: Colors.white, fontSize: 14, height: 1.4),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            surfaceDark,
+            surfaceDark.withValues(alpha: 0.8),
+          ],
         ),
-        trailing: IconButton(
-          icon: const Icon(Icons.delete_outline, color: Colors.white38, size: 20),
-          onPressed: () => _handleDelete(context, viewModel, quiz['id']),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => QuizReviewDetailScreen(quizId: quiz['id'])),
+              ).then((_) => viewModel.fetchQuizzes());
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          qText,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            height: 1.4,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline, color: NeoColors.error, size: 22),
+                    onPressed: () => _handleDelete(context, viewModel, quiz['id']),
+                    style: IconButton.styleFrom(
+                      backgroundColor: NeoColors.error.withValues(alpha: 0.1),
+                      padding: const EdgeInsets.all(8),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -67,17 +110,20 @@ class QuizListItem extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: surfaceDark,
-        title: const Text('삭제 확인', style: TextStyle(color: Colors.white)),
-        content: const Text('정말 삭제하시겠습니까?', style: TextStyle(color: Colors.white70)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('삭제 확인', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        content: const Text('정말 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.', style: TextStyle(color: Colors.white70)),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('취소', style: TextStyle(color: Colors.grey))),
-          TextButton(
+          ElevatedButton(
             onPressed: () async {
               Navigator.pop(ctx);
               try {
                 await viewModel.deleteQuiz(id);
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('삭제되었습니다.')));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('기출문제가 삭제되었습니다.')),
+                  );
                 }
               } catch (e) {
                 if (context.mounted) {
@@ -85,7 +131,8 @@ class QuizListItem extends StatelessWidget {
                 }
               }
             },
-            child: const Text('확인', style: TextStyle(color: Colors.redAccent)),
+            style: ElevatedButton.styleFrom(backgroundColor: NeoColors.error, foregroundColor: Colors.white),
+            child: const Text('삭제'),
           ),
         ],
       ),
