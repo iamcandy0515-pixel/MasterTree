@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:flutter_admin_app/features/tree_registration/viewmodels/tree_registration_viewmodel.dart';
-import 'package:flutter_admin_app/features/trees/models/tree.dart';
+import 'tree_registration_parts/tag_selector_row.dart';
+import 'tree_registration_parts/tag_image_display.dart';
+import 'tree_registration_parts/tag_upload_actions.dart';
+import 'tree_registration_parts/tag_hint_input.dart';
 
 class SmartTagImageSection extends StatelessWidget {
   const SmartTagImageSection({super.key});
@@ -39,37 +41,11 @@ class SmartTagImageSection extends StatelessWidget {
           const SizedBox(height: 16),
 
           // Tag Selection (Chips)
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: tags.entries.map((e) {
-                final isSelected = vm.activeTag == e.key;
-                final hasImage = vm.taggedImages.containsKey(e.key);
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: ChoiceChip(
-                    label: Text(e.value),
-                    selected: isSelected,
-                    onSelected: (selected) => vm.setActiveTag(e.key),
-                    selectedColor: const Color(0xFF80F20D),
-                    backgroundColor: const Color(0xFF161B12),
-                    labelStyle: TextStyle(
-                      color: isSelected
-                          ? Colors.black
-                          : (hasImage ? Colors.white : Colors.white38),
-                      fontWeight: FontWeight.bold,
-                    ),
-                    avatar: hasImage
-                        ? const Icon(
-                            Icons.check_circle,
-                            size: 16,
-                            color: Colors.green,
-                          )
-                        : null,
-                  ),
-                );
-              }).toList(),
-            ),
+          TagSelectorRow(
+            activeTag: vm.activeTag,
+            tags: tags,
+            taggedImages: vm.taggedImages,
+            onTagSelected: (tag) => vm.setActiveTag(tag),
           ),
           const SizedBox(height: 20),
 
@@ -97,176 +73,37 @@ class SmartTagImageSection extends StatelessWidget {
         children: [
           // Image Area
           if (image == null)
-            _buildUploadBox(context, vm)
+            TagUploadActions(
+              isUploading: vm.isUploading,
+              onPickImage: (file) => vm.handleImageUpload(file),
+              onPasteImage: vm.pasteImageFromClipboard,
+              onSearchGoogle: () async {
+                try {
+                  await vm.searchGoogleImage();
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(e.toString())),
+                    );
+                  }
+                }
+              },
+            )
           else
-            _buildImageItem(vm, image),
+            TagImageDisplay(
+              imageUrl: image.imageUrl,
+              onDelete: () => vm.removeImage(vm.activeTag),
+            ),
 
           const SizedBox(height: 20),
 
           // Hint Area
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                '이 부위의 퀴즈 힌트',
-                style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                onChanged: (v) => vm.updateHint(vm.activeTag, v),
-                controller: TextEditingController(text: image?.hint)
-                  ..selection = TextSelection.collapsed(
-                    offset: (image?.hint ?? '').length,
-                  ),
-                style: const TextStyle(color: Colors.white, fontSize: 14),
-                maxLines: 2,
-                decoration: InputDecoration(
-                  hintText: '문제가 나왔을 때 사용자에게 보여줄 힌트를 입력하세요.',
-                  hintStyle: const TextStyle(
-                    color: Colors.white24,
-                    fontSize: 12,
-                  ),
-                  filled: true,
-                  fillColor: Colors.black26,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-            ],
+          TagHintInput(
+            initialHint: image?.hint,
+            onChanged: (v) => vm.updateHint(vm.activeTag, v),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildUploadBox(BuildContext context, TreeRegistrationViewModel vm) {
-    if (vm.isUploading) {
-      return Container(
-        height: 154,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: Colors.black26,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: const Center(
-          child: CircularProgressIndicator(color: Color(0xFF80F20D)),
-        ),
-      );
-    }
-
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: () async {
-            final picker = ImagePicker();
-            final file = await picker.pickImage(source: ImageSource.gallery);
-            if (file != null) vm.handleImageUpload(file);
-          },
-          child: Container(
-            height: 100,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.black26,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: Colors.white10,
-                style: BorderStyle.solid,
-              ),
-            ),
-            child: const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.add_a_photo_outlined,
-                  color: Colors.white38,
-                  size: 28,
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '클릭하여 이미지 파일 추가',
-                  style: TextStyle(color: Colors.white38, fontSize: 12),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: vm.pasteImageFromClipboard,
-                icon: const Icon(Icons.content_paste, size: 18),
-                label: const Text('붙여넣기', style: TextStyle(fontSize: 12)),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.white70,
-                  side: const BorderSide(color: Colors.white10),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: () async {
-                  try {
-                    await vm.searchGoogleImage();
-                  } catch (e) {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text(e.toString())));
-                    }
-                  }
-                },
-                icon: const Icon(Icons.search, size: 18),
-                label: const Text('구글 검색', style: TextStyle(fontSize: 12)),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.white70,
-                  side: const BorderSide(color: Colors.white10),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildImageItem(TreeRegistrationViewModel vm, TreeImage image) {
-    return Stack(
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Image.network(
-            image.imageUrl,
-            height: 150,
-            width: double.infinity,
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => const Center(
-              child: Icon(Icons.broken_image, color: Colors.white10),
-            ),
-          ),
-        ),
-        Positioned(
-          top: 8,
-          right: 8,
-          child: IconButton(
-            icon: const Icon(Icons.delete_forever, color: Colors.redAccent),
-            onPressed: () => vm.removeImage(vm.activeTag),
-            style: IconButton.styleFrom(backgroundColor: Colors.black54),
-          ),
-        ),
-      ],
     );
   }
 }
