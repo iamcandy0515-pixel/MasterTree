@@ -28,6 +28,13 @@ class SettingsViewModel extends ChangeNotifier {
   String _examDriveUrl = "";
   String get examDriveUrl => _examDriveUrl;
 
+  // URL Status Maps (null: not checked, true: OK, false: Error)
+  final Map<String, bool?> _urlStatuses = {};
+  bool? getUrlStatus(String key) => _urlStatuses[key];
+
+  final Map<String, bool> _checkLoading = {};
+  bool isCheckLoading(String key) => _checkLoading[key] ?? false;
+
   Future<void> loadSettings() async {
     _isLoading = true;
     _isInitialLoading = true;
@@ -46,6 +53,9 @@ class SettingsViewModel extends ChangeNotifier {
       _thumbnailDriveUrl = results[3];
       _examDriveUrl = results[4];
       _error = null;
+
+      // Initial status check
+      checkAllUrls();
     } catch (e) {
       _error = "설정 정보를 불러오는데 실패했습니다.";
     } finally {
@@ -53,6 +63,24 @@ class SettingsViewModel extends ChangeNotifier {
       _isInitialLoading = false;
       notifyListeners();
     }
+  }
+
+  void checkAllUrls() {
+    checkUrl('userApp', _userAppUrl);
+    checkUrl('googleDrive', _googleDriveUrl);
+    checkUrl('thumbnailDrive', _thumbnailDriveUrl);
+    checkUrl('examDrive', _examDriveUrl);
+  }
+
+  Future<void> checkUrl(String key, String url) async {
+    if (url.isEmpty) return;
+    _checkLoading[key] = true;
+    notifyListeners();
+
+    final isOk = await _repository.checkUrlStatus(url);
+    _urlStatuses[key] = isOk;
+    _checkLoading[key] = false;
+    notifyListeners();
   }
 
   Future<void> loadEntryCode() async {
@@ -93,6 +121,7 @@ class SettingsViewModel extends ChangeNotifier {
     try {
       _userAppUrl = await _repository.updateUserAppUrl(newUrl);
       _error = null;
+      checkUrl('userApp', _userAppUrl);
     } catch (e) {
       _error = "URL 수정에 실패했습니다: $e";
       rethrow;
@@ -109,6 +138,7 @@ class SettingsViewModel extends ChangeNotifier {
     try {
       _googleDriveUrl = await _repository.updateGoogleDriveFolderUrl(newUrl);
       _error = null;
+      checkUrl('googleDrive', _googleDriveUrl);
     } catch (e) {
       _error = "구글 드라이브 URL 수정에 실패했습니다: $e";
       rethrow;
@@ -125,6 +155,7 @@ class SettingsViewModel extends ChangeNotifier {
     try {
       _thumbnailDriveUrl = await _repository.updateThumbnailDriveUrl(newUrl);
       _error = null;
+      checkUrl('thumbnailDrive', _thumbnailDriveUrl);
     } catch (e) {
       _error = "구글 썸네일 URL 수정에 실패했습니다: $e";
       rethrow;
@@ -141,9 +172,36 @@ class SettingsViewModel extends ChangeNotifier {
     try {
       _examDriveUrl = await _repository.updateExamDriveUrl(newUrl);
       _error = null;
+      checkUrl('examDrive', _examDriveUrl);
     } catch (e) {
       _error = "기출문제 URL 수정에 실패했습니다: $e";
       rethrow;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> restartAdminServer() async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      await _repository.restartAdminServer();
+    } catch (_) {
+    } finally {
+      await Future.delayed(const Duration(seconds: 3));
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> restartUserServer() async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      await _repository.restartUserServer();
+    } catch (e) {
+      debugPrint('Restart User Server Error: $e');
     } finally {
       _isLoading = false;
       notifyListeners();

@@ -221,4 +221,18 @@ class SystemSettingsRepository extends BaseRepository {
     checkAuthError(response.statusCode);
     throw Exception('기출문제 폴더 URL 업데이트 실패: ${response.body}');
   }
+
+  // Check URL status (Ping/Head)
+  Future<bool> checkUrlStatus(String urlString) async {
+    if (urlString.isEmpty) return false;
+    try {
+      final uri = Uri.parse(urlString);
+      // Use get/head depending on preference; for drive links, GET is more reliable for status 200/404
+      final response = await http.get(uri).timeout(const Duration(seconds: 5));
+      return response.statusCode >= 200 && response.statusCode < 400;
+    } catch (e) {
+      debugPrint('checkUrlStatus error ($urlString): $e');
+      return false;
+    }
+  }
 }
