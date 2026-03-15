@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import '../core/api_service.dart';
 import '../models/quiz_model.dart';
+import 'quiz_data_handler.dart';
 
-class QuizViewModel extends ChangeNotifier {
+class QuizViewModel extends ChangeNotifier with QuizDataHandler {
   List<QuizQuestion> _questions = [];
   bool _isLoading = true;
   int _currentIndex = 0;
@@ -61,125 +61,25 @@ class QuizViewModel extends ChangeNotifier {
         limit: 100,
       );
       if (data.isNotEmpty) {
-        _processData(data);
+        _questions = processQuizData(data);
       } else {
-        _useDummyData();
+        _questions = getDummyQuestions();
       }
     } catch (e) {
-      _useDummyData();
+      _questions = getDummyQuestions();
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  void _processData(List<dynamic> data) {
-    List<QuizQuestion> loadedQuestions = [];
-    final random = Random();
-
-    for (int i = 0; i < data.length; i++) {
-      final tree = data[i];
-      final String correctName = tree['name_kr'] as String;
-      Map<String, String> hintsMap = {};
-      String questionImageUrl = '';
-
-      final List<dynamic> images = tree['tree_images'] ?? [];
-      for (var img in images) {
-        final type = img['image_type'];
-        final hint = img['hint'];
-        final url = img['image_url'];
-
-        if (url != null && url.isNotEmpty) {
-          if (type == 'main' || questionImageUrl.isEmpty) {
-            questionImageUrl = url;
-          }
-        }
-
-        String? koreanKey;
-        switch (type) {
-          case 'main':
-            koreanKey = '대표';
-            break;
-          case 'leaf':
-            koreanKey = '잎';
-            break;
-          case 'bark':
-            koreanKey = '수피';
-            break;
-          case 'flower':
-            koreanKey = '꽃';
-            break;
-          case 'fruit':
-            koreanKey = '열매/겨울눈';
-            break;
-        }
-
-        if (koreanKey != null &&
-            hint != null &&
-            hint.toString().trim().isNotEmpty) {
-          hintsMap[koreanKey] = hint.toString();
-        }
-      }
-
-      List<String> options = [correctName];
-      final distractorData = tree['quiz_distractors'];
-      if (distractorData is List && distractorData.isNotEmpty) {
-        List<String> manual = distractorData.map((e) => e.toString()).toList();
-        manual.shuffle(random);
-        options.addAll(manual.take(2));
-      } else {
-        List<dynamic> others = List.from(data)..removeAt(i);
-        others.shuffle(random);
-        if (others.length >= 2) {
-          options.add(others[0]['name_kr']);
-          options.add(others[1]['name_kr']);
-        }
-      }
-
-      while (options.length < 3) {
-        options.add('다른 나무 ${options.length}');
-      }
-
-      options.shuffle(random);
-      loadedQuestions.add(
-        QuizQuestion(
-          id: tree['id'] is int
-              ? tree['id']
-              : int.tryParse(tree['id'].toString()) ?? 0,
-          imageUrl: ApiService.getProxyImageUrl(questionImageUrl),
-          description: tree['description'] ?? '설명이 없습니다.',
-          correctAnswerIndex: options.indexOf(correctName),
-          options: options,
-          hints: hintsMap,
-        ),
-      );
-    }
-
-    loadedQuestions.shuffle();
-    _questions = loadedQuestions;
-  }
-
-  void _useDummyData() {
-    _questions = [
-      QuizQuestion(
-        id: 1,
-        description: '소나무는 한국을 대표하는 상록수로, 잎이 2개씩 뭉쳐나며 붉은빛이 도는 수피가 특징입니다.',
-        imageUrl:
-            'https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&q=80&w=800',
-        options: ['소나무', '잣나무', '전나무'],
-        correctAnswerIndex: 0,
-        hints: {'잎': '2개씩 뭉쳐남', '수피': '붉은색 거북등', '대표': '애국가 소나무'},
-      ),
-    ];
-  }
-
   QuizQuestion _getDummyQuestion() {
     return QuizQuestion(
       id: 0,
-      imageUrl: '',
-      description: '',
+      description: "문제를 불러오는 중 오류가 발생했습니다.",
+      imageUrl: "",
+      options: [""],
       correctAnswerIndex: 0,
-      options: [''],
       hints: {},
     );
   }
