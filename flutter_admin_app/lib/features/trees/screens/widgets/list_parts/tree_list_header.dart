@@ -63,8 +63,11 @@ class _MoreMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
       onSelected: (value) {
-        if (value == 'export') _handleExport(context);
-        else if (value == 'import') _handleImport(context);
+        if (value == 'export') {
+          _handleExport(context);
+        } else if (value == 'import') {
+          _handleImport(context);
+        }
       },
       icon: const Icon(Icons.more_vert, color: Colors.white),
       padding: EdgeInsets.zero,
