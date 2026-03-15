@@ -68,6 +68,13 @@ class SmartTagImageSection extends StatelessWidget {
         color: const Color(0xFF161B12),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         children: [

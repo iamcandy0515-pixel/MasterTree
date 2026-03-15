@@ -1,5 +1,8 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_admin_app/core/utils/image_processing_util.dart';
+import 'package:flutter_admin_app/core/utils/web_utils.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
 import 'package:flutter_admin_app/features/tree_registration/models/tree_registration_request.dart';
 import 'package:flutter_admin_app/features/tree_registration/repositories/tree_registration_repository.dart';
@@ -81,7 +84,22 @@ class TreeRegistrationViewModel extends ChangeNotifier {
       _isUploading = true;
       notifyListeners();
 
-      final publicUrl = await _repo.uploadImage(xFile);
+      // Step 1: Read original bytes
+      final originalBytes = await xFile.readAsBytes();
+
+      // Step 2: Compress for mobile optimization
+      final compressedBytes =
+          await ImageProcessingUtil.compressImage(originalBytes);
+
+      // Step 3: Create optimized XFile
+      final optimizedFile = XFile.fromData(
+        compressedBytes,
+        name: xFile.name,
+        mimeType: 'image/jpeg',
+      );
+
+      // Step 4: Upload
+      final publicUrl = await _repo.uploadImage(optimizedFile);
 
       _taggedImages[_activeTag] = TreeImage(
         imageType: _activeTag,
@@ -99,8 +117,18 @@ class TreeRegistrationViewModel extends ChangeNotifier {
   }
 
   Future<void> pasteImageFromClipboard() async {
-    // Disabled temporarily
-    debugPrint('Clipboard paste is temporarily disabled');
+    try {
+      await WebUtils.pasteImageFromClipboard((bytes, name, type) async {
+        final xFile = XFile.fromData(
+          Uint8List.fromList(bytes),
+          name: name,
+          mimeType: type,
+        );
+        await handleImageUpload(xFile);
+      });
+    } catch (e) {
+      debugPrint('Error pasting image: $e');
+    }
   }
 
   Future<void> searchGoogleImage() async {

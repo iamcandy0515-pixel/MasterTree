@@ -27,21 +27,44 @@ class ImageProcessingUtil {
     return Uint8List.fromList(jpgBytes);
   }
 
-  /// Helper to get category name for filename rule (?€?? ê½? ?˜í”¼, ?? ?´ë§¤)
+  /// Resizes image if it's too large and encodes to JPG with specified quality.
+  static Future<Uint8List> compressImage(
+    Uint8List originalBytes, {
+    int maxDimension = 1024,
+    int quality = 85,
+  }) async {
+    final image = img.decodeImage(originalBytes);
+    if (image == null) throw Exception('Failed to decode image');
+
+    img.Image processed = image;
+    if (image.width > maxDimension || image.height > maxDimension) {
+      processed = img.copyResize(
+        image,
+        width: image.width > image.height ? maxDimension : null,
+        height: image.height >= image.width ? maxDimension : null,
+        interpolation: img.Interpolation.linear,
+      );
+    }
+
+    final jpgBytes = img.encodeJpg(processed, quality: quality);
+    return Uint8List.fromList(jpgBytes);
+  }
+
+  /// Helper to get category name for filename rule
   static String getCategoryDisplayName(String type) {
     switch (type) {
       case 'main':
-        return '?€??;
+        return 'ëŒ€í‘œ';
       case 'bark':
-        return '?˜í”¼';
+        return 'ìˆ˜í”¼';
       case 'leaf':
-        return '??;
+        return 'ìžŽ';
       case 'flower':
-        return 'ê½?;
+        return 'ê½ƒ';
       case 'fruit':
-        return '?´ë§¤';
+        return 'ì—´ë§¤';
       default:
-        return 'ê¸°í?';
+        return 'ê¸°íƒ€';
     }
   }
 

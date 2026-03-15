@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class TagHintInput extends StatelessWidget {
+class TagHintInput extends StatefulWidget {
   final String? initialHint;
   final Function(String) onChanged;
 
@@ -9,6 +9,34 @@ class TagHintInput extends StatelessWidget {
     this.initialHint,
     required this.onChanged,
   });
+
+  @override
+  State<TagHintInput> createState() => _TagHintInputState();
+}
+
+class _TagHintInputState extends State<TagHintInput> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialHint);
+  }
+
+  @override
+  void didUpdateWidget(TagHintInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialHint != oldWidget.initialHint &&
+        widget.initialHint != _controller.text) {
+      _controller.text = widget.initialHint ?? '';
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +49,8 @@ class TagHintInput extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         TextField(
-          onChanged: onChanged,
-          controller: TextEditingController(text: initialHint)
-            ..selection = TextSelection.collapsed(
-              offset: (initialHint ?? '').length,
-            ),
+          onChanged: widget.onChanged,
+          controller: _controller,
           style: const TextStyle(color: Colors.white, fontSize: 14),
           maxLines: 2,
           decoration: InputDecoration(

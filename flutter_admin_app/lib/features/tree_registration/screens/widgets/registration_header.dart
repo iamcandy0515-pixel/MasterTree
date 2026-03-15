@@ -23,14 +23,37 @@ class RegistrationHeader extends StatelessWidget {
             icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white70),
             onPressed: () => Navigator.pop(context),
           ),
-          const Expanded(
-            child: Text(
-              '신규 수목 등록',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  '신규 수목 등록',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                        color: Colors.green,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    const Text(
+                      '서버 상태: 정상',
+                      style: TextStyle(color: Colors.white54, fontSize: 11),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
           if (vm.isSubmitting)
@@ -43,22 +66,34 @@ class RegistrationHeader extends StatelessWidget {
               ),
             )
           else
-            ElevatedButton(
-              onPressed: () => _handleRegister(context, vm),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primaryColor,
-                foregroundColor: Colors.black,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 10,
-                ),
+            Container(
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: primaryColor.withOpacity(0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
-              child: const Text(
-                'DB등록',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              child: ElevatedButton(
+                onPressed: () => _handleRegister(context, vm),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryColor,
+                  foregroundColor: Colors.black,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
+                ),
+                child: const Text(
+                  'DB등록',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
             ),
         ],

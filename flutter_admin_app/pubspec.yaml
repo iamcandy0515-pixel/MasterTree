@@ -52,6 +52,7 @@ dependencies:
   qr_flutter: ^4.1.0
   flutter_math_fork: ^0.7.4
   intl: ^0.20.2
+  image: ^4.5.3
 
 dev_dependencies:
   flutter_test:
