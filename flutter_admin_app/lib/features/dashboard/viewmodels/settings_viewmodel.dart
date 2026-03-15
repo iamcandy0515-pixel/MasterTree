@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../trees/repositories/tree_repository.dart';
+import 'package:flutter_admin_app/features/dashboard/repositories/system_settings_repository.dart';
 
 class SettingsViewModel extends ChangeNotifier {
-  final TreeRepository _repository = TreeRepository();
+  final SystemSettingsRepository _repository = SystemSettingsRepository();
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_admin_app/core/theme/neo_theme.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
-import 'package:flutter_admin_app/features/trees/repositories/tree_repository.dart';
+import 'package:flutter_admin_app/features/trees/repositories/master_tree_repository.dart';
 
 class TreeDetailScreen extends StatefulWidget {
   final Tree tree;
@@ -13,7 +13,7 @@ class TreeDetailScreen extends StatefulWidget {
 }
 
 class _TreeDetailScreenState extends State<TreeDetailScreen> {
-  final TreeRepository _repository = TreeRepository();
+  final MasterTreeRepository _repository = MasterTreeRepository();
   bool _isSaving = false;
 
   final Map<String, TextEditingController> _hintControllers = {

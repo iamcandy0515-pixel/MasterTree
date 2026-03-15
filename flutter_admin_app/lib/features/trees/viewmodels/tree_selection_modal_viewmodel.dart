@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
 import 'package:flutter_admin_app/features/trees/models/tree_group.dart';
-import 'package:flutter_admin_app/features/trees/repositories/tree_repository.dart';
+import 'package:flutter_admin_app/features/trees/repositories/master_tree_repository.dart';
 
 class TreeSelectionModalViewModel extends ChangeNotifier {
-  final TreeRepository _repository = TreeRepository();
+  final MasterTreeRepository _repository = MasterTreeRepository();
 
   List<Tree> _trees = [];
   bool _isLoading = false;

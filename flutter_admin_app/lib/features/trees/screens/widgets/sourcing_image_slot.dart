@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../models/tree.dart';
-import '../../repositories/tree_repository.dart';
+import '../../repositories/master_tree_repository.dart';
 import '../../viewmodels/tree_sourcing_viewmodel.dart';
 import '../../../../core/theme/neo_theme.dart';
 
@@ -180,7 +180,7 @@ class SourcingImageSlot extends StatelessWidget {
       }
 
       return CachedNetworkImage(
-        imageUrl: TreeRepository.getProxyUrl(
+        imageUrl: MasterTreeRepository.getProxyUrl(
           url,
           width: isThumb ? 300 : 800, // 썸네일은 300px 정도로 요청 (Retina 대응)
         ),

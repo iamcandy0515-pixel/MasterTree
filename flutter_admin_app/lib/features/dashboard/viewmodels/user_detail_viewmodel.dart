@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../trees/repositories/tree_repository.dart';
+import 'package:flutter_admin_app/features/dashboard/repositories/stats_repository.dart';
 
 class UserDetailViewModel extends ChangeNotifier {
-  final TreeRepository _repository = TreeRepository();
+  final StatsRepository _repository = StatsRepository();
   final String userId;
 
   UserDetailViewModel(this.userId);

@@ -2,14 +2,14 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/tree.dart';
-import '../repositories/tree_repository.dart';
+import '../repositories/master_tree_repository.dart';
 
 part 'parts/tree_sourcing_viewmodel_list.part.dart';
 part 'parts/tree_sourcing_viewmodel_detail.part.dart';
 part 'parts/tree_sourcing_viewmodel_drive.part.dart';
 
 class TreeSourcingViewModel extends ChangeNotifier {
-  final _repository = TreeRepository();
+  final _repository = MasterTreeRepository();
 
   List<Tree> _trees = [];
   int _currentPage = 1;
