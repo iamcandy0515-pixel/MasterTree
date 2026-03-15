@@ -24,8 +24,9 @@ extension TreeSourcingDetailExtension on TreeSourcingViewModel {
     _pendingImages.clear();
     _imageSources.clear();
     for (final img in tree.images) {
-      if (img.imageUrl.isNotEmpty)
+      if (img.imageUrl.isNotEmpty) {
         _imageSources['${img.imageType}_original'] = 'db';
+      }
       if (img.thumbnailUrl != null && img.thumbnailUrl!.isNotEmpty) {
         _imageSources['${img.imageType}_thumb'] = 'db';
       }

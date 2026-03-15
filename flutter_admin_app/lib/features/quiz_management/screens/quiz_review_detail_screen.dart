@@ -49,7 +49,7 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> {
               builder: (context, vm, _) => vm.isSaving
                   ? const Padding(padding: EdgeInsets.all(16.0), child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: primaryColor, strokeWidth: 2)))
                   : TextButton.icon(
-                      onPressed: () => _handleSave(context, vm),
+                      onPressed: () => _handleSave(vm),
                       icon: const Icon(Icons.save, color: primaryColor, size: 20),
                       label: const Text('저장', style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold)),
                     ),
@@ -74,7 +74,7 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> {
                     isExpanded: vm.isContentExpanded,
                     onTextChanged: (val) => vm.questionText = val,
                     onToggleExpand: () => vm.toggleExpanded('content'),
-                    onUploadImage: (img) async => await _handleImageUpload(context, vm, img, 'content'),
+                    onUploadImage: (img) async => await _handleImageUpload(vm, img, 'content'),
                     onRemoveImage: (idx) => vm.removeImage(idx, 'content'),
                   ),
                   const SizedBox(height: 24),
@@ -85,9 +85,9 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> {
                     isReviewing: vm.isReviewing,
                     onTextChanged: (val) => vm.explanationText = val,
                     onToggleExpand: () => vm.toggleExpanded('exp'),
-                    onUploadImage: (img) async => await _handleImageUpload(context, vm, img, 'exp'),
+                    onUploadImage: (img) async => await _handleImageUpload(vm, img, 'exp'),
                     onRemoveImage: (idx) => vm.removeImage(idx, 'exp'),
-                    onAiReview: () => _handleAiReview(context, vm),
+                    onAiReview: () => _handleAiReview(vm),
                   ),
                   const SizedBox(height: 24),
                   QuizOptionsCard(
@@ -96,7 +96,7 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> {
                     isGenerating: vm.isGenerating,
                     onCorrectOptionChanged: (val) => vm.correctOption = val,
                     onIncorrectOptionChanged: (idx, val) => vm.incorrectOptions[idx] = val,
-                    onAiGenerate: () => _handleAiGenerate(context, vm),
+                    onAiGenerate: () => _handleAiGenerate(vm),
                   ),
                   const SizedBox(height: 24),
                   QuizHintCard(initialText: vm.hintText, onTextChanged: (val) => vm.hintText = val),
@@ -107,7 +107,7 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> {
                     isRecommending: vm.isRecommending,
                     onPageChanged: (p) => vm.setRelatedPage(p),
                     onRemoveRelated: (id) => vm.removeRelated(id),
-                    onAiRecommend: () => _handleAiRecommend(context, vm),
+                    onAiRecommend: () => _handleAiRecommend(vm),
                   ),
                   const SizedBox(height: 32),
                 ],
@@ -119,69 +119,77 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> {
     );
   }
 
-  Future<void> _handleSave(BuildContext context, QuizReviewDetailViewModel vm) async {
+  Future<void> _handleSave(QuizReviewDetailViewModel vm) async {
     try {
       await vm.saveQuiz(widget.quizId);
-      if (mounted) SnackBarUtil.showFloating(context, '성공적으로 저장되었습니다.');
+      if (!mounted) return;
+      SnackBarUtil.showFloating(context, '성공적으로 저장되었습니다.');
     } catch (e) {
-      if (mounted) SnackBarUtil.showFloating(context, '저장 실패: $e', isError: true);
+      if (!mounted) return;
+      SnackBarUtil.showFloating(context, '저장 실패: $e', isError: true);
     }
   }
 
-  Future<void> _handleImageUpload(BuildContext context, QuizReviewDetailViewModel vm, dynamic img, String field) async {
+  Future<void> _handleImageUpload(QuizReviewDetailViewModel vm, dynamic img, String field) async {
     try {
       final bytes = await img.readAsBytes();
       await vm.uploadImage(bytes, img.name, field);
-      if (mounted) SnackBarUtil.showFloating(context, '이미지 업로드 완료');
+      if (!mounted) return;
+      SnackBarUtil.showFloating(context, '이미지 업로드 완료');
     } catch (e) {
-      if (mounted) SnackBarUtil.showFloating(context, '업로드 실패: $e', isError: true);
+      if (!mounted) return;
+      SnackBarUtil.showFloating(context, '업로드 실패: $e', isError: true);
     }
   }
 
-  Future<void> _handleAiReview(BuildContext context, QuizReviewDetailViewModel vm) async {
+  Future<void> _handleAiReview(QuizReviewDetailViewModel vm) async {
     try {
       final res = await vm.aiReview();
-      if (mounted) _showReviewResultDialog(context, res);
+      if (!mounted) return;
+      _showReviewResultDialog(context, res);
     } catch (e) {
-      if (mounted) SnackBarUtil.showFloating(context, 'AI 검수 실패: $e', isError: true);
+      if (!mounted) return;
+      SnackBarUtil.showFloating(context, 'AI 검수 실패: $e', isError: true);
     }
   }
 
-  Future<void> _handleAiGenerate(BuildContext context, QuizReviewDetailViewModel vm) async {
+  Future<void> _handleAiGenerate(QuizReviewDetailViewModel vm) async {
     try {
       await vm.generateDistractors();
-      if (mounted) SnackBarUtil.showFloating(context, 'AI 오답 생성 완료');
+      if (!mounted) return;
+      SnackBarUtil.showFloating(context, 'AI 오답 생성 완료');
     } catch (e) {
-      if (mounted) SnackBarUtil.showFloating(context, '오답 생성 실패: $e', isError: true);
+      if (!mounted) return;
+      SnackBarUtil.showFloating(context, '오답 생성 실패: $e', isError: true);
     }
   }
 
-  Future<void> _handleAiRecommend(BuildContext context, QuizReviewDetailViewModel vm) async {
+  Future<void> _handleAiRecommend(QuizReviewDetailViewModel vm) async {
     try {
       final related = await vm.recommendSimilar(widget.quizId);
-      if (mounted) {
-        await showDialog(
-          context: context,
-          builder: (context) => SimilarQuizReviewDialog(
-            quiz: {
-              'id': widget.quizId,
-              'question_number': vm.questionNo,
-              'content_blocks': vm.contentBlocks,
-              'related_quiz_ids': vm.selectedRelatedIds,
-            },
-            selectedYear: vm.year,
-            selectedRound: vm.round,
-            initialRecommendations: related.map((e) => e as Map<String, dynamic>).toList(),
-            quizRepo: QuizRepository(),
-            onUpdate: (updatedList) {
-              vm.selectedRelatedIds = updatedList.map((e) => e['id'] as int).toList();
-              vm.loadRelatedQuizzesMetadata();
-            },
-          ),
-        );
-      }
+      if (!mounted) return;
+      await showDialog(
+        context: context,
+        builder: (context) => SimilarQuizReviewDialog(
+          quiz: {
+            'id': widget.quizId,
+            'question_number': vm.questionNo,
+            'content_blocks': vm.contentBlocks,
+            'related_quiz_ids': vm.selectedRelatedIds,
+          },
+          selectedYear: vm.year,
+          selectedRound: vm.round,
+          initialRecommendations: related.map((e) => e as Map<String, dynamic>).toList(),
+          quizRepo: QuizRepository(),
+          onUpdate: (updatedList) {
+            vm.selectedRelatedIds = updatedList.map((e) => e['id'] as int).toList();
+            vm.loadRelatedQuizzesMetadata();
+          },
+        ),
+      );
     } catch (e) {
-      if (mounted) SnackBarUtil.showFloating(context, '추천 실패: $e', isError: true);
+      if (!mounted) return;
+      SnackBarUtil.showFloating(context, '추천 실패: $e', isError: true);
     }
   }
 
