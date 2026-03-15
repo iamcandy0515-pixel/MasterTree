@@ -1,56 +1,54 @@
-# [작업계획서] 신규 수목 등록 모듈 분리 및 레이아웃 고도화 (V1.0)
+# 🧩 수목 등록 화면 리팩토링 및 모바일 최적화 작업 계획서 (Tree Registration Modularization)
 
-개발 표준(`DEVELOPMENT_RULES.md`)을 준수하여 설계된 '신규 수목 등록' 기능의 모듈 독립화 및 기능 고도화 계획입니다.
+이 계획서는 `DEVELOPMENT_RULES.md`를 엄격히 준수하여 `tree_registration_screen.dart` 및 관련 위젯을 리팩토링하고 모바일 환경에 최적화하기 위한 단계별 가이드를 정의합니다.
 
-## 🎯 목표 및 핵심 정책
-- **기존 필드 재활용**: `difficulty` 필드(int)를 성상(Habit) 정보로 활용 (1: 상록수, 2: 낙엽수)
-- **완전 분리**: 기존 `trees` 기능군에서 분리하여 `tree_registration` 독립 모듈로 구축
-- **이미지 정책**: 태그 카테고리별(대표, 잎, 수피, 꽃, 열매) 단 1장의 원본 이미지만 허용
-- **진입점 최적화**: 대시보드 전용 카드 연결 및 기존 목록 버튼 삭제
+## 0. 작업 전제 조건 (Prerequisites)
+- [x] **Git 백업**: `git add .` 및 `git commit`을 통해 현재 소스 상태 백업.
+- [x] **환경 설정**: 터미널 실행 전 `chcp 65001` 명령으로 한글 인코딩 보장.
+- [x] **소스 정합성**: 작업 전후 `diff` 분석을 통해 의도하지 않은 코드 삭제 방지.
+
+## 1. 코드 구조 및 모듈화 전략 (Source Splitting)
+`Rule 1-1`에 의거하여 200줄이 넘는 `SmartTagImageSection.dart` (현재 259줄)를 물리적으로 분리합니다.
+
+- **대상 파일**: `lib/features/tree_registration/screens/widgets/smart_tag_image_section.dart`
+- **분리 목표 위젯**:
+    - `TagSelectorRow.dart`: 부위별 선택 칩(Chips) UI (약 60~80줄 예상).
+    - `TagImageDisplay.dart`: 이미지 미리보기 및 삭제 버튼 영역 (약 50~70줄 예상).
+    - `TagUploadActions.dart`: 업로드/복사/검색 버튼 그룹 (약 80~100줄 예상).
+    - `TagHintInput.dart`: 힌트 입력 텍스트 필드 영역 (약 40~60줄 예상).
+- **통신 방식**: 부모-자식 간 `Callback` 패턴을 사용하여 `TreeRegistrationViewModel`과의 정합성 유지 (`Rule 1-2`).
+
+## 2. 작업 To-Do List (Task Workflow)
+
+### Phase 1: 위젯 물리 분리 및 경로 정리
+- [x] 신규 폴더 생성: `lib/features/tree_registration/screens/widgets/tree_registration_parts/`
+- [x] 200줄 초과 방지를 위한 4개 위젯 클래스 추출 및 개별 파일 생성.
+- [x] Import 경로 에러 및 린트(Lint) 에러 사전 체크 (`Rule 1-3`, `3-2`).
+- [x] **[Git Commit]**: 위젯 분리 완료 및 기본 연동 확인.
+
+### Phase 2: 모바일 최적화 및 인프라 구현
+- [x] **이미지 압축 (Optimization)**: `ImageProcessingUtil`을 연동하여 업로드 전 바이트 최적화.
+- [x] **WebUtils 적용 (Rule 4-3)**: `dart:html` 직접 참조 제거 및 `WebUtils` 추상화 레이어를 통한 클립보드 처리.
+- [x] **성능 튜닝**: `TextEditingController`를 자식 위젯 내부에서 관리하여 모바일 리빌드 부하 분산.
+- [x] **[Git Commit]**: 성능 및 인프라 로직 적용 완료.
+
+### Phase 3: 디자인 고도화 (Premium Aesthetics)
+- [x] **UI 시인성 강화**: 각 섹션 컨테이너에 `boxShadow` (그림자) 및 `border` (외곽선) 적용.
+- [x] **상태 피드백**: API 호출 상태(정상/비정상/지연)를 텍스트로 표시하는 인디케이터 상단 배치.
+- [x] **[Git Commit]**: 디자인 고도화 완료.
+
+### Phase 4: 컴파일 및 빌드 완결성 확인 (Rule 2-3, 4-1)
+- [x] 빌드 버전 고정 확인: Gradle 8.5, Kotlin 1.9.22 유지 검증.
+- [x] AndroidX Resolution Strategy가 빌드에 정상 반영되는지 체크 (`Rule 4-4`).
+- [x] **최종 분석**: `flutter analyze` 실행하여 모든 이슈 해결.
+- [x] **최종 빌드**: `flutter build apk --debug` 수행하여 실행 파일 생성 확인.
+- [x] **마지막 Git Commit**: "Complete TreeRegistration modularization and mobile optimization".
+
+## 3. 정합성 최종 체크리스트
+- [x] 모든 파일이 200줄 이하인가?
+- [x] `WebUtils`를 사용하여 플랫폼 호환성을 확보했는가?
+- [x] `chcp 65001` 환경에서 작업이 수행되었는가?
+- [x] `flutter analyze` 결과 'Critical' 이슈가 없는가?
 
 ---
-
-## 🏗️ To-Do List
-
-### 🛠️ Step 0: 환경 및 데이터 준비
-- [ ] 터미널 인코딩 설정 확인 (`chcp 65001`)
-- [ ] 작업 대상 파일 백업 확인 (Git Commit 완료)
-
-### 🛰️ Step 1: Backend 모듈 독립화 (Node.js)
-- [ ] `nodejs_admin_api/src/modules/tree-registration` 폴더 생성 및 보일러플레이트 작성
-- [ ] `tree-registration.controller.ts` 구현: 수목 등록 로직 (입력 데이터 검증 포함)
-- [ ] `tree-registration.routes.ts` 구현: `POST /api/tree-registration` 엔드포인트 등록
-- [ ] `app.ts`에 신규 모듈 라우트 등록 및 테스트
-
-### 📱 Step 2: Frontend 모듈 독립화 (Flutter)
-- [ ] `lib/features/tree_registration` 신규 기능 폴더 생성
-- [ ] `models/tree_registration_request.dart` 정의 (성상 데이터 포함)
-- [ ] `repositories/tree_registration_repository.dart` 구현 (신설 API 통신)
-- [ ] `viewmodels/tree_registration_viewmodel.dart` 구현 (태그별 이미지 및 힌트 상태 관리)
-- [ ] `screens/tree_registration_screen.dart` 레이아웃 구현 (UI 로직 분리)
-
-### 🎨 Step 3: 레이아웃 및 스마트 태그 시스템 고도화
-- [ ] **필드명 및 UI 변경**:
-    - [ ] `한글 이름(필수)` → `수목명`
-    - [ ] `난이도` 드롭다운 → `성상(상록수/낙엽수)` 드롭다운 (1, 2 매핑)
-- [ ] **퀴즈 오답 설정**: 오답 보기 필드 2개 고정형 레이아웃 적용
-- [ ] **Smart Tag System**:
-    - [ ] 카테고리(대표, 잎, 수피, 꽃, 열매) 탭 UI 구현
-    - [ ] 카테고리당 이미지 1장 + 힌트 필드 1:1 매칭 UI
-    - [ ] 이미지 미리보기 및 삭제 기능 (카테고리별 단일 이미지 보장)
-
-### 🔗 Step 4: 대시보드 통합 및 클린업
-- [ ] `DashboardScreen`에 '신규 수목 등록' 카드 추가 및 경로 연결
-- [ ] `TreeListScreen` 상단 '신규등록' 버튼 삭제 및 기존 `AddTreeScreen` 참조 제거
-- [ ] `TreeDetailScreen` (수정 화면)에도 성상 드롭다운 및 2개 오답 로직 일관성 있게 반영 (필요 시)
-
-### ✅ Step 5: 최종 검증 (Verification)
-- [ ] `flutter analyze` 린트 에러 체크 및 해결
-- [ ] 실제 등록 프로세스 통합 테스트 (이미지 업로드 -> DB 저장 -> 목록 확인)
-- [ ] 소스 정합성 및 유실 방지 최종 체크
-
----
-
-## 💡 구현 참고 사항 (Rule 1-1)
-- 각 파일은 200줄을 넘지 않도록 위젯 및 로직을 적극적으로 분리합니다.
-- 성상(Habit) 매핑: `Evergreen (상록수) = 1`, `Deciduous (낙엽수) = 2`
+**에이전트 준수 사항**: 본 계획서 승인 후에만 구현을 시작하며, 모든 코드 수정 후 반드시 린터를 가동한다.
