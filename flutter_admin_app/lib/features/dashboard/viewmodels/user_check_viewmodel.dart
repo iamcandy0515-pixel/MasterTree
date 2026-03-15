@@ -4,8 +4,8 @@ import 'package:flutter_admin_app/features/dashboard/repositories/user_repositor
 class UserCheckViewModel extends ChangeNotifier {
   final _repo = UserRepository();
 
-  List<Map<String, String>> _allUsers = [];
-  List<Map<String, String>> _filteredUsers = [];
+  List<Map<String, dynamic>> _allUsers = [];
+  List<Map<String, dynamic>> _filteredUsers = [];
   bool _isLoading = false;
   String _currentStatus = 'pending';
 
@@ -14,7 +14,7 @@ class UserCheckViewModel extends ChangeNotifier {
   }
 
   bool get isLoading => _isLoading;
-  List<Map<String, String>> get users => _filteredUsers;
+  List<Map<String, dynamic>> get users => _filteredUsers;
   String get currentStatus => _currentStatus;
 
   Future<void> loadUsers(String status) async {
@@ -32,6 +32,7 @@ class UserCheckViewModel extends ChangeNotifier {
           'id': u['id']?.toString() ?? '',
           'name': '$prefix$name',
           'email': u['email']?.toString() ?? '',
+          'phone': u['phone']?.toString(),
           'role': role,
           'status': u['status']?.toString() ?? 'pending',
           'lastLogin': _formatDate(u['lastLogin']?.toString()),
