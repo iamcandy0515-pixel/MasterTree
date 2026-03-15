@@ -20,7 +20,7 @@ class QuizManagementScreen extends StatelessWidget {
 }
 
 class _QuizManagementContent extends StatelessWidget {
-  const _QuizManagementContent({super.key});
+  const _QuizManagementContent();
 
   static const backgroundDark = Color(0xFF102219);
   static const primaryColor = Color(0xFF2BEE8C);
