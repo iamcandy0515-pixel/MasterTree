@@ -108,5 +108,8 @@ class _ActiveEditorState {
 
   @override
   int get hashCode =>
-      activeTag.hashCode ^ image?.imageUrl.hashCode ^ image?.hint.hashCode ^ isUploading.hashCode;
+      activeTag.hashCode ^
+      (image?.imageUrl.hashCode ?? 0) ^
+      (image?.hint.hashCode ?? 0) ^
+      isUploading.hashCode;
 }
