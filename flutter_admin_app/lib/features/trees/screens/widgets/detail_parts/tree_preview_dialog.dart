@@ -132,7 +132,7 @@ class TreePreviewDialog extends StatelessWidget {
           Image.network(
             image.imageUrl,
             fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => const Center(
+            errorBuilder: (_, _, _) => const Center(
               child: Icon(Icons.broken_image, color: Colors.grey),
             ),
           ),
