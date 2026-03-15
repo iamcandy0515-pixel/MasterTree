@@ -1,105 +1,31 @@
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_admin_app/core/theme/neo_theme.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
-import 'package:flutter_admin_app/features/trees/repositories/master_tree_repository.dart';
+import 'package:flutter_admin_app/features/trees/viewmodels/tree_detail_viewmodel.dart';
 
-class TreeDetailScreen extends StatefulWidget {
+class TreeDetailScreen extends StatelessWidget {
   final Tree tree;
 
   const TreeDetailScreen({super.key, required this.tree});
 
   @override
-  State<TreeDetailScreen> createState() => _TreeDetailScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => TreeDetailViewModel(tree: tree),
+      child: const _TreeDetailContent(),
+    );
+  }
 }
 
-class _TreeDetailScreenState extends State<TreeDetailScreen> {
-  final MasterTreeRepository _repository = MasterTreeRepository();
-  bool _isSaving = false;
+class _TreeDetailContent extends StatelessWidget {
+  const _TreeDetailContent();
 
-  final Map<String, TextEditingController> _hintControllers = {
-    'main': TextEditingController(),
-    'bark': TextEditingController(),
-    'leaf': TextEditingController(),
-    'flower': TextEditingController(),
-    'fruit': TextEditingController(),
-  };
-  final TextEditingController _descController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _descController.text = widget.tree.description ?? '';
-    for (var img in widget.tree.images) {
-      if (_hintControllers.containsKey(img.imageType)) {
-        _hintControllers[img.imageType]!.text = img.hint ?? '';
-      }
-    }
-  }
-
-  Future<void> _saveHints() async {
-    setState(() {
-      _isSaving = true;
-    });
-    try {
-      // Create updated images array
-      List<TreeImage> updatedImages = widget.tree.images.map((img) {
-        String? newHint;
-        if (img.imageType == 'main') {
-          newHint = _hintControllers['main']!.text;
-        } else if (img.imageType == 'bark') {
-          newHint = _hintControllers['bark']!.text;
-        } else if (img.imageType == 'leaf') {
-          newHint = _hintControllers['leaf']!.text;
-        } else if (img.imageType == 'flower') {
-          newHint = _hintControllers['flower']!.text;
-        } else if (img.imageType == 'fruit') {
-          newHint = _hintControllers['fruit']!.text;
-        }
-
-        return img.copyWith(hint: newHint ?? img.hint);
-      }).toList();
-
-      final request = CreateTreeRequest(
-        nameKr: widget.tree.nameKr,
-        scientificName: widget.tree.scientificName,
-        description: _descController.text,
-        category: widget.tree.category,
-        difficulty: widget.tree.difficulty,
-        quizDistractors: widget.tree.quizDistractors,
-        isAutoQuizEnabled: widget.tree.isAutoQuizEnabled,
-        images: updatedImages,
-      );
-
-      await _repository.updateTree(widget.tree.id, request);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('힌트가 성공적으로 저장되었습니다.'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('저장 실패: $e'), backgroundColor: Colors.red),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSaving = false;
-        });
-      }
-    }
-  }
-
-  void _showPreviewDialog() {
-    final barkImages = widget.tree.images
+  void _showPreviewDialog(BuildContext context, TreeDetailViewModel vm) {
+    final barkImages = vm.tree.images
         .where((img) => img.imageType == 'bark')
         .toList();
-    final leafImages = widget.tree.images
+    final leafImages = vm.tree.images
         .where((img) => img.imageType == 'leaf')
         .toList();
 
@@ -155,7 +81,7 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
                             child: barkImages.isNotEmpty
                                 ? _buildImageCardDialog(
                                     barkImages.first,
-                                    _hintControllers['bark']!.text,
+                                    vm.hintControllers['bark']!.text,
                                   )
                                 : _buildNoImagePlaceholder(),
                           ),
@@ -179,7 +105,7 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
                             child: leafImages.isNotEmpty
                                 ? _buildImageCardDialog(
                                     leafImages.first,
-                                    _hintControllers['leaf']!.text,
+                                    vm.hintControllers['leaf']!.text,
                                   )
                                 : _buildNoImagePlaceholder(),
                           ),
@@ -236,16 +162,10 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
   }
 
   @override
-  void dispose() {
-    _descController.dispose();
-    for (var c in _hintControllers.values) {
-      c.dispose();
-    }
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final vm = context.watch<TreeDetailViewModel>();
+    final tree = vm.tree;
+
     return Scaffold(
       backgroundColor: NeoTheme.darkTheme.scaffoldBackgroundColor,
       appBar: AppBar(
@@ -253,17 +173,17 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
           text: TextSpan(
             children: [
               TextSpan(
-                text: widget.tree.nameKr,
+                text: tree.nameKr,
                 style: const TextStyle(
                   fontSize: 18,
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              if (widget.tree.scientificName != null &&
-                  widget.tree.scientificName!.isNotEmpty)
+              if (tree.scientificName != null &&
+                  tree.scientificName!.isNotEmpty)
                 TextSpan(
-                  text: ' (${widget.tree.scientificName})',
+                  text: ' (${tree.scientificName})',
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.white70,
@@ -279,12 +199,11 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1. Basic Info Section with Category Tag + Preview Button
             Row(
               children: [
                 _buildSectionTitle('기본 정보'),
                 const SizedBox(width: 12),
-                if (widget.tree.category != null)
+                if (tree.category != null)
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,
@@ -295,7 +214,7 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      widget.tree.category!,
+                      tree.category!,
                       style: const TextStyle(
                         color: NeoColors.acidLime,
                         fontSize: 12,
@@ -305,7 +224,7 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
                   ),
                 const Spacer(),
                 TextButton.icon(
-                  onPressed: _showPreviewDialog,
+                  onPressed: () => _showPreviewDialog(context, vm),
                   icon: const Icon(
                     Icons.remove_red_eye,
                     size: 16,
@@ -323,9 +242,8 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
             ),
             const SizedBox(height: 12),
 
-            // Description Input Box
             TextField(
-              controller: _descController,
+              controller: vm.descController,
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 14,
@@ -357,20 +275,19 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
             ),
             const SizedBox(height: 32),
 
-            // 5개 카테고리 힌트 입력 박스
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _buildSectionTitle('부위별 힌트'),
                 TextButton(
-                  onPressed: _isSaving ? null : _saveHints,
+                  onPressed: vm.isSaving ? null : () => vm.saveHints(context),
                   style: TextButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 8,
                     ),
                   ),
-                  child: _isSaving
+                  child: vm.isSaving
                       ? const SizedBox(
                           width: 16,
                           height: 16,
@@ -391,11 +308,11 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
               ],
             ),
             const SizedBox(height: 16),
-            _buildHintInput('대표 (main)', 'main'),
-            _buildHintInput('수피와 가지 (bark)', 'bark'),
-            _buildHintInput('잎 (leaf)', 'leaf'),
-            _buildHintInput('꽃 (flower)', 'flower'),
-            _buildHintInput('열매/겨울눈 (fruit/bud)', 'fruit'),
+            _buildHintInput('대표 (main)', 'main', vm),
+            _buildHintInput('수피와 가지 (bark)', 'bark', vm),
+            _buildHintInput('잎 (leaf)', 'leaf', vm),
+            _buildHintInput('꽃 (flower)', 'flower', vm),
+            _buildHintInput('열매/겨울눈 (fruit/bud)', 'fruit', vm),
 
             const SizedBox(height: 32),
           ],
@@ -415,7 +332,7 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
     );
   }
 
-  Widget _buildHintInput(String label, String key) {
+  Widget _buildHintInput(String label, String key, TreeDetailViewModel vm) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Column(
@@ -431,7 +348,7 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
           ),
           const SizedBox(height: 8),
           TextField(
-            controller: _hintControllers[key],
+            controller: vm.hintControllers[key],
             style: const TextStyle(color: Colors.white, fontSize: 14),
             maxLines: 2,
             decoration: InputDecoration(
