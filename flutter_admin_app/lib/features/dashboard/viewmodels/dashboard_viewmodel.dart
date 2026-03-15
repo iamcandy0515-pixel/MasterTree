@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter_admin_app/features/trees/repositories/tree_repository.dart';
+import 'package:flutter_admin_app/features/dashboard/repositories/stats_repository.dart';
+import 'package:flutter_admin_app/features/dashboard/repositories/system_settings_repository.dart';
 
 class DashboardViewModel extends ChangeNotifier {
   bool _isLoading = false;
 
   bool get isLoading => _isLoading;
 
-  final _repo = TreeRepository();
+  final _statsRepo = StatsRepository();
+  final _settingsRepo = SystemSettingsRepository();
   Map<String, dynamic> _stats = {
     'totalTrees': 0,
     'totalQuizzes': 0,
@@ -41,7 +43,7 @@ class DashboardViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final data = await _repo.getDashboardStats();
+      final data = await _statsRepo.getDashboardStats();
       _stats = data;
     } catch (e) {
       debugPrint('Dashboard VM Error: $e');
@@ -55,7 +57,7 @@ class DashboardViewModel extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-      await _repo.restartAdminServer();
+      await _settingsRepo.restartAdminServer();
     } catch (_) {
       // Ignore
     } finally {
@@ -71,7 +73,7 @@ class DashboardViewModel extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-      await _repo.restartUserServer();
+      await _settingsRepo.restartUserServer();
     } catch (e) {
       debugPrint('Restart User Server Error: $e');
     } finally {

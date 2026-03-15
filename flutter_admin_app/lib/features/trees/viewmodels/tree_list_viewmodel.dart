@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
-import 'package:flutter_admin_app/features/trees/repositories/tree_repository.dart';
+import 'package:flutter_admin_app/features/trees/repositories/master_tree_repository.dart';
 
 class TreeListViewModel extends ChangeNotifier {
-  final TreeRepository _repo = TreeRepository();
+  final MasterTreeRepository _repo = MasterTreeRepository();
 
   List<Tree> _paginatedTrees = [];
   bool _isLoading = false;

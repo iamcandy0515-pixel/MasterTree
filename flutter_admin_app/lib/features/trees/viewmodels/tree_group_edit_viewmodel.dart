@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_admin_app/features/trees/models/tree_group.dart';
-import 'package:flutter_admin_app/features/trees/repositories/tree_repository.dart';
+import 'package:flutter_admin_app/features/trees/repositories/tree_group_repository.dart';
 
 class TreeGroupEditViewModel extends ChangeNotifier {
-  final TreeRepository _repository = TreeRepository();
+  final TreeGroupRepository _repository = TreeGroupRepository();
   // final _supabase = Supabase.instance.client; // Removed as we use repository now
 
   // Form State

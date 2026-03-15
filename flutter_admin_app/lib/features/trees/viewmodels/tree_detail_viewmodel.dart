@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
-import 'package:flutter_admin_app/features/trees/repositories/tree_repository.dart';
+import 'package:flutter_admin_app/features/trees/repositories/master_tree_repository.dart';
 
 class TreeDetailViewModel extends ChangeNotifier {
-  final TreeRepository _repository = TreeRepository();
+  final MasterTreeRepository _repository = MasterTreeRepository();
   final Tree tree;
 
   // Controllers

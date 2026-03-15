@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_admin_app/features/trees/models/tree_group.dart';
-import 'package:flutter_admin_app/features/trees/repositories/tree_repository.dart';
+import 'package:flutter_admin_app/features/trees/repositories/tree_group_repository.dart';
 
 class TreeLookalikeViewModel extends ChangeNotifier {
-  final _repository = TreeRepository();
+  final _repository = TreeGroupRepository();
   TreeGroup? _group;
   bool _isLoading = false;
 
