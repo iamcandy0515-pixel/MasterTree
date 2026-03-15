@@ -224,7 +224,11 @@ class QuizReviewDetailViewModel extends ChangeNotifier {
   }
 
   void toggleExpanded(String field) {
-    if (field == 'content') isContentExpanded = !isContentExpanded; else isExpExpanded = !isExpExpanded;
+    if (field == 'content') {
+      isContentExpanded = !isContentExpanded;
+    } else {
+      isExpExpanded = !isExpExpanded;
+    }
     notifyListeners();
   }
 

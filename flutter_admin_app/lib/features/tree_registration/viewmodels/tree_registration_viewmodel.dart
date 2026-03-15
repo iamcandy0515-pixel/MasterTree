@@ -136,8 +136,9 @@ class TreeRegistrationViewModel extends ChangeNotifier {
     if (nameKrController.text.trim().isEmpty) throw Exception('수목명을 입력해주세요.');
     if (_selectedCategory == null) throw Exception('구분을 선택해주세요.');
     if (_selectedHabit == null) throw Exception('성상을 선택해주세요.');
-    if (!_taggedImages.containsKey('main'))
+    if (!_taggedImages.containsKey('main')) {
       throw Exception('최소한 "대표" 이미지는 등록해야 합니다.');
+    }
 
     _isSubmitting = true;
     notifyListeners();

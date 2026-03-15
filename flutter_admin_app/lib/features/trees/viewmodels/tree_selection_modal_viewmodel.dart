@@ -13,7 +13,6 @@ class TreeSelectionModalViewModel extends ChangeNotifier {
 
   int _currentPage = 1;
   final int _limit = 20;
-  int _totalCount = 0;
   int _totalPages = 1;
 
   final List<Tree> _selectedTrees = [];
@@ -47,7 +46,6 @@ class TreeSelectionModalViewModel extends ChangeNotifier {
         category: _selectedCategory,
       );
       _trees = response.trees;
-      _totalCount = response.total;
       _totalPages = response.totalPages;
     } catch (e) {
       debugPrint('Error fetching trees in modal: $e');
