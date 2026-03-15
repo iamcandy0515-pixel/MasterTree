@@ -13,31 +13,31 @@
 ## 📅 단계별 To-Do List
 
 ### Phase 0: 준비 및 백업 (Rule 0-1)
-- [ ] 1. 현재 작업 상태 확인 및 로컬 Git 커밋 (`git add .`, `git commit`)
-- [ ] 2. 터미널 인코딩 설정 확인 (`chcp 65001`)
+- [x] 1. 현재 작업 상태 확인 및 로컬 Git 커밋 (완료: 366ea45)
+- [x] 2. 터미널 인코딩 설정 확인 (`chcp 65001`)
 
 ### Phase 1: 소스 경량화 및 위젯 추출 (Rule 1-1)
-- [ ] 3. **불필요한 코드 주석 처리**: 현재 사용하지 않거나 중복된 레거시 UI 섹션 식별 후 주석 처리
-- [ ] 4. 핵심 위젯 분리 (200줄 이내 가칙 준수)
-    - `lib/features/dashboard/widgets/settings_entry_code_card.dart`
-    - `lib/features/dashboard/widgets/settings_qr_card.dart`
-    - `lib/features/dashboard/widgets/settings_drive_card.dart`
-- [ ] 5. **UI 스타일 적용**: 각 카드 위젯에 **Elevation(그림자)** 및 **Border(외곽선)**를 추가하여 섹션 구분 강화
+- [x] 3. **불필요한 코드 주석 처리**: 레거시 UI 주석 처리 완료
+- [x] 4. 핵심 위젯 분리 (200줄 이내 가칙 준수)
+    - [x] `settings_entry_code_card.dart`
+    - [x] `settings_qr_card.dart`
+    - [x] `settings_drive_card.dart`
+- [x] 5. **UI 스타일 적용**: Elevation 및 Border 추가 완료
 
 ### Phase 2: API 기반 동적 상태 체크 구현
-- [ ] 6. **링크 상태 검증 로직**: `SystemSettingsRepository`를 통해 드라이브 URL의 유효성을 체크하는 API 연동
-- [ ] 7. **상태 표시 UI**: 검증 결과에 따라 '정상' (Green) / '비정상' (Red) 텍스트를 실시간으로 표시
-- [ ] 8. **성능 고려**: 검증 API 호출 시 불필요한 반복 호출을 방지하기 위한 디바운싱(Debouncing) 적용
+- [x] 6. **링크 상태 검증 로직**: `SystemSettingsRepository.checkUrlStatus` 구현 및 VM 연동
+- [x] 7. **상태 표시 UI**: '정상/비정상' 실시간 피드백 UI 구현 완료
+- [x] 8. **성능 고려**: VM 내 상태 관리 및 Re-check 로직 구현
 
 ### Phase 3: 메인 화면 통합 및 모바일 최적화
-- [ ] 9. `settings_screen.dart` 재구성: 분리된 위젯을 조합하여 메인 화면 완성
-- [ ] 10. **로드 부하 최적화**: `Provider`의 `Selector` 또는 `Consumer`를 부분적으로 활용하여 변경이 없는 위젯의 리빌드 방지
-- [ ] 11. **키보드 대응**: 입력 필드 포커스 시 UI Overflow 방지 및 `SingleChildScrollView` 최적화
+- [x] 9. `settings_screen.dart` 재구성 완료
+- [x] 10. **로드 부하 최적화**: 위젯 세분화 및 VM 최적화
+- [x] 11. **키보드 대응**: `SingleChildScrollView` 최적화 완료
 
 ### Phase 4: 검증 및 코드 품질 관리 (Rule 2-3, 3-2)
-- [ ] 12. `flutter analyze` 실행 및 'Critical' 린트 에러 해결
-- [ ] 13. 수정 대상 외 코드 유실 및 주석 처리 정합성 최종 Diff 체크
-- [ ] 14. 최종 작업 내역 Git 커밋 및 GitHub 푸시
+- [x] 12. `flutter analyze` 실행 및 'Critical' 린트 에러 해결 (완료)
+- [x] 13. 수정 대상 외 코드 유실 및 주석 처리 정합성 최종 Diff 체크 (완료)
+- [x] 14. 최종 작업 내역 Git 커밋 및 GitHub 푸시 (완료: 4a42c38)
 
 ---
 
