@@ -3,8 +3,8 @@
 이 계획서는 `flutter_user_app`의 `past_exam_detail_screen.dart` 소스를 `DEVELOPMENT_RULES.md`에 따라 200줄 이하로 경량화하고, 위젯별 책임 분리를 통해 유지보수성과 성능을 최적화하기 위한 가이드를 정의합니다.
 
 ## 0. 작업 전제 조건 (Prerequisites)
-- [ ] **Git 백업**: `git add .` 및 `git commit`을 통해 현재 상태 저장.
-- [ ] **환경 설정**: `chcp 65001` 터미널 인코딩 확인.
+- [x] **Git 백업**: `git add .` 및 `git commit`을 통해 현재 상태 저장.
+- [x] **환경 설정**: `chcp 65001` 터미널 인코딩 확인.
 
 ## 1. 코드 구조 및 모듈화 전략 (Source Splitting)
 현재 471줄인 비대한 파일을 가동성과 성능을 고려하여 5개 이상의 모듈로 분리합니다. (`Rule 1-1`)
@@ -21,30 +21,30 @@
 ## 2. 작업 To-Do List
 
 ### Phase 1: 위젯 물리 분리 및 구조 설계
-- [ ] 신규 폴더 생성: `lib/screens/past_exam/widgets/`
-- [ ] 핵심 기능별 클래스 추출 및 파일 분할 (5개 파일).
-- [ ] Import 경로 정립 및 린트(Lint) 에러 사전 해결.
-- [ ] **[Git Commit]**: 위젯 물리 분리 완료.
+- [x] 신규 폴더 생성: `lib/screens/past_exam/widgets/`
+- [x] 핵심 기능별 클래스 추출 및 파일 분할 (5개 파일).
+- [x] Import 경로 정립 및 린트(Lint) 에러 사전 해결.
+- [x] **[Git Commit]**: 위젯 물리 분리 완료.
 
 ### Phase 2: 성능 최적화 (Partial Rebuild)
-- [ ] `setState` 의존도 감소를 위해 `Selector` 위젯 도입 검토.
-*   [ ] 이미지 영역에 `RepaintBoundary` 적용하여 스크롤 및 텍스트 렌더링 성능 확보.
-- [ ] **[Git Commit]**: 리빌드 최적화 로직 적용.
+- [x] `setState` 의존도 감소를 위해 `Selector` 위젯 도입 검토.
+- [x] 이미지 영역에 `RepaintBoundary` 적용하여 스크롤 및 텍스트 렌더링 성능 확보.
+- [x] **[Git Commit]**: 리빌드 최적화 로직 적용.
 
 ### Phase 3: 디자인 정교화 (Premium Aesthetics)
-- [ ] `AppColors`와 `design_system.dart`를 활용한 테마 정합성 유지.
-- [ ] 섹션별 `Container`에 `boxShadow` 및 `border` 적용하여 프리미엄 레이아웃 구현.
-- [ ] **[Git Commit]**: UI/UX 고도화 완료.
+- [x] `AppColors`와 `design_system.dart`를 활용한 테마 정합성 유지.
+- [x] 섹션별 `Container`에 `boxShadow` 및 `border` 적용하여 프리미엄 레이아웃 구현.
+- [x] **[Git Commit]**: UI/UX 고도화 완료.
 
 ### Phase 4: 완결성 확인 및 빌드 (Rule 2-3)
-- [ ] `flutter analyze` 실행하여 모든 경고 및 오류 해결.
-- [ ] 사용자 앱 APK 빌드 테스트 (`flutter build apk --debug`).
-- [ ] **마지막 Git Commit**: "Complete PastExamDetail refactoring and modularization".
+- [x] `flutter analyze` 실행하여 모든 경고 및 오류 해결.
+- [x] 사용자 앱 APK 빌드 테스트 (`flutter build apk --debug`).
+- [x] **마지막 Git Commit**: "Complete PastExamDetail refactoring and modularization".
 
 ## 3. 정합성 최종 체크리스트
-- [ ] `past_exam_detail_screen.dart` 메인 파일이 200줄 이하인가?
-- [ ] 모든 하위 위젯이 독립적으로 테스트 가능한 구조인가?
-- [ ] `ApiService.syncPendingAttempts()` 등 주요 로직이 유실되지 않았는가?
+- [x] `past_exam_detail_screen.dart` 메인 파일이 200줄 이하인가?
+- [x] 모든 하위 위젯이 독립적으로 테스트 가능한 구조인가?
+- [x] `ApiService.syncPendingAttempts()` 등 주요 로직이 유실되지 않았는가?
 
 ---
 **에이전트 준수 사항**: 본 계획서 승인 후에만 구현을 시작하며, 모든 코드 수정 후 반드시 린터를 가동한다.
