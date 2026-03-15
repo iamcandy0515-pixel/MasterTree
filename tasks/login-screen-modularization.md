@@ -15,32 +15,32 @@
 ## 2. 작업 To-Do List
 
 ### [Phase 0] 작업 준비 및 백업 (Rule 0-1)
-- [ ] 현재 작업 소스 로컬 Git 커밋 (`git commit -m "Pre-refactor: login_screen backup"`)
+- [x] 현재 작업 소스 로컬 Git 커밋 (`git commit -m "Pre-refactor: login_screen backup"`)
 
 ### [Phase 1] 로직 분리 및 ViewModel 구축 (MVVM)
-- [ ] `lib/utils/auth_data_formatter.dart` 생성 및 연락처 포맷터 이동
-- [ ] `lib/viewmodels/auth_viewmodel.dart` 생성 (AuthController 기능 이관)
-- [ ] 유효성 검사(Validation) 로직을 ViewModel로 이동
-- [ ] 로컬 Git 커밋 (`Phase 1: ViewModel migration complete`)
+- [x] `lib/utils/auth_data_formatter.dart` 생성 및 연락처 포맷터 이동
+- [x] `lib/viewmodels/auth_viewmodel.dart` 생성 (AuthController 기능 이관)
+- [x] 유효성 검사(Validation) 로직을 ViewModel로 이동
+- [x] 로컬 Git 커밋 (`Phase 1: ViewModel migration complete`)
 
 ### [Phase 2] 위젯 추출 (Source Splitting - Rule 1-1)
 `lib/screens/widgets/login_parts/` 폴더 내에 200라인 이하로 위젯 분리:
-- [ ] `login_header.dart`: 로고 및 상단 타이틀
-- [ ] `login_input_fields.dart`: 이름, 휴대폰, 이메일 입력 필드 (`Selector` 사용)
-- [ ] `login_action_buttons.dart`: 입장하기, 데이터 삭제 버튼
-- [ ] `login_status_overlay.dart`: 로딩 및 서버 상태 안내 레이어
-- [ ] 로컬 Git 커밋 (`Phase 2: Widget modularization complete`)
+- [x] `login_header.dart`: 로고 및 상단 타이틀
+- [x] `login_input_fields.dart`: 이름, 휴대폰, 이메일 입력 필드 (`Selector` 사용)
+- [x] `login_action_buttons.dart`: 입장하기, 데이터 삭제 버튼
+- [x] `login_status_overlay.dart`: 로딩 및 서버 상태 안내 레이어
+- [x] 로컬 Git 커밋 (`Phase 2: Widget modularization complete`)
 
 ### [Phase 3] 화면 재조립 및 최적화
-- [ ] `login_screen.dart`를 Composition Root로 재작성 (100라인 이내)
-- [ ] `Provider` 및 `ChangeNotifierProvider` 연결
-- [ ] 린트 에러 및 Import 경로 정합성 체크 (Rule 1-3)
-- [ ] 로컬 Git 커밋 (`Phase 3: Screen re-composition complete`)
+- [x] `login_screen.dart`를 Composition Root로 재작성 (100라인 이내)
+- [x] `Provider` 및 `ChangeNotifierProvider` 연결
+- [x] 린트 에러 및 Import 경로 정합성 체크 (Rule 1-3)
+- [x] 로컬 Git 커밋 (`Phase 3: Screen re-composition complete`)
 
 ### [Phase 4] 품질 검증 및 최종 점검 (Rule 2-3, 3-2)
-- [ ] `flutter analyze` 실행 및 모든 경고 해결
-- [ ] 한글 깨짐 방지(`chcp 65001`) 상태에서 빌드 완결성 확인
-- [ ] 최종 Git 커밋 및 작업 종료
+- [x] `flutter analyze` 실행 및 모든 경고 해결
+- [x] 한글 깨짐 방지(`chcp 65001`) 상태에서 빌드 완결성 확인
+- [x] 최종 Git 커밋 및 작업 종료
 
 ---
 

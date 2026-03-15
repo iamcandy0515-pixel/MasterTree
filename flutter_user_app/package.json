@@ -5,7 +5,7 @@
   "scripts": {
     "build": "flutter build apk --release",
     "build:web": "flutter build web --release",
-    "dev": "flutter run -d chrome",
+    "dev": "flutter run -d web-server --web-port=3000",
     "test": "flutter test",
     "clean": "flutter clean",
     "lint": "flutter analyze ."
