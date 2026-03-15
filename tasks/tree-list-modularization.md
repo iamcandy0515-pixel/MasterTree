@@ -18,25 +18,25 @@
 ## 3. 세부 작업 단계 (Phases)
 
 ### **Phase 1: ViewModel 및 데이터 레이어 강화**
-- [ ] `TreeListViewModel`에서 검색, 필터링 로직 안정화 및 에러 핸들링 추가.
-- [ ] CSV Export/Import 로직의 예외 처리 강화 및 `WebUtils` 활용 확인.
-- [ ] **[Git Commit]**: `Phase 1: Enhance TreeListViewModel logic and error handling`
+- [x] `TreeListViewModel`에서 검색, 필터링 로직 안정화 및 에러 핸들링 추가.
+- [x] CSV Export/Import 로직의 예외 처리 강화 및 `WebUtils` 활용 확인.
+- [x] **[Git Commit]**: `Phase 1: Enhance TreeListViewModel logic and error handling`
 
 ### **Phase 2: 위젯 모듈화 (Source Splitting)**
-- [ ] `TreeListScreen`: 메인 파일은 100줄 이내의 Composition Root로 변경.
-- [ ] `TreeListHeader`: 앱바, 타이틀, CSV 메뉴 분리. (`widgets/list_parts/`)
-- [ ] `TreeListSearchBar`: 검색창 입력 로직 및 UI 분리.
-- [ ] `TreeListCategoryFilters`: 카테고리 칩 필터 섹션 독립.
-- [ ] `TreeListStatsBar`: 총 건수 및 페이지네이션 컨트롤러 분리.
-- [ ] `TreeListItem`: 개별 수목 리스트 아이템 위젯화 및 성능 최적화.
-- [ ] `TreeListDeleteDialog`: 삭제 확인 팝업 분리.
-- [ ] **[Git Commit]**: `Phase 2: Modularize TreeListScreen into independent widgets under 200 lines`
+- [x] `TreeListScreen`: 메인 파일은 100줄 이내의 Composition Root로 변경.
+- [x] `TreeListHeader`: 앱바, 타이틀, CSV 메뉴 분리. (`widgets/list_parts/`)
+- [x] `TreeListSearchBar`: 검색창 입력 로직 및 UI 분리.
+- [x] `TreeListCategoryFilters`: 카테고리 칩 필터 섹션 독립.
+- [x] `TreeListStatsBar`: 총 건수 및 페이지네이션 컨트롤러 분리.
+- [x] `TreeListItem`: 개별 수목 리스트 아이템 위젯화 및 성능 최적화.
+- [x] `TreeListDeleteDialog`: 삭제 확인 팝업 분리.
+- [x] **[Git Commit]**: `Phase 2: Modularize TreeListScreen into independent widgets under 200 lines`
 
 ### **Phase 3: NeoTheme 스타일 고도화 및 UX 개선**
-- [ ] 인라인 컬러 및 스타일을 `NeoTheme` 상수로 교체.
-- [ ] `primaryColor`를 `NeoColors.acidLime` 등으로 일원화 및 디자인 디테일 향상.
-- [ ] 네트워크 장애 시 재시도를 위한 `NeoErrorState` 위젯 적용.
-- [ ] **[Git Commit]**: `Phase 3: Apply NeoTheme styling and implement error recovery UI`
+- [x] 인라인 컬러 및 스타일을 `NeoTheme` 상수로 교체.
+- [x] `primaryColor`를 `NeoColors.acidLime` 등으로 일원화 및 디자인 디테일 향상.
+- [x] 네트워크 장애 시 재시도를 위한 `NeoErrorState` 위젯 적용.
+- [x] **[Git Commit]**: `Phase 3: Apply NeoTheme styling and implement error recovery UI`
 
 ### **Phase 4: 완결성 검증 및 빌드 테스트**
 - [ ] `flutter analyze` 실행하여 모든 린트 및 경고 사항 해결.
