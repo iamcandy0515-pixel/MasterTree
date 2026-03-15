@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_admin_app/features/trees/viewmodels/add_tree_viewmodel.dart';
 import 'package:flutter_admin_app/core/theme/neo_theme.dart';
+import 'add_tree_submit_button.dart';
 
 class AddTreeBasicInfoSection extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -34,37 +35,13 @@ class AddTreeBasicInfoSection extends StatelessWidget {
                   color: NeoColors.acidLime,
                 ),
               ),
-              _SubmitButton(formKey: formKey, vm: vm, isEditMode: isEditMode),
+              AddTreeSubmitButton(formKey: formKey, isEditMode: isEditMode),
             ],
           ),
           const SizedBox(height: 16),
-          TextFormField(
-            controller: vm.nameKrController,
-            decoration: const InputDecoration(
-              labelText: '한글 이름 (필수)',
-              border: InputBorder.none,
-              labelStyle: TextStyle(color: Colors.white54),
-            ),
-            validator: (v) => v == null || v.isEmpty ? '이름을 입력해주세요' : null,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          _NameInput(vm: vm),
           const Divider(color: Colors.white10),
-          TextFormField(
-            controller: vm.scientificNameController,
-            decoration: const InputDecoration(
-              labelText: '학명',
-              border: InputBorder.none,
-              labelStyle: TextStyle(color: Colors.white54),
-            ),
-            style: const TextStyle(
-              color: Colors.white70,
-              fontStyle: FontStyle.italic,
-            ),
-          ),
+          _ScientificNameInput(vm: vm),
           const Divider(color: Colors.white10),
           Row(
             children: [
@@ -74,113 +51,68 @@ class AddTreeBasicInfoSection extends StatelessWidget {
             ],
           ),
           const Divider(color: Colors.white10),
-          TextFormField(
-            controller: vm.descriptionController,
-            decoration: const InputDecoration(
-              hintText: '수목에 대한 상세 설명을 입력하세요.',
-              hintStyle: TextStyle(color: Colors.white24, fontSize: 13),
-              border: InputBorder.none,
-              labelText: '수목 설명',
-              labelStyle: TextStyle(color: Colors.white54),
-            ),
-            maxLines: 4,
-            style: const TextStyle(color: Colors.white, fontSize: 13),
-          ),
+          _DescriptionInput(vm: vm),
         ],
       ),
     );
   }
 }
 
-class _SubmitButton extends StatelessWidget {
-  final GlobalKey<FormState> formKey;
+class _NameInput extends StatelessWidget {
   final AddTreeViewModel vm;
-  final bool isEditMode;
-
-  const _SubmitButton({
-    required this.formKey,
-    required this.vm,
-    required this.isEditMode,
-  });
+  const _NameInput({required this.vm});
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: vm.isSubmitting ? null : () => _submit(context),
-      style: TextButton.styleFrom(
-        backgroundColor: NeoColors.acidLime,
-        foregroundColor: const Color(0xFF020402),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    return TextFormField(
+      controller: vm.nameKrController,
+      decoration: const InputDecoration(
+        labelText: '한글 이름 (필수)',
+        border: InputBorder.none,
+        labelStyle: TextStyle(color: Colors.white54),
       ),
-      child: vm.isSubmitting
-          ? const SizedBox(
-              width: 16,
-              height: 16,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: Color(0xFF020402),
-              ),
-            )
-          : Text(
-              isEditMode ? '수정' : '등록',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
+      validator: (v) => v == null || v.isEmpty ? '이름을 입력해주세요' : null,
+      style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
     );
   }
+}
 
-  Future<void> _submit(BuildContext context) async {
-    if (!formKey.currentState!.validate()) return;
+class _ScientificNameInput extends StatelessWidget {
+  final AddTreeViewModel vm;
+  const _ScientificNameInput({required this.vm});
 
-    try {
-      final success = await vm.submitTree();
-      if (success && context.mounted) {
-        if (isEditMode) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('정보가 수정되었습니다.'), backgroundColor: Colors.green),
-          );
-          Navigator.pop(context, true);
-        } else {
-          final shouldClear = await showDialog<bool>(
-            context: context,
-            builder: (context) => AlertDialog(
-              backgroundColor: const Color(0xFF2A2A2A),
-              title: const Text('등록 완료', style: TextStyle(color: Colors.white)),
-              content: const Text(
-                '나무가 성공적으로 등록되었습니다.\n입력한 내용을 지우시겠습니까?',
-                style: TextStyle(color: Colors.white70),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: const Text('유지'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: const Text('지우기'),
-                ),
-              ],
-            ),
-          );
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: vm.scientificNameController,
+      decoration: const InputDecoration(
+        labelText: '학명',
+        border: InputBorder.none,
+        labelStyle: TextStyle(color: Colors.white54),
+      ),
+      style: const TextStyle(color: Colors.white70, fontStyle: FontStyle.italic),
+    );
+  }
+}
 
-          if (shouldClear == true) {
-            vm.clearForm();
-          }
+class _DescriptionInput extends StatelessWidget {
+  final AddTreeViewModel vm;
+  const _DescriptionInput({required this.vm});
 
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('성공적으로 등록되었습니다.'), backgroundColor: Colors.green),
-            );
-          }
-        }
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('작업 실패: $e'), backgroundColor: Colors.red),
-        );
-      }
-    }
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: vm.descriptionController,
+      decoration: const InputDecoration(
+        hintText: '수목에 대한 상세 설명을 입력하세요.',
+        hintStyle: TextStyle(color: Colors.white24, fontSize: 13),
+        border: InputBorder.none,
+        labelText: '수목 설명',
+        labelStyle: TextStyle(color: Colors.white54),
+      ),
+      maxLines: 4,
+      style: const TextStyle(color: Colors.white, fontSize: 13),
+    );
   }
 }
 
@@ -192,7 +124,7 @@ class _DropdownCategory extends StatelessWidget {
   Widget build(BuildContext context) {
     return Flexible(
       child: DropdownButtonFormField<String>(
-        value: vm.selectedCategory,
+        initialValue: vm.selectedCategory,
         decoration: const InputDecoration(
           labelText: '구분 (필수)',
           border: InputBorder.none,
@@ -220,7 +152,7 @@ class _DropdownDifficulty extends StatelessWidget {
   Widget build(BuildContext context) {
     return Flexible(
       child: DropdownButtonFormField<int>(
-        value: vm.difficulty,
+        initialValue: vm.difficulty,
         decoration: const InputDecoration(
           labelText: '난이도 (1-5)',
           border: InputBorder.none,
