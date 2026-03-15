@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/user_check_viewmodel.dart';
 import '../../../core/theme/neo_theme.dart';
-import '../../../core/utils/format_utils.dart';
+import 'widgets/user_check_parts/user_search_header.dart';
+import 'widgets/user_check_parts/user_card_item.dart';
+import 'widgets/user_check_parts/user_delete_dialog.dart';
 
 class UserCheckScreen extends StatelessWidget {
   const UserCheckScreen({super.key});
@@ -21,7 +23,7 @@ class _UserCheckContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<UserCheckViewModel>();
+    final viewModel = context.read<UserCheckViewModel>();
     const primaryColor = NeoColors.acidLime;
     const backgroundDark = NeoColors.voidGreen;
     const surfaceDark = NeoColors.darkGray;
@@ -41,49 +43,25 @@ class _UserCheckContent extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          bottom: TabBar(
-            onTap: (index) {
-              final status = ['pending', 'approved', 'rejected'][index];
-              viewModel.loadUsers(status);
-            },
-            indicatorColor: primaryColor,
-            labelColor: primaryColor,
-            unselectedLabelColor: Colors.grey,
-            tabs: const [
-              Tab(text: '대기 중'),
-              Tab(text: '승인됨'),
-              Tab(text: '거절됨'),
-            ],
-          ),
         ),
         body: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: TextField(
-                style: const TextStyle(color: Colors.white),
-                onChanged: viewModel.searchUsers,
-                decoration: InputDecoration(
-                  hintText: '사용자 이름 또는 이메일 검색',
-                  hintStyle: TextStyle(color: Colors.grey[600]),
-                  prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                  filled: true,
-                  fillColor: surfaceDark,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
+            UserSearchHeader(
+              onTabTap: (index) {
+                final status = ['pending', 'approved', 'rejected'][index];
+                viewModel.loadUsers(status);
+              },
+              onSearchChanged: viewModel.searchUsers,
+              primaryColor: primaryColor,
+              surfaceColor: surfaceDark,
             ),
             Expanded(
               child: TabBarView(
-                physics:
-                    const NeverScrollableScrollPhysics(), // Handle via onTap load
+                physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  _buildUserList(viewModel, primaryColor),
-                  _buildUserList(viewModel, primaryColor),
-                  _buildUserList(viewModel, primaryColor),
+                  _UserListBuilder(primaryColor: primaryColor),
+                  _UserListBuilder(primaryColor: primaryColor),
+                  _UserListBuilder(primaryColor: primaryColor),
                 ],
               ),
             ),
@@ -92,223 +70,72 @@ class _UserCheckContent extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildUserList(UserCheckViewModel viewModel, Color primaryColor) {
-    if (viewModel.isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(color: NeoColors.acidLime),
-      );
-    }
+class _UserListBuilder extends StatelessWidget {
+  final Color primaryColor;
 
-    if (viewModel.users.isEmpty) {
-      return Center(
-        child: Text('사용자가 없습니다.', style: TextStyle(color: Colors.grey[500])),
-      );
-    }
+  const _UserListBuilder({required this.primaryColor});
 
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      itemCount: viewModel.users.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (context, index) {
-        final user = viewModel.users[index];
-        final name = user['name'] ?? '사용자';
-        final initial = name.replaceAll(RegExp(r'\[.*?\]\s*'), '').isNotEmpty
-            ? name.replaceAll(RegExp(r'\[.*?\]\s*'), '')[0]
-            : '?';
-
-        return Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: NeoColors.darkGray.withValues(alpha: 0.5),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white10),
-          ),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: primaryColor.withValues(alpha: 0.1),
-                    child: Text(
-                      initial,
-                      style: TextStyle(
-                        color: primaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          name,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          '${user['email'] ?? ''}${user['phone'] != null ? ' | ${FormatUtils.formatPhone(user['phone'])}' : ''}',
-                          style: TextStyle(
-                            color: Colors.grey[500],
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  _buildStatusBadge(user['role'] ?? 'User', primaryColor),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.delete_outline,
-                      color: Colors.white38,
-                      size: 20,
-                    ),
-                    onPressed: () => _showDeleteConfirm(
-                      context,
-                      viewModel,
-                      user['id']!,
-                      user['name']!,
-                    ),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: Text(
-                      '최근 활동: ${user['lastLogin']}',
-                      style: TextStyle(color: Colors.grey[600], fontSize: 11),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  if (viewModel.currentStatus == 'pending')
-                    Row(
-                      children: [
-                        TextButton(
-                          onPressed: () => viewModel.rejectUser(user['id']!),
-                          child: const Text(
-                            '거절',
-                            style: TextStyle(color: Colors.redAccent),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        ElevatedButton(
-                          onPressed: () => viewModel.approveUser(user['id']!),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryColor,
-                            foregroundColor: Colors.black,
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                          ),
-                          child: const Text(
-                            '승인',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
-                    )
-                  else if (viewModel.currentStatus == 'rejected')
-                    TextButton(
-                      onPressed: () => viewModel.approveUser(user['id']!),
-                      child: Text('재승인', style: TextStyle(color: primaryColor)),
-                    )
-                  else
-                    TextButton(
-                      onPressed: () => viewModel.rejectUser(user['id']!),
-                      child: const Text(
-                        '활동 정지',
-                        style: TextStyle(color: Colors.redAccent),
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          ),
-        );
+  @override
+  Widget build(BuildContext context) {
+    return Selector<UserCheckViewModel, bool>(
+      selector: (_, vm) => vm.isLoading,
+      builder: (context, isLoading, child) {
+        if (isLoading) {
+          return const Center(child: CircularProgressIndicator(color: NeoColors.acidLime));
+        }
+        return child!;
       },
+      child: Selector<UserCheckViewModel, List<Map<String, dynamic>>>(
+        selector: (_, vm) => vm.users,
+        builder: (context, users, _) {
+          if (users.isEmpty) {
+            return Center(
+              child: Text('사용자가 없습니다.', style: TextStyle(color: Colors.grey[500])),
+            );
+          }
+
+          final viewModel = context.read<UserCheckViewModel>();
+          return ListView.separated(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+            itemCount: users.length,
+            separatorBuilder: (_, _) => const SizedBox(height: 12),
+            itemBuilder: (context, index) {
+              return UserCardItem(
+                user: users[index],
+                currentStatus: viewModel.currentStatus,
+                primaryColor: primaryColor,
+                onApprove: (id) => viewModel.approveUser(id),
+                onReject: (id) => viewModel.rejectUser(id),
+                onDelete: (id, name) => _handleDelete(context, viewModel, id, name),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
-  void _showDeleteConfirm(
+  void _handleDelete(
     BuildContext context,
     UserCheckViewModel viewModel,
     String userId,
     String userName,
   ) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: NeoColors.darkGray,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text(
-          '사용자 삭제',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        content: Text(
-          '삭제시 사용자의 정보가 사라집니다, 그래도 삭제하시겠습니까',
-          style: TextStyle(color: Colors.white.withValues(alpha: 0.7), height: 1.5),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('취소', style: TextStyle(color: Colors.grey)),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              try {
-                await viewModel.deleteUser(userId);
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('사용자가 삭제되었습니다.')),
-                  );
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text('삭제 실패: $e')));
-                }
-              }
-            },
-            child: const Text(
-              '확인',
-              style: TextStyle(
-                color: Colors.redAccent,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatusBadge(String role, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        role,
-        style: TextStyle(
-          color: color,
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
+    UserDeleteDialog.show(context, userName, () async {
+      try {
+        await viewModel.deleteUser(userId);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('사용자가 삭제되었습니다.')),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('삭제 실패: $e')));
+        }
+      }
+    });
   }
 }
