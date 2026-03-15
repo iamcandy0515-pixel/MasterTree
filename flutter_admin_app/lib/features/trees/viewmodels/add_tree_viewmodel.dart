@@ -35,6 +35,7 @@ class AddTreeViewModel extends ChangeNotifier {
     TextEditingController(),
   ];
   bool _isAutoQuizEnabled = true;
+  String? _errorMessage;
 
   // Getters
   String? get selectedCategory => _selectedCategory;
@@ -44,6 +45,7 @@ class AddTreeViewModel extends ChangeNotifier {
   bool get isSubmitting => _isSubmitting;
   String get selectedImageType => _selectedImageType;
   bool get isAutoQuizEnabled => _isAutoQuizEnabled;
+  String? get errorMessage => _errorMessage;
 
   AddTreeViewModel(this.originalTree) {
     if (originalTree != null) {
@@ -185,6 +187,7 @@ class AddTreeViewModel extends ChangeNotifier {
 
     try {
       _isUploading = true;
+      _errorMessage = null; // Clear previous error
       notifyListeners();
 
       bool imageFound = false;
@@ -218,6 +221,7 @@ class AddTreeViewModel extends ChangeNotifier {
     }
 
     _isSubmitting = true;
+    _errorMessage = null;
     notifyListeners();
 
     try {
@@ -246,6 +250,7 @@ class AddTreeViewModel extends ChangeNotifier {
       return true;
     } catch (e) {
       _isSubmitting = false;
+      _errorMessage = e.toString();
       notifyListeners();
       rethrow;
     }
