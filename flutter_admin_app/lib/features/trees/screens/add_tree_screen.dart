@@ -53,14 +53,14 @@ class _AddTreeContentState extends State<_AddTreeContent> {
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
-          children: const [
-            SizedBox(height: 16),
+          children: [
+            const SizedBox(height: 16),
             AddTreeBasicInfoSection(formKey: _formKey),
-            SizedBox(height: 20),
-            AddTreeImageManager(),
-            SizedBox(height: 20),
-            AddTreeQuizConfig(),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
+            const AddTreeImageManager(),
+            const SizedBox(height: 20),
+            const AddTreeQuizConfig(),
+            const SizedBox(height: 20),
           ],
         ),
       ),
