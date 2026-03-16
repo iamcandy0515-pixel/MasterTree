@@ -17,7 +17,7 @@ class SettingsServerControlCard extends StatelessWidget {
         border: Border.all(color: Colors.white10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
+            color: Colors.black.withOpacity(0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -40,7 +40,7 @@ class SettingsServerControlCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           _buildActionButton(
-            label: '사용자 앱 API 서버 재시작',
+            label: '사용자 API 서버 재시작',
             icon: Icons.person,
             color: Colors.blueAccent,
             onPressed: () => _showConfirm(context, '사용자 서버를 재시작하시겠습니까?', vm.restartUserServer),
@@ -70,12 +70,12 @@ class SettingsServerControlCard extends StatelessWidget {
         icon: Icon(icon, size: 18),
         label: Text(label),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white.withValues(alpha: 0.05),
+          backgroundColor: Colors.white.withOpacity(0.05),
           foregroundColor: color,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
-            side: BorderSide(color: color.withValues(alpha: 0.3)),
+            side: BorderSide(color: color.withOpacity(0.3)),
           ),
         ),
       ),
@@ -106,3 +106,4 @@ class SettingsServerControlCard extends StatelessWidget {
     );
   }
 }
+

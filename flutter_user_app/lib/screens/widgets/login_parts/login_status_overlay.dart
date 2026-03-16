@@ -8,15 +8,13 @@ class LoginStatusOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<AuthViewModel, ({bool isLoading, bool isChecking})>(
-      selector: (_, vm) => (
-        isLoading: vm.isLoading,
-        isChecking: vm.isCheckingServer,
-      ),
-      builder: (context, status, _) {
+    return Consumer<AuthViewModel>(
+      builder: (context, vm, _) {
+        final isLoading = vm.isLoading;
+        final isChecking = vm.isCheckingServer;
         return Stack(
           children: [
-            if (status.isChecking)
+            if (isChecking)
               const Positioned(
                 top: 230, // Adjust relative to title
                 left: 0,
@@ -28,7 +26,7 @@ class LoginStatusOverlay extends StatelessWidget {
                   ),
                 ),
               ),
-            if (status.isLoading)
+            if (isLoading)
               Container(
                 color: Colors.black54,
                 child: const Center(

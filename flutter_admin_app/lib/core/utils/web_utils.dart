@@ -6,7 +6,7 @@ class WebUtils {
 
   static void registerViewFactory(
     String viewId,
-    dynamic Function(int) factory,
+    Object Function(int) factory,
   ) => WebUtilsPlatform.registerViewFactory(viewId, factory);
 
   static dynamic createDropZoneElement({

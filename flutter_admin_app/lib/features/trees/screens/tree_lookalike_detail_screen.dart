@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_admin_app/features/trees/models/tree_group.dart';
 import 'package:flutter_admin_app/features/trees/viewmodels/tree_lookalike_viewmodel.dart';
@@ -81,9 +81,9 @@ class _SmartTagsSection extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildTab(vm, '잎 (Leaf)', 'leaf'),
+        _buildTab(vm, '??(Leaf)', 'leaf'),
         const SizedBox(width: 16),
-        _buildTab(vm, '수피 (Bark)', 'bark'),
+        _buildTab(vm, '?섑뵾 (Bark)', 'bark'),
       ],
     );
   }
@@ -98,13 +98,13 @@ class _SmartTagsSection extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? primaryColor : Colors.white.withValues(alpha: 0.05),
+          color: isSelected ? primaryColor : Colors.white.withOpacity(0.05),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: isSelected ? primaryColor : Colors.white24),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: primaryColor.withValues(alpha: 0.3),
+                    color: primaryColor.withOpacity(0.3),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -152,7 +152,7 @@ class _ComparisonMatrixState extends State<_ComparisonMatrix> {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('더 이상 이미지 정보가 없습니다.'),
+          content: Text('???댁긽 ?대?吏 ?뺣낫媛 ?놁뒿?덈떎.'),
           duration: Duration(seconds: 1),
           behavior: SnackBarBehavior.floating,
         ),
@@ -180,7 +180,7 @@ class _ComparisonMatrixState extends State<_ComparisonMatrix> {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('더 이상 이미지 정보가 없습니다.'),
+          content: Text('???댁긽 ?대?吏 ?뺣낫媛 ?놁뒿?덈떎.'),
           duration: Duration(seconds: 1),
           behavior: SnackBarBehavior.floating,
         ),
@@ -234,7 +234,7 @@ class _ComparisonMatrixState extends State<_ComparisonMatrix> {
                 Container(
                   width: 100,
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.3),
+                    color: Colors.black.withOpacity(0.3),
                     border: const Border(
                       right: BorderSide(color: Colors.white10),
                     ),
@@ -300,19 +300,19 @@ class _ComparisonMatrixState extends State<_ComparisonMatrix> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.05),
+              color: Colors.white.withOpacity(0.05),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Row(
+            child: Row(
               children: [
                 Icon(Icons.touch_app, color: Colors.white54, size: 14),
                 SizedBox(width: 8),
                 Text(
-                  '가로 더 보기',
+                  '가로로 보기',
                   style: TextStyle(color: Colors.white70, fontSize: 13),
                 ),
               ],
-            ),
+              ),
           ),
           const SizedBox(width: 16),
           _NavButton(
@@ -340,7 +340,7 @@ class _ComparisonMatrixState extends State<_ComparisonMatrix> {
       height: height,
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      color: isHeader ? Colors.white.withValues(alpha: 0.02) : null,
+      color: isHeader ? Colors.white.withOpacity(0.02) : null,
       child: Text(
         text,
         style: const TextStyle(
@@ -484,7 +484,7 @@ class _NavButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: Colors.white.withOpacity(0.1),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: Colors.white10),
         ),
@@ -493,3 +493,4 @@ class _NavButton extends StatelessWidget {
     );
   }
 }
+

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:flutter_user_app/core/design_system.dart';
 import 'package:flutter_user_app/core/api_service.dart';
@@ -27,7 +27,7 @@ class _QuizSolverScreenState extends State<QuizSolverScreen> {
 
   @override
   void dispose() {
-    // 화면 이탈 시 남은 결과 동기화 시도
+    // ?붾㈃ ?댄깉 ???⑥? 寃곌낵 ?숆린???쒕룄
     ApiService.syncPendingAttempts();
     super.dispose();
   }
@@ -46,7 +46,7 @@ class _QuizSolverScreenState extends State<QuizSolverScreen> {
       Navigator.pop(context);
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('수고하셨습니다. 모든 문제를 풀었습니다!')));
+      ).showSnackBar(const SnackBar(content: Text('?섍퀬?섏뀲?듬땲?? 紐⑤뱺 臾몄젣瑜???덉뒿?덈떎!')));
     }
   }
 
@@ -69,14 +69,14 @@ class _QuizSolverScreenState extends State<QuizSolverScreen> {
               const Icon(Icons.error_outline, color: Colors.redAccent, size: 48),
               const SizedBox(height: 16),
               Text(
-                '문제를 불러오지 못했습니다.\n${_controller.errorMessage}',
+                '臾몄젣瑜?遺덈윭?ㅼ? 紐삵뻽?듬땲??\n${_controller.errorMessage}',
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: AppColors.textLight),
               ),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () => _controller.init(() => setState(() {})),
-                child: const Text('다시 시도'),
+                child: const Text('?ㅼ떆 ?쒕룄'),
               ),
             ],
           ),
@@ -89,7 +89,7 @@ class _QuizSolverScreenState extends State<QuizSolverScreen> {
         backgroundColor: AppColors.backgroundDark,
         body: Center(
           child: Text(
-            '풀이 가능한 문제가 없습니다.',
+            '???媛?ν븳 臾몄젣媛 ?놁뒿?덈떎.',
             style: TextStyle(color: AppColors.textLight),
           ),
         ),
@@ -102,7 +102,7 @@ class _QuizSolverScreenState extends State<QuizSolverScreen> {
       backgroundColor: AppColors.backgroundDark,
       appBar: AppBar(
         title: Text(
-          '${widget.mode == 'random' ? '랜덤 기출' : '약점 극복'} (${_controller.currentQuestionIndex + 1}/${_controller.questions.length})',
+          '${widget.mode == 'random' ? '?쒕뜡 湲곗텧' : '?쎌젏 洹밸났'} (${_controller.currentQuestionIndex + 1}/${_controller.questions.length})',
         ),
         backgroundColor: AppColors.backgroundDark,
         elevation: 0,
@@ -130,7 +130,7 @@ class _QuizSolverScreenState extends State<QuizSolverScreen> {
                     Text(
                       'Question ${_controller.currentQuestionIndex + 1}.',
                       style: TextStyle(
-                        color: AppColors.primary.withValues(alpha: 0.8),
+                        color: AppColors.primary.withOpacity(0.8),
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -161,8 +161,8 @@ class _QuizSolverScreenState extends State<QuizSolverScreen> {
                           color:
                               _controller.selectedOptionIndex ==
                                   currentQ['correct_index']
-                              ? Colors.green.withValues(alpha: 0.1)
-                              : Colors.red.withValues(alpha: 0.1),
+                              ? Colors.green.withOpacity(0.1)
+                              : Colors.red.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color:
@@ -178,8 +178,8 @@ class _QuizSolverScreenState extends State<QuizSolverScreen> {
                             Text(
                               _controller.selectedOptionIndex ==
                                       currentQ['correct_index']
-                                  ? '🎉 정답입니다!'
-                                  : '🤔 오답입니다.',
+                                  ? '?럦 ?뺣떟?낅땲??'
+                                  : '?쨺 ?ㅻ떟?낅땲??',
                               style: TextStyle(
                                 color:
                                     _controller.selectedOptionIndex ==
@@ -192,7 +192,7 @@ class _QuizSolverScreenState extends State<QuizSolverScreen> {
                             ),
                             const SizedBox(height: 8),
                             const Text(
-                              '해설',
+                              '?댁꽕',
                               style: TextStyle(
                                 color: Colors.white70,
                                 fontSize: 12,
@@ -240,7 +240,7 @@ class _QuizSolverScreenState extends State<QuizSolverScreen> {
                           ? _nextQuestion
                           : _submitAnswer),
                 child: Text(
-                  _controller.isAnswerSubmitted ? '다음 문제' : '정답 제출',
+                  _controller.isAnswerSubmitted ? '?ㅼ쓬 臾몄젣' : '?뺣떟 ?쒖텧',
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -337,14 +337,14 @@ class _QuizSolverScreenState extends State<QuizSolverScreen> {
     if (_controller.isAnswerSubmitted) {
       if (showCorrect) {
         borderColor = Colors.green;
-        bgColor = Colors.green.withValues(alpha: 0.1);
+        bgColor = Colors.green.withOpacity(0.1);
       } else if (showWrong) {
         borderColor = Colors.red;
-        bgColor = Colors.red.withValues(alpha: 0.1);
+        bgColor = Colors.red.withOpacity(0.1);
       }
     } else if (isSelected) {
       borderColor = AppColors.primary;
-      bgColor = AppColors.primary.withValues(alpha: 0.1);
+      bgColor = AppColors.primary.withOpacity(0.1);
     }
 
     return GestureDetector(
@@ -404,3 +404,4 @@ class _QuizSolverScreenState extends State<QuizSolverScreen> {
     );
   }
 }
+

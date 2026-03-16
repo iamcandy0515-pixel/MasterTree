@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { settingsService } from "./settings.service";
 import { successResponse, errorResponse } from "../../utils/response";
+import axios from "axios";
 
 export class SettingsController {
     static async getEntryCode(req: Request, res: Response) {
@@ -186,6 +187,24 @@ export class SettingsController {
                 res,
                 error.message || "Failed to update exam drive url",
             );
+        }
+    }
+
+    static async validateUrl(req: Request, res: Response) {
+        try {
+            const { url } = req.body;
+            if (!url) {
+                return errorResponse(res, "URL is required", 400);
+            }
+
+            // 구글 드라이브 및 기타 외부 URL을 HEAD로 요청하여 생존 확인
+            const response = await axios.head(url, { timeout: 5000 });
+            const isValid = response.status >= 200 && response.status < 400;
+            
+            successResponse(res, { isValid });
+        } catch (error: any) {
+            // timeout, CORS (서버에서는 안 걸림), 404 등등의 에러 처리
+            successResponse(res, { isValid: false });
         }
     }
 }

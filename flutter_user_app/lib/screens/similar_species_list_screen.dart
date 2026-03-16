@@ -63,7 +63,7 @@ class _SimilarSpeciesListScreenState extends State<SimilarSpeciesListScreen> {
   Widget _buildSearchField() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(16),
       ),
       child: TextField(
@@ -121,7 +121,7 @@ class _SimilarSpeciesListScreenState extends State<SimilarSpeciesListScreen> {
       onTap: enabled ? onTap : null,
       child: Container(
         padding: const EdgeInsets.all(6),
-        decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(8)),
+        decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(8)),
         child: Icon(icon, color: enabled ? AppColors.textLight : Colors.white10, size: 20),
       ),
     );
@@ -138,3 +138,4 @@ class _SimilarSpeciesListScreenState extends State<SimilarSpeciesListScreen> {
     );
   }
 }
+

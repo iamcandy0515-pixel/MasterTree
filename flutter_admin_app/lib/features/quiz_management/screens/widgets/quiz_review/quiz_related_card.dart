@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 class QuizRelatedCard extends StatelessWidget {
   final List<Map<String, dynamic>> relatedQuizzes;
@@ -41,13 +41,13 @@ class QuizRelatedCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('유사 문제 목록 (${relatedQuizzes.length}건)', style: const TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.bold)),
+              Text('?좎궗 臾몄젣 紐⑸줉 (${relatedQuizzes.length}嫄?', style: const TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.bold)),
               Row(
                 children: [
                   if (isRecommending)
                     const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: primaryColor, strokeWidth: 2))
                   else
-                    _buildAIAssistantButton('AI 추천', Icons.auto_awesome, onAiRecommend, aiColor),
+                    _buildAIAssistantButton('AI 異붿쿇', Icons.auto_awesome, onAiRecommend, aiColor),
                   if (relatedQuizzes.length > itemsPerPage) ...[
                     const SizedBox(width: 12),
                     IconButton(icon: const Icon(Icons.chevron_left, color: Colors.white), iconSize: 20, onPressed: displayPage > 0 ? () => onPageChanged(displayPage - 1) : null),
@@ -60,7 +60,7 @@ class QuizRelatedCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           if (relatedQuizzes.isEmpty)
-             const Center(child: Text('연결된 유사 문제가 없습니다.', style: TextStyle(color: Colors.white24, fontSize: 13)))
+             const Center(child: Text('?곌껐???좎궗 臾몄젣媛 ?놁뒿?덈떎.', style: TextStyle(color: Colors.white24, fontSize: 13)))
           else
             ...visibleQuizzes.map((quiz) => _buildRelatedItem(quiz, primaryColor)),
         ],
@@ -89,8 +89,8 @@ class QuizRelatedCard extends StatelessWidget {
         children: [
           Container(
             width: 130, padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-            decoration: BoxDecoration(color: primaryColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)),
-            child: Text('$year년 $round회 $qNo번($category)', style: TextStyle(color: primaryColor, fontSize: 10, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+            decoration: BoxDecoration(color: primaryColor.withOpacity(0.1), borderRadius: BorderRadius.circular(4)),
+            child: Text('$year??$round??$qNo踰?$category)', style: TextStyle(color: primaryColor, fontSize: 10, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
           ),
           const SizedBox(width: 12),
           Expanded(child: Text(content, style: const TextStyle(color: Colors.white, fontSize: 12), maxLines: 1, overflow: TextOverflow.ellipsis)),
@@ -106,7 +106,7 @@ class QuizRelatedCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(20),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(color: aiColor.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(20), border: Border.all(color: aiColor.withValues(alpha: 0.5))),
+        decoration: BoxDecoration(color: aiColor.withOpacity(0.15), borderRadius: BorderRadius.circular(20), border: Border.all(color: aiColor.withOpacity(0.5))),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -119,3 +119,4 @@ class QuizRelatedCard extends StatelessWidget {
     );
   }
 }
+

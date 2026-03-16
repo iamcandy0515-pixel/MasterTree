@@ -9,8 +9,8 @@ class ComparisonHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.only(top: 16, bottom: 8),
       decoration: BoxDecoration(
-        color: AppColors.backgroundDark.withValues(alpha: 0.8),
-        border: Border(bottom: BorderSide(color: Colors.white.withValues(alpha: 0.05))),
+        color: AppColors.backgroundDark.withOpacity(0.8),
+        border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.05))),
       ),
       child: SafeArea(
         bottom: false,
@@ -38,3 +38,4 @@ class ComparisonHeader extends StatelessWidget {
     );
   }
 }
+

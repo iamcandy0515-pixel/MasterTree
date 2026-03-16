@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/design_system.dart';
 import '../../../viewmodels/quiz_viewmodel.dart';
@@ -34,17 +34,17 @@ class QuizOptionsList extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         decoration: BoxDecoration(
           color: showCorrect
-              ? AppColors.primary.withValues(alpha: 0.12)
+              ? AppColors.primary.withOpacity(0.12)
               : showWrong
-              ? Colors.red.withValues(alpha: 0.1)
+              ? Colors.red.withOpacity(0.1)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: showCorrect
-                ? AppColors.primary.withValues(alpha: 0.3)
+                ? AppColors.primary.withOpacity(0.3)
                 : showWrong
-                ? Colors.red.withValues(alpha: 0.3)
-                : Colors.white.withValues(alpha: 0.03),
+                ? Colors.red.withOpacity(0.3)
+                : Colors.white.withOpacity(0.03),
             width: 1,
           ),
         ),
@@ -59,7 +59,7 @@ class QuizOptionsList extends StatelessWidget {
                       ? AppColors.primary
                       : showWrong
                       ? Colors.redAccent
-                      : Colors.white.withValues(alpha: 0.6),
+                      : Colors.white.withOpacity(0.6),
                   fontSize: 13,
                   fontWeight: showCorrect || showWrong ? FontWeight.bold : FontWeight.w400,
                 ),
@@ -68,10 +68,11 @@ class QuizOptionsList extends StatelessWidget {
             if (showCorrect)
               const Icon(Icons.check_circle, color: AppColors.primary, size: 18)
             else if (showWrong)
-              Icon(Icons.cancel, color: Colors.red.withValues(alpha: 0.8), size: 18),
+              Icon(Icons.cancel, color: Colors.red.withOpacity(0.8), size: 18),
           ],
         ),
       ),
     );
   }
 }
+

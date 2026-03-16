@@ -40,7 +40,7 @@ class _SettingsQrCardState extends State<SettingsQrCard> {
         border: Border.all(color: Colors.white10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
+            color: Colors.black.withOpacity(0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -76,7 +76,7 @@ class _SettingsQrCardState extends State<SettingsQrCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      '사용자 앱 웹 주소 (URL)',
+                      '사용자 앱 주소 (URL)',
                       style: TextStyle(color: Colors.white70, fontSize: 13),
                     ),
                     const SizedBox(height: 8),
@@ -176,3 +176,4 @@ class _SettingsQrCardState extends State<SettingsQrCard> {
     );
   }
 }
+

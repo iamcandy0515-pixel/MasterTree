@@ -79,41 +79,35 @@ class _UserListBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<UserCheckViewModel, bool>(
-      selector: (_, vm) => vm.isLoading,
-      builder: (context, isLoading, child) {
-        if (isLoading) {
+    return Consumer<UserCheckViewModel>(
+      builder: (context, vm, child) {
+        if (vm.isLoading) {
           return const Center(child: CircularProgressIndicator(color: NeoColors.acidLime));
         }
-        return child!;
-      },
-      child: Selector<UserCheckViewModel, List<Map<String, dynamic>>>(
-        selector: (_, vm) => vm.users,
-        builder: (context, users, _) {
-          if (users.isEmpty) {
-            return Center(
-              child: Text('사용자가 없습니다.', style: TextStyle(color: Colors.grey[500])),
-            );
-          }
-
-          final viewModel = context.read<UserCheckViewModel>();
-          return ListView.separated(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
-            itemCount: users.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              return UserCardItem(
-                user: users[index],
-                currentStatus: viewModel.currentStatus,
-                primaryColor: primaryColor,
-                onApprove: (id) => viewModel.approveUser(id),
-                onReject: (id) => viewModel.rejectUser(id),
-                onDelete: (id, name) => _handleDelete(context, viewModel, id, name),
-              );
-            },
+        
+        final users = vm.users;
+        if (users.isEmpty) {
+          return Center(
+            child: Text('사용자가 없습니다.', style: TextStyle(color: Colors.grey[500])),
           );
-        },
-      ),
+        }
+
+        return ListView.separated(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+          itemCount: users.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 12),
+          itemBuilder: (context, index) {
+            return UserCardItem(
+              user: users[index],
+              currentStatus: vm.currentStatus,
+              primaryColor: primaryColor,
+              onApprove: (id) => vm.approveUser(id),
+              onReject: (id) => vm.rejectUser(id),
+              onDelete: (id, name) => _handleDelete(context, vm, id, name),
+            );
+          },
+        );
+      },
     );
   }
 

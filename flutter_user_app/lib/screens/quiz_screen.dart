@@ -51,12 +51,10 @@ class _QuizScreenContentState extends State<_QuizScreenContent> {
 
     final question = vm.currentQuestion;
 
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) async {
-        if (didPop) return;
+    return WillPopScope(
+      onWillPop: () async {
         await ApiService.syncPendingAttempts();
-        if (context.mounted) Navigator.pop(context);
+        return true;
       },
       child: Scaffold(
         backgroundColor: AppColors.backgroundDark,

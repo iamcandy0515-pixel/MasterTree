@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/log_check_viewmodel.dart';
 
@@ -31,7 +31,7 @@ class _LogCheckContent extends StatelessWidget {
         backgroundColor: backgroundDark,
         elevation: 0,
         title: const Text(
-          '시스템 로그 확인',
+          '?쒖뒪??濡쒓렇 ?뺤씤',
           style: TextStyle(
             color: Colors.white,
             fontSize: 16,
@@ -122,7 +122,7 @@ class _LogCheckContent extends StatelessWidget {
                     ),
                     Container(
                       padding: const EdgeInsets.all(12),
-                      color: Colors.white.withValues(alpha: 0.02),
+                      color: Colors.white.withOpacity(0.02),
                       child: Row(
                         children: [
                           const Icon(
@@ -151,3 +151,4 @@ class _LogCheckContent extends StatelessWidget {
     );
   }
 }
+

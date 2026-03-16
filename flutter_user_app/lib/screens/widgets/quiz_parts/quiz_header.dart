@@ -15,7 +15,7 @@ class QuizHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.only(top: 12, left: 12, right: 12, bottom: 8),
       decoration: BoxDecoration(
-        color: AppColors.backgroundDark.withValues(alpha: 0.8),
+        color: AppColors.backgroundDark.withOpacity(0.8),
       ),
       child: SafeArea(
         bottom: false,
@@ -85,7 +85,7 @@ class QuizHeader extends StatelessWidget {
                   value: vm.totalQuestions > 0
                       ? vm.solvedCount / vm.totalQuestions
                       : 0.0,
-                  backgroundColor: Colors.white.withValues(alpha: 0.1),
+                  backgroundColor: Colors.white.withOpacity(0.1),
                   valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
                   minHeight: 4,
                 ),
@@ -97,3 +97,4 @@ class QuizHeader extends StatelessWidget {
     );
   }
 }
+

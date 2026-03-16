@@ -123,7 +123,7 @@ class TreePreviewDialog extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.grey[900],
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
@@ -132,7 +132,7 @@ class TreePreviewDialog extends StatelessWidget {
           Image.network(
             image.imageUrl,
             fit: BoxFit.cover,
-            errorBuilder: (_, _, _) => const Center(
+            errorBuilder: (context, error, stackTrace) => const Center(
               child: Icon(Icons.broken_image, color: Colors.grey),
             ),
           ),
@@ -142,7 +142,7 @@ class TreePreviewDialog extends StatelessWidget {
               left: 0,
               right: 0,
               child: Container(
-                color: Colors.black.withValues(alpha: 0.6),
+                color: Colors.black.withOpacity(0.6),
                 padding: const EdgeInsets.all(8),
                 child: Text(
                   hint,
@@ -161,10 +161,10 @@ class TreePreviewDialog extends StatelessWidget {
     return Container(
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: Colors.white.withOpacity(0.1),
         ),
       ),
       child: Text(

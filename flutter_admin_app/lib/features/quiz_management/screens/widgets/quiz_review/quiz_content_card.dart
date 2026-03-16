@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../../core/widgets/fullscreen_image_viewer.dart';
@@ -60,12 +60,12 @@ class _QuizContentCardState extends State<QuizContentCard> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('문제', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+            const Text('臾몄젣', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
             Row(
               children: [
                 if (hasImages)
                   IconButton(
-                    icon: Icon(widget.isExpanded ? Icons.keyboard_arrow_up : Icons.photo_library, color: primaryColor.withValues(alpha: 0.8), size: 20),
+                    icon: Icon(widget.isExpanded ? Icons.keyboard_arrow_up : Icons.photo_library, color: primaryColor.withOpacity(0.8), size: 20),
                     onPressed: widget.onToggleExpand,
                   ),
                 IconButton(
@@ -112,7 +112,7 @@ class _QuizContentCardState extends State<QuizContentCard> {
           Icon(Icons.content_paste_go, color: _focusNode.hasFocus ? primaryColor : Colors.white24, size: hasImages ? 24 : 32),
           const SizedBox(height: 8),
           Text(
-            '클립보드 이미지를 Ctrl+V로 붙여넣으세요',
+            '?대┰蹂대뱶 ?대?吏瑜?Ctrl+V濡?遺숈뿬?ｌ쑝?몄슂',
             style: TextStyle(color: _focusNode.hasFocus ? primaryColor : Colors.white54, fontSize: hasImages ? 11 : 13),
           ),
         ],
@@ -139,7 +139,7 @@ class _QuizContentCardState extends State<QuizContentCard> {
             child: Stack(
               children: [
                 GestureDetector(
-                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FullscreenImageViewer(imageUrl: url, title: '문제 이미지'))),
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FullscreenImageViewer(imageUrl: url, title: '臾몄젣 ?대?吏'))),
                   child: CachedNetworkImage(imageUrl: url, width: double.infinity, fit: BoxFit.contain),
                 ),
                 Positioned(
@@ -158,3 +158,4 @@ class _QuizContentCardState extends State<QuizContentCard> {
     );
   }
 }
+

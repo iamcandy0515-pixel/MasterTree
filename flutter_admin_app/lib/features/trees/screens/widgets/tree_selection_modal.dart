@@ -266,7 +266,7 @@ class _ModalContentState extends State<_ModalContent> {
                     Flexible(
                       child: Text(
                         tree.nameKr,
-                        style: GoogleFonts.notoSansKr(
+                        style: GoogleFonts.notoSans(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 14,

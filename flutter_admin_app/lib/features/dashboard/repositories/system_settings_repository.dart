@@ -146,7 +146,7 @@ class SystemSettingsRepository extends BaseRepository {
 
   // GET /api/settings/thumbnail-drive-url
   Future<String> getThumbnailDriveUrl() async {
-    final url = Uri.parse('$baseUrl/thumbnail-drive-url');
+    final url = Uri.parse('$baseUrl/settings/thumbnail-drive-url');
     final headers = await getHeaders();
     try {
       final response = await http.get(url, headers: headers);
@@ -222,16 +222,34 @@ class SystemSettingsRepository extends BaseRepository {
     throw Exception('기출문제 폴더 URL 업데이트 실패: ${response.body}');
   }
 
-  // Check URL status (Ping/Head)
+  // Check URL status (Ping/Head delegated to Backend)
   Future<bool> checkUrlStatus(String urlString) async {
     if (urlString.isEmpty) return false;
+
+    // 1차 클라이언트측 기본 형식 검사 (시간/네트워크 낭비 방지)
+    if (!urlString.startsWith('http://') && !urlString.startsWith('https://')) {
+      return false;
+    }
+
     try {
-      final uri = Uri.parse(urlString);
-      // Use get/head depending on preference; for drive links, GET is more reliable for status 200/404
-      final response = await http.get(uri).timeout(const Duration(seconds: 5));
-      return response.statusCode >= 200 && response.statusCode < 400;
+      final url = Uri.parse('$baseUrl/settings/validate-url');
+      final headers = await getHeaders();
+
+      final response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode({'url': urlString}),
+      );
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+        if (jsonResponse['success'] == true) {
+          return jsonResponse['data']['isValid'] == true;
+        }
+      }
+      return false;
     } catch (e) {
-      debugPrint('checkUrlStatus error ($urlString): $e');
+      debugPrint('checkUrlStatus (Backend delegated) error ($urlString): $e');
       return false;
     }
   }

@@ -46,14 +46,14 @@ class DashboardExamTab extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.surfaceDark,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+          border: Border.all(color: Colors.white.withOpacity(0.05)),
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
+                color: color.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color, size: 18),
@@ -97,9 +97,9 @@ class DashboardExamTab extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.03),
+        color: Colors.white.withOpacity(0.03),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,12 +107,12 @@ class DashboardExamTab extends StatelessWidget {
           Row(
             children: [
               Icon(Icons.tips_and_updates_outlined, 
-                color: AppColors.primary.withValues(alpha: 0.7), size: 16),
+                color: AppColors.primary.withOpacity(0.7), size: 16),
               const SizedBox(width: 8),
               Text(
-                '기출문제 풀이 팁',
+                '기출문제 대비',
                 style: TextStyle(
-                  color: AppColors.textLight.withValues(alpha: 0.6),
+                  color: AppColors.textLight.withOpacity(0.6),
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
@@ -122,7 +122,7 @@ class DashboardExamTab extends StatelessWidget {
           const SizedBox(height: 12),
           _buildGuideItem('최신 기출 문항부터 차례대로 학습해보세요.'),
           const SizedBox(height: 8),
-          _buildGuideItem('모든 문제는 상세 해설과 함께 제공됩니다.'),
+          _buildGuideItem('모든 문제에 상세 해설과 함께 제공합니다.'),
         ],
       ),
     );
@@ -132,13 +132,13 @@ class DashboardExamTab extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(Icons.check_circle_outline, color: AppColors.primary.withValues(alpha: 0.5), size: 14),
+        Icon(Icons.check_circle_outline, color: AppColors.primary.withOpacity(0.5), size: 14),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
             text,
             style: TextStyle(
-              color: AppColors.textMuted.withValues(alpha: 0.8),
+              color: AppColors.textMuted.withOpacity(0.8),
               fontSize: 12,
               height: 1.4,
             ),
@@ -148,3 +148,4 @@ class DashboardExamTab extends StatelessWidget {
     );
   }
 }
+

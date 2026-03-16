@@ -107,7 +107,7 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
     return Container(
       decoration: BoxDecoration(
         color: AppColors.backgroundDark,
-        border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.05))),
+        border: Border(top: BorderSide(color: Colors.white.withOpacity(0.05))),
       ),
       child: BottomNavigationBar(
         currentIndex: _controller.currentIndex,
@@ -185,3 +185,4 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     return false;
   }
 }
+

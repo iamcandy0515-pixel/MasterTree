@@ -108,7 +108,7 @@ class _NeoScaleButtonState extends State<_NeoScaleButton> {
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
-                      color: widget.color.withValues(alpha: 0.3),
+                      color: widget.color.withOpacity(0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -127,3 +127,4 @@ class _NeoScaleButtonState extends State<_NeoScaleButton> {
     );
   }
 }
+

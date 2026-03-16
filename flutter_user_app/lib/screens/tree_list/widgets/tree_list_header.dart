@@ -19,7 +19,7 @@ class TreeListHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 8),
       decoration: BoxDecoration(
-        color: AppColors.backgroundDark.withValues(alpha: 0.8),
+        color: AppColors.backgroundDark.withOpacity(0.8),
       ),
       child: SafeArea(
         bottom: false,
@@ -34,7 +34,7 @@ class TreeListHeader extends StatelessWidget {
                 const Expanded(
                   child: Center(
                     child: Text(
-                      '수목도감 일람',
+                      '수목도감 알람',
                       style: TextStyle(
                         color: AppColors.textLight,
                         fontSize: 20,
@@ -108,7 +108,7 @@ class TreeListHeader extends StatelessWidget {
       children: [
         Expanded(
           child: _buildDropdown(
-            label: '침엽·활엽',
+            label: '침엽/활엽',
             value: controller.selectedType,
             items: ['전체', '침엽수', '활엽수'],
             onChanged: (val) {
@@ -119,7 +119,7 @@ class TreeListHeader extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: _buildDropdown(
-            label: '상록·낙엽',
+            label: '상록/낙엽',
             value: controller.selectedHabit,
             items: ['전체', '상록수', '낙엽수'],
             onChanged: (val) {
@@ -152,7 +152,7 @@ class TreeListHeader extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppColors.surfaceDark,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+            border: Border.all(color: Colors.white.withOpacity(0.1)),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
@@ -175,3 +175,4 @@ class TreeListHeader extends StatelessWidget {
     );
   }
 }
+

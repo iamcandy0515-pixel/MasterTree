@@ -25,10 +25,6 @@ class NeoTheme {
         onPrimary: NeoColors.voidGreen,
         onSurface: NeoColors.pureWhite,
       ),
-      actionIconTheme: ActionIconThemeData(
-        backButtonIconBuilder: (BuildContext context) =>
-            const Icon(Icons.arrow_back_ios_new),
-      ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: NeoColors.darkGray,

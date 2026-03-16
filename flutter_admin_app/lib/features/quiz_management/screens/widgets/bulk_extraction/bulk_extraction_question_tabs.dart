@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 class BulkExtractionQuestionTabs extends StatelessWidget {
   final int startNumber;
@@ -79,7 +79,7 @@ class BulkExtractionQuestionTabs extends StatelessWidget {
                         size: 8,
                         color: isSelected
                             ? backgroundDark
-                            : primaryColor.withValues(alpha: 0.8),
+                            : primaryColor.withOpacity(0.8),
                       ),
                     ),
                 ],
@@ -91,3 +91,4 @@ class BulkExtractionQuestionTabs extends StatelessWidget {
     );
   }
 }
+

@@ -20,7 +20,7 @@ class SpeciesSelectionSection extends StatelessWidget {
 
     return Column(
       children: [
-        // 5건 리스트
+        // 나무 리스트
         if (vm.isLoading)
           const Padding(
             padding: EdgeInsets.all(32.0),
@@ -52,11 +52,11 @@ class SpeciesSelectionSection extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.02),
+        color: Colors.white.withOpacity(0.02),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: const Column(
-        children: [
+      child: Column(
+        children: const [
           Icon(Icons.search_off, color: Colors.grey, size: 40),
           SizedBox(height: 12),
           Text('조회된 수목이 없습니다.', style: TextStyle(color: Colors.grey)),
@@ -89,9 +89,9 @@ class SpeciesSelectionSection extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
+          color: Colors.white.withOpacity(0.05),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          border: Border.all(color: Colors.white.withOpacity(0.1)),
         ),
         child: Row(
           children: [
@@ -111,7 +111,7 @@ class SpeciesSelectionSection extends StatelessWidget {
                   Text(
                     '${tree.scientificName} / ${tree.category}',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: Colors.white.withOpacity(0.5),
                       fontSize: 11,
                     ),
                   ),
@@ -133,7 +133,7 @@ class SpeciesSelectionSection extends StatelessWidget {
         _buildIcon(Icons.texture, '수피', _hasImage(tree, 'bark')),
         _buildIcon(Icons.grain, '열매', _hasImage(tree, 'fruit')),
         _buildIcon(Icons.filter_vintage, '꽃', _hasImage(tree, 'flower')),
-        _buildIcon(Icons.forest, '대표', _hasImage(tree, 'main')),
+        _buildIcon(Icons.forest, '전경', _hasImage(tree, 'main')),
       ],
     );
   }
@@ -152,7 +152,7 @@ class SpeciesSelectionSection extends StatelessWidget {
         child: Icon(
           icon,
           size: 16,
-          color: active ? primaryColor : Colors.white.withValues(alpha: 0.1),
+          color: active ? primaryColor : Colors.white.withOpacity(0.1),
         ),
       ),
     );
@@ -199,3 +199,4 @@ class SpeciesSelectionSection extends StatelessWidget {
     );
   }
 }
+

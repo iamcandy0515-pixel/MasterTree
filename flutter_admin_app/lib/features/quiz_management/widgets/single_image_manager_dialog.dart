@@ -300,9 +300,9 @@ class _SingleQuizImageManagerDialogState
 
             const SizedBox(height: 16),
             if (_isUploading)
-              const Center(
+              Center(
                 child: Column(
-                  children: [
+                  children: const [
                     LinearProgressIndicator(color: primaryColor),
                     SizedBox(height: 8),
                     Text(

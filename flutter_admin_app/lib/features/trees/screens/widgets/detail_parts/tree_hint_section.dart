@@ -53,7 +53,7 @@ class TreeHintSection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        _buildHintInput('대표 (main)', 'main', vm),
+        _buildHintInput('전체 (main)', 'main', vm),
         _buildHintInput('수피와 가지 (bark)', 'bark', vm),
         _buildHintInput('잎 (leaf)', 'leaf', vm),
         _buildHintInput('꽃 (flower)', 'flower', vm),
@@ -83,9 +83,9 @@ class TreeHintSection extends StatelessWidget {
             maxLines: 2,
             decoration: InputDecoration(
               hintText: '$label 힌트 입력...',
-              hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
+              hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
               filled: true,
-              fillColor: Colors.white.withValues(alpha: 0.05),
+              fillColor: Colors.white.withOpacity(0.05),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 12,
@@ -101,3 +101,4 @@ class TreeHintSection extends StatelessWidget {
     );
   }
 }
+

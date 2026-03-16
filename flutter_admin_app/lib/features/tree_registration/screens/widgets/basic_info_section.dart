@@ -22,7 +22,7 @@ class BasicInfoSection extends StatelessWidget {
         border: Border.all(color: Colors.white10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
+            color: Colors.black.withOpacity(0.3),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -49,7 +49,7 @@ class BasicInfoSection extends StatelessWidget {
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
-            decoration: _inputDecoration('수목명 (필수)', '예) 소나무'),
+            decoration: _inputDecoration('수목명 (필수)', '예: 소나무'),
           ),
           const SizedBox(height: 16),
 
@@ -60,13 +60,13 @@ class BasicInfoSection extends StatelessWidget {
               color: Colors.white70,
               fontStyle: FontStyle.italic,
             ),
-            decoration: _inputDecoration('학명', '예) Pinus densiflora'),
+            decoration: _inputDecoration('학명', '예: Pinus densiflora'),
           ),
           const SizedBox(height: 16),
 
           Row(
             children: [
-              // 구분
+              // 援щ텇
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,3 +149,4 @@ class BasicInfoSection extends StatelessWidget {
     );
   }
 }
+

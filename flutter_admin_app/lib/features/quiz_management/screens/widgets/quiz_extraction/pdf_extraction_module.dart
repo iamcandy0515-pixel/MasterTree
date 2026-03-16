@@ -18,8 +18,8 @@ class PdfExtractionModule extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Row(
-              children: [
+            Row(
+              children: const [
                 Icon(
                   Icons.settings_input_component,
                   color: primaryColor,
@@ -63,7 +63,7 @@ class PdfExtractionModule extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: Colors.white.withOpacity(0.05),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -98,7 +98,7 @@ class PdfExtractionModule extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '% 추출 중...',
+                  '${(vm.extractionProgress * 100).toInt()}% 추출 중...',
                   style: const TextStyle(color: Colors.white54, fontSize: 10),
                   textAlign: TextAlign.center,
                 ),

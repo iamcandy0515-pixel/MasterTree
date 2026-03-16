@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../../core/design_system.dart';
 import '../../species_comparison_detail_screen.dart';
 
@@ -26,9 +26,9 @@ class SimilarSpeciesCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: Colors.white.withOpacity(0.05),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+            border: Border.all(color: Colors.white.withOpacity(0.05)),
           ),
           child: Row(
             children: [
@@ -104,7 +104,7 @@ class SimilarSpeciesCard extends StatelessWidget {
                   fit: BoxFit.cover,
                 )
               : null,
-          color: Colors.white.withValues(alpha: 0.05),
+          color: Colors.white.withOpacity(0.05),
         ),
         child: url.isEmpty
             ? const Center(child: Icon(Icons.park, size: 24, color: Colors.white10))
@@ -113,3 +113,4 @@ class SimilarSpeciesCard extends StatelessWidget {
     );
   }
 }
+

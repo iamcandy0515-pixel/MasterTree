@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../../core/design_system.dart';
 import '../../../controllers/tree_list_controller.dart';
 
@@ -54,9 +54,10 @@ class TreeListPagination extends StatelessWidget {
 
   Widget _buildPageButton(IconData icon, bool enabled, VoidCallback onTap) {
     return IconButton(
-      icon: Icon(icon, color: enabled ? AppColors.primary : AppColors.textMuted.withValues(alpha: 0.2)),
+      icon: Icon(icon, color: enabled ? AppColors.primary : AppColors.textMuted.withOpacity(0.2)),
       onPressed: enabled ? onTap : null,
       iconSize: 24,
     );
   }
 }
+

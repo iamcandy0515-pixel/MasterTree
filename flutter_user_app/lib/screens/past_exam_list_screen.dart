@@ -76,7 +76,7 @@ class _PastExamListScreenState extends State<PastExamListScreen> {
                 ),
                 Expanded(
                   child: _buildDropdown(
-                    hint: '년도',
+                    hint: '연도',
                     value: _controller.selectedYear,
                     items: _controller.years,
                     onChanged: (val) {
@@ -200,7 +200,7 @@ class _PastExamListScreenState extends State<PastExamListScreen> {
       decoration: BoxDecoration(
         color: AppColors.surfaceDark,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Material(
         color: Colors.transparent,
@@ -305,3 +305,4 @@ class _PastExamListScreenState extends State<PastExamListScreen> {
     );
   }
 }
+

@@ -40,13 +40,12 @@ class SmartTagImageSection extends StatelessWidget {
           const SizedBox(height: 16),
 
           // Tag Selection Row (Rebuilds when activeTag or taggedImages changes labels)
-          Selector<TreeRegistrationViewModel, String>(
-            selector: (_, vm) => vm.activeTag,
-            builder: (context, activeTag, _) {
+          Consumer<TreeRegistrationViewModel>(
+            builder: (context, vm, _) {
               return TagSelectorRow(
-                activeTag: activeTag,
+                activeTag: vm.activeTag,
                 tags: tags,
-                taggedImages: context.read<TreeRegistrationViewModel>().taggedImages,
+                taggedImages: vm.taggedImages,
                 onTagSelected: (tag) => vm.setActiveTag(tag),
               );
             },
@@ -54,17 +53,12 @@ class SmartTagImageSection extends StatelessWidget {
           const SizedBox(height: 20),
 
           // Active Tag Editor (Rebuilds ONLY when activeTag, image data, or uploading state changes)
-          Selector<TreeRegistrationViewModel, _ActiveEditorState>(
-            selector: (_, vm) => _ActiveEditorState(
-              vm.activeTag,
-              vm.taggedImages[vm.activeTag],
-              vm.isUploading,
-            ),
-            builder: (context, state, _) {
+          Consumer<TreeRegistrationViewModel>(
+            builder: (context, vm, _) {
               return ActiveTagEditor(
-                activeTag: state.activeTag,
-                image: state.image,
-                isUploading: state.isUploading,
+                activeTag: vm.activeTag,
+                image: vm.taggedImages[vm.activeTag],
+                isUploading: vm.isUploading,
                 onPickImage: (file) => vm.handleImageUpload(file),
                 onPasteImage: vm.pasteImageFromClipboard,
                 onSearchGoogle: () async {

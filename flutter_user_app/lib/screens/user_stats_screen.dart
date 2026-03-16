@@ -101,8 +101,8 @@ class _UserStatsScreenState extends State<UserStatsScreen> {
         children: [
           const Icon(Icons.error_outline, color: Colors.redAccent, size: 48),
           const SizedBox(height: 16),
-          Text(
-            '오류가 발생했습니다.\n로그인 상태를 확인해주세요.',
+          const Text(
+            '오류가 발생했습니다.\n로그인 상태를 확인해 주세요.',
             textAlign: TextAlign.center,
             style: TextStyle(color: AppColors.textMuted),
           ),
@@ -182,7 +182,6 @@ class _UserStatsScreenState extends State<UserStatsScreen> {
       children: [
         _buildStatCard(title, data, accentColor, Icons.analytics),
         const SizedBox(height: 20),
-        // 향후 여기에 과목별/유형별 더 상세한 통계 리스트 추가 가능
       ],
     );
   }
@@ -203,7 +202,7 @@ class _UserStatsScreenState extends State<UserStatsScreen> {
         ),
         const SizedBox(height: 4),
         const Text(
-          '오늘도 한 걸음 더 성장하셨네요. 💪',
+          '오늘도 한 걸음 더 성장하셨네요! 🌱',
           style: TextStyle(color: AppColors.textMuted, fontSize: 14),
         ),
       ],
@@ -228,7 +227,7 @@ class _UserStatsScreenState extends State<UserStatsScreen> {
       decoration: BoxDecoration(
         color: AppColors.surfaceDark,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -280,7 +279,7 @@ class _UserStatsScreenState extends State<UserStatsScreen> {
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 10,
-              backgroundColor: Colors.white.withValues(alpha: 0.05),
+              backgroundColor: Colors.white.withOpacity(0.05),
               valueColor: AlwaysStoppedAnimation<Color>(accentColor),
             ),
           ),

@@ -96,15 +96,15 @@ class _RelatedQuestionModuleState extends State<RelatedQuestionModule> {
                   margin: const EdgeInsets.only(right: 12),
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: aiColor.withValues(alpha: 0.05),
+                    color: aiColor.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: aiColor.withValues(alpha: 0.1)),
+                    border: Border.all(color: aiColor.withOpacity(0.1)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${quiz['year'] ?? ''}년 회',
+                        '${quiz['year'] ?? ''} 기출',
                         style: const TextStyle(
                           color: aiColor,
                           fontSize: 10,
@@ -131,7 +131,7 @@ class _RelatedQuestionModuleState extends State<RelatedQuestionModule> {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.02),
+              color: Colors.white.withOpacity(0.02),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.white10),
             ),

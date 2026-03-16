@@ -7,9 +7,9 @@ class DashboardStatsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<DashboardViewModel, Map<String, dynamic>>(
-      selector: (_, vm) => vm.stats,
-      builder: (context, stats, child) {
+    return Consumer<DashboardViewModel>(
+      builder: (context, vm, child) {
+        final stats = vm.stats;
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Container(
@@ -78,7 +78,8 @@ class DashboardStatsSection extends StatelessWidget {
       height: 12,
       width: 1,
       margin: const EdgeInsets.symmetric(horizontal: 12),
-      color: Colors.white.withValues(alpha: 0.1),
+      color: Colors.white.withOpacity(0.1),
     );
   }
 }
+

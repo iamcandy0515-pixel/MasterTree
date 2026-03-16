@@ -103,7 +103,7 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
               backgroundColor: backgroundDark,
               elevation: 0,
               title: Text(
-                '기출문제 추출(일괄)',
+                '기출문제 추출 (일괄)',
                 style: GoogleFonts.inter(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -121,7 +121,7 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
                     color: Colors.white70,
                   ),
                   label: const Text(
-                    'DB등록',
+                    'DB 등록',
                     style: TextStyle(color: Colors.white, fontSize: 13),
                   ),
                 ),
@@ -160,7 +160,7 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
                           if (current % 5 == 0 || current == total) {
                             _showFloatingMessage(
                               context,
-                              '✅ $current / $total 문항 추출 완료',
+                              '현재 $current / $total 문항 추출 완료',
                             );
                             if (vm.extractedQuizzes.containsKey(
                                   _selectedTabIndex,
@@ -229,10 +229,10 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
   }
 
   Widget _buildEmptyState() {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        children: const [
           Icon(Icons.quiz_outlined, size: 64, color: Colors.white10),
           SizedBox(height: 16),
           Text(
@@ -257,13 +257,13 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isProgress
-                  ? primaryColor.withValues(alpha: 0.5)
+                  ? primaryColor.withOpacity(0.5)
                   : Colors.white24,
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.5),
+                color: Colors.black.withOpacity(0.5),
                 blurRadius: 20,
                 spreadRadius: 5,
               ),
@@ -364,17 +364,17 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '• 총 문항: ${stats['total']}건',
+              '■ 총 문항: ${stats['total']}건',
               style: const TextStyle(color: Colors.white70),
             ),
             const SizedBox(height: 4),
             Text(
-              '• 성공: ${stats['success']}건',
+              '■ 성공: ${stats['success']}건',
               style: const TextStyle(color: primaryColor),
             ),
             const SizedBox(height: 4),
             Text(
-              '• 실패: ${stats['failed']}건',
+              '■ 실패: ${stats['failed']}건',
               style: const TextStyle(color: Colors.redAccent),
             ),
           ],
@@ -417,3 +417,4 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
     }
   }
 }
+

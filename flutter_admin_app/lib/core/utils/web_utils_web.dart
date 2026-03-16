@@ -1,5 +1,5 @@
 import 'dart:html' as html;
-import 'dart:ui_web' as ui_web;
+import 'dart:ui' as ui;
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -18,10 +18,10 @@ class WebUtilsPlatform {
 
   static void registerViewFactory(
     String viewId,
-    dynamic Function(int) factory,
+    Object Function(int) factory,
   ) {
     // ignore: undefined_prefixed_name
-    ui_web.platformViewRegistry.registerViewFactory(viewId, factory);
+    ui.platformViewRegistry.registerViewFactory(viewId, factory);
   }
 
   static dynamic createDropZoneElement({

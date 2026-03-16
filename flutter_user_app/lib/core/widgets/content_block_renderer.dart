@@ -68,9 +68,9 @@ class ContentBlockRenderer extends StatelessWidget {
                     height: 100,
                     width: double.infinity,
                     color: Colors.white10,
-                    child: const Column(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
+                      children: const [
                         Icon(
                           Icons.broken_image_rounded,
                           color: Colors.grey,
@@ -108,7 +108,7 @@ class ContentBlockRenderer extends StatelessWidget {
             GoogleFonts.inter(
               color: isHighlight
                   ? AppColors.primary
-                  : Colors.white.withValues(alpha: 0.85),
+                  : Colors.white.withOpacity(0.85),
               fontSize: 14,
               height: 1.5,
             ),
@@ -116,3 +116,4 @@ class ContentBlockRenderer extends StatelessWidget {
     );
   }
 }
+

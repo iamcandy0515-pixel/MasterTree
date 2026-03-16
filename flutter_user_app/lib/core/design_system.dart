@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 class AppColors {
   static const Color primary = Color(0xFF80F20D);
@@ -19,13 +19,13 @@ class AppRadius {
 
 class AppDesign {
   static BoxShadow glowPrimary = BoxShadow(
-    color: AppColors.primary.withValues(alpha: 0.4),
+    color: AppColors.primary.withOpacity(0.4),
     blurRadius: 15,
     spreadRadius: 0,
   );
 
   static BoxShadow glowBar = BoxShadow(
-    color: AppColors.primary.withValues(alpha: 0.6),
+    color: AppColors.primary.withOpacity(0.6),
     blurRadius: 10,
     spreadRadius: 0,
   );
@@ -33,9 +33,9 @@ class AppDesign {
   static const double glassBlur = 12.0;
 
   static BoxDecoration glassCard = BoxDecoration(
-    color: Colors.white.withValues(alpha: 0.03),
+    color: Colors.white.withOpacity(0.03),
     borderRadius: BorderRadius.circular(24.0), // AppRadius.xl
-    border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+    border: Border.all(color: Colors.white.withOpacity(0.1)),
   );
 }
 
@@ -76,3 +76,4 @@ class AppTypography {
     fontWeight: FontWeight.w500,
   );
 }
+

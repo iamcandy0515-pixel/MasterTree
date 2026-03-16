@@ -43,7 +43,7 @@ class SnackBarUtil {
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(
             color: (isError ? Colors.orangeAccent : const Color(0xFF2BEE8C))
-                .withValues(alpha: 0.3),
+                .withOpacity(0.3),
             width: 1,
           ),
         ),
@@ -54,3 +54,4 @@ class SnackBarUtil {
     );
   }
 }
+

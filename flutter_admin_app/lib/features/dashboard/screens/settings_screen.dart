@@ -53,7 +53,7 @@ class _SettingsContent extends StatelessWidget {
                       margin: const EdgeInsets.only(bottom: 20),
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.redAccent.withValues(alpha: 0.1),
+                        color: Colors.redAccent.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -118,3 +118,4 @@ class _SettingsContent extends StatelessWidget {
     );
   }
 }
+

@@ -81,9 +81,9 @@ class _GoogleDriveSearchModuleState extends State<GoogleDriveSearchModule> {
                           strokeWidth: 2,
                         ),
                       )
-                    : const Wrap(
+                    : Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
+                        children: const [
                           Icon(Icons.search, size: 16),
                           SizedBox(width: 4),
                           Text(

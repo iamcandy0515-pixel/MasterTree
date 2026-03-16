@@ -89,17 +89,17 @@ class AddTreeMobilePreview extends StatelessWidget {
       child: Container(
         color: Colors.black26,
         padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               '19:41',
               style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
             ),
             Row(
               children: [
                 Icon(Icons.wifi, color: Colors.white, size: 12),
-                SizedBox(width: 4),
+                const SizedBox(width: 4),
                 Icon(Icons.battery_full, color: Colors.white, size: 12),
               ],
             ),

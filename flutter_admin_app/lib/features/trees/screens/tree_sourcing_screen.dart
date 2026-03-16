@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../viewmodels/tree_sourcing_viewmodel.dart';
@@ -84,9 +84,9 @@ class _TreeSourcingContentState extends State<_TreeSourcingContent> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.02),
+        color: Colors.white.withOpacity(0.02),
         border: Border(
-          bottom: BorderSide(color: primaryColor.withValues(alpha: 0.1)),
+          bottom: BorderSide(color: primaryColor.withOpacity(0.1)),
         ),
       ),
       child: Row(
@@ -104,7 +104,7 @@ class _TreeSourcingContentState extends State<_TreeSourcingContent> {
               ),
               const SizedBox(width: 8),
               Text(
-                '수목 이미지 추출(수목별)',
+                '?섎ぉ ?대?吏 異붿텧(?섎ぉ蹂?',
                 style: TextStyle(
                   color: primaryColor,
                   fontSize: 18,
@@ -129,7 +129,7 @@ class _TreeSourcingContentState extends State<_TreeSourcingContent> {
       },
       icon: Icon(Icons.open_in_new, size: 14, color: primaryColor),
       label: Text(
-        '국가생물정보',
+        '援???앸Ъ?뺣낫',
         style: TextStyle(color: primaryColor, fontSize: 11),
       ),
     );
@@ -140,9 +140,9 @@ class _TreeSourcingContentState extends State<_TreeSourcingContent> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: primaryColor.withValues(alpha: 0.2)),
+        border: Border.all(color: primaryColor.withOpacity(0.2)),
       ),
       child: TextField(
         controller: _searchController,
@@ -151,7 +151,7 @@ class _TreeSourcingContentState extends State<_TreeSourcingContent> {
         onSubmitted: (val) => vm.loadTrees(page: 1),
         style: const TextStyle(color: Colors.white, fontSize: 14),
         decoration: InputDecoration(
-          hintText: '수목명으로 검색...',
+          hintText: '?섎ぉ紐낆쑝濡?寃??..',
           hintStyle: TextStyle(color: Colors.grey[600], fontSize: 13),
           border: InputBorder.none,
           suffixIcon: IconButton(
@@ -163,3 +163,4 @@ class _TreeSourcingContentState extends State<_TreeSourcingContent> {
     );
   }
 }
+

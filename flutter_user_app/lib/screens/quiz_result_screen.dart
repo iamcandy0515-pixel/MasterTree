@@ -94,7 +94,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
                         _controller.description,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.7),
+                          color: Colors.white.withOpacity(0.7),
                           fontSize: 16,
                         ),
                       ),
@@ -139,16 +139,16 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.05),
+                          color: Colors.white.withOpacity(0.05),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: _controller.titleColor.withValues(alpha: 0.3),
+                            color: _controller.titleColor.withOpacity(0.3),
                           ),
                         ),
                         child: Column(
                           children: [
                             _buildStatRow(
-                              '총 풀어본 문제',
+                              '총 대면한 문제',
                               '${widget.solvedCount} 문제',
                             ),
                             const Divider(color: Colors.white12, height: 24),
@@ -196,7 +196,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
       children: [
         Text(
           label,
-          style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 16),
+          style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 16),
         ),
         Text(
           value,
@@ -210,3 +210,4 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
     );
   }
 }
+

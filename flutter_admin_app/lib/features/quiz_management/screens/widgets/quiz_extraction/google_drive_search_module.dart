@@ -65,7 +65,7 @@ class _GoogleDriveSearchModuleState extends State<GoogleDriveSearchModule> {
                   hintText: '검색어 입력 (예: 2024 나무의사)',
                   hintStyle: const TextStyle(color: Colors.white24),
                   filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.05),
+                  fillColor: Colors.white.withOpacity(0.05),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,
@@ -82,12 +82,12 @@ class _GoogleDriveSearchModuleState extends State<GoogleDriveSearchModule> {
             IconButton(
               onPressed: _isSearching ? null : _performSearch,
               icon: _isSearching
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation(primaryColor),
+                        valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
                       ),
                     )
                   : const Icon(Icons.search, color: primaryColor),
@@ -99,7 +99,7 @@ class _GoogleDriveSearchModuleState extends State<GoogleDriveSearchModule> {
           Container(
             height: 200,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.02),
+              color: Colors.white.withOpacity(0.02),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.white10),
             ),

@@ -43,7 +43,7 @@ class BulkExtractionFilterPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-      color: surfaceDark.withValues(alpha: 0.5),
+      color: surfaceDark.withOpacity(0.5),
       child: Column(
         children: [
           TextField(
@@ -92,7 +92,7 @@ class BulkExtractionFilterPanel extends StatelessWidget {
                 _buildBannerDivider(),
                 Expanded(
                   child: _buildDropDown(
-                    hint: '년도',
+                    hint: '연도',
                     value: year?.toString(),
                     items: List.generate(14, (i) => (2013 + i).toString()),
                     onChanged: onYearChanged,

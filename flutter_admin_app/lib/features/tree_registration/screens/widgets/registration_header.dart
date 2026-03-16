@@ -70,7 +70,7 @@ class RegistrationHeader extends StatelessWidget {
               decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
-                    color: primaryColor.withValues(alpha: 0.3),
+                    color: primaryColor.withOpacity(0.3),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -91,7 +91,7 @@ class RegistrationHeader extends StatelessWidget {
                   ),
                 ),
                 child: const Text(
-                  'DB등록',
+                  'DB 등록',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
@@ -122,3 +122,4 @@ class RegistrationHeader extends StatelessWidget {
     }
   }
 }
+

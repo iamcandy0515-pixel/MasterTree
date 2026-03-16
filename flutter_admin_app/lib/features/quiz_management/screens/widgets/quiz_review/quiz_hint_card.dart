@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 class QuizHintCard extends StatefulWidget {
   final String initialText;
@@ -51,15 +51,16 @@ class _QuizHintCardState extends State<QuizHintCard> {
           controller: _controller,
           style: const TextStyle(color: Colors.white, fontSize: 14),
           decoration: InputDecoration(
-            hintText: '문제를 풀 때 도움이 될 힌트를 입력하세요',
+            hintText: '문제를 풀 때 도움이 되는 힌트를 입력하세요',
             hintStyle: const TextStyle(color: Colors.white24, fontSize: 13),
             filled: true,
             fillColor: surfaceDark,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Colors.white10)),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: primaryColor.withValues(alpha: 0.5))),
+            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: primaryColor.withOpacity(0.5))),
           ),
         ),
       ],
     );
   }
 }
+

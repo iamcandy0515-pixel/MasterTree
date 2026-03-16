@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_admin_app/core/theme/neo_theme.dart';
 import 'package:flutter_admin_app/features/trees/models/tree_group.dart';
@@ -20,7 +20,7 @@ class TreeGroupMemberList extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              '비교 수목 리스트 (${vm.members.length})',
+              '鍮꾧탳 ?섎ぉ 由ъ뒪??(${vm.members.length})',
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -36,7 +36,7 @@ class TreeGroupMemberList extends StatelessWidget {
                   size: 16,
                 ),
                 label: const Text(
-                  '비교수목 추가',
+                  '鍮꾧탳?섎ぉ 異붽?',
                   style: TextStyle(
                     color: NeoColors.acidLime,
                     fontSize: 12,
@@ -59,7 +59,7 @@ class TreeGroupMemberList extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: Text(
-              '⚠️ 최소 2개 이상의 수목을 추가해야 저장할 수 있습니다.',
+              '?좑툘 理쒖냼 2媛??댁긽???섎ぉ??異붽??댁빞 ??ν븷 ???덉뒿?덈떎.',
               style: TextStyle(color: Colors.red[300], fontSize: 12),
             ),
           ),
@@ -88,7 +88,7 @@ class TreeGroupMemberList extends StatelessWidget {
   ) {
     return Container(
       key: ValueKey(member.treeId),
-      margin: const EdgeInsets.only(bottom: 4), // 좁은 간격으로 렌더링
+      margin: const EdgeInsets.only(bottom: 4), // 醫곸? 媛꾧꺽?쇰줈 ?뚮뜑留?
       decoration: const BoxDecoration(color: Colors.transparent),
       child: ListTile(
         visualDensity: VisualDensity.compact,
@@ -108,12 +108,12 @@ class TreeGroupMemberList extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                 decoration: BoxDecoration(
-                  color: Colors.red.withValues(alpha: 0.15),
+                  color: Colors.red.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+                  border: Border.all(color: Colors.red.withOpacity(0.3)),
                 ),
                 child: const Text(
-                  '비교전용',
+                  '鍮꾧탳?꾩슜',
                   style: TextStyle(
                     color: Colors.redAccent,
                     fontSize: 10,
@@ -125,7 +125,7 @@ class TreeGroupMemberList extends StatelessWidget {
           ],
         ),
         subtitle: Text(
-          member.treeId, // ID 또는 학명 노출
+          member.treeId, // ID ?먮뒗 ?숇챸 ?몄텧
           style: TextStyle(
             color: Colors.grey[500],
             fontSize: 12,
@@ -160,11 +160,11 @@ class TreeGroupMemberList extends StatelessWidget {
     BuildContext context,
     TreeGroupEditViewModel vm,
   ) async {
-    // 1건 이상 존재하는 경우 첫 번째 멤버 정보를 활용해 카테고리(침/활엽수) 정보 전달
-    // 이 작업은 나중에 추가될 모달에서 처리하도록 인자를 추후 수정합니다.
+    // 1嫄??댁긽 議댁옱?섎뒗 寃쎌슦 泥?踰덉㎏ 硫ㅻ쾭 ?뺣낫瑜??쒖슜??移댄뀒怨좊━(移??쒖뿽?? ?뺣낫 ?꾨떖
+    // ???묒뾽? ?섏쨷??異붽???紐⑤떖?먯꽌 泥섎━?섎룄濡??몄옄瑜?異뷀썑 ?섏젙?⑸땲??
     final selectedTrees = await showDialog<List<Tree>>(
       context: context,
-      barrierDismissible: false, // 닫기 버튼으로만 닫히게 함
+      barrierDismissible: false, // ?リ린 踰꾪듉?쇰줈留??ロ엳寃???
       builder: (ctx) => TreeSelectionModal(parentVm: vm),
     );
 
@@ -182,3 +182,4 @@ class TreeGroupMemberList extends StatelessWidget {
     }
   }
 }
+

@@ -19,7 +19,7 @@ class AddTreeBasicInfoSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF161B12),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,7 +104,7 @@ class _DescriptionInput extends StatelessWidget {
     return TextFormField(
       controller: vm.descriptionController,
       decoration: const InputDecoration(
-        hintText: '수목에 대한 상세 설명을 입력하세요.',
+        hintText: '수목에 대한 상세 설명을 입력하세요...',
         hintStyle: TextStyle(color: Colors.white24, fontSize: 13),
         border: InputBorder.none,
         labelText: '수목 설명',
@@ -124,7 +124,7 @@ class _DropdownCategory extends StatelessWidget {
   Widget build(BuildContext context) {
     return Flexible(
       child: DropdownButtonFormField<String>(
-        initialValue: vm.selectedCategory,
+        value: vm.selectedCategory,
         decoration: const InputDecoration(
           labelText: '구분 (필수)',
           border: InputBorder.none,
@@ -152,7 +152,7 @@ class _DropdownDifficulty extends StatelessWidget {
   Widget build(BuildContext context) {
     return Flexible(
       child: DropdownButtonFormField<int>(
-        initialValue: vm.difficulty,
+        value: vm.difficulty,
         decoration: const InputDecoration(
           labelText: '난이도 (1-5)',
           border: InputBorder.none,
@@ -170,3 +170,4 @@ class _DropdownDifficulty extends StatelessWidget {
     );
   }
 }
+

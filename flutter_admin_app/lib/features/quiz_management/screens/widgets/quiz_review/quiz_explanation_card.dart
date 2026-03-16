@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../../core/widgets/fullscreen_image_viewer.dart';
@@ -78,13 +78,13 @@ class _QuizExplanationCardState extends State<QuizExplanationCard> {
               children: [
                 if (hasImages)
                   IconButton(
-                    icon: Icon(widget.isExpanded ? Icons.keyboard_arrow_up : Icons.photo_library, color: primaryColor.withValues(alpha: 0.8), size: 20),
+                    icon: Icon(widget.isExpanded ? Icons.keyboard_arrow_up : Icons.photo_library, color: primaryColor.withOpacity(0.8), size: 20),
                     onPressed: widget.onToggleExpand,
                   ),
                 if (widget.isReviewing)
                   const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: primaryColor, strokeWidth: 2))
                 else
-                  _buildAIAssistantButton('AI 검수', Icons.auto_awesome, widget.onAiReview, aiColor),
+                  _buildAIAssistantButton('AI 검토', Icons.auto_awesome, widget.onAiReview, aiColor),
                 IconButton(
                   icon: const Icon(Icons.add_photo_alternate, color: primaryColor, size: 20),
                   onPressed: () async {
@@ -120,7 +120,7 @@ class _QuizExplanationCardState extends State<QuizExplanationCard> {
       borderRadius: BorderRadius.circular(20),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(color: aiColor.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(20), border: Border.all(color: aiColor.withValues(alpha: 0.5))),
+        decoration: BoxDecoration(color: aiColor.withOpacity(0.15), borderRadius: BorderRadius.circular(20), border: Border.all(color: aiColor.withOpacity(0.5))),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -171,3 +171,4 @@ class _QuizExplanationCardState extends State<QuizExplanationCard> {
     );
   }
 }
+

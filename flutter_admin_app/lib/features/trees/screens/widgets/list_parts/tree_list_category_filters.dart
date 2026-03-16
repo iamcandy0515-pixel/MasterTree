@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_admin_app/features/trees/viewmodels/tree_list_viewmodel.dart';
 import 'package:flutter_admin_app/core/theme/neo_theme.dart';
@@ -44,10 +44,10 @@ class _FilterChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? primary.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.05),
+          color: isSelected ? primary.withOpacity(0.15) : Colors.white.withOpacity(0.05),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? primary.withValues(alpha: 0.3) : Colors.transparent,
+            color: isSelected ? primary.withOpacity(0.3) : Colors.transparent,
           ),
         ),
         child: Row(
@@ -71,3 +71,4 @@ class _FilterChip extends StatelessWidget {
     );
   }
 }
+

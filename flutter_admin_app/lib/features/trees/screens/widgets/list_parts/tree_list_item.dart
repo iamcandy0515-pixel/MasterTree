@@ -84,11 +84,11 @@ class _ComparisonOnlyBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       decoration: BoxDecoration(
-        color: Colors.red.withValues(alpha: 0.1),
+        color: Colors.red.withOpacity(0.1),
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
+        border: Border.all(color: Colors.red.withOpacity(0.2)),
       ),
-      child: const Text('비교전용', style: TextStyle(color: Colors.redAccent, fontSize: 10, fontWeight: FontWeight.bold)),
+      child: const Text('비교 전용', style: TextStyle(color: Colors.redAccent, fontSize: 10, fontWeight: FontWeight.bold)),
     );
   }
 }
@@ -103,9 +103,9 @@ class _SmallTag extends StatelessWidget {
       margin: const EdgeInsets.only(right: 4),
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: color.withValues(alpha: 0.2), width: 0.5),
+        border: Border.all(color: color.withOpacity(0.2), width: 0.5),
       ),
       child: Text(label, style: TextStyle(color: color, fontSize: 9, fontWeight: FontWeight.bold)),
     );
@@ -120,7 +120,7 @@ class _PublishedBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
+        color: color.withOpacity(0.15),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text('게시됨', style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold)),
@@ -138,13 +138,13 @@ class _BadgeRow extends StatelessWidget {
         _CountBadge(
           icon: Icons.image_outlined,
           count: tree.images.length,
-          color: Colors.blueAccent.withValues(alpha: 0.7),
+          color: Colors.blueAccent.withOpacity(0.7),
         ),
         const SizedBox(width: 12),
         _CountBadge(
           icon: Icons.lightbulb_outline,
           count: tree.images.where((img) => img.hint != null && img.hint!.isNotEmpty).length,
-          color: Colors.orangeAccent.withValues(alpha: 0.7),
+          color: Colors.orangeAccent.withOpacity(0.7),
         ),
       ],
     );
@@ -186,7 +186,7 @@ class _DeleteButton extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('수목 삭제'),
-        content: Text('${tree.nameKr} 수목을(를) 정말 삭제하시겠습니까?'),
+        content: Text('${tree.nameKr} 수목을 정말 삭제하시겠습니까?'),
         backgroundColor: const Color(0xFF15281E),
         titleTextStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
         contentTextStyle: const TextStyle(color: Colors.white70),

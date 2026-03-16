@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_admin_app/core/theme/neo_theme.dart';
 import 'package:flutter_admin_app/features/trees/models/tree_group.dart';
@@ -48,8 +48,8 @@ class _TreeGroupListContent extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      '비교 수목 일람',
-                      style: GoogleFonts.notoSansKr(
+                      '비교 수목 관리',
+                      style: GoogleFonts.notoSans(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -78,21 +78,21 @@ class _TreeGroupListContent extends StatelessWidget {
                       color: const Color(0xFF1E2518),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
-                        SizedBox(width: 16),
-                        Icon(Icons.search, color: Colors.grey),
-                        SizedBox(width: 12),
+                        const SizedBox(width: 16),
+                        const Icon(Icons.search, color: Colors.grey),
+                        const SizedBox(width: 12),
                         Expanded(
                           child: TextField(
                             decoration: InputDecoration(
                               hintText: '비교하고 싶은 수종 검색',
-                              hintStyle: TextStyle(color: Colors.grey),
+                              hintStyle: const TextStyle(color: Colors.grey),
                               border: InputBorder.none,
                               enabledBorder: InputBorder.none,
                               focusedBorder: InputBorder.none,
                             ),
-                            style: TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.white),
                           ),
                         ),
                       ],
@@ -113,7 +113,7 @@ class _TreeGroupListContent extends StatelessWidget {
                             Flexible(
                               child: Text(
                                 '추천 비교 가이드',
-                                style: GoogleFonts.notoSansKr(
+                                style: GoogleFonts.notoSans(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey[500],
@@ -124,7 +124,7 @@ class _TreeGroupListContent extends StatelessWidget {
                             const SizedBox(width: 8),
                             Text(
                               '총 ${viewModel.totalCount}개',
-                              style: GoogleFonts.notoSansKr(
+                              style: GoogleFonts.notoSans(
                                 fontSize: 12,
                                 color: NeoColors.acidLime,
                                 fontWeight: FontWeight.w500,
@@ -155,7 +155,7 @@ class _TreeGroupListContent extends StatelessWidget {
                             const SizedBox(width: 8),
                             Text(
                               '${viewModel.currentPage} / ${viewModel.totalPages}',
-                              style: GoogleFonts.notoSansKr(
+                              style: GoogleFonts.notoSans(
                                 fontSize: 13,
                                 color: Colors.white70,
                                 fontWeight: FontWeight.w600,
@@ -211,14 +211,14 @@ class _TreeGroupListContent extends StatelessWidget {
                                 size: 20,
                               ),
                               const SizedBox(width: 4),
-                              Text(
-                                '그룹 추가',
-                                style: GoogleFonts.notoSansKr(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: NeoColors.acidLime,
+                                Text(
+                                  '그룹 추가',
+                                  style: GoogleFonts.notoSans(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: NeoColors.acidLime,
+                                  ),
                                 ),
-                              ),
                             ],
                           ),
                         ),
@@ -326,8 +326,7 @@ class _TreeGroupListContent extends StatelessWidget {
                           ),
                           child: CircleAvatar(
                             radius: 12,
-                            backgroundColor: NeoColors.acidLime.withValues(alpha: 
-                              0.2,
+                            backgroundColor: NeoColors.acidLime.withOpacity(0.2,
                             ),
                             child: const Icon(
                               Icons.more_horiz,
@@ -352,7 +351,7 @@ class _TreeGroupListContent extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: firstMember?.treeName ?? 'A',
-                            style: GoogleFonts.notoSansKr(
+                            style: GoogleFonts.notoSans(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -360,7 +359,7 @@ class _TreeGroupListContent extends StatelessWidget {
                           ),
                           TextSpan(
                             text: ' vs ',
-                            style: GoogleFonts.notoSansKr(
+                            style: GoogleFonts.notoSans(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                               color: Colors.grey[500],
@@ -369,7 +368,7 @@ class _TreeGroupListContent extends StatelessWidget {
                           ),
                           TextSpan(
                             text: secondMember?.treeName ?? 'B',
-                            style: GoogleFonts.notoSansKr(
+                            style: GoogleFonts.notoSans(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -377,7 +376,7 @@ class _TreeGroupListContent extends StatelessWidget {
                           ),
                           TextSpan(
                             text: ' (${group.members.length}건)',
-                            style: GoogleFonts.notoSansKr(
+                            style: GoogleFonts.notoSans(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: NeoColors.acidLime,
@@ -403,7 +402,7 @@ class _TreeGroupListContent extends StatelessWidget {
                         Expanded(
                           child: Text(
                             group.description,
-                            style: GoogleFonts.notoSansKr(
+                            style: GoogleFonts.notoSans(
                               fontSize: 12,
                               color: NeoColors.acidLime,
                               fontWeight: FontWeight.w500,
@@ -447,3 +446,4 @@ class _TreeGroupListContent extends StatelessWidget {
     );
   }
 }
+

@@ -38,7 +38,7 @@ class _StatInfo extends StatelessWidget {
         Text(
           '수목 현황',
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.4),
+            color: Colors.white.withOpacity(0.4),
             fontSize: 10,
             fontWeight: FontWeight.bold,
           ),
@@ -122,9 +122,9 @@ class _PageNumberDisplay extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: primary.withValues(alpha: 0.1),
+        color: primary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: primary.withValues(alpha: 0.2)),
+        border: Border.all(color: primary.withOpacity(0.2)),
       ),
       child: Text(
         '$current / $total',
@@ -137,3 +137,4 @@ class _PageNumberDisplay extends StatelessWidget {
     );
   }
 }
+

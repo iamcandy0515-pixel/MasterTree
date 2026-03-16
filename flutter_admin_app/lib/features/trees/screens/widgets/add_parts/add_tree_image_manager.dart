@@ -95,7 +95,7 @@ class _AddTreeImageManagerState extends State<AddTreeImageManager> {
       decoration: BoxDecoration(
         color: const Color(0xFF161B12),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,7 +129,7 @@ class _DropdownImageType extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
-      initialValue: vm.selectedImageType,
+      value: vm.selectedImageType,
       decoration: const InputDecoration(labelText: '이미지 구분', border: InputBorder.none, labelStyle: TextStyle(color: Colors.white54)),
       dropdownColor: const Color(0xFF333333),
       items: labels.entries.map((e) => DropdownMenuItem(value: e.key, child: Text(e.value, style: const TextStyle(color: Colors.white)))).toList(),

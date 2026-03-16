@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../viewmodels/quiz_extraction_step2_viewmodel.dart';
 
@@ -16,7 +16,7 @@ class _UnifiedExtractionHeaderState extends State<UnifiedExtractionHeader> {
   static const surfaceDark = Color(0xFF1A2E24);
   static const backgroundDark = Color(0xFF102219);
 
-  // 메시지 상태 관리
+  // 硫붿떆吏 ?곹깭 愿由?
   String _floatingMessage = '';
 
   @override
@@ -30,7 +30,7 @@ class _UnifiedExtractionHeaderState extends State<UnifiedExtractionHeader> {
     setState(() {
       _floatingMessage = message;
     });
-    // 2초 후 메시지 제거
+    // 2珥???硫붿떆吏 ?쒓굅
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
         setState(() {
@@ -52,7 +52,7 @@ class _UnifiedExtractionHeaderState extends State<UnifiedExtractionHeader> {
           ),
           textAlign: TextAlign.center,
         ),
-        backgroundColor: primaryColor.withValues(alpha: 0.9),
+        backgroundColor: primaryColor.withOpacity(0.9),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         margin: const EdgeInsets.only(bottom: 20, left: 50, right: 50),
@@ -68,14 +68,14 @@ class _UnifiedExtractionHeaderState extends State<UnifiedExtractionHeader> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: surfaceDark.withValues(alpha: 0.5),
+        color: surfaceDark.withOpacity(0.5),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.white10),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // 1행: 파일명 박스
+          // 1?? ?뚯씪紐?諛뺤뒪
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
@@ -93,7 +93,7 @@ class _UnifiedExtractionHeaderState extends State<UnifiedExtractionHeader> {
                     onChanged: (val) => vm.searchFiles(val),
                     style: const TextStyle(color: Colors.white, fontSize: 14),
                     decoration: const InputDecoration(
-                      hintText: '파일명 또는 드라이브 ID 입력',
+                      hintText: '?뚯씪紐??먮뒗 ?쒕씪?대툕 ID ?낅젰',
                       hintStyle: TextStyle(color: Colors.white38, fontSize: 13),
                       border: InputBorder.none,
                       isDense: true,
@@ -105,7 +105,7 @@ class _UnifiedExtractionHeaderState extends State<UnifiedExtractionHeader> {
             ),
           ),
           const SizedBox(height: 12),
-          // 2행: [과목 | 연도 | 회차] 가로 통합 필터
+          // 2?? [怨쇰ぉ | ?곕룄 | ?뚯감] 媛濡??듯빀 ?꾪꽣
           Container(
             padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
             decoration: BoxDecoration(
@@ -117,16 +117,16 @@ class _UnifiedExtractionHeaderState extends State<UnifiedExtractionHeader> {
               children: [
                 Expanded(
                   child: _buildDropDown(
-                    hint: '과목',
+                    hint: '怨쇰ぉ',
                     value: vm.selectedSubject,
-                    items: const ['산림기사', '산림산업기사'],
+                    items: const ['?곕┝湲곗궗', '?곕┝?곗뾽湲곗궗'],
                     onChanged: (val) => vm.updateFilters(subject: val),
                   ),
                 ),
                 _buildDivider(),
                 Expanded(
                   child: _buildDropDown(
-                    hint: '연도',
+                    hint: '?곕룄',
                     value: vm.selectedYear?.toString(),
                     items: List.generate(14, (i) => (2013 + i).toString()),
                     onChanged: (val) =>
@@ -136,7 +136,7 @@ class _UnifiedExtractionHeaderState extends State<UnifiedExtractionHeader> {
                 _buildDivider(),
                 Expanded(
                   child: _buildDropDown(
-                    hint: '회차',
+                    hint: '?뚯감',
                     value: vm.selectedRound?.toString(),
                     items: const ['1', '2', '3', '4'],
                     onChanged: (val) =>
@@ -147,14 +147,14 @@ class _UnifiedExtractionHeaderState extends State<UnifiedExtractionHeader> {
             ),
           ),
           const SizedBox(height: 12),
-          // 3행: 문제번호 및 버튼 영역
+          // 3?? 臾몄젣踰덊샇 諛?踰꾪듉 ?곸뿭
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
                   const Text(
-                    '문제번호:',
+                    '臾몄젣踰덊샇:',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 14,
@@ -173,19 +173,19 @@ class _UnifiedExtractionHeaderState extends State<UnifiedExtractionHeader> {
                     },
                   ),
                   const Spacer(),
-                  // PDF 추출 버튼
+                  // PDF 異붿텧 踰꾪듉
                   TextButton.icon(
                     onPressed: vm.isLoading
                         ? null
                         : () async {
                             final fileId = _fileSearchController.text.trim();
                             if (fileId.isEmpty) {
-                              _showFloatingMessage(context, '파일 정보를 입력해주세요.');
+                              _showFloatingMessage(context, '?뚯씪 ?뺣낫瑜??낅젰?댁＜?몄슂.');
                               return;
                             }
 
-                            // 추출 시작 메시지
-                            _showLocalMessage('추출 시작');
+                            // 異붿텧 ?쒖옉 硫붿떆吏
+                            _showLocalMessage('異붿텧 ?쒖옉');
 
                             await vm.startBatchExtractionAction(
                               fileId: fileId,
@@ -195,7 +195,7 @@ class _UnifiedExtractionHeaderState extends State<UnifiedExtractionHeader> {
                             );
 
                             if (mounted) {
-                              _showLocalMessage('추출 완료');
+                              _showLocalMessage('異붿텧 ?꾨즺');
                             }
                           },
                     icon: const Icon(
@@ -204,7 +204,7 @@ class _UnifiedExtractionHeaderState extends State<UnifiedExtractionHeader> {
                       color: primaryColor,
                     ),
                     label: const Text(
-                      'PDF 추출',
+                      'PDF 異붿텧',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 13,
@@ -225,7 +225,7 @@ class _UnifiedExtractionHeaderState extends State<UnifiedExtractionHeader> {
                   ),
                 ],
               ),
-              // 문제번호 아래 플로팅 메시지 영역
+              // 臾몄젣踰덊샇 ?꾨옒 ?뚮줈??硫붿떆吏 ?곸뿭
               AnimatedOpacity(
                 opacity: _floatingMessage.isNotEmpty ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 300),
@@ -326,3 +326,4 @@ class _UnifiedExtractionHeaderState extends State<UnifiedExtractionHeader> {
     );
   }
 }
+

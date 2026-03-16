@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../../core/design_system.dart';
 import '../../../core/widgets/fullscreen_image_viewer.dart';
 
@@ -21,7 +21,7 @@ class VisualComparisonSection extends StatelessWidget {
     return Container(
       height: 250,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Row(
         children: [
@@ -67,13 +67,13 @@ class VisualComparisonSection extends StatelessWidget {
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) return child;
                 return Container(
-                  color: Colors.white.withValues(alpha: 0.05),
+                  color: Colors.white.withOpacity(0.05),
                   child: const Center(child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary)),
                 );
               },
               errorBuilder: (context, error, stackTrace) {
                 return Container(
-                  color: Colors.white.withValues(alpha: 0.05),
+                  color: Colors.white.withOpacity(0.05),
                   child: const Center(child: Icon(Icons.broken_image_outlined, color: Colors.white24, size: 40)),
                 );
               },
@@ -86,9 +86,9 @@ class VisualComparisonSection extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
-                color: AppColors.backgroundDark.withValues(alpha: 0.6),
+                color: AppColors.backgroundDark.withOpacity(0.6),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                border: Border.all(color: Colors.white.withOpacity(0.2)),
               ),
               child: Text(
                 name,
@@ -107,3 +107,4 @@ class VisualComparisonSection extends StatelessWidget {
     );
   }
 }
+

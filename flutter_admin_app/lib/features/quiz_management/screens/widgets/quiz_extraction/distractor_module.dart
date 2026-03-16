@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../viewmodels/quiz_extraction_step2_viewmodel.dart';
 
@@ -29,7 +29,7 @@ class _DistractorModuleState extends State<DistractorModule> {
     if (questionText.isEmpty || explanationText.isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('문제와 해설을 먼저 입력해주세요.')));
+      ).showSnackBar(const SnackBar(content: Text('臾몄젣? ?댁꽕??癒쇱? ?낅젰?댁＜?몄슂.')));
       return;
     }
 
@@ -51,7 +51,7 @@ class _DistractorModuleState extends State<DistractorModule> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('보기 생성 중 오류가 발생했습니다: $e')));
+        ).showSnackBar(SnackBar(content: Text('蹂닿린 ?앹꽦 以??ㅻ쪟媛 諛쒖깮?덉뒿?덈떎: $e')));
       }
     } finally {
       if (mounted) {
@@ -71,7 +71,7 @@ class _DistractorModuleState extends State<DistractorModule> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text(
-              '정답 및 보기 설정',
+              '?뺣떟 諛?蹂닿린 ?ㅼ젙',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
@@ -87,7 +87,7 @@ class _DistractorModuleState extends State<DistractorModule> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.psychology_alt, size: 16),
-              label: const Text('AI 보기 생성'),
+              label: const Text('AI 蹂닿린 ?앹꽦'),
               style: TextButton.styleFrom(foregroundColor: primaryColor),
             ),
           ],
@@ -101,17 +101,17 @@ class _DistractorModuleState extends State<DistractorModule> {
               controller: widget.optionControllers[index],
               style: const TextStyle(color: Colors.white, fontSize: 13),
               decoration: InputDecoration(
-                labelText: isCorrect ? '정답' : '보기 ${index + 1}',
+                labelText: isCorrect ? '?뺣떟' : '蹂닿린 ${index + 1}',
                 labelStyle: TextStyle(
                   color: isCorrect ? primaryColor : Colors.white54,
                   fontWeight: isCorrect ? FontWeight.bold : FontWeight.normal,
                 ),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.05),
+                fillColor: Colors.white.withOpacity(0.05),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: isCorrect
-                      ? BorderSide(color: primaryColor.withValues(alpha: 0.3))
+                      ? BorderSide(color: primaryColor.withOpacity(0.3))
                       : BorderSide.none,
                 ),
                 focusedBorder: OutlineInputBorder(
@@ -126,3 +126,4 @@ class _DistractorModuleState extends State<DistractorModule> {
     );
   }
 }
+

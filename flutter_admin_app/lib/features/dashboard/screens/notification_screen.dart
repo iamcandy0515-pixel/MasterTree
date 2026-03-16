@@ -55,7 +55,7 @@ class _NotificationContent extends StatelessWidget {
           : ListView.separated(
               itemCount: viewModel.notifications.length,
               separatorBuilder: (context, index) =>
-                  Divider(color: Colors.white.withValues(alpha: 0.05), height: 1),
+                  Divider(color: Colors.white.withOpacity(0.05), height: 1),
               itemBuilder: (context, index) {
                 final notification = viewModel.notifications[index];
                 return _buildNotificationItem(
@@ -99,14 +99,14 @@ class _NotificationContent extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         color: notification.isRead
             ? Colors.transparent
-            : Colors.white.withValues(alpha: 0.03),
+            : Colors.white.withOpacity(0.03),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: iconColor.withValues(alpha: 0.1),
+                color: iconColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: iconColor, size: 22),
@@ -168,3 +168,4 @@ class _NotificationContent extends StatelessWidget {
     }
   }
 }
+

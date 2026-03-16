@@ -8,7 +8,7 @@ class DashboardHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
-      backgroundColor: AppColors.backgroundDark.withValues(alpha: 0.8),
+      backgroundColor: AppColors.backgroundDark.withOpacity(0.8),
       floating: true,
       pinned: false,
       elevation: 0,
@@ -45,3 +45,4 @@ class DashboardHeader extends StatelessWidget {
     );
   }
 }
+

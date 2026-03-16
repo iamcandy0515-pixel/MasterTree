@@ -23,7 +23,7 @@ class QuizImageDisplay extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
+              color: Colors.black.withOpacity(0.3),
               blurRadius: 15,
               offset: const Offset(0, 5),
             ),
@@ -65,12 +65,12 @@ class QuizImageDisplay extends StatelessWidget {
       placeholder: (context, url) => const Center(
         child: CircularProgressIndicator(color: AppColors.primary),
       ),
-      errorWidget: (context, url, error) => const Column(
+      errorWidget: (context, url, error) => Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.park, size: 60, color: Colors.grey),
-          SizedBox(height: 12),
-          Text(
+          const Icon(Icons.park, size: 60, color: Colors.grey),
+          const SizedBox(height: 12),
+          const Text(
             '이미지를 불러올 수 없습니다.',
             style: TextStyle(color: Colors.grey, fontSize: 12),
           ),
@@ -88,7 +88,7 @@ class QuizImageDisplay extends StatelessWidget {
         child: ClipRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-            child: Container(color: Colors.black.withValues(alpha: 0.35)),
+            child: Container(color: Colors.black.withOpacity(0.35)),
           ),
         ),
       ),
@@ -106,13 +106,13 @@ class QuizImageDisplay extends StatelessWidget {
             filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.35),
+                color: Colors.black.withOpacity(0.35),
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.transparent,
-                    Colors.black.withValues(alpha: 0.5),
+                    Colors.black.withOpacity(0.5),
                   ],
                 ),
               ),
@@ -130,7 +130,7 @@ class QuizImageDisplay extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(
-          color: Colors.black.withValues(alpha: 0.4),
+          color: Colors.black.withOpacity(0.4),
           shape: BoxShape.circle,
         ),
         child: const Icon(Icons.zoom_in, color: Colors.white, size: 20),
@@ -138,3 +138,4 @@ class QuizImageDisplay extends StatelessWidget {
     );
   }
 }
+

@@ -54,4 +54,11 @@ router.post(
     SettingsController.updateExamDriveUrl,
 );
 
+// POST /api/settings/validate-url
+// 외부 URL 생존 검사 (CORS 회피형 백엔드 프록시 검증)
+router.post(
+    "/validate-url",
+    SettingsController.validateUrl,
+);
+
 export default router;

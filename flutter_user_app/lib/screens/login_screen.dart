@@ -62,7 +62,7 @@ class _LoginContentState extends State<_LoginContent> {
       showRefresh = true;
     } else if (message == 'status_denied' || message == 'status_rejected') {
       title = '접근 제한';
-      content = '관리에 의해 접근이 거부되었거나\n사용 기간이 만료되었습니다.';
+      content = '관리자에 의해 접근이 거부되었거나\n사용 기간이 만료되었습니다.';
     } else if (message == 'status_expired') {
       title = '기간 만료';
       content = '사용 기간이 만료되었습니다.\n관리자에게 문의해 주세요.';
@@ -146,8 +146,8 @@ class _LoginContentState extends State<_LoginContent> {
                   const SizedBox(height: 24),
                   Form(
                     key: _formKey,
-                    child: const Column(
-                      children: [
+                    child: Column(
+                      children: const [
                         LoginInputFields(),
                       ],
                     ),
@@ -172,9 +172,10 @@ class _LoginContentState extends State<_LoginContent> {
         height: 300,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: AppColors.primary.withValues(alpha: 0.05),
+          color: AppColors.primary.withOpacity(0.05),
         ),
       ),
     );
   }
 }
+

@@ -51,7 +51,7 @@ class _TreeDetailSheetState extends State<TreeDetailSheet> {
             width: 48,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.1),
+              color: Colors.white.withOpacity(0.1),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -103,7 +103,7 @@ class _TreeDetailSheetState extends State<TreeDetailSheet> {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: Colors.white.withValues(alpha: 0.02),
+            color: Colors.white.withOpacity(0.02),
           ),
           clipBehavior: Clip.antiAlias,
           child: GestureDetector(
@@ -133,7 +133,7 @@ class _TreeDetailSheetState extends State<TreeDetailSheet> {
                             ? loadingProgress.cumulativeBytesLoaded /
                                 loadingProgress.expectedTotalBytes!
                             : null,
-                        color: AppColors.primary.withValues(alpha: 0.5),
+                        color: AppColors.primary.withOpacity(0.5),
                       ),
                     );
                   },
@@ -143,7 +143,7 @@ class _TreeDetailSheetState extends State<TreeDetailSheet> {
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [Colors.transparent, Colors.black.withValues(alpha: 0.7)],
+                      colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
                     ),
                   ),
                 ),
@@ -201,10 +201,10 @@ class _TreeDetailSheetState extends State<TreeDetailSheet> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.02),
+                color: isSelected ? AppColors.primary.withOpacity(0.1) : Colors.white.withOpacity(0.02),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: isSelected ? AppColors.primary : Colors.white.withValues(alpha: 0.05),
+                  color: isSelected ? AppColors.primary : Colors.white.withOpacity(0.05),
                 ),
               ),
               child: Center(
@@ -232,10 +232,10 @@ class _TreeDetailSheetState extends State<TreeDetailSheet> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.03),
+            color: Colors.white.withOpacity(0.03),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Text('$_selectedTag 힌트가 없습니다.', style: const TextStyle(color: AppColors.textMuted, fontSize: 13)),
+          child: Text('$_selectedTag 파트가 없습니다.', style: const TextStyle(color: AppColors.textMuted, fontSize: 13)),
         ),
       );
     }
@@ -244,9 +244,9 @@ class _TreeDetailSheetState extends State<TreeDetailSheet> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha: 0.1),
+          color: AppColors.primary.withOpacity(0.1),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+          border: Border.all(color: AppColors.primary.withOpacity(0.3)),
         ),
         child: Text(hint, style: const TextStyle(color: AppColors.textLight, fontSize: 13, height: 1.5)),
       ),
@@ -288,3 +288,4 @@ class _TreeDetailSheetState extends State<TreeDetailSheet> {
     );
   }
 }
+

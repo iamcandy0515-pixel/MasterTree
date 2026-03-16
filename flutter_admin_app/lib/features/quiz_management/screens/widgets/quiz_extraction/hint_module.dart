@@ -120,7 +120,7 @@ class _HintModuleState extends State<HintModule> {
                 labelText: '힌트 ${index + 1}',
                 labelStyle: const TextStyle(color: Colors.white54),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.05),
+                fillColor: Colors.white.withOpacity(0.05),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),

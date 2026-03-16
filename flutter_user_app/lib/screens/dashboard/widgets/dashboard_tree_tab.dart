@@ -16,8 +16,8 @@ class DashboardTreeTab extends StatelessWidget {
           const SizedBox(height: 12),
           _buildMenuCard(
             context,
-            '수목도감 일람',
-            '모든 수목 정보를 확인하세요',
+            '수목도감 열람',
+            '모든 수목 정보를 확인하세요.',
             Icons.menu_book,
             AppColors.primary,
             () => Navigator.push(
@@ -29,7 +29,7 @@ class DashboardTreeTab extends StatelessWidget {
           _buildMenuCard(
             context,
             '수목 / 퀴즈',
-            '오늘의 퀴즈로 실력을 테스트하세요',
+            '오늘의 퀴즈로 실력을 테스트하세요.',
             Icons.school,
             Colors.orangeAccent,
             () => Navigator.push(
@@ -40,8 +40,8 @@ class DashboardTreeTab extends StatelessWidget {
           const SizedBox(height: 10),
           _buildMenuCard(
             context,
-            '비교 수목 일람',
-            '헷갈리는 수목들을 비교 학습하세요',
+            '비교 수목 열람',
+            '헷갈리는 수목들을 비교 학습하세요.',
             Icons.compare_arrows,
             Colors.purpleAccent,
             () => Navigator.push(
@@ -60,9 +60,9 @@ class DashboardTreeTab extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.03),
+        color: Colors.white.withOpacity(0.03),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,12 +70,12 @@ class DashboardTreeTab extends StatelessWidget {
           Row(
             children: [
               Icon(Icons.tips_and_updates_outlined, 
-                color: AppColors.primary.withValues(alpha: 0.7), size: 16),
+                color: AppColors.primary.withOpacity(0.7), size: 16),
               const SizedBox(width: 8),
               Text(
                 '수목학습 가이드',
                 style: TextStyle(
-                  color: AppColors.textLight.withValues(alpha: 0.6),
+                  color: AppColors.textLight.withOpacity(0.6),
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
@@ -83,7 +83,7 @@ class DashboardTreeTab extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          _buildGuideItem('수목의 특징적인 동정 포인트를 위주로 암기해보세요.'),
+          _buildGuideItem('수목의 특징적인 동정 포인트를 위주로 익혀보세요.'),
           const SizedBox(height: 8),
           _buildGuideItem('유사한 수목들을 비교하며 차이점을 파악하는 것이 중요합니다.'),
         ],
@@ -95,13 +95,13 @@ class DashboardTreeTab extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(Icons.check_circle_outline, color: AppColors.primary.withValues(alpha: 0.5), size: 14),
+        Icon(Icons.check_circle_outline, color: AppColors.primary.withOpacity(0.5), size: 14),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
             text,
             style: TextStyle(
-              color: AppColors.textMuted.withValues(alpha: 0.8),
+              color: AppColors.textMuted.withOpacity(0.8),
               fontSize: 12,
               height: 1.4,
             ),
@@ -127,14 +127,14 @@ class DashboardTreeTab extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.surfaceDark,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+          border: Border.all(color: Colors.white.withOpacity(0.05)),
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
+                color: color.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color, size: 18),
@@ -174,3 +174,4 @@ class DashboardTreeTab extends StatelessWidget {
     );
   }
 }
+

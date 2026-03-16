@@ -34,23 +34,23 @@ class UserCardItem extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFF2A2A2A).withValues(alpha: 0.8),
-            const Color(0xFF1A1A1A).withValues(alpha: 0.9),
+            const Color(0xFF2A2A2A).withOpacity(0.8),
+            const Color(0xFF1A1A1A).withOpacity(0.9),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.05),
+          color: Colors.white.withOpacity(0.05),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.4),
+            color: Colors.black.withOpacity(0.4),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
           BoxShadow(
-            color: primaryColor.withValues(alpha: 0.03),
+            color: primaryColor.withOpacity(0.03),
             blurRadius: 20,
             spreadRadius: -5,
           ),
@@ -62,7 +62,7 @@ class UserCardItem extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundColor: primaryColor.withValues(alpha: 0.1),
+                backgroundColor: primaryColor.withOpacity(0.1),
                 child: Text(
                   initial,
                   style: TextStyle(
@@ -115,7 +115,7 @@ class UserCardItem extends StatelessWidget {
             children: [
               Flexible(
                 child: Text(
-                  '최근 활동: ${user['lastLogin']}',
+                   '최근 활동: ${user['lastLogin']}',
                   style: TextStyle(color: Colors.grey[600], fontSize: 10),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -137,7 +137,7 @@ class UserCardItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
@@ -151,3 +151,4 @@ class UserCardItem extends StatelessWidget {
     );
   }
 }
+

@@ -22,8 +22,8 @@ class UserDeleteDialog extends StatelessWidget {
         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
       content: Text(
-        '삭제시 사용자의 정보가 사라집니다, 그래도 삭제하시겠습니까',
-        style: TextStyle(color: Colors.white.withValues(alpha: 0.7), height: 1.5),
+        '삭제 시 사용자의 정보가 사라집니다. 그래도 삭제하시겠습니까?',
+        style: TextStyle(color: Colors.white.withOpacity(0.7), height: 1.5),
       ),
       actions: [
         TextButton(
@@ -54,3 +54,4 @@ class UserDeleteDialog extends StatelessWidget {
     );
   }
 }
+

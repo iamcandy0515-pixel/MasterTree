@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/design_system.dart';
 import '../../../viewmodels/quiz_viewmodel.dart';
@@ -35,12 +35,12 @@ class QuizFeedbackOverlays extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.backgroundDark.withValues(alpha: 0.95),
+            color: AppColors.backgroundDark.withOpacity(0.95),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.primary.withValues(alpha: 0.5), width: 2),
+            border: Border.all(color: AppColors.primary.withOpacity(0.5), width: 2),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.3),
+                color: AppColors.primary.withOpacity(0.3),
                 blurRadius: 20,
                 spreadRadius: 2,
               ),
@@ -54,7 +54,7 @@ class QuizFeedbackOverlays extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.2),
+                      color: AppColors.primary.withOpacity(0.2),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(Icons.lightbulb, color: AppColors.primary, size: 20),
@@ -62,7 +62,7 @@ class QuizFeedbackOverlays extends StatelessWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      '${vm.selectedHint} 힌트',
+                      '${vm.selectedHint} ?뚰듃',
                       style: const TextStyle(
                         color: AppColors.primary,
                         fontSize: 14,
@@ -105,12 +105,12 @@ class QuizFeedbackOverlays extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: AppColors.backgroundDark.withValues(alpha: 0.95),
+            color: AppColors.backgroundDark.withOpacity(0.95),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.primary.withValues(alpha: 0.6), width: 2),
+            border: Border.all(color: AppColors.primary.withOpacity(0.6), width: 2),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.4),
+                color: AppColors.primary.withOpacity(0.4),
                 blurRadius: 25,
                 spreadRadius: 3,
               ),
@@ -124,7 +124,7 @@ class QuizFeedbackOverlays extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.2),
+                      color: AppColors.primary.withOpacity(0.2),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(Icons.check_circle, color: AppColors.primary, size: 24),
@@ -132,7 +132,7 @@ class QuizFeedbackOverlays extends StatelessWidget {
                   const SizedBox(width: 12),
                   const Expanded(
                     child: Text(
-                      '정답입니다!',
+                      '?뺣떟?낅땲??',
                       style: TextStyle(
                         color: AppColors.primary,
                         fontSize: 16,
@@ -150,7 +150,7 @@ class QuizFeedbackOverlays extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.05),
+                  color: Colors.white.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -165,3 +165,4 @@ class QuizFeedbackOverlays extends StatelessWidget {
     );
   }
 }
+

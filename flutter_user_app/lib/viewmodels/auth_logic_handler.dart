@@ -43,7 +43,7 @@ mixin AuthLogicHandler {
             await SupabaseService.updateUserAuthId(user['id'], authResponse.user!.id);
           }
         } on AuthException catch (signUpErr) {
-          if (signUpErr.message.contains('already registered') || signUpErr.code == 'user_already_exists') {
+          if (signUpErr.message.toLowerCase().contains('already registered') || signUpErr.message.toLowerCase().contains('user_already_exists')) {
             throw '인증 서버에 계정이 이미 존재하지만 비번이 일치하지 않습니다. 관리자 콘솔에서 해당 이메일/번호의 계정을 삭제 후 다시 시도해주세요.';
           }
           rethrow;
@@ -59,7 +59,7 @@ mixin AuthLogicHandler {
       return await SupabaseService.signUpPermanent(phone, name: name, email: email);
     } on AuthException catch (e) {
       final errStr = e.toString().toLowerCase();
-      if (errStr.contains('already registered') || e.code == 'user_already_exists') {
+      if (errStr.contains('already registered') || errStr.contains('user_already_exists')) {
         try {
           return await SupabaseService.signInPermanent(phone);
         } on AuthException catch (signInErr) {

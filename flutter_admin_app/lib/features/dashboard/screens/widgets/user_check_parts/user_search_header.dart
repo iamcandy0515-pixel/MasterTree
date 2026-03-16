@@ -48,9 +48,9 @@ class UserSearchHeader extends StatelessWidget {
             decoration: InputDecoration(
               hintText: '사용자 이름 또는 이메일 검색',
               hintStyle: TextStyle(color: Colors.white24, fontSize: 13),
-              prefixIcon: Icon(Icons.search, color: primaryColor.withValues(alpha: 0.5), size: 20),
+              prefixIcon: Icon(Icons.search, color: primaryColor.withOpacity(0.5), size: 20),
               filled: true,
-              fillColor: surfaceColor.withValues(alpha: 0.5),
+              fillColor: surfaceColor.withOpacity(0.5),
               contentPadding: const EdgeInsets.symmetric(vertical: 0),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
@@ -58,11 +58,11 @@ class UserSearchHeader extends StatelessWidget {
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+                borderSide: BorderSide(color: Colors.white.withOpacity(0.05)),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(color: primaryColor.withValues(alpha: 0.4), width: 1.5),
+                borderSide: BorderSide(color: primaryColor.withOpacity(0.4), width: 1.5),
               ),
             ),
           ),
@@ -71,3 +71,4 @@ class UserSearchHeader extends StatelessWidget {
     );
   }
 }
+

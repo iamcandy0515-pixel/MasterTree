@@ -60,7 +60,7 @@ class SourcingImageSlot extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   border: isMissing
                       ? Border.all(
-                          color: Colors.red.withValues(alpha: 0.8),
+                          color: Colors.red.withOpacity(0.8),
                           width: 2,
                         )
                       : Border.all(color: Colors.white10),
@@ -135,14 +135,14 @@ class SourcingImageSlot extends StatelessWidget {
   Widget _buildSourceBadge(String key, dynamic displayItem) {
     final source = vm.imageSources[key] ?? 'db';
     String text = 'DB 정보';
-    Color color = Colors.blue.withValues(alpha: 0.8);
+    Color color = Colors.blue.withOpacity(0.8);
 
     if (source == 'google') {
       text = '구글 정보';
-      color = NeoColors.acidLime.withValues(alpha: 0.9);
+      color = NeoColors.acidLime.withOpacity(0.9);
     } else if (source == 'manual') {
       text = '수정 중';
-      color = Colors.orange.withValues(alpha: 0.8);
+      color = Colors.orange.withOpacity(0.8);
     }
 
     return Container(
@@ -154,7 +154,7 @@ class SourcingImageSlot extends StatelessWidget {
       child: Text(
         text,
         style: TextStyle(
-          color: color == NeoColors.acidLime.withValues(alpha: 0.9)
+          color: color == NeoColors.acidLime.withOpacity(0.9)
               ? Colors.black
               : Colors.white,
           fontSize: 10,
@@ -241,3 +241,4 @@ class SourcingImageSlot extends StatelessWidget {
     }
   }
 }
+

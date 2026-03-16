@@ -6,7 +6,7 @@ class WebUtilsPlatform {
     debugPrint('Download not supported on this platform: $filename');
   }
 
-  static void registerViewFactory(String viewId, dynamic Function(int) factory) {
+  static void registerViewFactory(String viewId, Object Function(int) factory) {
     // Mobile: No-op
   }
 

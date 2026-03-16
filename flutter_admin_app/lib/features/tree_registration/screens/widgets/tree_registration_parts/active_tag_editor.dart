@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'tag_upload_actions.dart';
 import 'tag_image_display.dart';
 import 'tag_hint_input.dart';
@@ -36,7 +36,7 @@ class ActiveTagEditor extends StatelessWidget {
         border: Border.all(color: Colors.white10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
+            color: Colors.black.withOpacity(0.3),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -70,3 +70,4 @@ class ActiveTagEditor extends StatelessWidget {
     );
   }
 }
+

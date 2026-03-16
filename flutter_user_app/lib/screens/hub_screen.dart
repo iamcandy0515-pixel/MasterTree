@@ -57,7 +57,7 @@ class _HubScreenState extends State<HubScreen> {
           decoration: BoxDecoration(
             border: Border.symmetric(
               horizontal: BorderSide.none,
-              vertical: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+              vertical: BorderSide(color: Colors.white.withOpacity(0.05)),
             ),
           ),
           child: Stack(
@@ -101,7 +101,7 @@ class _HubScreenState extends State<HubScreen> {
                           _buildMenuCard(
                             icon: Icons.history_edu,
                             title: '기출 / 학습',
-                            subtitle: '년도별/회차별 기출문제 풀이',
+                            subtitle: '연도별 회차별 기출문제 대비',
                             context: context,
                             onTap: () => Navigator.push(
                               context,
@@ -114,7 +114,7 @@ class _HubScreenState extends State<HubScreen> {
                           const SizedBox(height: 8),
                           _buildMenuCard(
                             icon: Icons.compare_arrows,
-                            title: '유사(혼돈)수목',
+                            title: '유사(혼동)수목',
                             subtitle: '헷갈리기 쉬운 유사 수목 정밀 분석',
                             context: context,
                             onTap: () => Navigator.push(
@@ -173,7 +173,7 @@ class _HubScreenState extends State<HubScreen> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.05),
+                  color: Colors.white.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
@@ -187,7 +187,7 @@ class _HubScreenState extends State<HubScreen> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.05),
+                  color: Colors.white.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: IconButton(
@@ -230,7 +230,7 @@ class _HubScreenState extends State<HubScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.03),
+              color: Colors.white.withOpacity(0.03),
               borderRadius: BorderRadius.circular(AppRadius.base),
               // Border removed as requested
             ),
@@ -240,7 +240,7 @@ class _HubScreenState extends State<HubScreen> {
                   width: 52,
                   height: 52,
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.2),
+                    color: AppColors.primary.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(icon, color: AppColors.primary, size: 28),
@@ -287,9 +287,9 @@ class _HubScreenState extends State<HubScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.04),
+        color: Colors.white.withOpacity(0.04),
         borderRadius: BorderRadius.circular(AppRadius.base),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -297,14 +297,14 @@ class _HubScreenState extends State<HubScreen> {
           Text(
             '학습 가이드',
             style: TextStyle(
-              color: AppColors.textLight.withValues(alpha: 0.4),
+              color: AppColors.textLight.withOpacity(0.4),
               fontSize: 12,
               fontWeight: FontWeight.bold,
               letterSpacing: 2.0,
             ),
           ),
           const SizedBox(height: 8),
-          _buildGuideItem('매일 새로운 퀴즈를 풀어 학습 성취도를 높이세요.'),
+          _buildGuideItem('매일 새로운 퀴즈를 통해 학습 성취도를 높이세요.'),
           const SizedBox(height: 8),
           _buildGuideItem('유사종 비교 데이터를 활용해 식별 능력을 향상시킬 수 있습니다.'),
         ],
@@ -342,9 +342,9 @@ class _HubScreenState extends State<HubScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.03),
+            color: Colors.white.withOpacity(0.03),
             border: Border(
-              top: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+              top: BorderSide(color: Colors.white.withOpacity(0.1)),
             ),
           ),
           child: Row(
@@ -412,3 +412,4 @@ class _BottomNavItem extends StatelessWidget {
     );
   }
 }
+

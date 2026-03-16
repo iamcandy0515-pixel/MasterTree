@@ -112,7 +112,7 @@ class _QuizExtractionStep2ScreenContentState
     try {
       await vm.validateFile(fallbackFileId);
       if (mounted) {
-        SnackBarUtil.showFloating(context, '파일 검증 성공! PDF 추출을 진행해주세요.');
+        SnackBarUtil.showFloating(context, '파일 검증 성공! PDF 추출을 진행해 주세요.');
       }
     } catch (e) {
       if (mounted) {
@@ -120,8 +120,8 @@ class _QuizExtractionStep2ScreenContentState
           context: context,
           builder: (context) => AlertDialog(
             backgroundColor: const Color(0xFF1E1E1E),
-            title: const Row(
-              children: [
+            title: Row(
+              children: const [
                 Icon(Icons.error_outline, color: Colors.orangeAccent),
                 SizedBox(width: 8),
                 Text(
@@ -183,11 +183,8 @@ class _QuizExtractionStep2ScreenContentState
           final correctText = options.length > correctIdx
               ? options[correctIdx]['content'] ?? ''
               : '';
-          final incorrectText =
-              options
-                  .where((o) => options.indexOf(o) != correctIdx)
-                  .firstOrNull?['content'] ??
-              '';
+          final filtered = options.where((o) => options.indexOf(o) != correctIdx).toList();
+          final incorrectText = filtered.isNotEmpty ? filtered.first['content'] ?? '' : '';
 
           _optionControllers[0].text = correctText;
           _optionControllers[1].text = incorrectText;
@@ -261,7 +258,7 @@ class _QuizExtractionStep2ScreenContentState
                             ),
                             const SizedBox(width: 8),
                             const Text(
-                              '검색필터:',
+                              '검색필터',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -381,7 +378,7 @@ class _QuizExtractionStep2ScreenContentState
                   right: 20,
                 ),
                 decoration: BoxDecoration(
-                  color: backgroundDark.withValues(alpha: 0.8),
+                  color: backgroundDark.withOpacity(0.8),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -424,3 +421,4 @@ class _QuizExtractionStep2ScreenContentState
     );
   }
 }
+

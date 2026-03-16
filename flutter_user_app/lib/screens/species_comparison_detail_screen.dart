@@ -95,7 +95,7 @@ class _SpeciesComparisonDetailScreenState extends State<SpeciesComparisonDetailS
         const SizedBox(height: 8),
         ComparisonDataCard(
           icon: Icons.park,
-          title: '잎의 특징',
+          title: '잎의 핵심 특징',
           content1: _controller.tree1Data.leafHint,
           content2: _controller.tree2Data.leafHint,
           tree1Name: widget.tree1,
@@ -103,7 +103,7 @@ class _SpeciesComparisonDetailScreenState extends State<SpeciesComparisonDetailS
         ),
         ComparisonDataCard(
           icon: Icons.texture,
-          title: '수피',
+          title: '수피(나무껍질)',
           content1: _controller.tree1Data.barkHint,
           content2: _controller.tree2Data.barkHint,
           tree1Name: widget.tree1,
@@ -111,7 +111,7 @@ class _SpeciesComparisonDetailScreenState extends State<SpeciesComparisonDetailS
         ),
         ComparisonDataCard(
           icon: Icons.eco,
-          title: '꽃·열매 및 겨울눈',
+          title: '꽃/열매 및 겨울눈',
           content1: _controller.tree1Data.etcHint,
           content2: _controller.tree2Data.etcHint,
           tree1Name: widget.tree1,
@@ -128,7 +128,7 @@ class _SpeciesComparisonDetailScreenState extends State<SpeciesComparisonDetailS
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary : Colors.white.withValues(alpha: 0.05),
+          color: isSelected ? AppColors.primary : Colors.white.withOpacity(0.05),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: isSelected ? AppColors.primary : Colors.white24),
         ),
@@ -143,7 +143,7 @@ class _SpeciesComparisonDetailScreenState extends State<SpeciesComparisonDetailS
   Widget _buildKeyPointsButton() {
     return TextButton(
       onPressed: _showKeyPointsPopup,
-      child: const Text('식별 포인트', style: TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.bold, decoration: TextDecoration.underline)),
+      child: const Text('주요 식별 포인트', style: TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.bold, decoration: TextDecoration.underline)),
     );
   }
 
@@ -152,7 +152,7 @@ class _SpeciesComparisonDetailScreenState extends State<SpeciesComparisonDetailS
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.surfaceDark,
-        title: const Text('핵심 식별 포인트', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: const Text('핵심 요점 식별법', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         content: SingleChildScrollView(
           child: Text(_controller.groupData?['description'] ?? '정보가 없습니다.', style: const TextStyle(color: Colors.white, height: 1.5)),
         ),
@@ -167,3 +167,4 @@ class _SpeciesComparisonDetailScreenState extends State<SpeciesComparisonDetailS
     return VisualComparisonSection(tree1Name: widget.tree1, tree2Name: widget.tree2, url1: url1, url2: url2);
   }
 }
+

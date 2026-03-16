@@ -50,9 +50,9 @@ class TagUploadActions extends StatelessWidget {
                 style: BorderStyle.solid,
               ),
             ),
-            child: const Column(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: const [
                 Icon(
                   Icons.add_a_photo_outlined,
                   color: Colors.white38,

@@ -32,15 +32,17 @@
 - **3-1. [Clean Code 준수]** `@[skills/clean-code]` 규칙을 따르며, 과도한 엔지니어링을 피하고 직관적인 코드를 작성한다.
 - **3-2. [린트 및 보안 체크]** 모든 작업 종료 전 `flutter analyze`와 보안 스캔 스크립트를 실행하여 'Critical' 블로커를 해결한다.
 
-## 4. 빌드 및 인프라 설정 (Build & Infrastructure)
+## 4. 빌드 및 인프라 설정 (Build & Infrastructure - Flutter 3.7.12)
 
-- **4-1. [Flutter Admin App 빌드 버전 고정]** 안드로이드 빌드 안정성과 플랫폼 간(Web/App) 호환성을 위해 아래 버전을 **절대 변경하지 않는다.**
-    - **Gradle**: `8.5` (gradle-wrapper.properties)
-    - **Android Gradle Plugin (AGP)**: `8.2.1` (settings.gradle.kts)
-    - **Kotlin**: `1.9.22` (settings.gradle.kts)
-- **4-2. [의존성 충돌 해결 (Resolution Strategy)]** 특정 라이브러리가 상위 AGP 버전을 요구하여 빌드가 실패할 경우, 무리한 AGP 업그레이드 대신 `app/build.gradle.kts`의 `configurations.all { ... }` 블록을 통해 안정적인 하위 호환 버전을 강제(force)하여 빌드 정합성을 유지한다.
-- **4-3. [웹 관련 코드 격리 (Web Independence)]** `dart:html` 또는 `dart:ui_web`을 직접 사용하지 않는다. 반드시 `WebUtils` 추상화 레이어를 사용하여 모바일 빌드 시 발생하는 컴파일 에러를 원천 차단한다.
-- **4-4. [AndroidX 의존성 강제 지정 (Resolution Strategy)]** 최신 AndroidX 라이브러리들이 높은 AGP 버전을 요구하는 문제를 해결하기 위해, `app/build.gradle.kts`에 `resolutionStrategy`를 추가하여 안정적인 버전(예: `browser:1.8.0`, `activity:1.8.0`, `core:1.13.1` 등)을 사용하도록 강제한다.
+- **4-1. [안드로이드 빌드 환경 고정 (Flutter 3.7.12 대응)]** 빌드 안정성과 구버전 플러그인 호환성을 위해 아래 버전을 고수하며 **절대 임의 변경하지 않는다.**
+    - **Flutter**: `3.7.12` / **Dart**: `2.19.6`
+    - **Java**: `11` (LTS)
+    - **Gradle**: `7.5` (gradle-wrapper.properties)
+    - **Android Gradle Plugin (AGP)**: `7.2.0` (build.gradle)
+    - **Kotlin**: `1.7.10` (build.gradle)
+- **4-2. [버전 상향 금지 및 에러 메시지]** 위 버전을 초과하여 업데이트를 시도할 경우, 빌드 시나 에디터 상에서 명확한 에러 메시지를 발생시켜 작업을 중단시켜야 한다.
+- **4-3. [의존성 충돌 해결 (Resolution Strategy)]** 특정 라이브러리가 상위 AGP 버전을 요구하여 빌드가 실패할 경우, 무리한 AGP 업그레이드 대신 `app/build.gradle`의 `configurations.all { ... }` 블록을 통해 안정적인 하위 호환 버전을 강제(force)하여 빌드 정합성을 유지한다. (예: `androidx.core:core:1.10.1`, `androidx.activity:activity:1.7.2` 등)
+- **4-4. [웹 관련 코드 격리 (Web Independence)]** `dart:html` 또는 `dart:ui_web`을 직접 사용하지 않는다. 반드시 `WebUtils` 추상화 레이어를 사용하여 모바일 빌드 시 발생하는 컴파일 에러를 원천 차단한다.
 
 ---
 

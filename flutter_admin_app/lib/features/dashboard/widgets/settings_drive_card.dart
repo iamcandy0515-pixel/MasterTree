@@ -54,7 +54,7 @@ class _SettingsDriveCardState extends State<SettingsDriveCard> {
         border: Border.all(color: Colors.white10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
+            color: Colors.black.withOpacity(0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -113,8 +113,8 @@ class _SettingsDriveCardState extends State<SettingsDriveCard> {
             if (controller.text.isNotEmpty)
               GestureDetector(
                 onTap: () => _openFolder(controller.text),
-                child: const Row(
-                  children: [
+                child: Row(
+                  children: const [
                     Text('폴더 열기', style: TextStyle(color: Color(0xFFCCFF00), fontSize: 12)),
                     SizedBox(width: 4),
                     Icon(Icons.open_in_new, size: 12, color: Color(0xFFCCFF00)),
@@ -202,3 +202,4 @@ class _SettingsDriveCardState extends State<SettingsDriveCard> {
     );
   }
 }
+

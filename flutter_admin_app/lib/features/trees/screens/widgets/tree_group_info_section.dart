@@ -62,7 +62,7 @@ class TreeGroupInfoSection extends StatelessWidget {
         TextField(
           controller: titleController,
           onChanged: vm.setTitle,
-          style: GoogleFonts.notoSansKr(color: Colors.white, fontSize: 16),
+          style: GoogleFonts.notoSans(color: Colors.white, fontSize: 16),
           decoration: InputDecoration(
             labelText: '그룹 제목',
             hintText: '예: 봄꽃이 비슷한 나무',
@@ -79,7 +79,7 @@ class TreeGroupInfoSection extends StatelessWidget {
         TextField(
           controller: descController,
           onChanged: vm.setDescription,
-          style: GoogleFonts.notoSansKr(color: Colors.white, fontSize: 14),
+          style: GoogleFonts.notoSans(color: Colors.white, fontSize: 14),
           maxLines: 3,
           decoration: InputDecoration(
             labelText: '비교 포인트 (팁)',

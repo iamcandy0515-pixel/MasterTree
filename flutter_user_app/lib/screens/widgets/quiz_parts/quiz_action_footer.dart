@@ -11,7 +11,7 @@ class QuizActionFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = context.watch<QuizViewModel>();
     
-    // 선택된 답변이 없으면 표시하지 않음 (공간은 차지하지 않도록 Row 내부에서 처리됨)
+    // ?좏깮???듬????놁쑝硫??쒖떆?섏? ?딆쓬 (怨듦컙? 李⑥??섏? ?딅룄濡?Row ?대??먯꽌 泥섎━??
     if (vm.selectedAnswer == null) return const SizedBox.shrink();
 
     return Row(
@@ -25,7 +25,7 @@ class QuizActionFooter extends StatelessWidget {
             style: TextButton.styleFrom(
               foregroundColor: Colors.redAccent,
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              backgroundColor: Colors.redAccent.withValues(alpha: 0.05),
+              backgroundColor: Colors.redAccent.withOpacity(0.05),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -52,7 +52,7 @@ class QuizActionFooter extends StatelessWidget {
               }
             },
             style: TextButton.styleFrom(
-              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+              backgroundColor: AppColors.primary.withOpacity(0.1),
               foregroundColor: AppColors.primary,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               shape: RoundedRectangleBorder(
@@ -76,3 +76,4 @@ class QuizActionFooter extends StatelessWidget {
     );
   }
 }
+

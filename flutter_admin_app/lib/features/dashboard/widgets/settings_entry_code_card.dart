@@ -37,7 +37,7 @@ class _SettingsEntryCodeCardState extends State<SettingsEntryCodeCard> {
         border: Border.all(color: Colors.white10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
+            color: Colors.black.withOpacity(0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -116,7 +116,7 @@ class _SettingsEntryCodeCardState extends State<SettingsEntryCodeCard> {
           ),
           const SizedBox(height: 8),
           const Text(
-            '* 사용자 앱에서 로그인 시 사용되는 4~6자리 코드입니다.',
+            '* 사용자 앱에서 로그인 시 사용하는 4~6자리 코드입니다.',
             style: TextStyle(color: Colors.white30, fontSize: 12),
           ),
         ],
@@ -124,3 +124,4 @@ class _SettingsEntryCodeCardState extends State<SettingsEntryCodeCard> {
     );
   }
 }
+

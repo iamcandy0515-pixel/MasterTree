@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_admin_app/features/trees/viewmodels/add_tree_viewmodel.dart';
 import 'package:flutter_admin_app/core/theme/neo_theme.dart';
@@ -15,7 +15,7 @@ class AddTreeQuizConfig extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF161B12),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,7 +24,7 @@ class AddTreeQuizConfig extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                '퀴즈 오답 설정',
+                '?댁쫰 ?ㅻ떟 ?ㅼ젙',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -72,7 +72,7 @@ class _AutoQuizToggle extends StatelessWidget {
             ),
             const SizedBox(width: 4),
             Text(
-              vm.isAutoQuizEnabled ? 'AI 자동' : '수동',
+              vm.isAutoQuizEnabled ? 'AI ?먮룞' : '?섎룞',
               style: TextStyle(
                 color: vm.isAutoQuizEnabled ? Colors.black : Colors.white70,
                 fontSize: 10,
@@ -104,7 +104,7 @@ class _DistractorField extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -118,7 +118,7 @@ class _DistractorField extends StatelessWidget {
             child: TextFormField(
               controller: controller,
               decoration: const InputDecoration(
-                hintText: '오답 입력...',
+                hintText: '?ㅻ떟 ?낅젰...',
                 hintStyle: TextStyle(color: Colors.white24),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(vertical: 10),
@@ -130,7 +130,7 @@ class _DistractorField extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.remove_circle_outline, size: 18),
               onPressed: () => vm.removeDistractor(index),
-              color: Colors.redAccent.withValues(alpha: 0.6),
+              color: Colors.redAccent.withOpacity(0.6),
             ),
         ],
       ),
@@ -149,7 +149,7 @@ class _AddDistractorButton extends StatelessWidget {
       child: OutlinedButton.icon(
         onPressed: vm.addDistractor,
         icon: const Icon(Icons.add_circle_outline, size: 18),
-        label: const Text('오답 추가'),
+        label: const Text('?ㅻ떟 異붽?'),
         style: OutlinedButton.styleFrom(
           foregroundColor: NeoColors.acidLime,
           side: const BorderSide(color: NeoColors.acidLime),
@@ -158,3 +158,4 @@ class _AddDistractorButton extends StatelessWidget {
     );
   }
 }
+

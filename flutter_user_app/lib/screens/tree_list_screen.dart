@@ -72,7 +72,7 @@ class _TreeListScreenState extends State<TreeListScreen> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(Icons.forest_outlined, size: 64, color: AppColors.textMuted.withValues(alpha: 0.3)),
+        Icon(Icons.forest_outlined, size: 64, color: AppColors.textMuted.withOpacity(0.3)),
         const SizedBox(height: 16),
         const Text('등록된 수목이 없습니다.', style: TextStyle(color: AppColors.textMuted, fontSize: 16)),
       ],
@@ -87,7 +87,7 @@ class _TreeListScreenState extends State<TreeListScreen> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: pagedTrees.length,
-      separatorBuilder: (context, index) => Divider(color: Colors.white.withValues(alpha: 0.05), height: 1),
+      separatorBuilder: (context, index) => Divider(color: Colors.white.withOpacity(0.05), height: 1),
       itemBuilder: (context, index) {
         final tree = pagedTrees[index];
         return InkWell(
@@ -126,7 +126,7 @@ class _TreeListScreenState extends State<TreeListScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.1),
+        color: AppColors.primary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
@@ -145,3 +145,4 @@ class _TreeListScreenState extends State<TreeListScreen> {
     );
   }
 }
+

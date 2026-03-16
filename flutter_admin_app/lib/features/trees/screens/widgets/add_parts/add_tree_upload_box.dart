@@ -27,8 +27,11 @@ class AddTreeUploadBox extends StatelessWidget {
         focusNode: FocusNode(),
         onKeyEvent: (event) {
           if (event is KeyDownEvent) {
-            final isCtrlPressed = HardwareKeyboard.instance.isControlPressed;
-            final isCmdPressed = HardwareKeyboard.instance.isMetaPressed;
+            final keys = HardwareKeyboard.instance.logicalKeysPressed;
+            final isCtrlPressed = keys.contains(LogicalKeyboardKey.controlLeft) || 
+                                  keys.contains(LogicalKeyboardKey.controlRight);
+            final isCmdPressed = keys.contains(LogicalKeyboardKey.metaLeft) || 
+                                 keys.contains(LogicalKeyboardKey.metaRight);
             final isVPressed = event.logicalKey == LogicalKeyboardKey.keyV;
             if ((isCtrlPressed || isCmdPressed) && isVPressed) {
               onPaste();
@@ -52,8 +55,8 @@ class AddTreeUploadBox extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(12),
                   color: isDragging || focusNode.hasFocus
-                      ? NeoColors.acidLime.withValues(alpha: 0.05)
-                      : Colors.white.withValues(alpha: 0.02),
+                      ? NeoColors.acidLime.withOpacity(0.05)
+                      : Colors.white.withOpacity(0.02),
                 ),
                 child: isUploading
                     ? const Center(child: CircularProgressIndicator(color: NeoColors.acidLime))
@@ -81,3 +84,4 @@ class AddTreeUploadBox extends StatelessWidget {
     );
   }
 }
+

@@ -57,7 +57,7 @@ class _QuizDashboardScreenState extends State<QuizDashboardScreen> {
             _buildModeButton(
               context,
               '랜덤 기출문제 풀기',
-              '무작위로 10문제를 뽑아 스피드하게 풉니다.',
+              '무작위로 10문제를 뽑아 스피디하게 풉니다.',
               Icons.shuffle,
               () => Navigator.push(
                 context,
@@ -87,7 +87,7 @@ class _QuizDashboardScreenState extends State<QuizDashboardScreen> {
               Icons.menu_book,
               () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('오답 노트 화면으로 이동합니다...')),
+                  const SnackBar(content: Text('오답 노트 화면으로 이동합니다..')),
                 );
               },
             ),
@@ -103,7 +103,7 @@ class _QuizDashboardScreenState extends State<QuizDashboardScreen> {
       decoration: BoxDecoration(
         color: AppColors.surfaceDark,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+        border: Border.all(color: AppColors.primary.withOpacity(0.3)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -160,7 +160,7 @@ class _QuizDashboardScreenState extends State<QuizDashboardScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '최근 7회 성적 추이',
+            '최근 7일 성적 추이',
             style: TextStyle(
               color: AppColors.textLight,
               fontSize: 14,
@@ -188,7 +188,7 @@ class _QuizDashboardScreenState extends State<QuizDashboardScreen> {
                     dotData: FlDotData(show: true),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: AppColors.primary.withValues(alpha: 0.1),
+                      color: AppColors.primary.withOpacity(0.1),
                     ),
                   ),
                 ],
@@ -217,7 +217,7 @@ class _QuizDashboardScreenState extends State<QuizDashboardScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.surfaceDark.withValues(alpha: 0.5),
+          color: AppColors.surfaceDark.withOpacity(0.5),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Colors.white12),
         ),
@@ -226,7 +226,7 @@ class _QuizDashboardScreenState extends State<QuizDashboardScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.2),
+                color: AppColors.primary.withOpacity(0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: AppColors.primary),
@@ -263,3 +263,4 @@ class _QuizDashboardScreenState extends State<QuizDashboardScreen> {
     );
   }
 }
+

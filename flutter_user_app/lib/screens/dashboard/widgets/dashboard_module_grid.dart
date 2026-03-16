@@ -31,7 +31,7 @@ class DashboardModuleGrid extends StatelessWidget {
             children: [
               _buildMenuCard(
                 context,
-                '수목도감 일람',
+                '수목도감 알람',
                 '모든 수목 정보를 확인하세요',
                 Icons.menu_book,
                 AppColors.primary,
@@ -67,7 +67,7 @@ class DashboardModuleGrid extends StatelessWidget {
               const SizedBox(height: 8),
               _buildMenuCard(
                 context,
-                '비교 수목 일람',
+                '비교 수목 알람',
                 '헷갈리는 수목들을 비교 학습하세요',
                 Icons.compare_arrows,
                 Colors.purpleAccent,
@@ -101,14 +101,14 @@ class DashboardModuleGrid extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.surfaceDark,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+          border: Border.all(color: Colors.white.withOpacity(0.05)),
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
+                color: color.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color, size: 20),
@@ -158,9 +158,9 @@ class DashboardModuleGrid extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.04),
+          color: Colors.white.withOpacity(0.04),
           borderRadius: BorderRadius.circular(AppRadius.base),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+          border: Border.all(color: Colors.white.withOpacity(0.05)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -168,16 +168,16 @@ class DashboardModuleGrid extends StatelessWidget {
             Text(
               '학습 가이드',
               style: TextStyle(
-                color: AppColors.textLight.withValues(alpha: 0.4),
+                color: AppColors.textLight.withOpacity(0.4),
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 2.0,
               ),
             ),
             const SizedBox(height: 8),
-            _buildGuideItem('매일 새로운 퀴즈를 풀어 학습 성취도를 높이세요.'),
+            _buildGuideItem('매일 새로운 퀴즈를 풀면 학습 성취도가 높여집니다.'),
             const SizedBox(height: 8),
-            _buildGuideItem('유사종 비교 데이터를 활용해 식별 능력을 향상시킬 수 있습니다.'),
+            _buildGuideItem('유사종 비교 데이터를 활용하여 식별 능력을 향상시킬 수 있습니다.'),
           ],
         ),
       ),
@@ -204,3 +204,4 @@ class DashboardModuleGrid extends StatelessWidget {
     );
   }
 }
+

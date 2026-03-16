@@ -51,10 +51,6 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.dark,
         ),
         useMaterial3: true,
-        actionIconTheme: ActionIconThemeData(
-          backButtonIconBuilder: (BuildContext context) =>
-              const Icon(Icons.arrow_back_ios_new),
-        ),
       ),
       home: const LoginScreen(),
     );

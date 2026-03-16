@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 class DashboardShortcutItem extends StatelessWidget {
   final IconData icon;
@@ -31,7 +31,7 @@ class DashboardShortcutItem extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
+                  color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(icon, color: color, size: 22),
@@ -65,3 +65,4 @@ class DashboardShortcutItem extends StatelessWidget {
     );
   }
 }
+

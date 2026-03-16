@@ -22,7 +22,7 @@ class DashboardBottomNav extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
           decoration: BoxDecoration(
-            color: surfaceDark.withValues(alpha: 0.85),
+            color: surfaceDark.withOpacity(0.85),
             border: const Border(top: BorderSide(color: Colors.white10)),
           ),
           child: Row(
@@ -94,3 +94,4 @@ class DashboardBottomNav extends StatelessWidget {
     );
   }
 }
+

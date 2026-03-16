@@ -32,14 +32,14 @@ class _QuizManagementContent extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: backgroundDark,
         title: const Text(
-          '기출문제 일람',
+          '기출문제 관리',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(color: Colors.white.withValues(alpha: 0.1), height: 1),
+          child: Container(color: Colors.white.withOpacity(0.1), height: 1),
         ),
       ),
       body: Column(
@@ -52,19 +52,18 @@ class _QuizManagementContent extends StatelessWidget {
   }
 
   Widget _buildMainContent(BuildContext context) {
-    return Selector<QuizManagementViewModel, (bool, bool, String?)>(
-      selector: (_, vm) => (vm.isLoading, vm.hasSearched, vm.error),
-      builder: (context, data, _) {
-        final isLoading = data.$1;
-        final hasSearched = data.$2;
-        final error = data.$3;
+    return Consumer<QuizManagementViewModel>(
+      builder: (context, vm, _) {
+        final isLoading = vm.isLoading;
+        final hasSearched = vm.hasSearched;
+        final error = vm.error;
 
         if (error != null) {
           return QuizErrorState(error: error);
         }
 
         if (!hasSearched) {
-          return const QuizEmptyState(message: '조회 조건을 선택해 주세요.');
+          return const QuizEmptyState(message: '조회 조건을 선택해 주세요');
         }
 
         if (isLoading) {
@@ -97,3 +96,4 @@ class _QuizManagementContent extends StatelessWidget {
     );
   }
 }
+

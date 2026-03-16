@@ -15,15 +15,17 @@ class QuizFilterHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: surfaceDark.withValues(alpha: 0.5),
-        border: Border(bottom: BorderSide(color: Colors.white.withValues(alpha: 0.05))),
+        color: surfaceDark.withOpacity(0.5),
+        border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.05))),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Selector<QuizManagementViewModel, (String?, String?, String?)>(
-            selector: (_, vm) => (vm.selectedSubject, vm.selectedYear, vm.selectedSession),
-            builder: (context, data, _) {
+          Consumer<QuizManagementViewModel>(
+            builder: (context, vm, _) {
+              final selectedSubject = vm.selectedSubject;
+              final selectedYear = vm.selectedYear;
+              final selectedSession = vm.selectedSession;
               return Wrap(
                 spacing: 16,
                 runSpacing: 12,
@@ -35,19 +37,19 @@ class QuizFilterHeader extends StatelessWidget {
                   ),
                   _buildDropdown(
                     hint: '과목',
-                    value: data.$1,
+                    value: selectedSubject,
                     items: viewModel.subjects,
                     onChanged: viewModel.setSubject,
                   ),
                   _buildDropdown(
-                    hint: '년도',
-                    value: data.$2,
+                    hint: '연도',
+                    value: selectedYear,
                     items: viewModel.years,
                     onChanged: viewModel.setYear,
                   ),
                   _buildDropdown(
                     hint: '회차',
-                    value: data.$3,
+                    value: selectedSession,
                     items: viewModel.sessions,
                     onChanged: viewModel.setSession,
                   ),
@@ -94,9 +96,9 @@ class QuizFilterHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -112,3 +114,4 @@ class QuizFilterHeader extends StatelessWidget {
     );
   }
 }
+

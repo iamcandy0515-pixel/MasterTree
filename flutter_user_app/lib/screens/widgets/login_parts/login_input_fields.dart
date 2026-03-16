@@ -23,7 +23,7 @@ class LoginInputFields extends StatelessWidget {
         const SizedBox(height: 12),
         _buildTextField(
           controller: vm.phoneController,
-          label: '휴대전화',
+          label: '휴대폰',
           icon: Icons.phone_android_outlined,
           hint: '010-0000-0000',
           keyboardType: TextInputType.phone,
@@ -47,7 +47,7 @@ class LoginInputFields extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 12.0),
                       child: _buildTextField(
                         controller: vm.emailController,
-                        label: '이메일 (신규 등록용)',
+                        label: '이메일(신규 등록시)',
                         icon: Icons.email_outlined,
                         validator: vm.validateEmail,
                       ),
@@ -100,13 +100,13 @@ class LoginInputFields extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(
-              color: AppColors.textMuted.withValues(alpha: 0.3),
+              color: AppColors.textMuted.withOpacity(0.3),
             ),
             prefixIcon: Icon(icon, color: AppColors.primary, size: 20),
             filled: false,
             enabledBorder: UnderlineInputBorder(
               borderSide: BorderSide(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: Colors.white.withOpacity(0.1),
               ),
             ),
             focusedBorder: const UnderlineInputBorder(
@@ -120,3 +120,4 @@ class LoginInputFields extends StatelessWidget {
     );
   }
 }
+
