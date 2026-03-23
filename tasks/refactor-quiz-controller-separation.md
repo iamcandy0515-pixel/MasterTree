@@ -1,45 +1,41 @@
-# [작업 계획서] 'QuizController' 모바일 부하 분산 및 기능별 구조 리팩토링
+# [작업 계획서] 'QuizController' 기능 분리 및 중복 제거 리팩토링
 
-본 계획서는 `DEVELOPMENT_RULES.md`와 `FLUTTER_3_7_12_TECH_SPEC.md`를 엄격히 준수하여 모바일 환경의 로드 부하를 최소화하고 유지보수성을 극대화하기 위해 작성되었습니다.
+본 계획서는 `DEVELOPMENT_RULES.md`를 준수하며, 특히 `QuizController`와 `QuizViewModel` 간의 코드 중복을 해결하고 모바일 성능을 최적화하기 위해 작성되었습니다.
 
 ## 1. 분석 및 과제 현황
-- **현재 파일**: `lib/controllers/quiz_controller.dart` (약 272라인)
-- **위반 사항**: 200라인 초과 원칙 위반.
-- **주요 부하 요소**:
-  - 단일 클래스에서 API 연동, 데이터 변환, 타이머 제어, 퀴즈 상태를 모두 관리함.
-  - 데이터 파싱 로직(`_processData`)이 비대하여 비즈니스 로직과 섞여 있음.
-  - 다음 문제 이미지 로딩 시 네트워크 지연으로 인한 사용자 경험 저하.
+- **현재 파일**: `lib/controllers/quiz_controller.dart` (272라인)
+- **핵심 문제**: 
+  - `QuizViewModel`과 거의 로직이 동일하여 중복 코드가 발생함.
+  - API 호출, 타이머 관리, 상태 추적 등이 한 곳에 집중되어 있음.
+  - `precacheImage` 부재로 인해 문제 전환 시 이미지 로딩 체감이 큼.
 
 ## 2. 세부 작업 단계 (Phased Plan)
 
-### Phase 1: 기능 분리 (Modularity & Mixins)
-- **대상 위젯/클래스 (`lib/controllers/mixins/` 하위 생성)**:
-  - `QuizTimerMixin.dart`: 힌트/설명 자동 숨김 타이머 로직 분리.
-  - `QuizStateMixin.dart`: 현재 인덱스, 로딩 상태, 정답 개수 등 변수 관리 및 초기화 로직 분리.
-- **목표**: `QuizController.dart` 본체는 핵심 의사결정 로직만 담당.
+### Phase 1: 공통 기능 Mixin 추출 (Shared Modularity)
+- **대상 (`lib/controllers/mixins/` 하위)**:
+  - `QuizTimerMixin.dart`: 타이머(힌트, 설명) 제어 로직 추출.
+  - `QuizStateMixin.dart`: 퀴즈 진행 상태(인덱스, 점수 등) 변수 추출.
+- **효과**: `QuizController`와 `QuizViewModel` 모두에서 재사용 가능하게 구성.
 
-### Phase 2: 데이터 매핑 및 공급 계층 강화 (Isolation)
-- **`QuizDataMapper.dart` 추출**: 
-  - 복잡한 API Map 데이터를 `QuizQuestion` 모델로 변환하는 로직을 완전히 격리 (약 100라인 절감).
-- **`QuizRepository.dart` 신규 도입 (더 좋은 제안)**:
-  - `ApiService`를 직접 호출하지 않고 리포지토리를 통해 데이터를 공급받아 에러 핸들링과 테스트 용이성 확보.
+### Phase 2: 데이터 추상화 및 레이어 분리 (Data Isolation)
+- **`QuizRepository.dart` 추출**: `ApiService` 호출 및 시도 결과 저장을 담당.
+- **`QuizDataMapper.dart` 추출**: 복잡한 `Map` 데이터를 `QuizQuestion` 모델로 변환하는 순수 함수 격리.
+- **목표**: `QuizController` 본체 코드를 **80라인 이하**로 축소.
 
-### Phase 3: 모바일 성능 및 리소스 고도화 (Optimization)
-- **이미지 사전 로딩 (Pre-fetching)**: 다음 문제로 넘어가기 전 혹은 초기 로딩 시 `precacheImage`를 통해 이미지 지연 현상 제거.
-- **메모리 절약**: 대량의 데이터를 수신할 경우 필요한 데이터만큼만 매핑하는 지연 연산 방식 검토.
-- **검증**: `flutter analyze` 후 linter 스타일 체크 및 문법 오류 검증.
+### Phase 3: 성능 및 UX 고도화 (Optimization)
+- **Proactive Image Pre-fetching**: 퀴즈 시작 및 진행 시 다음 문제 이미지를 미리 로컬에 캐싱.
+- **Stateless 관점 유지**: `QuizController` 내 불필요한 필드 제거 및 기능 중심의 인터페이스 제공.
 
-## 3. Git 커밋 전략 (Commit Strategy)
-- **Commit 1**: `docs(quiz): add refactoring task plan for quiz_controller following DEVELOPMENT_RULES.md`
-- **Commit 2**: `refactor(quiz): separate timer and state logic using Mixins`
-- **Commit 3**: `refactor(quiz): extract QuizDataMapper and implement QuizRepository`
-- **Commit 4**: `perf(quiz): implement proactive image pre-fetching for quiz flow`
+## 3. 더 좋은 제안 (Superior Proposal)
+1. **코드 공유 아키텍처 (Shared Architecture)**: 추출된 Mixin과 Repository를 `QuizViewModel`에도 적용하여 프로젝트 전체의 퀴즈 로직 일관성을 확보하고 전체 코드량을 150라인 이상 절감할 것을 제안합니다.
+2. **Batch Processing Optimizer**: 100개 상당의 데이터를 매핑할 때 메인 스레드 부하를 줄이기 위해 루프 최적화를 적용합니다.
+3. **Reactive State Pattern**: 단순 `VoidCallback` 대신 `ValueNotifier` 등을 활용하여 리렌더링 범위를 더욱 좁히는 방식을 제안합니다.
 
-## 4. 수행 규칙 체크리스트
-- [x] 파일당 200라인 이하 준수 여부 (Controller 본체 100라인 이하 목표)
-- [x] Mixin 기반 기능 분리 적용
-- [x] Flutter 3.7.12 / Dart 2.19.6 호환성 확인
-- [x] `linter` 스타일 및 문법 체크 수행
+## 4. Git 커밋 전략 (Commit Strategy)
+- **Commit 1**: `docs(quiz): add unified refactoring task plan for QuizController and shared logic`
+- **Commit 2**: `refactor(quiz): extract shared Mixins and Repository for quiz logic`
+- **Commit 3**: `refactor(quiz): clean up QuizController using shared components`
+- **Commit 4**: `perf(quiz): implement pre-fetching and data mapping optimization`
 
 ---
 **개발자님의 승인 후 작업을 시작하겠습니다.**
