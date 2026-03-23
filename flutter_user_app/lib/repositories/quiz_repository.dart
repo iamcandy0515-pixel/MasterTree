@@ -96,4 +96,15 @@ class QuizRepository {
       rethrow;
     }
   }
+
+  static QuizQuestion getDummyQuestion() {
+    return QuizQuestion(
+      id: 0,
+      imageUrl: '',
+      description: '로딩 중...',
+      correctAnswerIndex: 0,
+      options: ['Loading...'],
+      hints: {},
+    );
+  }
 }

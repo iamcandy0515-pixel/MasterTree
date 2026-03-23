@@ -7,12 +7,6 @@ import '../data/fallback_quiz_data.dart';
 import '../models/quiz_model.dart';
 import '../repositories/quiz_repository.dart';
 
-class QuizRank {
-  static const String sprout = '새싹';
-  static const String forestKeeper = '숲의 파수꾼';
-  static const String eagleEye = '매의 눈';
-}
-
 class QuizProvider extends ChangeNotifier {
   List<QuizQuestion> _questions = [];
   bool _isLoading = true;
@@ -22,20 +16,14 @@ class QuizProvider extends ChangeNotifier {
   int get currentIndex => _currentIndex;
   bool get isLoading => _isLoading;
   QuizQuestion get currentQuestion =>
-      _questions.isNotEmpty ? _questions[_currentIndex] : _getDummyQuestion();
+      _questions.isNotEmpty ? _questions[_currentIndex] : QuizRepository.getDummyQuestion();
 
   // 힌트 관련
   String get selectedHint => _selectedHint;
   bool get showHintMessage => _showHintMessage;
   Set<String> get viewedHints => _viewedHints;
   int get viewedHintsCount => _viewedHints.length;
-  String get currentHintText {
-    final text = currentQuestion.hints[_selectedHint];
-    if (text == null || text.trim().isEmpty || text == '정보 없음') {
-      return '해당 힌트 정보가 없습니다.';
-    }
-    return text;
-  }
+  String get currentHintText => currentQuestion.getHintText(_selectedHint);
 
   // 답변 관련
   int? get selectedAnswer => _selectedAnswer;
@@ -55,17 +43,8 @@ class QuizProvider extends ChangeNotifier {
   bool get hasNext => _currentIndex < _questions.length - 1;
 
   // 결과 등급 계산
-  String get userRank {
-    if (totalQuestions == 0) return QuizRank.sprout;
-    final double avg = averageHints;
-    if (avg <= 2.0) {
-      return QuizRank.eagleEye;
-    } else if (avg <= 4.0) {
-      return QuizRank.forestKeeper;
-    } else {
-      return QuizRank.sprout;
-    }
-  }
+  QuizRank get userRank => QuizRankHelper.fromAverage(averageHints);
+  String get userRankName => QuizRankHelper.getName(userRank);
 
   double get averageHints =>
       totalQuestions > 0 ? (_accumulatedHintCount / totalQuestions) : 0.0;
@@ -100,18 +79,6 @@ class QuizProvider extends ChangeNotifier {
   void _useDummyData() {
     _questions = getFallbackQuizQuestions()..shuffle();
     debugPrint('Using fallback dummy data (${_questions.length} items)');
-  }
-
-  // 안전 장치: 데이터가 없을 때
-  QuizQuestion _getDummyQuestion() {
-    return QuizQuestion(
-      id: 0,
-      imageUrl: '',
-      description: '로딩 중...',
-      correctAnswerIndex: 0,
-      options: ['Loading...'],
-      hints: {},
-    );
   }
 
   int _currentIndex = 0;
