@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../repositories/quiz_repository.dart';
+import '../../repositories/quiz_media_repository.dart';
 
 mixin QuizImageHandlerMixin on ChangeNotifier {
-  final QuizRepository _repository = QuizRepository();
+  final QuizMediaRepository _repository = QuizMediaRepository();
 
   bool _isImageLoading = false;
   bool get isImageLoading => _isImageLoading;

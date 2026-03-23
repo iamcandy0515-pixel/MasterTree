@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_admin_app/features/quiz_management/repositories/quiz_repository.dart';
+import 'package:flutter_admin_app/features/quiz_management/repositories/quiz_media_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './services/quiz_extraction_service.dart';
 
 class BulkExtractionViewModel extends ChangeNotifier {
   final QuizRepository _quizRepo = QuizRepository();
+  final QuizMediaRepository _mediaRepo = QuizMediaRepository();
   final QuizExtractionService _extractionService = QuizExtractionService();
 
   BulkExtractionViewModel() {
@@ -229,7 +231,7 @@ class BulkExtractionViewModel extends ChangeNotifier {
       _isLoading = true;
       notifyListeners();
       final bytes = await file.readAsBytes();
-      final url = await _quizRepo.uploadQuizImage(bytes, file.name);
+      final url = await _mediaRepo.uploadQuizImage(bytes, file.name);
 
       final item = _extractedQuizzes.putIfAbsent(
         qNum,

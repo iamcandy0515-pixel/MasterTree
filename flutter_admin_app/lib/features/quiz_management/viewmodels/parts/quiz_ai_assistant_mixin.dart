@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../repositories/quiz_repository.dart';
+import '../../repositories/quiz_ai_repository.dart';
 
 mixin QuizAiAssistantMixin on ChangeNotifier {
-  final QuizRepository _repository = QuizRepository();
+  final QuizAiRepository _repository = QuizAiRepository();
 
   bool _isRecommending = false;
   bool get isRecommending => _isRecommending;

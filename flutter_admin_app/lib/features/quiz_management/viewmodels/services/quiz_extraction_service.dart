@@ -1,7 +1,7 @@
-import 'package:flutter_admin_app/features/quiz_management/repositories/quiz_repository.dart';
+import 'package:flutter_admin_app/features/quiz_management/repositories/quiz_drive_repository.dart';
 
 class QuizExtractionService {
-  final QuizRepository _quizRepo = QuizRepository();
+  final QuizDriveRepository _quizRepo = QuizDriveRepository();
 
   /// PDF에서 퀴즈를 추출하고 형식에 맞게 매핑
   Future<Map<int, Map<String, dynamic>>> extractChunk({

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../models/drive_file.dart';
-import '../../repositories/quiz_repository.dart';
+import '../../repositories/quiz_drive_repository.dart';
 
 mixin QuizFileHandlerMixin on ChangeNotifier {
-  final QuizRepository _repository = QuizRepository();
+  final QuizDriveRepository _repository = QuizDriveRepository();
 
   bool _isSearching = false;
   bool get isSearching => _isSearching;

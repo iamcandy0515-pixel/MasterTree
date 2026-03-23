@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../repositories/quiz_repository.dart';
+import '../repositories/quiz_ai_repository.dart';
 
 class BulkSimilarManagementViewModel extends ChangeNotifier {
   final QuizRepository _quizRepo = QuizRepository();
+  final QuizAiRepository _aiRepo = QuizAiRepository();
   
   List<Map<String, dynamic>> _quizzes = [];
   Map<int, List<Map<String, dynamic>>> _tempRecommendations = {};
@@ -129,7 +131,7 @@ class BulkSimilarManagementViewModel extends ChangeNotifier {
       final qText = getFullQuizText(quiz);
       if (qText.isNotEmpty) {
         try {
-          final result = await _quizRepo.recommendRelated(questionText: qText, limit: 10);
+          final result = await _aiRepo.recommendRelated(questionText: qText, limit: 10);
           final filteredResult = (result).where((r) => r['id'] != quizId).toList();
           
           filteredResult.sort((a, b) {

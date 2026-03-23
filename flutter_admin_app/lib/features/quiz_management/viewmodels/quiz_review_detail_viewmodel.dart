@@ -2,9 +2,13 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../repositories/quiz_repository.dart';
+import '../repositories/quiz_ai_repository.dart';
+import '../repositories/quiz_media_repository.dart';
 
 class QuizReviewDetailViewModel extends ChangeNotifier {
   final QuizRepository _repository = QuizRepository();
+  final QuizAiRepository _aiRepo = QuizAiRepository();
+  final QuizMediaRepository _mediaRepo = QuizMediaRepository();
 
   bool _isLoading = true;
   bool _isSaving = false;
@@ -151,7 +155,7 @@ class QuizReviewDetailViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       final rawText = relatedQuizzesMetadata.isNotEmpty ? _extractTextFromBlocks(relatedQuizzesMetadata.first['content_blocks'] ?? []) : '';
-      final res = await _repository.reviewQuizAlignment(rawText, [{'type': 'text', 'content': explanationText}]);
+      final res = await _aiRepo.reviewQuizAlignment(rawText, [{'type': 'text', 'content': explanationText}]);
       _isReviewing = false;
       notifyListeners();
       return res;
@@ -166,7 +170,7 @@ class QuizReviewDetailViewModel extends ChangeNotifier {
     _isGenerating = true;
     notifyListeners();
     try {
-      final distractors = await _repository.generateDistractors(questionText, correctOption);
+      final distractors = await _aiRepo.generateDistractors(questionText, correctOption);
       incorrectOptions = distractors;
       _isGenerating = false;
     } catch (e) {
@@ -180,7 +184,7 @@ class QuizReviewDetailViewModel extends ChangeNotifier {
     _isRecommending = true;
     notifyListeners();
     try {
-      final related = await _repository.recommendRelated(questionText: questionText);
+      final related = await _aiRepo.recommendRelated(questionText: questionText);
       _isRecommending = false;
       notifyListeners();
       return related.where((r) => r['id'] != quizId).toList();
@@ -205,7 +209,7 @@ class QuizReviewDetailViewModel extends ChangeNotifier {
   }
 
   Future<void> uploadImage(Uint8List bytes, String name, String field) async {
-    final url = await _repository.uploadQuizImage(bytes, name);
+    final url = await _mediaRepo.uploadQuizImage(bytes, name);
     if (field == 'content') {
       contentBlocks.add({'type': 'image', 'content': url});
     } else {
