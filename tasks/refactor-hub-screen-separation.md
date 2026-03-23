@@ -21,20 +21,20 @@
 
 ## 4. To-Do List
 ### Phase 1: 위젯 소스 분리
-- [ ] `lib/screens/hub/widgets/hub_header.dart` 생성 및 추출
-- [ ] `lib/screens/hub/widgets/hub_menu_card.dart` 생성 및 추출
-- [ ] `lib/screens/hub/widgets/hub_guide_section.dart` 생성 및 추출
-- [ ] `lib/screens/hub/widgets/hub_bottom_nav.dart` 생성 및 추출
+- [x] `lib/screens/hub/widgets/hub_header.dart` 생성 및 추출
+- [x] `lib/screens/hub/widgets/hub_menu_card.dart` 생성 및 추출
+- [x] `lib/screens/hub/widgets/hub_guide_section.dart` 생성 및 추출
+- [x] `lib/screens/hub/widgets/hub_bottom_nav.dart` 생성 및 추출
 
 ### Phase 2: 메인 스크린 재구성
-- [ ] `lib/screens/hub_screen.dart` 내 중복 코드 제거 및 신규 위젯 Import
-- [ ] `HubScreen`의 UI 구조 정합성 체크 (Overflow 방지)
-- [ ] 로그아웃 및 네비게이션 콜백 함수 연결
+- [x] `lib/screens/hub_screen.dart` 내 중복 코드 제거 및 신규 위젯 Import
+- [x] `HubScreen`의 UI 구조 정합성 체크 (Overflow 방지)
+- [x] 로그아웃 및 네비게이션 콜백 함수 연결
 
 ### Phase 3: 검증 및 최적화
 - [ ] **[1-3. 분리 후 에러 체크]** Import 경로 및 UI 렌더링 정상 여부 확인
 - [ ] **[3-2. 린트 체크]** `flutter analyze` 명령어로 린트 에러 제로(0) 확인
-- [ ] **[0-4. 소스 정합성]** `diff` 분석을 통해 의도치 않은 코드 삭제 여부 최종 확인
+- [x] **[0-4. 소스 정합성]** `diff` 분석을 통해 의도치 않은 코드 삭제 여부 최종 확인
 
 ## 5. 기대 효과 (Expected Outcomes)
 - `hub_screen.dart` 파일 크기 70% 이상 축소 (100라인 이내).
