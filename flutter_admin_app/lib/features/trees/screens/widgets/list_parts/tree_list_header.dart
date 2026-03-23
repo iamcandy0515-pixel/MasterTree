@@ -137,7 +137,7 @@ class _MoreMenu extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('확인', style: TextStyle(color: NeoColors.acidLime)),
+            child: const Text('확인', style: TextStyle(color: NeoColors.acidLime)),
           ),
         ],
       ),

@@ -1,0 +1,34 @@
+﻿Analyzing flutter_admin_app...                                  
+
+   info - Don't use web-only libraries outside Flutter web plugin packages - lib\core\utils\web_utils_web.dart:1:1 - avoid_web_libraries_in_flutter
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\features\dashboard\screens\dashboard_screen.dart:96:35 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\features\dashboard\screens\user_check_screen.dart:58:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\dashboard\screens\user_check_screen.dart:59:22 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\features\dashboard\screens\user_check_screen.dart:61:27 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\features\dashboard\screens\user_check_screen.dart:62:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\dashboard\screens\user_check_screen.dart:63:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\dashboard\screens\user_check_screen.dart:64:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\dashboard\screens\widgets\user_check_parts\user_search_header.dart:50:26 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\features\dashboard\widgets\dashboard_header.dart:30:25 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\features\dashboard\widgets\dashboard_header.dart:31:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\dashboard\widgets\dashboard_header.dart:33:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\dashboard\widgets\dashboard_header.dart:39:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\dashboard\widgets\dashboard_header.dart:41:26 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\features\quiz_management\screens\widgets\quiz_extraction\pdf_extraction_module.dart:31:25 - prefer_const_literals_to_create_immutables
+   info - The declaration '_ActiveEditorState' isn't referenced - lib\features\tree_registration\screens\widgets\smart_tag_image_section.dart:86:7 - unused_element
+   info - Use 'const' with the constructor to improve performance - lib\features\trees\screens\tree_sourcing_screen.dart:68:21 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\features\trees\screens\widgets\add_parts\add_tree_mobile_preview.dart:100:25 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\features\trees\screens\widgets\add_parts\add_tree_mobile_preview.dart:101:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\trees\screens\widgets\add_parts\add_tree_mobile_preview.dart:103:17 - prefer_const_constructors
+   info - Use 'const' for final variables initialized to a constant value - lib\features\trees\screens\widgets\list_parts\tree_list_category_filters.dart:42:5 - prefer_const_declarations
+   info - Use 'const' with the constructor to improve performance - lib\features\trees\screens\widgets\list_parts\tree_list_header.dart:140:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\trees\screens\widgets\list_parts\tree_list_header.dart:140:38 - prefer_const_constructors
+   info - Use 'const' for final variables initialized to a constant value - lib\features\trees\screens\widgets\list_parts\tree_list_stats_bar.dart:121:5 - prefer_const_declarations
+   info - The private field _trees could be 'final' - lib\features\trees\viewmodels\tree_sourcing_viewmodel.dart:16:14 - prefer_final_fields
+   info - The private field _currentPage could be 'final' - lib\features\trees\viewmodels\tree_sourcing_viewmodel.dart:17:7 - prefer_final_fields
+   info - The private field _totalCount could be 'final' - lib\features\trees\viewmodels\tree_sourcing_viewmodel.dart:18:7 - prefer_final_fields
+   info - The private field _hasMore could be 'final' - lib\features\trees\viewmodels\tree_sourcing_viewmodel.dart:19:8 - prefer_final_fields
+   info - The private field _isLoading could be 'final' - lib\features\trees\viewmodels\tree_sourcing_viewmodel.dart:31:8 - prefer_final_fields
+   info - The private field _searchQuery could be 'final' - lib\features\trees\viewmodels\tree_sourcing_viewmodel.dart:34:10 - prefer_final_fields
+   info - The private field _hasChanges could be 'final' - lib\features\trees\viewmodels\tree_sourcing_viewmodel.dart:37:8 - prefer_final_fields
+

@@ -98,7 +98,7 @@ class _DashboardScreenState extends State<_DashboardContent> {
                             indicatorColor: primaryColor,
                             labelColor: Colors.white,
                             unselectedLabelColor: Colors.grey,
-                            tabs: [
+                            tabs: const [
                               Tab(
                                 icon: Icon(Icons.description, size: 20),
                                 text: '기출문제',

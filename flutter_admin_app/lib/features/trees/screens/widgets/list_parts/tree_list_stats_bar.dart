@@ -118,7 +118,7 @@ class _PageNumberDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primary = NeoColors.acidLime;
+    const primary = NeoColors.acidLime;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
@@ -128,7 +128,7 @@ class _PageNumberDisplay extends StatelessWidget {
       ),
       child: Text(
         '$current / $total',
-        style: TextStyle(
+        style: const TextStyle(
           color: primary,
           fontSize: 12,
           fontWeight: FontWeight.bold,

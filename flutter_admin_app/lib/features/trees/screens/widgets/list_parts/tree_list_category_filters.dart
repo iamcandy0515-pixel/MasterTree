@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_admin_app/features/trees/viewmodels/tree_list_viewmodel.dart';
 import 'package:flutter_admin_app/core/theme/neo_theme.dart';
@@ -39,7 +39,7 @@ class _FilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primary = NeoColors.acidLime;
+    const primary = NeoColors.acidLime;
     return Center(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

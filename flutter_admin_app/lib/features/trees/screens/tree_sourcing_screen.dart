@@ -65,7 +65,7 @@ class _TreeSourcingContentState extends State<_TreeSourcingContent> {
                   children: [
                     _buildSearchBar(context, primaryColor),
                     const SizedBox(height: 24),
-                    SpeciesSelectionSection(
+                    const SpeciesSelectionSection(
                       primaryColor: primaryColor,
                       backgroundDark: backgroundDark,
                     ),

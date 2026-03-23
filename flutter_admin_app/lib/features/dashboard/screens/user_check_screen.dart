@@ -55,9 +55,9 @@ class _UserCheckContent extends StatelessWidget {
               primaryColor: primaryColor,
               surfaceColor: surfaceDark,
             ),
-            Expanded(
+            const Expanded(
               child: TabBarView(
-                physics: const NeverScrollableScrollPhysics(),
+                physics: NeverScrollableScrollPhysics(),
                 children: [
                   _UserListBuilder(primaryColor: primaryColor),
                   _UserListBuilder(primaryColor: primaryColor),

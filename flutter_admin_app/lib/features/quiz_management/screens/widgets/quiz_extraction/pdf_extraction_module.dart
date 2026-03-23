@@ -28,14 +28,14 @@ class PdfExtractionModule extends StatelessWidget {
           children: [
             Row(
               mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
+              children: const [
+                Icon(
                   Icons.settings_input_component,
                   color: primaryColor,
                   size: 20,
                 ),
-                const SizedBox(width: 8),
-                const Text(
+                SizedBox(width: 8),
+                Text(
                   '추출조건',
                   style: TextStyle(
                     color: Colors.white,

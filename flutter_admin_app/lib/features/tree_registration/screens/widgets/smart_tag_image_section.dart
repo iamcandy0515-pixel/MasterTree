@@ -83,27 +83,4 @@ class SmartTagImageSection extends StatelessWidget {
   }
 }
 
-class _ActiveEditorState {
-  final String activeTag;
-  final TreeImage? image;
-  final bool isUploading;
 
-  _ActiveEditorState(this.activeTag, this.image, this.isUploading);
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is _ActiveEditorState &&
-          runtimeType == other.runtimeType &&
-          activeTag == other.activeTag &&
-          image?.imageUrl == other.image?.imageUrl &&
-          image?.hint == other.image?.hint &&
-          isUploading == other.isUploading;
-
-  @override
-  int get hashCode =>
-      activeTag.hashCode ^
-      (image?.imageUrl.hashCode ?? 0) ^
-      (image?.hint.hashCode ?? 0) ^
-      isUploading.hashCode;
-}

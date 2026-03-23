@@ -97,9 +97,9 @@ class AddTreeMobilePreview extends StatelessWidget {
               style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
             ),
             Row(
-              children: [
+              children: const [
                 Icon(Icons.wifi, color: Colors.white, size: 12),
-                const SizedBox(width: 4),
+                SizedBox(width: 4),
                 Icon(Icons.battery_full, color: Colors.white, size: 12),
               ],
             ),

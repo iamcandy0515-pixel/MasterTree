@@ -27,7 +27,7 @@ class DashboardHeader extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: const [
                 Text(
                   '관리자 대시보드',
                   style: TextStyle(
