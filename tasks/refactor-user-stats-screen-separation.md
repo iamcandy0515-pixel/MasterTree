@@ -18,20 +18,20 @@
 
 ## 4. To-Do List
 ### Phase 1: 공통 컴포넌트 및 하위 위젯 추출
-- [ ] `lib/screens/user_stats/widgets/stat_summary_card.dart` 구현 (공통 카드 UI 컴포넌트)
-- [ ] `lib/screens/user_stats/tabs/overall_stats_tab.dart` 추출 (종합 통계 요약 탭)
-- [ ] `lib/screens/user_stats/tabs/quiz_stats_tab.dart` 추출 (퀴즈 학습 성과 탭)
-- [ ] `lib/screens/user_stats/tabs/past_exam_stats_tab.dart` 추출 (기출 문제 학습 성과 탭)
+- [x] `lib/screens/user_stats/widgets/stat_summary_card.dart` 구현 (공통 카드 UI 컴포넌트)
+- [x] `lib/screens/user_stats/tabs/overall_stats_tab.dart` 추출 (종합 통계 요약 탭)
+- [x] `lib/screens/user_stats/tabs/quiz_stats_tab.dart` 추출 (퀴즈 학습 성과 탭)
+- [x] `lib/screens/user_stats/tabs/past_exam_stats_tab.dart` 추출 (기출 문제 학습 성과 탭)
 
 ### Phase 2: 메인 화면 재구성 및 연동
-- [ ] `UserStatsScreen` 내 기존 위젯 빌더 메서드(`_buildOverallTab` 등) 제거
-- [ ] 메인 화면에서 신규 추출한 탭 위젯으로 `TabBarView` 구성
-- [ ] 새로고침(Refresh) 로직의 안정적인 데이터 바인딩 확인
+- [x] `UserStatsScreen` 내 기존 위젯 빌더 메서드(`_buildOverallTab` 등) 제거
+- [x] 메인 화면에서 신규 추출한 탭 위젯으로 `TabBarView` 구성
+- [x] 새로고침(Refresh) 로직의 안정적인 데이터 바인딩 확인
 
 ### Phase 3: 검증 및 최종 점검
-- [ ] **[1-3. 에러 체크]** 데이터 로딩 실패 시 에러 뷰(ErrorView) 및 다시 시도 기능 검증
-- [ ] **[3-2. 린트 체크]** `flutter analyze` 명령어로 스타일 및 문법 오류 제로(0) 확인
-- [ ] **[0-4. 소스 정합성]** `git diff` 분석을 통해 의도치 않은 로직 삭제 여부 최종 확인
+- [x] **[1-3. 에러 체크]** 데이터 로딩 실패 시 에러 뷰(ErrorView) 및 다시 시도 기능 검증
+- [x] **[3-2. 린트 체크]** `flutter analyze` 명령어로 스타일 및 문법 오류 제로(0) 확인 (기존 이슈 제외)
+- [x] **[0-4. 소스 정합성]** `git diff` 분석을 통해 의도치 않은 로직 삭제 여부 최종 확인
 
 ## 5. 기대 효과 (Expected Outcomes)
 - `UserStatsScreen` 파일이 대폭 축소되어 핵심 구조(AppBar, TabBar) 파악이 용이해짐.
