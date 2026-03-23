@@ -16,19 +16,19 @@
 
 ## 4. To-Do List
 ### Phase 1: 하위 위젯 및 컴포넌트 추출
-- [ ] `lib/screens/past_exam/widgets/exam_filter_header.dart` 구현 (드롭다운 필터 행)
-- [ ] `lib/screens/past_exam/widgets/exam_quiz_card.dart` 구현 (개별 기출문제 카드)
-- [ ] `lib/screens/past_exam/widgets/exam_pagination_bar.dart` 구현 (페이지 제어 바)
+- [x] `lib/screens/past_exam/widgets/exam_filter_header.dart` 구현 (드롭다운 필터 행)
+- [x] `lib/screens/past_exam/widgets/exam_quiz_card.dart` 구현 (개별 기출문제 카드)
+- [x] `lib/screens/past_exam/widgets/exam_pagination_bar.dart` 구현 (페이지 제어 바)
 
 ### Phase 2: 메인 화면 재구성 및 연동
-- [ ] `PastExamListScreen` 내의 복잡한 빌드 메서드(`_buildDropdown`, `_buildPagination` 등) 제거
-- [ ] 메인 화면에서 신규 추출한 위젯들을 임포트하여 전체 레이아웃 재구성
-- [ ] 컨트롤러와 위젯 간의 콜백(setState 전파 등) 로직 정합성 확인
+- [x] `PastExamListScreen` 내의 복잡한 빌드 메서드(`_buildDropdown`, `_buildPagination` 등) 제거
+- [x] 메인 화면에서 신규 추출한 위젯들을 임포트하여 전체 레이아웃 재구성
+- [x] 컨트롤러와 위젯 간의 콜백(setState 전파 등) 로직 정합성 확인
 
 ### Phase 3: 검증 및 최종 점검
-- [ ] **[1-3. 에러 체크]** 필터링 시 데이터 부재(Empty) 상태 및 에러 스낵바 출력 검증
-- [ ] **[3-2. 린트 체크]** `flutter analyze` 명령어로 스타일 및 문법 오류 제로(0) 확인
-- [ ] **[0-4. 소스 정합성]** `git diff` 분석을 통해 기존 데이터 필터링 로직이 유지되었는지 최종 확인
+- [x] **[1-3. 에러 체크]** 필터링 시 데이터 부재(Empty) 상태 및 에러 스낵바 출력 검증
+- [x] **[3-2. 린트 체크]** `flutter analyze` 명령어로 스타일 및 문법 오류 제로(0) 확인 (기존 이슈 제외)
+- [x] **[0-4. 소스 정합성]** `git diff` 분석을 통해 기존 데이터 필터링 로직이 유지되었는지 최종 확인
 
 ## 5. 기대 효과 (Expected Outcomes)
 - `PastExamListScreen` 파일이 **150라인 이내**로 축소되어 핵심 구조 파악이 용이해짐.
