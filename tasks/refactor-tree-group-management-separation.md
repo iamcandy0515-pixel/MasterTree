@@ -50,22 +50,22 @@
 ## 3. To-Do List (Checklist)
 
 ### 구현 전 (Pre-Implementation)
-- [ ] **[0-1. Git 백업]** 현재 상태 커밋 (`git commit -m "pre-refactor: backup tree_group_management_screen"`)
-- [ ] `TreeGroupRepository`에 검색(query) 매개변수 지원 여부 최종 확인
+- [x] **[0-1. Git 백업]** 현재 상태 커밋 (`git commit -m "pre-refactor: backup tree_group_management_screen"`)
+- [x] `TreeGroupRepository`에 검색(query) 매개변수 지원 여부 최종 확인
 
 ### 구현 중 (Implementation)
-- [ ] `TreeGroupManagementViewModel` 검색 및 삭제 로직 보강
-- [ ] `./widgets/management/management_header_section.dart` 분리
-- [ ] `./widgets/management/management_control_bar.dart` 분리
-- [ ] `./widgets/management/tree_group_list_item.dart` 분리 (`CachedNetworkImage` 및 롱클릭 적용)
-- [ ] `./widgets/management/management_shimmer_loader.dart` 분리
-- [ ] `tree_group_management_screen.dart` 메인 파일 슬림화 (200라인 이하 달성)
+- [x] `TreeGroupManagementViewModel` 검색 및 삭제 로직 보강
+- [x] `./widgets/management/management_header_section.dart` 분리
+- [x] `./widgets/management/management_control_bar.dart` 분리
+- [x] `./widgets/management/tree_group_list_item.dart` 분리 (`CachedNetworkImage` 및 롱클릭 적용)
+- [x] `./widgets/management/management_shimmer_loader.dart` 분리
+- [x] `tree_group_management_screen.dart` 메인 파일 슬림화 (200라인 이하 달성)
 
 ### 구현 후 (Post-Implementation)
-- [ ] **[1-3. 분리 후 에러 체크]** 화면 전환 및 데이터 로드 정상 여부 확인
-- [ ] **[3-2. 린트 체크]** `flutter analyze` 수행 및 이슈 해결
-- [ ] **[0-4. 소스 정합성]** 최종 소스 diff 확인 및 유실 방지 체크
-- [ ] **[0-2. Git 최종 커밋]** 작업 결과 커밋
+- [x] **[1-3. 분리 후 에러 체크]** 화면 전환 및 데이터 로드 정상 여부 확인
+- [x] **[3-2. 린트 체크]** `flutter analyze` 수행 및 이슈 해결
+- [x] **[0-4. 소스 정합성]** 최종 소스 diff 확인 및 유실 방지 체크
+- [x] **[0-2. Git 최종 커밋]** 작업 결과 커밋
 
 ---
 
