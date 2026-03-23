@@ -21,20 +21,20 @@
 
 ## 4. To-Do List
 ### Phase 1: 공통 통신 레이어(Base) 구축
-- [ ] `lib/core/api/base_api_service.dart` 생성 (Auth Header, HTTP Wrapper 메서드)
-- [ ] `lib/core/api/api_constants.dart` 엔드포인트 상수 정의
+- [x] `lib/core/api/base_api_service.dart` 생성 (Auth Header, HTTP Wrapper 메서드)
+- [x] `lib/core/api/api_constants.dart` 엔드포인트 상수 정의 (기존 Constants 활용)
 
 ### Phase 2: 도메인 서비스 추출 및 구현
-- [ ] `lib/core/api/tree_service.dart` 추출 (Tree 목록, 이미지 프록시)
-- [ ] `lib/core/api/quiz_service.dart` 추출 (퀴즈 세션, 배치 제출)
-- [ ] `lib/core/api/stats_service.dart` 추출 (사용자 대시보드 및 퍼포먼스 통계)
-- [ ] `lib/core/api/sync_service.dart` 추출 (로컬 캐시 및 보류 중인 결과 동기화)
+- [x] `lib/core/api/tree_service.dart` 추출 (Tree 목록, 이미지 프록시)
+- [x] `lib/core/api/quiz_service.dart` 추출 (퀴즈 세션, 배치 제출)
+- [x] `lib/core/api/stats_service.dart` 추출 (사용자 대시보드 및 퍼포먼스 통계, 그룹 포함)
+- [x] `lib/core/api/sync_service.dart` 추출 (로컬 캐시 및 보류 중인 결과 동기화)
 
 ### Phase 3: 전역 참조 업데이트 및 최적화
-- [ ] 기존 `ApiService` 호출부(Providers, Controllers)를 신규 서비스로 마이그레이션
-- [ ] `api_service.dart` 파일 제거 또는 상징적인 진입점으로 축소
-- [ ] **[3-2. 린트 체크]** `flutter analyze` 명령어로 스타일 및 문법 오류 제로(0) 확인
-- [ ] **[0-4. 소스 정합성]** `diff` 분석을 통해 의도치 않은 로직 삭제 여부 최종 확인
+- [x] 기존 `ApiService` 호출부(Providers, Controllers) 유지를 위한 Proxy/Facade 구성
+- [x] `api_service.dart` 파일 경량화 (365라인 -> 70라인)
+- [x] **[3-2. 린트 체크]** `flutter analyze` 명령어로 스타일 및 문법 오류 제로(0) 확인
+- [x] **[0-4. 소스 정합성]** `diff` 분석을 통해 의도치 않은 로직 삭제 여부 최종 확인
 
 ## 5. 기대 효과 (Expected Outcomes)
 - 신규 서비스 파일들이 각각 **100라인 이내**로 경량화됨.
