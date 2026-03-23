@@ -50,21 +50,21 @@
 ## 4. To-Do List (Checklist)
 
 ### 구현 전 (Pre-Implementation)
-- [ ] **[0-1. Git 백업]** 현재 상태 커밋 (`git commit -m "pre-refactor: backup tree_lookalike_detail_screen"`)
-- [ ] Socratic Gate 질문에 대한 답변 확인 및 전략 확정
+- [x] **[0-1. Git 백업]** 현재 상태 커밋 (`git commit -m "pre-refactor: backup tree_lookalike_detail_screen"`)
+- [x] Socratic Gate 질문에 대한 답변 확인 및 전략 확정
 
 ### 구현 중 (Implementation)
-- [ ] `./widgets/lookalike/lookalike_tab_selector.dart` 분리
-- [ ] `./widgets/lookalike/lookalike_tree_column.dart` 분리 (이미지 최적화 포함)
-- [ ] `./widgets/lookalike/lookalike_nav_controls.dart` 분리
-- [ ] `./widgets/lookalike/lookalike_comparison_matrix.dart` 분리 및 `ListView.builder` 적용
-- [ ] `tree_lookalike_detail_screen.dart` 메인 파일 슬림화 (200라인 이하 달성)
+- [x] `./widgets/lookalike/lookalike_tab_selector.dart` 분리
+- [x] `./widgets/lookalike/lookalike_tree_column.dart` 분리 (이미지 최적화 포함)
+- [x] `./widgets/lookalike/lookalike_nav_controls.dart` 분리
+- [x] `./widgets/lookalike/lookalike_comparison_matrix.dart` 분리 및 `ListView.builder` 적용
+- [x] `tree_lookalike_detail_screen.dart` 메인 파일 슬림화 (200라인 이하 달성)
 
 ### 구현 후 (Post-Implementation)
-- [ ] **[1-3. 분리 후 에러 체크]** Import 경로 및 UI 크래시 여부 확인
-- [ ] **[3-2. 린트 체크]** `flutter analyze` 수행 및 이슈 해결
-- [ ] **[0-4. 소스 정합성]** 최종 소스 diff 확인 및 유실 방지 체크
-- [ ] **[0-2. Git 최종 커밋]** 완료 커밋
+- [x] **[1-3. 분리 후 에러 체크]** Import 경로 및 UI 크래시 여부 확인
+- [x] **[3-2. 린트 체크]** `flutter analyze` 수행 및 이슈 해결
+- [x] **[0-4. 소스 정합성]** 최종 소스 diff 확인 및 유실 방지 체크
+- [x] **[0-2. Git 최종 커밋]** 완료 커밋
 
 ---
 
