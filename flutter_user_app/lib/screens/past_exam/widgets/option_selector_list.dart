@@ -24,8 +24,8 @@ class OptionSelectorList extends StatelessWidget {
       children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            const Text(
+          children: const [
+            Text(
               '보기',
               style: TextStyle(
                 color: Colors.white,
@@ -33,8 +33,8 @@ class OptionSelectorList extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(width: 8),
-            const Expanded(
+            SizedBox(width: 8),
+            Expanded(
               child: Text(
                 '반드시 보기를 선택 해야만 해설을 볼수 있습니다',
                 style: TextStyle(

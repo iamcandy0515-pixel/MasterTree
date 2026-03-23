@@ -68,10 +68,10 @@ class QuizImageDisplay extends StatelessWidget {
       ),
       errorWidget: (context, url, error) => Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.park, size: 60, color: Colors.grey),
-          const SizedBox(height: 12),
-          const Text(
+        children: const [
+          Icon(Icons.park, size: 60, color: Colors.grey),
+          SizedBox(height: 12),
+          Text(
             '이미지를 불러올 수 없습니다.',
             style: TextStyle(color: Colors.grey, fontSize: 12),
           ),

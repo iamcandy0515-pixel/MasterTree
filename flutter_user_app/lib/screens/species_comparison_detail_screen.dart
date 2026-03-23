@@ -36,8 +36,8 @@ class _SpeciesComparisonDetailScreenState extends State<SpeciesComparisonDetailS
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('화면 하단에 비교 이미지(수피, 잎)가 있습니다', style: TextStyle(color: Colors.white)),
+          const SnackBar(
+            content: Text('화면 하단에 비교 이미지(수피, 잎)가 있습니다', style: TextStyle(color: Colors.white)),
             backgroundColor: AppColors.surfaceDark,
             behavior: SnackBarBehavior.floating,
           ),

@@ -28,12 +28,12 @@ class DashboardHeader extends StatelessWidget {
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text(
+        children: const [
+          Text(
             '사용자 대시보드',
             style: AppTypography.titleSmall,
           ),
-          const Text(
+          Text(
             'Master Tree User',
             style: AppTypography.labelSmall,
           ),
