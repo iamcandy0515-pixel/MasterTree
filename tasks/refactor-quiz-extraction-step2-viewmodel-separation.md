@@ -23,30 +23,30 @@
 
 ## 3. 작업 일정 및 단계 (Execution Phases)
 ### Phase 1: Mixin 기반 기능 추출 (lib/features/quiz_management/viewmodels/parts/)
-- [ ] `quiz_file_handler_mixin.dart` 생성 및 파일 제어 로직 이관.
-- [ ] `quiz_ai_assistant_mixin.dart` 생성 및 AI 연계 비즈니스 로직 이관.
-- [ ] `quiz_image_handler_mixin.dart` 생성 및 미디어 처리 로직 이관.
+- [x] `quiz_file_handler_mixin.dart` 생성 및 파일 제어 로직 이관.
+- [x] `quiz_ai_assistant_mixin.dart` 생성 및 AI 연계 비즈니스 로직 이관.
+- [x] `quiz_image_handler_mixin.dart` 생성 및 미디어 처리 로직 이관.
 
 ### Phase 2: 메인 뷰모델 재구조화
-- [ ] `QuizExtractionStep2ViewModel`에서 기존 로직 제거 후 Mixin들과 결합(`with` 키워드).
-- [ ] 메인 파일 내의 `Provider` 데이터 매핑 및 최종 DB 저장(`saveToDb`) 로직 정합성 확인.
-- [ ] 뷰모델 파일 라인 수 최종 점검 (150~180라인 타겟).
+- [x] `QuizExtractionStep2ViewModel`에서 기존 로직 제거 후 Mixin들과 결합(`with` 키워드).
+- [x] 메인 파일 내의 `Provider` 데이터 매핑 및 최종 DB 저장(`saveToDb`) 로직 정합성 확인.
+- [x] 뷰모델 파일 라인 수 최종 점검 (150~180라인 타겟).
 
 ### Phase 3: 최종 검증 및 동기화
-- [ ] **[3-2. 린트 체크]** `flutter analyze` 명령어로 린트 오류 0개 달성.
-- [ ] **[0-4. 소스 정합성]** 기능 분리 후 기존 UI(Step 2 Screen)와의 연동 테스트 (기능 누락 여부 확인).
-- [ ] 로컬 Git 최종 커밋 수행.
+- [x] **[3-2. 린트 체크]** `flutter analyze` 명령어로 린트 오류 0개 달성.
+- [x] **[0-4. 소스 정합성]** 기능 분리 후 기존 UI(Step 2 Screen)와의 연동 테스트 (기능 누락 여부 확인).
+- [x] 로컬 Git 최종 커밋 수행.
 
 ## 4. To-Do List (DEVELOPMENT_RULES 적용)
-- [ ] **[0-1. Git 백업]** 구현 시작 전 현재 상태 로컬 커밋 수행
-- [ ] `./parts/quiz_file_handler_mixin.dart` 구현 및 테스트
-- [ ] `./parts/quiz_ai_assistant_mixin.dart` 구현 및 테스트
-- [ ] `./parts/quiz_image_handler_mixin.dart` 구현 및 테스트
-- [ ] `quiz_extraction_step2_viewmodel.dart` 슬림화 및 리팩토링 완료
-- [ ] **[1-1. 200줄 체크]** 리팩토링 후 모든 관련 파일 라인 수 검증
-- [ ] **[3-2. 린트 체크]** `flutter analyze` 스타일/문법 오류 0개 달성
-- [ ] **[0-4. 소스 정합성]** `git diff`를 통한 기능 누락 여부 최종 확인
-- [ ] **[0-2. Git 최종 커밋]** 완료 후 작업 결과 커밋
+- [x] **[0-1. Git 백업]** 구현 시작 전 현재 상태 로컬 커밋 수행
+- [x] `./parts/quiz_file_handler_mixin.dart` 구현 및 테스트
+- [x] `./parts/quiz_ai_assistant_mixin.dart` 구현 및 테스트
+- [x] `./parts/quiz_image_handler_mixin.dart` 구현 및 테스트
+- [x] `quiz_extraction_step2_viewmodel.dart` 슬림화 및 리팩토링 완료
+- [x] **[1-1. 200줄 체크]** 리팩토링 후 모든 관련 파일 라인 수 검증
+- [x] **[3-2. 린트 체크]** `flutter analyze` 스타일/문법 오류 0개 달성
+- [x] **[0-4. 소스 정합성]** `git diff`를 통한 기능 누락 여부 최종 확인
+- [x] **[0-2. Git 최종 커밋]** 완료 후 작업 결과 커밋
 
 ## 5. 기대 효과 (Expected Outcomes)
 - 기능별 `Mixin` 구조를 통해 코드 중복을 제거하고 기능 확장이 용이해짐.
