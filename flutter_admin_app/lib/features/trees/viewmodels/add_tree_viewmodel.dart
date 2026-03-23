@@ -1,52 +1,28 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter_admin_app/core/utils/web_utils.dart';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
 import 'package:flutter_admin_app/features/trees/repositories/master_tree_repository.dart';
-import 'package:flutter_admin_app/features/trees/repositories/master_tree_media_repository.dart';
+import 'mixins/tree_media_mixin.dart';
+import 'mixins/tree_quiz_mixin.dart';
 
-class AddTreeViewModel extends ChangeNotifier {
+/// 수목 추가/수정 ViewModel (Refactored with Mixins)
+class AddTreeViewModel extends ChangeNotifier with TreeMediaMixin, TreeQuizMixin {
   final MasterTreeRepository _repo = MasterTreeRepository();
-  final MasterTreeMediaRepository _mediaRepo = MasterTreeMediaRepository();
-
   final Tree? originalTree;
 
   // Form Fields
   final TextEditingController nameKrController = TextEditingController();
-  final TextEditingController scientificNameController =
-      TextEditingController();
+  final TextEditingController scientificNameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
   String? _selectedCategory;
   int _difficulty = 1;
-
-  // Images
-  final List<TreeImage> _uploadedImages = [];
-  bool _isUploading = false;
   bool _isSubmitting = false;
-  String _selectedImageType = 'main';
-
-  // Quiz Distractors
-  final List<TextEditingController> distractorControllers = [
-    TextEditingController(),
-    TextEditingController(),
-    TextEditingController(),
-  ];
-  bool _isAutoQuizEnabled = true;
   String? _errorMessage;
 
   // Getters
   String? get selectedCategory => _selectedCategory;
   int get difficulty => _difficulty;
-  List<TreeImage> get uploadedImages => _uploadedImages;
-  bool get isUploading => _isUploading;
   bool get isSubmitting => _isSubmitting;
-  String get selectedImageType => _selectedImageType;
-  bool get isAutoQuizEnabled => _isAutoQuizEnabled;
   String? get errorMessage => _errorMessage;
 
   AddTreeViewModel(this.originalTree) {
@@ -56,16 +32,10 @@ class AddTreeViewModel extends ChangeNotifier {
       descriptionController.text = originalTree!.description ?? '';
       _selectedCategory = originalTree!.category;
       _difficulty = originalTree!.difficulty;
-      _uploadedImages.addAll(originalTree!.images);
-
-      // Load Quiz Distractors
-      if (originalTree!.quizDistractors.isNotEmpty) {
-        distractorControllers.clear();
-        for (var distractor in originalTree!.quizDistractors) {
-          distractorControllers.add(TextEditingController(text: distractor));
-        }
-      }
-      _isAutoQuizEnabled = originalTree!.isAutoQuizEnabled;
+      
+      // Initialize Mixins
+      initializeImages(originalTree!.images);
+      initializeQuiz(originalTree!.quizDistractors, originalTree!.isAutoQuizEnabled);
     }
   }
 
@@ -74,9 +44,7 @@ class AddTreeViewModel extends ChangeNotifier {
     nameKrController.dispose();
     scientificNameController.dispose();
     descriptionController.dispose();
-    for (var controller in distractorControllers) {
-      controller.dispose();
-    }
+    disposeQuiz();
     super.dispose();
   }
 
@@ -91,127 +59,8 @@ class AddTreeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSelectedImageType(String value) {
-    _selectedImageType = value;
-    notifyListeners();
-  }
-
-  void removeImage(int index) {
-    _uploadedImages.removeAt(index);
-    notifyListeners();
-  }
-
-  // Quiz Distractor Methods
-  void addDistractor() {
-    distractorControllers.add(TextEditingController());
-    notifyListeners();
-  }
-
-  void removeDistractor(int index) {
-    if (distractorControllers.length > 1) {
-      distractorControllers[index].dispose();
-      distractorControllers.removeAt(index);
-      notifyListeners();
-    }
-  }
-
-  void setAutoQuizEnabled(bool value) {
-    _isAutoQuizEnabled = value;
-    notifyListeners();
-  }
-
-  Future<void> handleDroppedFiles(dynamic file) async {
-    try {
-      _isUploading = true;
-      notifyListeners();
-
-      final bytes = await WebUtils.readFileAsBytes(file);
-      if (bytes == null) throw Exception('파일을 읽을 수 없습니다.');
-
-      final publicUrl = await _mediaRepo.uploadImageFromBytes(
-        Uint8List.fromList(bytes),
-        kIsWeb ? (file as dynamic).name : 'dropped_file',
-      );
-
-      _uploadedImages.add(
-        TreeImage(imageType: _selectedImageType, imageUrl: publicUrl),
-      );
-      _isUploading = false;
-      notifyListeners();
-    } catch (e) {
-      _isUploading = false;
-      notifyListeners();
-      rethrow;
-    }
-  }
-
-  Future<void> pickAndUploadImage() async {
-    try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.image,
-        allowMultiple: false,
-      );
-
-      if (result == null || result.files.isEmpty) return;
-
-      final file = result.files.first;
-      if (file.bytes == null) return;
-
-      _isUploading = true;
-      notifyListeners();
-
-      final publicUrl = await _mediaRepo.uploadImageFromBytes(
-        file.bytes!,
-        file.name,
-      );
-
-      _uploadedImages.add(
-        TreeImage(imageType: _selectedImageType, imageUrl: publicUrl),
-      );
-      _isUploading = false;
-      notifyListeners();
-    } catch (e) {
-      _isUploading = false;
-      notifyListeners();
-      rethrow;
-    }
-  }
-
-  Future<void> pasteImageFromClipboard() async {
-    if (!kIsWeb) {
-      throw Exception('모바일에서는 클립보드 붙여넣기가 지원되지 않습니다.');
-    }
-
-    try {
-      _isUploading = true;
-      _errorMessage = null; // Clear previous error
-      notifyListeners();
-
-      bool imageFound = false;
-      await WebUtils.pasteImageFromClipboard((bytes, name, type) async {
-        final publicUrl = await _mediaRepo.uploadImageFromBytes(
-          Uint8List.fromList(bytes),
-          name,
-        );
-
-        _uploadedImages.add(
-          TreeImage(imageType: _selectedImageType, imageUrl: publicUrl),
-        );
-        imageFound = true;
-      });
-
-      _isUploading = false;
-      notifyListeners();
-      if (!imageFound) throw Exception('클립보드에 이미지가 없습니다.');
-    } catch (e) {
-      _isUploading = false;
-      notifyListeners();
-      rethrow;
-    }
-  }
-
   Future<bool> submitTree() async {
-    if (_uploadedImages.isEmpty) {
+    if (uploadedImages.isEmpty) {
       throw Exception('최소 1개 이상의 이미지를 업로드해주세요');
     }
 
@@ -226,12 +75,12 @@ class AddTreeViewModel extends ChangeNotifier {
         description: descriptionController.text.trim(),
         category: _selectedCategory,
         difficulty: _difficulty,
-        images: _uploadedImages,
+        images: uploadedImages,
         quizDistractors: distractorControllers
             .map((c) => c.text.trim())
             .where((text) => text.isNotEmpty)
             .toList(),
-        isAutoQuizEnabled: _isAutoQuizEnabled,
+        isAutoQuizEnabled: isAutoQuizEnabled,
       );
 
       if (originalTree != null) {
@@ -272,11 +121,8 @@ class AddTreeViewModel extends ChangeNotifier {
     descriptionController.clear();
     _difficulty = 1;
     _selectedCategory = null;
-    _uploadedImages.clear();
-    _selectedImageType = 'main';
-    for (var controller in distractorControllers) {
-      controller.clear();
-    }
+    clearImages();
+    clearQuiz();
     notifyListeners();
   }
 }

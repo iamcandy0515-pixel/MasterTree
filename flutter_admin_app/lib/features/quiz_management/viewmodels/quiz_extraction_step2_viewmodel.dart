@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import '../repositories/quiz_repository.dart';
 import 'parts/quiz_file_handler_mixin.dart';
 import 'parts/quiz_ai_assistant_mixin.dart';

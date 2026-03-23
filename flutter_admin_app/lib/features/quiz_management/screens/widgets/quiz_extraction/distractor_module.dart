@@ -1,16 +1,14 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../viewmodels/quiz_extraction_step2_viewmodel.dart';
 
 class DistractorModule extends StatefulWidget {
   final TextEditingController questionController;
-  final TextEditingController explanationController;
   final List<TextEditingController> optionControllers;
 
   const DistractorModule({
     super.key,
     required this.questionController,
-    required this.explanationController,
     required this.optionControllers,
   });
 
@@ -19,111 +17,160 @@ class DistractorModule extends StatefulWidget {
 }
 
 class _DistractorModuleState extends State<DistractorModule> {
-  bool _isGenerating = false;
+  static const primaryColor = Color(0xFF2BEE8C);
+  static const backgroundDark = Color(0xFF102219);
 
-  Future<void> _generateOptions() async {
+  Future<void> _generateDistractorsAction() async {
     final vm = context.read<QuizExtractionStep2ViewModel>();
     final questionText = widget.questionController.text;
-    final explanationText = widget.explanationController.text;
+    final correctAnswer = widget.optionControllers[0].text;
 
-    if (questionText.isEmpty || explanationText.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('臾몄젣? ?댁꽕??癒쇱? ?낅젰?댁＜?몄슂.')));
+    if (questionText.isEmpty || correctAnswer.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('문제와 현재 지정된 정답 내용을 확인해주세요.')),
+      );
       return;
     }
 
-    setState(() => _isGenerating = true);
-
     try {
-      final options = await vm.generateOptionsAction(
+      final distractors = await vm.generateDistractorsAction(
         questionText,
-        explanationText,
+        correctAnswer,
       );
-      if (mounted && options.isNotEmpty) {
-        for (int i = 0; i < widget.optionControllers.length; i++) {
-          if (i < options.length) {
-            widget.optionControllers[i].text = options[i];
+      if (mounted && distractors.isNotEmpty) {
+        setState(() {
+          int distIdx = 0;
+          for (int i = 0; i < widget.optionControllers.length; i++) {
+            if (i != 0 && distIdx < distractors.length) {
+              // 0 is correct answer
+              widget.optionControllers[i].text = distractors[distIdx];
+              distIdx++;
+            }
           }
-        }
+        });
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('오답이 성공적으로 재추천되었습니다.')));
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('蹂닿린 ?앹꽦 以??ㅻ쪟媛 諛쒖깮?덉뒿?덈떎: $e')));
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isGenerating = false);
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    const primaryColor = Color(0xFF2BEE8C);
-
+    final vm = context.watch<QuizExtractionStep2ViewModel>();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text(
-              '?뺣떟 諛?蹂닿린 ?ㅼ젙',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+            Flexible(
+              child: Text(
+                '오답 (보기 구성)',
+                style: TextStyle(
+                  color: Colors.grey[400],
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
-            TextButton.icon(
-              onPressed: _isGenerating ? null : _generateOptions,
-              icon: _isGenerating
-                  ? const SizedBox(
-                      width: 14,
-                      height: 14,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.psychology_alt, size: 16),
-              label: const Text('AI 蹂닿린 ?앹꽦'),
-              style: TextButton.styleFrom(foregroundColor: primaryColor),
+            const SizedBox(width: 8),
+            TextButton(
+              onPressed: vm.extractedBlock == null
+                  ? null
+                  : _generateDistractorsAction,
+              child: const Text(
+                '오답 재추천',
+                style: TextStyle(color: primaryColor, fontSize: 12),
+              ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
-        ...List.generate(widget.optionControllers.length, (index) {
-          final bool isCorrect = index == 0;
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: TextField(
-              controller: widget.optionControllers[index],
-              style: const TextStyle(color: Colors.white, fontSize: 13),
-              decoration: InputDecoration(
-                labelText: isCorrect ? '?뺣떟' : '蹂닿린 ${index + 1}',
-                labelStyle: TextStyle(
-                  color: isCorrect ? primaryColor : Colors.white54,
-                  fontWeight: isCorrect ? FontWeight.bold : FontWeight.normal,
-                ),
-                filled: true,
-                fillColor: Colors.white.withOpacity(0.05),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: isCorrect
-                      ? BorderSide(color: primaryColor.withOpacity(0.3))
-                      : BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: primaryColor),
+        const SizedBox(height: 4),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: backgroundDark,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                '정답',
+                style: TextStyle(
+                  color: primaryColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
                 ),
               ),
-            ),
-          );
-        }),
+              const SizedBox(height: 4),
+              TextField(
+                controller: widget.optionControllers[0],
+                maxLines: null,
+                minLines: 1,
+                style: const TextStyle(color: Colors.white, fontSize: 13),
+                decoration: const InputDecoration(
+                  filled: false,
+                  contentPadding: EdgeInsets.zero,
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  isDense: true,
+                  hintText: '정답 원문',
+                  hintStyle: TextStyle(color: Colors.grey),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: backgroundDark,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '오답',
+                style: TextStyle(
+                  color: Colors.grey[400],
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
+              ),
+              const SizedBox(height: 4),
+              TextField(
+                controller: widget.optionControllers[1],
+                maxLines: null,
+                minLines: 1,
+                style: const TextStyle(color: Colors.white, fontSize: 13),
+                decoration: const InputDecoration(
+                  filled: false,
+                  contentPadding: EdgeInsets.zero,
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  isDense: true,
+                  hintText: '오답(매력적 보기)',
+                  hintStyle: TextStyle(color: Colors.grey),
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
 }
-
