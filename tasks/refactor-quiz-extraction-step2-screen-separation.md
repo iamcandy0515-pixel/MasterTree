@@ -43,20 +43,20 @@
 ## 3. To-Do List (Checklist)
 
 ### 구현 전 (Pre-Implementation)
-- [ ] **[0-1. Git 백업]** 현재 상태 커밋 (`git commit -m "pre-refactor: backup quiz_extraction_step2_screen"`)
-- [ ] `ExtractionDataForm`에 전달해야 할 10여 개의 컨트롤러 매개변수 명세 확정
+- [x] **[0-1. Git 백업]** 현재 상태 커밋 (`git commit -m "pre-refactor: backup quiz_extraction_step2_screen"`)
+- [x] `ExtractionDataForm`에 전달해야 할 10여 개의 컨트롤러 매개변수 명세 확정
 
 ### 구현 중 (Implementation)
-- [ ] `quiz_extraction_sticky_header.dart` 분리 (Glassmorphism 적용)
-- [ ] `quiz_extraction_filter_summary.dart` 분리
-- [ ] `quiz_extraction_data_form.dart` 분리 (모듈 3~7 래핑)
-- [ ] `quiz_extraction_step2_screen.dart` 메인 파일 슬림화 (200라인 이하 달성)
+- [x] `quiz_extraction_sticky_header.dart` 분리 (Glassmorphism 적용)
+- [x] `quiz_extraction_filter_summary.dart` 분리
+- [x] `quiz_extraction_data_form.dart` 분리 (모듈 3~7 래핑)
+- [x] `quiz_extraction_step2_screen.dart` 메인 파일 슬림화 (200라인 이하 달성)
 
 ### 구현 후 (Post-Implementation)
-- [ ] **[1-3. 분리 후 에러 체크]** 화면 전환 시 컨트롤러 누출(Leak) 여부 및 UI 정합성 확인
-- [ ] **[3-2. 린트 체크]** `flutter analyze` 수행 및 이슈 해결
-- [ ] **[0-4. 소스 정합성]** 최종 소스 diff 확인 및 유실 방지 체크
-- [ ] **[0-2. Git 최종 커밋]** 리팩토링 완료 상태 커밋
+- [x] **[1-3. 분리 후 에러 체크]** 화면 전환 시 컨트롤러 누출(Leak) 여부 및 UI 정합성 확인
+- [x] **[3-2. 린트 체크]** `flutter analyze` 수행 및 이슈 해결
+- [x] **[0-4. 소스 정합성]** 최종 소스 diff 확인 및 유실 방지 체크
+- [x] **[0-2. Git 최종 커밋]** 리팩토링 완료 상태 커밋
 
 ---
 
