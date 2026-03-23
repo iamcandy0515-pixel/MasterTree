@@ -11,23 +11,12 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export interface CommonEnums {
+export type CommonEnums = {
   [_ in never]: never
 }
 
-export interface CommonCompositeTypes {
+export type CommonCompositeTypes = {
   [_ in never]: never
 }
 
-// Helpers for Supabase generated types
-export type Tables<
-  T extends { Row: any }
-> = T["Row"]
 
-export type TablesInsert<
-  T extends { Insert: any }
-> = T["Insert"]
-
-export type TablesUpdate<
-  T extends { Update: any }
-> = T["Update"]

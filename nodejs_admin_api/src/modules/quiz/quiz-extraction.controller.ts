@@ -97,7 +97,8 @@ export class QuizExtractionController {
         const files = await driveService.searchFilesInFolder(folderId, fileId.trim());
         if (!files || files.length === 0) throw new Error(`구글 드라이브 폴더 내에서 파일을 찾을 수 없습니다: '${fileId}'`);
 
-        return files[0].id;
+        return files[0].id as string;
+
     }
 
     /**

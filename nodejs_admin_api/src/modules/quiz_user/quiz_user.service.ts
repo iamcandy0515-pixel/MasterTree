@@ -75,7 +75,7 @@ export class QuizUserService {
 
         const { error: insErr } = await supabase
             .from("quiz_attempts")
-            .insert(attemptRows);
+            .insert(attemptRows as any[]);
         if (insErr)
             throw new Error(`Insert attempts failed: ${insErr.message}`);
 
@@ -178,7 +178,8 @@ export class QuizUserService {
         // 4. Batch insert
         const { error: insErr } = await supabase
             .from("quiz_attempts")
-            .insert(attemptRows);
+            .insert(attemptRows as any[]);
+
 
         if (insErr) {
             console.error("[saveBatchAttempts] Insert Error:", insErr);
@@ -314,13 +315,14 @@ export class QuizUserService {
                 .map((s) => ({
                     started_at: s.started_at,
                     total_score:
-                        s.total_questions > 0
+                        s.total_questions && s.total_questions > 0
                             ? Math.round(
-                                  (s.correct_count / s.total_questions) * 100,
+                                  ((s.correct_count || 0) / s.total_questions) * 100,
                               )
                             : 0,
                 }))
                 .reverse(),
+
         };
     }
 }

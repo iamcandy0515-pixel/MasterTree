@@ -85,9 +85,11 @@ export class QuizService {
             return { id: data.id, ...payload };
         } else {
             const res = await quizRepository.insertQuiz(payload);
-            return { id: res.id, ...payload };
+            if (res.error) throw res.error;
+            return { id: (res.data as any).id, ...payload };
         }
     }
+
 
     /**
      * Recommends related questions from DB using AI & Vector Search
@@ -98,8 +100,8 @@ export class QuizService {
 
         if (queryEmbedding && queryEmbedding.length > 0) {
             const { data, error } = await quizRepository.matchQuestions(queryEmbedding, 0.5, 50);
-            if (!error && data && data.length > 0) {
-                const { data: fullData } = await quizRepository.findQuizzesByIds(data.map((d: any) => d.id));
+            if (!error && data && (data as any[]).length > 0) {
+                const { data: fullData } = await quizRepository.findQuizzesByIds((data as any[]).map((d: any) => d.id));
                 questions = fullData || [];
             }
         }
@@ -134,7 +136,7 @@ export class QuizService {
 
         const itemsToUpsert: any[] = [];
         for (const item of quizItems) {
-            const payload = this._formatBatchItem(item, examId, categoryId);
+            const payload: any = this._formatBatchItem(item, examId, categoryId);
             const embedText = this._getEmbeddingSourceText(payload);
             if (embedText) {
                 const embedding = await quizAIService.generateEmbedding(embedText);
@@ -146,11 +148,11 @@ export class QuizService {
         const { data, error } = await quizRepository.upsertBatch(itemsToUpsert);
         if (error) {
             // Fallback to individual upsert for precise logging
-            const results = [];
+            const results: any[] = [];
             for (const item of itemsToUpsert) {
                 const { data: qData, error: qErr } = await quizRepository.upsertSingle(item);
                 if (qErr) throw new Error(`Q${item.question_number} failed: ${qErr.message}`);
-                if (qData) results.push(...qData);
+                if (qData) results.push(...(qData as any[]));
             }
             return results;
         }
@@ -161,7 +163,7 @@ export class QuizService {
      * Deletes a quiz by ID and cleans up associated images
      */
     async deleteQuiz(id: number) {
-        const { data: quiz } = await quizRepository.findQuizForDeletion(id);
+        const { data: quiz } = await quizRepository.findQuizForDeletion(id) as any;
         if (quiz) {
             const imagePaths = this._extractImagePaths([...(quiz.content_blocks || []), ...(quiz.explanation_blocks || [])]);
             if (imagePaths.length > 0) {
@@ -184,18 +186,18 @@ export class QuizService {
     private async _ensureCategory(subject: string) {
         if (!subject) return null;
         const { data } = await quizRepository.findCategoryByName(subject);
-        if (data) return data.id;
+        if (data && (data as any).id) return (data as any).id;
         const { data: newCat } = await quizRepository.createCategory(subject);
-        return newCat?.id;
+        return (newCat as any)?.id;
     }
 
     private async _ensureExam(subject: string, year: number, round: number) {
         if (!year || !round) return null;
         const examTitle = `${subject || "Unknown"} ${year}년 ${round}회`;
         const { data } = await quizRepository.findExam(examTitle, year, round);
-        if (data) return data.id;
+        if (data && (data as any).id) return (data as any).id;
         const { data: newExam } = await quizRepository.createExam(year, round, examTitle);
-        return newExam?.id;
+        return (newExam as any)?.id;
     }
 
     private _extractImagePaths(blocks: any[]) {

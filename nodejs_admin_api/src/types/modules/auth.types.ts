@@ -4,7 +4,8 @@ import { Json } from "../common.db";
  * Authentication & User Module Types
  * Strategy G: Module Mapping
  */
-export interface AuthTables {
+export type AuthTables = {
+
   admins: {
     Row: {
       role_level: number | null

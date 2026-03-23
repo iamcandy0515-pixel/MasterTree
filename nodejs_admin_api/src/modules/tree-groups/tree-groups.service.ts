@@ -64,7 +64,7 @@ export class TreeGroupsService {
                 )
             `,
             )
-            .eq("id", id)
+            .eq("id", parseInt(id))
             .single();
 
         if (error) throw error;
@@ -112,7 +112,7 @@ export class TreeGroupsService {
         const { error: groupError } = await supabase
             .from("tree_groups")
             .update({ group_name: groupName, description })
-            .eq("id", id);
+            .eq("id", parseInt(id));
 
         if (groupError) throw groupError;
 
@@ -120,7 +120,7 @@ export class TreeGroupsService {
         const { error: deleteError } = await supabase
             .from("tree_group_members")
             .delete()
-            .eq("group_id", id);
+            .eq("group_id", parseInt(id));
 
         if (deleteError) throw deleteError;
 
@@ -148,7 +148,8 @@ export class TreeGroupsService {
         const { error } = await supabase
             .from("tree_groups")
             .delete()
-            .eq("id", id);
+            .eq("id", parseInt(id))
+;
 
         if (error) throw error;
         return true;

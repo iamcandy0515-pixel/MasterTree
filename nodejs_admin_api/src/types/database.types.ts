@@ -15,17 +15,38 @@ export type Database = {
     PostgrestVersion: "14.1"
   }
   public: {
-    Tables: AuthTables & TreeTables & QuizCoreTables & QuizUserTables & SettingTables
+    Tables: {
+      admins: AuthTables["admins"]
+      profiles: AuthTables["profiles"]
+      users: AuthTables["users"]
+      trees: TreeTables["trees"]
+      tree_images: TreeTables["tree_images"]
+      tree_groups: TreeTables["tree_groups"]
+      tree_group_members: TreeTables["tree_group_members"]
+      ai_detections: TreeTables["ai_detections"]
+      quiz_categories: QuizCoreTables["quiz_categories"]
+      quiz_exams: QuizCoreTables["quiz_exams"]
+      quiz_questions: QuizCoreTables["quiz_questions"]
+      quiz_sessions: QuizUserTables["quiz_sessions"]
+      quiz_attempts: QuizUserTables["quiz_attempts"]
+      quiz_answers: QuizUserTables["quiz_answers"]
+      app_settings: SettingTables["app_settings"]
+    }
     Views: {
       [_ in never]: never
     }
+
+
+
+
     Functions: {
       match_quiz_questions: {
         Args: {
           match_count: number
           match_threshold: number
-          query_embedding: string
+          query_embedding: any
         }
+
         Returns: {
           content_blocks: Json
           id: number
@@ -43,19 +64,17 @@ export type Database = {
   }
 }
 
-type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
-
 export type Tables<
-  T extends keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-> = (DefaultSchema["Tables"] & DefaultSchema["Views"])[T] extends { Row: infer R } ? R : never
+  T extends keyof Database["public"]["Tables"]
+> = Database["public"]["Tables"][T] extends { Row: infer R } ? R : never
 
 export type TablesInsert<
-  T extends keyof DefaultSchema["Tables"]
-> = DefaultSchema["Tables"][T] extends { Insert: infer I } ? I : never
+  T extends keyof Database["public"]["Tables"]
+> = Database["public"]["Tables"][T] extends { Insert: infer I } ? I : never
 
 export type TablesUpdate<
-  T extends keyof DefaultSchema["Tables"]
-> = DefaultSchema["Tables"][T] extends { Update: infer U } ? U : never
+  T extends keyof Database["public"]["Tables"]
+> = Database["public"]["Tables"][T] extends { Update: infer U } ? U : never
 
-export type Enums<T extends keyof DefaultSchema["Enums"]> = DefaultSchema["Enums"][T]
+export type Enums<T extends keyof Database["public"]["Enums"]> = Database["public"]["Enums"][T]
+

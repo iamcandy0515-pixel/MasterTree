@@ -4,7 +4,7 @@ import { Json } from "../common.db";
  * Tree & AI Detection Module Types
  * Strategy G: Module Mapping
  */
-export interface TreeTables {
+export type TreeTables = {
   trees: {
     Row: {
       category: string | null
@@ -19,6 +19,7 @@ export interface TreeTables {
       quiz_distractors: string[] | null
       scientific_name: string | null
       shape: string | null
+      family_name: string | null
     }
     Insert: {
       category?: string | null
@@ -33,6 +34,7 @@ export interface TreeTables {
       quiz_distractors?: string[] | null
       scientific_name?: string | null
       shape?: string | null
+      family_name?: string | null
     }
     Update: {
       category?: string | null
@@ -57,6 +59,7 @@ export interface TreeTables {
       id: number
       image_type: string | null
       image_url: string | null
+      thumbnail_url: string | null
       is_quiz_enabled: boolean
       tree_id: number
       uploaded_by: string | null

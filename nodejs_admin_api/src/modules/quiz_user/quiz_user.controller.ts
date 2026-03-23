@@ -128,7 +128,8 @@ export class QuizUserController {
                     is_correct,
                     user_answer,
                     time_taken_ms,
-                })
+                } as any)
+
                 .select("*")
                 .single();
 

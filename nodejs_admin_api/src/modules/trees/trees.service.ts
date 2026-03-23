@@ -22,9 +22,9 @@ export class TreeService {
 
         // Deduplication/Merging logic (Rule 3 Optimization)
         const uniqueTreeMap = new Map<string, any>();
-        for (const tree of data || []) {
+        for (const tree of (data as any[]) || []) {
             if (!uniqueTreeMap.has(tree.name_kr)) {
-                uniqueTreeMap.set(tree.name_kr, { ...tree });
+                uniqueTreeMap.set(tree.name_kr, { ...(tree as any) });
             } else {
                 const existing = uniqueTreeMap.get(tree.name_kr);
                 if (tree.tree_images && Array.isArray(tree.tree_images)) {
@@ -53,14 +53,14 @@ export class TreeService {
             throw treeError;
         }
 
-        const treeId = treeData.id;
+        const treeId = (treeData as any).id;
         if (dto.images && dto.images.length > 0) {
             const imageRecords = dto.images.map(img => ({ ...img, tree_id: treeId, uploaded_by: userId }));
             const { error: imgError } = await treeRepository.insertImages(imageRecords);
-            if (imgError) logger.error("[TreeService] Image insert failed for tree", treeId, imgError);
+            if (imgError) logger.error(`[TreeService] Image insert failed for tree ${treeId}`, imgError);
         }
 
-        return { ...treeData, tree_images: dto.images };
+        return { ...(treeData as any), tree_images: dto.images };
     }
 
     /**
@@ -111,7 +111,8 @@ export class TreeService {
 
     // --- Private Helpers ---
 
-    private static _mapDtoToTree(dto: CreateTreeDto, nameKr: string, userId: string) {
+    private static _mapDtoToTree(dto: CreateTreeDto, nameKr: string, userId: string): any {
+
         return {
             name_kr: nameKr,
             name_en: dto.name_en,

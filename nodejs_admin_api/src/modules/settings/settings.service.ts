@@ -34,7 +34,8 @@ export class SettingsService {
                     key: "entry_code",
                     value: code,
                     description: "앱 입장 코드",
-                    updated_at: new Date(),
+                    updated_at: new Date().toISOString(),
+
                 },
                 { onConflict: "key" },
             )
@@ -76,7 +77,8 @@ export class SettingsService {
                     key: "user_app_url",
                     value: url,
                     description: "사용자 앱 URL (QR생성용)",
-                    updated_at: new Date(),
+                    updated_at: new Date().toISOString(),
+
                 },
                 { onConflict: "key" },
             )
@@ -118,7 +120,8 @@ export class SettingsService {
                     key: "google_drive_folder_url",
                     value: url,
                     description: "구글 드라이브 폴더 URL (문제 추출용)",
-                    updated_at: new Date(),
+                    updated_at: new Date().toISOString(),
+
                 },
                 { onConflict: "key" },
             )
@@ -160,7 +163,8 @@ export class SettingsService {
                     key: "thumbnail_drive_url",
                     value: url,
                     description: "구글 드라이브 썸네일 폴더 URL",
-                    updated_at: new Date(),
+                    updated_at: new Date().toISOString(),
+
                 },
                 { onConflict: "key" },
             )
@@ -201,7 +205,8 @@ export class SettingsService {
                     key: "exam_drive_url",
                     value: url,
                     description: "구글 드라이브 기출문제 폴더 URL",
-                    updated_at: new Date(),
+                    updated_at: new Date().toISOString(),
+
                 },
                 { onConflict: "key" },
             )

@@ -43,6 +43,7 @@ export interface QuizUserTables {
       session_id: number
       time_taken_ms: number | null
       user_answer: string | null
+      tree_id: number | null
       user_id: string
     }
     Insert: {
@@ -50,10 +51,11 @@ export interface QuizUserTables {
       created_at?: string
       id?: never
       is_correct: boolean
-      question_id: number
+      question_id?: number | null
       session_id: number
       time_taken_ms?: number | null
       user_answer?: string | null
+      tree_id?: number | null
       user_id: string
     }
     Update: {

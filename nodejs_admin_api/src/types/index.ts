@@ -5,8 +5,7 @@
 
 export * from "./database.types";
 export * from "./common.db";
-export * from "./modules/auth.types";
-export * from "./modules/trees.types";
-export * from "./modules/quiz-core.types";
-export * from "./modules/quiz-user.types";
-export * from "./modules/settings.types";
+// Modules are already aggregated in database.types.ts, 
+// so we don't need to export * from them if they cause name collisions.
+// If specific types are needed, they can be accessed via Database interface or explicit named exports here.
+

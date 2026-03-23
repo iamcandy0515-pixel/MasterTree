@@ -70,6 +70,8 @@ export interface QuizCoreTables {
       raw_source_image_url: string | null
       raw_source_text: string | null
       related_quiz_ids: number[] | null
+      name_kr: string | null
+      tree_id: number | null
       status: string | null
     }
     Insert: {

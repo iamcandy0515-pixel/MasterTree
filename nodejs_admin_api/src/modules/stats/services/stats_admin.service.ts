@@ -44,9 +44,10 @@ export class StatsAdminService {
         const wrongCounts: Record<string, number> = {};
 
         allAttempts?.forEach(att => {
+            const uid = att.user_id as string;
             // User stats aggregation
-            if (!userAggregates[att.user_id]) {
-                userAggregates[att.user_id] = { 
+            if (!userAggregates[uid]) {
+                userAggregates[uid] = { 
                     last_active: att.created_at, 
                     tree_count: 0, 
                     exam_count: 0,
@@ -54,12 +55,13 @@ export class StatsAdminService {
                 };
             }
             
-            if (!userAggregates[att.user_id].last_active || new Date(att.created_at) > new Date(userAggregates[att.user_id].last_active!)) {
-                userAggregates[att.user_id].last_active = att.created_at;
+            if (!userAggregates[uid].last_active || new Date(att.created_at as string) > new Date(userAggregates[uid].last_active!)) {
+                userAggregates[uid].last_active = att.created_at as string;
             }
 
-            const qId = att.question_id;
-            const tId = att.tree_id;
+            const qId = att.question_id as number;
+            const tId = att.tree_id as number;
+
 
             // Past Exam Question (has exam_id)
             if (qId && examQuestionIds.has(qId)) {
