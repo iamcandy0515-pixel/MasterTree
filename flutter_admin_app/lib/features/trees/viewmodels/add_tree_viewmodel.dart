@@ -7,9 +7,11 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
 import 'package:flutter_admin_app/features/trees/repositories/master_tree_repository.dart';
+import 'package:flutter_admin_app/features/trees/repositories/master_tree_media_repository.dart';
 
 class AddTreeViewModel extends ChangeNotifier {
   final MasterTreeRepository _repo = MasterTreeRepository();
+  final MasterTreeMediaRepository _mediaRepo = MasterTreeMediaRepository();
 
   final Tree? originalTree;
 
@@ -131,7 +133,7 @@ class AddTreeViewModel extends ChangeNotifier {
         name: kIsWeb ? (file as dynamic).name : 'dropped_file',
         mimeType: kIsWeb ? (file as dynamic).type : 'image/jpeg',
       );
-      final publicUrl = await _repo.uploadImage(xFile);
+      final publicUrl = await _mediaRepo.uploadImage(xFile);
 
       _uploadedImages.add(
         TreeImage(imageType: _selectedImageType, imageUrl: publicUrl),
@@ -166,7 +168,7 @@ class AddTreeViewModel extends ChangeNotifier {
         mimeType: 'image/${file.extension}',
       );
 
-      final publicUrl = await _repo.uploadImage(xFile);
+      final publicUrl = await _mediaRepo.uploadImage(xFile);
 
       _uploadedImages.add(
         TreeImage(imageType: _selectedImageType, imageUrl: publicUrl),
@@ -198,7 +200,7 @@ class AddTreeViewModel extends ChangeNotifier {
           mimeType: type,
         );
 
-        final publicUrl = await _repo.uploadImage(xFile);
+        final publicUrl = await _mediaRepo.uploadImage(xFile);
         _uploadedImages.add(
           TreeImage(imageType: _selectedImageType, imageUrl: publicUrl),
         );

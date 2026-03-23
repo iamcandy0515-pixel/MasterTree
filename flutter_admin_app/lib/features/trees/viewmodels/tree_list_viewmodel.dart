@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
 import 'package:flutter_admin_app/features/trees/repositories/master_tree_repository.dart';
+import 'package:flutter_admin_app/features/trees/repositories/master_tree_data_repository.dart';
 
 class TreeListViewModel extends ChangeNotifier {
   final MasterTreeRepository _repo = MasterTreeRepository();
+  final MasterTreeDataRepository _dataRepo = MasterTreeDataRepository();
 
   List<Tree> _paginatedTrees = [];
   bool _isLoading = false;
@@ -109,7 +111,7 @@ class TreeListViewModel extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-      final csvData = await _repo.exportTrees();
+      final csvData = await _dataRepo.exportTrees();
       return csvData;
     } catch (e) {
       _errorMessage = '내보내기 실패: $e';
@@ -128,7 +130,7 @@ class TreeListViewModel extends ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
     try {
-      final results = await _repo.importTrees(bytes, fileName);
+      final results = await _dataRepo.importTrees(bytes, fileName);
       // Refresh list
       _currentPage = 1;
       await fetchTrees();

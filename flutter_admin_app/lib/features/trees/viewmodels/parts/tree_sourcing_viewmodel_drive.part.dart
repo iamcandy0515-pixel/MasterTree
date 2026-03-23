@@ -4,7 +4,7 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
   Future<void> _checkExistence(String url, String key) async {
     if (!url.contains('drive.google.com')) return;
     try {
-      final exists = await _repository.checkFileExists(url);
+      final exists = await _mediaRepo.checkFileExists(url);
       if (!exists) {
         _fileMissing[key] = true;
         notify();
@@ -21,7 +21,7 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
     notify();
 
     try {
-      final thumbUrl = await _repository.generateThumbnail(
+      final thumbUrl = await _mediaRepo.generateThumbnail(
         _selectedTree!.nameKr,
         type,
       );
@@ -53,7 +53,7 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
     notify();
 
     try {
-      final result = await _repository.getDriveLinks(_selectedTree!.nameKr);
+      final result = await _mediaRepo.getDriveLinks(_selectedTree!.nameKr);
       if (result['success'] == true) {
         final Map<String, dynamic> original = result['original'] ?? {};
         final Map<String, dynamic> thumb = result['thumb'] ?? {};

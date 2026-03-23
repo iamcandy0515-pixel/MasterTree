@@ -134,7 +134,7 @@ extension TreeSourcingDetailExtension on TreeSourcingViewModel {
 
         if (stagedOriginal != null) {
           if (stagedOriginal is XFile) {
-            finalUrl = await _repository.uploadImage(stagedOriginal);
+            finalUrl = await _mediaRepo.uploadImage(stagedOriginal);
           } else if (stagedOriginal is TreeImage) {
             finalUrl = stagedOriginal.imageUrl;
           } else if (stagedOriginal is Uint8List) {
@@ -142,13 +142,13 @@ extension TreeSourcingDetailExtension on TreeSourcingViewModel {
               stagedOriginal,
               name: '${_selectedTree!.nameKr}_${type}_original.jpg',
             );
-            finalUrl = await _repository.uploadImage(xFile);
+            finalUrl = await _mediaRepo.uploadImage(xFile);
           }
         }
 
         if (stagedThumb != null) {
           if (stagedThumb is XFile) {
-            finalThumb = await _repository.uploadImage(stagedThumb);
+            finalThumb = await _mediaRepo.uploadImage(stagedThumb);
           } else if (stagedThumb is TreeImage) {
             finalThumb = stagedThumb.thumbnailUrl;
           } else if (stagedThumb is Uint8List) {
@@ -156,7 +156,7 @@ extension TreeSourcingDetailExtension on TreeSourcingViewModel {
               stagedThumb,
               name: '${_selectedTree!.nameKr}_${type}_thumb.jpg',
             );
-            finalThumb = await _repository.uploadImage(xFile);
+            finalThumb = await _mediaRepo.uploadImage(xFile);
           }
         }
 

@@ -38,4 +38,25 @@ abstract class BaseRepository {
       throw Exception('인증 만료 (서버 오류: $statusCode)');
     }
   }
+
+  /// 이미지 서버 프록시 URL 생성 (인스턴스용)
+  String getProxyUrl(String url, {int? width, int? height}) =>
+      staticProxyUrl(url, baseUrl: baseUrl, width: width, height: height);
+
+  /// 이미지 서버 프록시 URL 생성 (정적 유틸리티)
+  static String staticProxyUrl(
+    String url, {
+    String? baseUrl,
+    int? width,
+    int? height,
+  }) {
+    if (url.contains('drive.google.com') || url.startsWith('http')) {
+      final base = baseUrl ?? dotenv.env['API_URL'] ?? 'http://localhost:3000/api';
+      String proxyUrl = '$base/uploads/proxy?url=${Uri.encodeComponent(url)}';
+      if (width != null) proxyUrl += '&w=$width';
+      if (height != null) proxyUrl += '&h=$height';
+      return proxyUrl;
+    }
+    return url;
+  }
 }
