@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_admin_app/features/quiz_management/repositories/quiz_repository.dart';
@@ -10,10 +11,14 @@ class BulkExtractionViewModel extends ChangeNotifier {
 
   BulkExtractionViewModel() {
     loadSavedFilters();
+    _loadBackup();
   }
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+
+  bool _isCancelled = false; // Cancellation Flag
+  bool get isCancelled => _isCancelled;
 
   String _statusMessage = '';
   String get statusMessage => _statusMessage;
@@ -61,7 +66,6 @@ class BulkExtractionViewModel extends ChangeNotifier {
     subject = prefs.getString('ext_filter_subject');
     year = prefs.getInt('ext_filter_year');
     round = prefs.getInt('ext_filter_round');
-    // 사용자가 입력했던 마지막 파일명만 로드 (폴더 URL 자동 주입 제거 완료)
     fileId = prefs.getString('ext_filter_file_id');
     startNumber = prefs.getInt('ext_filter_start') ?? 0;
     endNumber = prefs.getInt('ext_filter_end') ?? 0;
@@ -78,6 +82,12 @@ class BulkExtractionViewModel extends ChangeNotifier {
     await prefs.setInt('ext_filter_end', endNumber);
   }
 
+  void cancelExtraction() {
+    _isCancelled = true;
+    _statusMessage = '추출 중단 요청됨...';
+    notifyListeners();
+  }
+
   Future<void> startBatchExtraction({
     required Function(int current, int total) onProgress,
     required Function(String message) onMessage,
@@ -88,6 +98,7 @@ class BulkExtractionViewModel extends ChangeNotifier {
     }
 
     _isLoading = true;
+    _isCancelled = false;
     _statusMessage = '추출을 시작합니다...';
     _extractedQuizzes.clear();
     notifyListeners();
@@ -97,6 +108,11 @@ class BulkExtractionViewModel extends ChangeNotifier {
       int extractedCount = 0;
 
       for (int i = startNumber; i <= endNumber; i += 5) {
+        if (_isCancelled) {
+          onMessage('🛑 사용자에 의해 추출이 중단되었습니다.');
+          break;
+        }
+
         int chunkEnd = (i + 4 > endNumber) ? endNumber : i + 4;
         _statusMessage = '진행 중: $i번 ~ $chunkEnd번 추출 중...';
         notifyListeners();
@@ -110,13 +126,18 @@ class BulkExtractionViewModel extends ChangeNotifier {
           end: chunkEnd,
         );
 
+        if (_isCancelled) break;
+
         _extractedQuizzes.addAll(batchresults);
         extractedCount = _extractedQuizzes.length;
         onProgress(extractedCount, totalToExtract);
+        _saveBackup(); // Autosave after each chunk
         notifyListeners();
       }
 
-      _showExtractionResult(extractedCount, totalToExtract, onMessage);
+      if (!_isCancelled) {
+        _showExtractionResult(extractedCount, totalToExtract, onMessage);
+      }
     } catch (e) {
       _statusMessage = '오류 발생';
       onMessage('❌ 추출 중 오류 발생: $e');
@@ -151,6 +172,7 @@ class BulkExtractionViewModel extends ChangeNotifier {
     }
 
     if (field == 'wrong_answer') _updateWrongOption(item, value.toString());
+    _saveBackup(); // Autosave on content update
     notifyListeners();
   }
 
@@ -184,6 +206,24 @@ class BulkExtractionViewModel extends ChangeNotifier {
     }
   }
 
+  Future<void> _saveBackup() async {
+    final prefs = await SharedPreferences.getInstance();
+    final data = _extractedQuizzes.map((k, v) => MapEntry(k.toString(), v));
+    await prefs.setString('bulk_extraction_backup', jsonEncode(data));
+  }
+
+  Future<void> _loadBackup() async {
+    final prefs = await SharedPreferences.getInstance();
+    final json = prefs.getString('bulk_extraction_backup');
+    if (json != null) {
+      final data = jsonDecode(json) as Map<String, dynamic>;
+      data.forEach((k, v) {
+        _extractedQuizzes[int.parse(k)] = v as Map<String, dynamic>;
+      });
+      notifyListeners();
+    }
+  }
+
   Future<void> addImageToQuiz(int qNum, String field, XFile file) async {
     try {
       _isLoading = true;
@@ -203,6 +243,7 @@ class BulkExtractionViewModel extends ChangeNotifier {
       List blocks = List.from(item[field] ?? []);
       blocks.add({'type': 'image', 'content': url});
       item[field] = blocks;
+      _saveBackup();
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -225,6 +266,7 @@ class BulkExtractionViewModel extends ChangeNotifier {
     if (index >= 0 && index < blocks.length) {
       blocks.removeAt(index);
       _extractedQuizzes[qNum]![field] = blocks;
+      _saveBackup();
       notifyListeners();
     }
   }
@@ -255,6 +297,12 @@ class BulkExtractionViewModel extends ChangeNotifier {
         quizItems: batchData,
         examFilter: examFilter,
       );
+
+      if (success) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove('bulk_extraction_backup');
+        _extractedQuizzes.clear();
+      }
 
       onMessage?.call(
         success ? '✅ 모든 문항이 성공적으로 등록되었습니다.' : '❌ 등록 중 오류가 발생했습니다.',

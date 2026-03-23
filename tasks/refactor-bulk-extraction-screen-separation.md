@@ -46,23 +46,23 @@
 ## 3. To-Do List (Checklist)
 
 ### 구현 전 (Pre-Implementation)
-- [ ] **[0-1. Git 백업]** 현재 상태 커밋 (`git commit -m "pre-refactor: backup bulk_extraction_screen"`)
-- [ ] ViewModel의 `startBatchExtraction` 내부에 중단 플래그 체크 로직 설계
+- [x] **[0-1. Git 백업]** 현재 상태 커밋 (`git commit -m "pre-refactor: backup bulk_extraction_screen"`)
+- [x] ViewModel의 `startBatchExtraction` 내부에 중단 플래그 체크 로직 설계
 
 ### 구현 중 (Implementation)
-- [ ] `bulk_extraction_header.dart` 분리
-- [ ] `bulk_extraction_progress_bar.dart` 신규 제작
-- [ ] `bulk_extraction_status_overlay.dart` 분리 (스낵바 연동)
-- [ ] `bulk_extraction_dialog_helper.dart` 분리
-- [ ] ViewModel 중단(Cancel) 및 자동 저장(Autosave) 로직 추가
-- [ ] `Selector` 적용을 통한 빌드 성능 최적화
-- [ ] `bulk_extraction_screen.dart` 메인 파일 슬림화 (200라인 이하 달성)
+- [x] `bulk_extraction_header.dart` 분리
+- [x] `bulk_extraction_progress_bar.dart` 신규 제작
+- [x] `bulk_extraction_status_overlay.dart` 분리 (스낵바 연동)
+- [x] `bulk_extraction_empty_view.dart` 분리 (Header/DialogHelper 통합)
+- [x] ViewModel 중단(Cancel) 및 자동 저장(Autosave) 로직 추가
+- [x] `Selector` 대신 명확한 위젯 분리로 리빌드 최적화
+- [x] `bulk_extraction_screen.dart` 메인 파일 슬림화 (200라인 이하 달성)
 
 ### 구현 후 (Post-Implementation)
-- [ ] **[1-3. 분리 후 에러 체크]** 추출 중단 시 이전 데이터 정합성 확인
-- [ ] **[3-2. 린트 체크]** `flutter analyze` 수행 및 이슈 해결
-- [ ] **[0-4. 소스 정합성]** 최종 소스 diff 확인 및 유실 방지 체크
-- [ ] **[0-2. Git 최종 커밋]** 리팩토링 완료 상태 커밋
+- [x] **[1-3. 분리 후 에러 체크]** 추출 중단 시 이전 데이터 정합성 확인
+- [x] **[3-2. 린트 체크]** `flutter analyze` 수행 및 이슈 해결
+- [x] **[0-4. 소스 정합성]** 최종 소스 diff 확인 및 유실 방지 체크
+- [x] **[0-2. Git 최종 커밋]** 리팩토링 완료 상태 커밋
 
 ---
 
