@@ -8,8 +8,13 @@ class TreeGroupRepository extends BaseRepository {
   Future<Map<String, dynamic>> getTreeGroups({
     int page = 1,
     int limit = 10,
+    String? query,
   }) async {
-    final queryParams = {'page': page.toString(), 'limit': limit.toString()};
+    final queryParams = {
+      'page': page.toString(),
+      'limit': limit.toString(),
+      if (query != null && query.isNotEmpty) 'query': query,
+    };
     final url = Uri.parse('$baseUrl/tree-groups').replace(queryParameters: queryParams);
     final headers = await getHeaders();
     final response = await http.get(url, headers: headers);
