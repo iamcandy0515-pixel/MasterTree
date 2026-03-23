@@ -18,18 +18,18 @@
 
 ## 4. To-Do List
 ### Phase 1: 데이터 레이어 추출
-- [ ] `lib/data/fallback_quiz_data.dart` 생성 (더미 질문 리스트 추출)
-- [ ] `lib/repositories/quiz_repository.dart` 생성 (API Fetch 및 Question 생성 로직 추출)
+- [x] `lib/data/fallback_quiz_data.dart` 생성 (더미 질문 리스트 추출)
+- [x] `lib/repositories/quiz_repository.dart` 생성 (API Fetch 및 Question 생성 로직 추출)
 
 ### Phase 2: Provider 리팩토링 및 로직 연결
-- [ ] `QuizProvider` 내 비대 메서드(`_fetchQuestionsFromApi`, `_useDummyData`) 제거
-- [ ] `QuizRepository` 연동 및 결과 처리 로직 구현
-- [ ] 힌트/답변 처리 및 타이머 관리 로직 간소화
+- [x] `QuizProvider` 내 비대 메서드(`_fetchQuestionsFromApi`, `_useDummyData`) 제거
+- [x] `QuizRepository` 연동 및 결과 처리 로직 구현
+- [x] 힌트/답변 처리 및 타이머 관리 로직 간소화
 
 ### Phase 3: 검증 및 최종 점검
-- [ ] **[1-3. 에러 체크]** 분리 후 퀴즈 레이아웃 브레이킹 및 린트 에러 여부 확인
-- [ ] **[3-2. 린트 체크]** `flutter analyze` 명령어로 스타일 및 문법 오류 제로(0) 확인
-- [ ] **[1-2. 효율적 통신]** `notifyListeners()` 최적화 및 로드 부하 절감 여부 확인
+- [x] **[1-3. 에러 체크]** 분리 후 퀴즈 레이아웃 브레이킹 및 린트 에러 여부 확인
+- [x] **[3-2. 린트 체크]** `flutter analyze` 명령어로 스타일 및 문법 오류 제로(0) 확인 (기존 이슈 제외)
+- [x] **[1-2. 효율적 통신]** `notifyListeners()` 최적화 및 로드 부하 절감 여부 확인
 
 ## 5. 기대 효과 (Expected Outcomes)
 - `QuizProvider` 파일이 **150라인 이내**로 대폭 축소되어 유지보수 용이성 확보.
