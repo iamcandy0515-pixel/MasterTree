@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_user_app/core/design_system.dart';
+import 'package:flutter_user_app/core/api_service.dart';
 import 'package:flutter_user_app/core/widgets/fullscreen_image_viewer.dart';
 
 class ContentBlockRenderer extends StatelessWidget {
@@ -53,7 +54,7 @@ class ContentBlockRenderer extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: CachedNetworkImage(
-                  imageUrl: content,
+                  imageUrl: ApiService.getProxyImageUrl(content),
                   placeholder: (context, url) => Container(
                     height: 200,
                     color: Colors.white10,

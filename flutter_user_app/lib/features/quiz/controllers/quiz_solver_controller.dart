@@ -21,9 +21,11 @@ class QuizSolverController {
 
     try {
       // 기출문제 모드면 'pastExam', 아니면 'normal' (수목퀴즈)
-      // QuizSolverScreen은 기출문제용이므로 기본적으로 'pastExam' 사용
+      // QuizSolverScreen에서 전달받은 mode가 'random' 이더라도 
+      // 기출문제 질문을 가져오기 위해 'pastExam' 모드를 기본으로 사용하거나 
+      // 전달받은 모드가 있으면 해당 모드를 사용하도록 수정
       final data = await ApiService.generateQuizSession(
-        mode: 'pastExam',
+        mode: mode == 'random' || mode == 'weakness' ? 'pastExam' : mode,
         limit: 10,
       );
 
@@ -70,7 +72,11 @@ class QuizSolverController {
   }
 
   bool get isLastQuestion => questions.isEmpty ? true : currentQuestionIndex >= questions.length - 1;
-  double get progress => questions.isEmpty ? 0 : (currentQuestionIndex + 1) / questions.length;
+  double get progress {
+    if (questions.isEmpty) return 0.0;
+    double val = (currentQuestionIndex + 1) / questions.length;
+    return val.isFinite ? val : 0.0;
+  }
   Map<String, dynamic> get currentQuestion => questions[currentQuestionIndex];
 
   void selectOption(int index) {
@@ -85,7 +91,17 @@ class QuizSolverController {
     final q = currentQuestion;
     final isCorrect = selectedOptionIndex == q['correct_index'];
 
-    // 학습 결과 큐에 추가 (배치 전송을 위해 보관)
+    // 1. 서버에 즉시 저장 시도 (Phase 3 요구사항)
+    ApiService.submitQuizAttempt(
+      questionId: q['id'] as int,
+      sessionId: sessionId,
+      categoryId: q['category_id'] as int?,
+      isCorrect: isCorrect,
+      userAnswer: selectedOptionIndex.toString(),
+      timeTakenMs: 0, // 추후 필요시 타이머 추가 가능
+    );
+
+    // 2. 오프라인 대비 및 배치 동기화를 위해 기존 큐에도 추가 (중복 방지는 서버가 처리)
     ApiService.addPendingAttempt({
       'session_id': sessionId,
       'question_id': q['id'],
@@ -93,7 +109,7 @@ class QuizSolverController {
       'is_correct': isCorrect,
       'user_answer': selectedOptionIndex.toString(),
       'time_taken_ms': 0,
-      'mode': 'pastExam',
+      'mode': mode == 'random' || mode == 'weakness' ? 'pastExam' : mode,
     });
   }
 

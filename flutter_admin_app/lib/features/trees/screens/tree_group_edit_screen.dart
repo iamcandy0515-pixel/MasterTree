@@ -3,10 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:flutter_admin_app/core/theme/neo_theme.dart';
 import 'package:flutter_admin_app/features/trees/models/tree_group.dart';
 import 'package:flutter_admin_app/features/trees/viewmodels/tree_group_edit_viewmodel.dart';
-import 'package:flutter_admin_app/features/trees/screens/tree_lookalike_detail_screen.dart';
-
 import 'widgets/tree_group_info_section.dart';
 import 'widgets/tree_group_member_list.dart';
+import 'widgets/tree_group_preview_action.dart';
 
 class TreeGroupEditScreen extends StatelessWidget {
   final TreeGroup? group;
@@ -92,22 +91,9 @@ class _TreeGroupEditContentState extends State<_TreeGroupEditContent> {
     return Scaffold(
       backgroundColor: NeoTheme.darkTheme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('유사수목 그룹 등록'),
+        title: Text(vm.isEditing ? '유사수목 그룹 수정' : '유사수목 그룹 등록'),
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      TreeLookalikeDetailScreen(group: vm.toGroup()),
-                ),
-              );
-            },
-            icon: const Icon(Icons.visibility),
-            tooltip: '미리보기',
-            color: NeoColors.acidLime,
-          ),
+          TreeGroupPreviewAction(group: vm.toGroup()),
           TextButton(
             onPressed: vm.isValid && !vm.isLoading ? _onSave : null,
             child: Text(

@@ -1,5 +1,6 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../../../core/design_system.dart';
+import '../../../core/api_service.dart';
 import '../../../core/widgets/fullscreen_image_viewer.dart';
 
 class VisualComparisonSection extends StatelessWidget {
@@ -61,7 +62,7 @@ class VisualComparisonSection extends StatelessWidget {
         children: [
           Positioned.fill(
             child: Image.network(
-              imageUrl,
+              ApiService.getProxyImageUrl(imageUrl),
               fit: BoxFit.cover,
               cacheWidth: 500,
               loadingBuilder: (context, child, loadingProgress) {

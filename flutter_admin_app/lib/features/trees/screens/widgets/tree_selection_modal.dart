@@ -12,21 +12,10 @@ class TreeSelectionModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Determine category from existing member if available
-    String? initialCat;
-    if (parentVm.members.isNotEmpty) {
-      // Find category... ideally we could fetch it, but let's leave it null
-      // if not strictly available from member class.
-      // User requested "침엽수, 활엽수 정도의 구분자를 활용하여 자동 선택"
-      // TreeGroupMember only contains treeName and keyCharacteristics.
-      // E.g., if member name contains "구상나무" it's 침엽수, but best is to rely on actual data.
-      // We will leave initialCat to null until we can resolve it accurately, or just pass it if loaded.
-    }
-
     return ChangeNotifierProvider(
       create: (_) => TreeSelectionModalViewModel(
         existingMembers: parentVm.members,
-        initialCategory: initialCat,
+        initialCategory: null,
       ),
       child: Dialog(
         backgroundColor: const Color(0xFF141A11),
@@ -46,14 +35,6 @@ class _ModalContent extends StatefulWidget {
 }
 
 class _ModalContentState extends State<_ModalContent> {
-  final _searchController = TextEditingController();
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<TreeSelectionModalViewModel>();
@@ -64,12 +45,19 @@ class _ModalContentState extends State<_ModalContent> {
         children: [
           _buildHeader(context, vm),
           if (vm.selectedTrees.isNotEmpty) _buildSelectionChips(vm),
-          _buildSearchBar(vm),
           const Divider(color: Colors.white10, height: 1),
           _buildCategoryFilters(vm),
-          _buildPagination(vm),
           const Divider(color: Colors.white10, height: 1),
-          Flexible(child: _buildTreeList(vm)),
+          // Fixed height to show approx 5-6 items comfortably (compact)
+          Flexible(
+            child: Container(
+              constraints: const BoxConstraints(maxHeight: 450),
+              child: _buildTreeList(vm),
+            ),
+          ),
+          const Divider(color: Colors.white10, height: 1),
+          _buildPagination(vm),
+          const SizedBox(height: 8),
         ],
       ),
     );
@@ -77,51 +65,46 @@ class _ModalContentState extends State<_ModalContent> {
 
   Widget _buildHeader(BuildContext context, TreeSelectionModalViewModel vm) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            '비교수목 추가${vm.selectedTrees.isNotEmpty ? ' (${vm.selectedTrees.length})' : ''}',
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+          Expanded(
+            child: Text(
+              '비교수목 추가${vm.selectedTrees.isNotEmpty ? ' (${vm.selectedTrees.length})' : ''}',
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
           ),
-          Row(
-            children: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(
-                    context,
-                    vm.selectedTrees,
-                  ); // 모달 화면은 닫고 추가한 수목명을 셋으로 넘겨줌
-                },
-                style: TextButton.styleFrom(
-                  minimumSize: Size.zero,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                child: const Text(
-                  '추가',
-                  style: TextStyle(
-                    color: NeoColors.acidLime,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
+          const SizedBox(width: 8),
+          // '추가' 버튼을 제목 옆 오른쪽에 배치 (Requirement 3)
+          TextButton(
+            onPressed: vm.selectedTrees.isEmpty
+                ? null
+                : () {
+                    Navigator.pop(context, vm.selectedTrees);
+                  },
+            style: TextButton.styleFrom(
+              backgroundColor: NeoColors.acidLime.withOpacity(0.1),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            ),
+            child: const Text(
+              '추가',
+              style: TextStyle(
+                color: NeoColors.acidLime,
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
               ),
-              IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.close, color: Colors.grey),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-              ),
-            ],
+            ),
+          ),
+          const SizedBox(width: 4),
+          IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.close, color: Colors.grey, size: 24),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
           ),
         ],
       ),
@@ -143,12 +126,12 @@ class _ModalContentState extends State<_ModalContent> {
                   tree.nameKr,
                   style: const TextStyle(
                     color: Colors.black,
-                    fontSize: 12,
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 backgroundColor: NeoColors.acidLime,
-                deleteIcon: const Icon(Icons.close, size: 16),
+                deleteIcon: const Icon(Icons.close, size: 14),
                 onDeleted: () => vm.toggleSelection(tree),
                 padding: EdgeInsets.zero,
                 visualDensity: VisualDensity.compact,
@@ -160,35 +143,9 @@ class _ModalContentState extends State<_ModalContent> {
     );
   }
 
-  Widget _buildSearchBar(TreeSelectionModalViewModel vm) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: SizedBox(
-        height: 40,
-        child: TextField(
-          controller: _searchController,
-          onChanged: vm.search,
-          style: const TextStyle(color: Colors.white, fontSize: 14),
-          decoration: InputDecoration(
-            hintText: '수목명 또는 학명 검색...',
-            hintStyle: TextStyle(color: Colors.grey[500], fontSize: 14),
-            prefixIcon: Icon(Icons.search, color: Colors.grey[500], size: 20),
-            filled: true,
-            fillColor: const Color(0xFF1E2518),
-            contentPadding: EdgeInsets.zero,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide.none,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildCategoryFilters(TreeSelectionModalViewModel vm) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Row(
         children: [
           _buildFilterChip(vm, '침엽수'),
@@ -207,12 +164,14 @@ class _ModalContentState extends State<_ModalContent> {
         label,
         style: TextStyle(
           color: isSelected ? Colors.black : Colors.white,
-          fontSize: 12,
+          fontSize: 11,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),
       selectedColor: NeoColors.acidLime,
       backgroundColor: Colors.transparent,
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      visualDensity: VisualDensity.compact,
       shape: StadiumBorder(
         side: BorderSide(
           color: isSelected ? NeoColors.acidLime : Colors.white30,
@@ -251,24 +210,22 @@ class _ModalContentState extends State<_ModalContent> {
         final isSelected = vm.isSelected(tree);
         final isAlreadyMember = vm.isAlreadyMember(tree);
 
+        // Simple text-only layout (Requirement 2)
         return ListTile(
           visualDensity: VisualDensity.compact,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 0,
-          ),
+          dense: true,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
           title: Row(
             children: [
               Expanded(
-                flex: 3,
                 child: Row(
                   children: [
                     Flexible(
                       child: Text(
                         tree.nameKr,
                         style: GoogleFonts.notoSans(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                          color: isSelected ? NeoColors.acidLime : Colors.white,
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                           fontSize: 14,
                         ),
                         maxLines: 1,
@@ -279,105 +236,64 @@ class _ModalContentState extends State<_ModalContent> {
                       const SizedBox(width: 8),
                       Text(
                         '[${tree.category}]',
-                        style: const TextStyle(
-                          color: NeoColors.acidLime,
-                          fontSize: 12,
+                        style: TextStyle(
+                          color: isSelected ? NeoColors.acidLime : Colors.white24,
+                          fontSize: 11,
                         ),
                       ),
                     ],
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
               if (tree.scientificName != null)
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    tree.scientificName!,
-                    style: TextStyle(
-                      color: Colors.grey[500],
-                      fontStyle: FontStyle.italic,
-                      fontSize: 12,
-                    ),
-                    textAlign: TextAlign.right,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                Text(
+                  tree.scientificName!,
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontStyle: FontStyle.italic,
+                    fontSize: 12,
                   ),
                 ),
             ],
           ),
           trailing: isAlreadyMember
-              ? Icon(Icons.check_circle, color: Colors.grey[600], size: 20)
-              : isSelected
-              ? const Icon(
-                  Icons.check_circle,
-                  color: NeoColors.acidLime,
-                  size: 20,
-                )
-              : const Icon(
-                  Icons.circle_outlined,
-                  color: Colors.white30,
-                  size: 20,
+              ? Icon(Icons.check_circle, color: Colors.grey[800], size: 18)
+              : Icon(
+                  isSelected ? Icons.check_circle : Icons.circle_outlined,
+                  color: isSelected ? NeoColors.acidLime : Colors.white10,
+                  size: 18,
                 ),
           onTap: isAlreadyMember ? null : () => vm.toggleSelection(tree),
-          tileColor: Colors.transparent,
         );
       },
     );
   }
 
   Widget _buildPagination(TreeSelectionModalViewModel vm) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           IconButton(
-            onPressed: vm.currentPage > 1 ? vm.firstPage : null,
-            icon: const Icon(Icons.keyboard_double_arrow_left, size: 20),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-            color: Colors.white,
-            disabledColor: Colors.grey[800],
-          ),
-          IconButton(
             onPressed: vm.currentPage > 1 ? vm.prevPage : null,
-            icon: const Icon(Icons.chevron_left, size: 20),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-            color: Colors.white,
-            disabledColor: Colors.grey[800],
+            icon: const Icon(Icons.chevron_left, size: 24),
+            color: Colors.white70,
+            disabledColor: Colors.white10,
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1E2518),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Text(
-              '${vm.currentPage} / ${vm.totalPages}',
-              style: const TextStyle(
-                color: NeoColors.acidLime,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
+          Text(
+            '${vm.currentPage} / ${vm.totalPages}',
+            style: const TextStyle(
+              color: NeoColors.acidLime,
+              fontWeight: FontWeight.bold,
+              fontSize: 13,
             ),
           ),
           IconButton(
             onPressed: vm.currentPage < vm.totalPages ? vm.nextPage : null,
-            icon: const Icon(Icons.chevron_right, size: 20),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-            color: Colors.white,
-            disabledColor: Colors.grey[800],
-          ),
-          IconButton(
-            onPressed: vm.currentPage < vm.totalPages ? vm.lastPage : null,
-            icon: const Icon(Icons.keyboard_double_arrow_right, size: 20),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-            color: Colors.white,
-            disabledColor: Colors.grey[800],
+            icon: const Icon(Icons.chevron_right, size: 24),
+            color: Colors.white70,
+            disabledColor: Colors.white10,
           ),
         ],
       ),

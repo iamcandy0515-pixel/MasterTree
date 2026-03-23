@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_admin_app/features/trees/models/tree_group.dart';
 import 'package:flutter_admin_app/features/trees/viewmodels/tree_lookalike_viewmodel.dart';
@@ -81,9 +81,9 @@ class _SmartTagsSection extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildTab(vm, '??(Leaf)', 'leaf'),
+        _buildTab(vm, '잎 (Leaf)', 'leaf'),
         const SizedBox(width: 16),
-        _buildTab(vm, '?섑뵾 (Bark)', 'bark'),
+        _buildTab(vm, '수피 (Bark)', 'bark'),
       ],
     );
   }
@@ -152,7 +152,7 @@ class _ComparisonMatrixState extends State<_ComparisonMatrix> {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('???댁긽 ?대?吏 ?뺣낫媛 ?놁뒿?덈떎.'),
+          content: Text('더 이상 이미지 정보가 없습니다.'),
           duration: Duration(seconds: 1),
           behavior: SnackBarBehavior.floating,
         ),
@@ -180,7 +180,7 @@ class _ComparisonMatrixState extends State<_ComparisonMatrix> {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('???댁긽 ?대?吏 ?뺣낫媛 ?놁뒿?덈떎.'),
+          content: Text('더 이상 이미지 정보가 없습니다.'),
           duration: Duration(seconds: 1),
           behavior: SnackBarBehavior.floating,
         ),
@@ -304,7 +304,7 @@ class _ComparisonMatrixState extends State<_ComparisonMatrix> {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
-              children: [
+              children: const [
                 Icon(Icons.touch_app, color: Colors.white54, size: 14),
                 SizedBox(width: 8),
                 Text(
@@ -312,7 +312,7 @@ class _ComparisonMatrixState extends State<_ComparisonMatrix> {
                   style: TextStyle(color: Colors.white70, fontSize: 13),
                 ),
               ],
-              ),
+            ),
           ),
           const SizedBox(width: 16),
           _NavButton(
@@ -493,4 +493,3 @@ class _NavButton extends StatelessWidget {
     );
   }
 }
-

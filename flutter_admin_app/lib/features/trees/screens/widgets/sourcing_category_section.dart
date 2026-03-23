@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../../viewmodels/tree_sourcing_viewmodel.dart';
 import '../../../../core/theme/neo_theme.dart';
 import 'sourcing_image_slot.dart';
@@ -25,9 +25,9 @@ class SourcingCategorySection extends StatelessWidget {
         vm.pendingImages.containsKey('${type}_original') ||
         (existing?.imageUrl.isNotEmpty == true && !isOriginalMissing);
 
-    // ?몃꽕??踰꾪듉 ?몄텧 議곌굔 (hasThumb??false硫?踰꾪듉 ?쒖꽦?붾맖)
-    // 1. db?뺣낫???덉쑝??援ш????뚯씪???녿뒗 寃쎌슦 (isThumbMissing = true -> hasThumb = false)
-    // 2. db??pending??url???꾩삁 ?녿뒗寃쎌슦 (false)
+    // 썸네일 버튼 노출 조건 (hasThumb가 false면 버튼 활성화됨)
+    // 1. db정보는 있으나 구글드라이브에 파일이 없는 경우 (isThumbMissing = true -> hasThumb = false)
+    // 2. db나 pending에 url이 아예 없는경우 (false)
     final hasThumb =
         vm.pendingImages.containsKey('${type}_thumb') ||
         (existing?.thumbnailUrl?.isNotEmpty == true && !isThumbMissing);
@@ -99,4 +99,3 @@ class SourcingCategorySection extends StatelessWidget {
     );
   }
 }
-

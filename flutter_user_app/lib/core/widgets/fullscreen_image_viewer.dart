@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_user_app/core/design_system.dart';
+import 'package:flutter_user_app/core/api_service.dart';
 
 class FullscreenImageViewer extends StatelessWidget {
   final String imageUrl;
@@ -29,7 +30,7 @@ class FullscreenImageViewer extends StatelessWidget {
           minScale: 0.5,
           maxScale: 4.0,
           child: CachedNetworkImage(
-            imageUrl: imageUrl,
+            imageUrl: ApiService.getProxyImageUrl(imageUrl),
             placeholder: (context, url) => const Center(
               child: CircularProgressIndicator(color: AppColors.primary),
             ),

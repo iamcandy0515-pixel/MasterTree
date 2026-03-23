@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_admin_app/core/theme/neo_theme.dart';
 import 'package:flutter_admin_app/features/quiz_management/viewmodels/quiz_management_viewmodel.dart';
@@ -44,7 +44,8 @@ class QuizListItem extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => QuizReviewDetailScreen(quizId: quiz['id'])),
+                MaterialPageRoute(
+                    builder: (_) => QuizReviewDetailScreen(quizId: quiz['id'])),
               ).then((_) => viewModel.fetchQuizzes());
             },
             child: Padding(
@@ -71,8 +72,10 @@ class QuizListItem extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   IconButton(
-                    icon: const Icon(Icons.delete_outline, color: NeoColors.error, size: 22),
-                    onPressed: () => _handleDelete(context, viewModel, quiz['id']),
+                    icon: const Icon(Icons.delete_outline,
+                        color: NeoColors.error, size: 22),
+                    onPressed: () =>
+                        _handleDelete(context, viewModel, quiz['id']),
                     style: IconButton.styleFrom(
                       backgroundColor: NeoColors.error.withOpacity(0.1),
                       padding: const EdgeInsets.all(8),
@@ -88,7 +91,7 @@ class QuizListItem extends StatelessWidget {
   }
 
   String _extractQuestionText(Map<String, dynamic> quiz) {
-    String qText = '臾몄젣 ?댁슜 ?놁쓬';
+    String qText = '문제 내용 없음';
     try {
       final blocks = quiz['content_blocks'];
       if (blocks != null && blocks is List && blocks.isNotEmpty) {
@@ -102,19 +105,25 @@ class QuizListItem extends StatelessWidget {
       }
     } catch (_) {}
     final qNum = quiz['question_number'];
-    return qNum != null ? '$qNum踰? $qText' : qText;
+    return qNum != null ? '$qNum번 $qText' : qText;
   }
 
-  void _handleDelete(BuildContext context, QuizManagementViewModel viewModel, int id) {
+  void _handleDelete(
+      BuildContext context, QuizManagementViewModel viewModel, int id) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: surfaceDark,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('??젣 ?뺤씤', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        content: const Text('?뺣쭚 ??젣?섏떆寃좎뒿?덇퉴?\n??젣???곗씠?곕뒗 蹂듦뎄?????놁뒿?덈떎.', style: TextStyle(color: Colors.white70)),
+        title: const Text('삭제 확인',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        content: const Text(
+            '정말 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.',
+            style: TextStyle(color: Colors.white70)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('痍⑥냼', style: TextStyle(color: Colors.grey))),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('취소', style: TextStyle(color: Colors.grey))),
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(ctx);
@@ -122,21 +131,22 @@ class QuizListItem extends StatelessWidget {
                 await viewModel.deleteQuiz(id);
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('湲곗텧臾몄젣媛 ??젣?섏뿀?듬땲??')),
+                    const SnackBar(content: Text('기출문제가 삭제되었습니다.')),
                   );
                 }
               } catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('??젣 ?ㅽ뙣: $e')));
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text('삭제 실패: $e')));
                 }
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: NeoColors.error, foregroundColor: Colors.white),
-            child: const Text('??젣'),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: NeoColors.error, foregroundColor: Colors.white),
+            child: const Text('삭제'),
           ),
         ],
       ),
     );
   }
 }
-

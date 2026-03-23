@@ -31,9 +31,11 @@ class SourcingImageSlot extends StatelessWidget {
     final stagedData = vm.pendingImages[key];
     final displayItem =
         stagedData ??
-        (isThumb
-            ? (existing?.thumbnailUrl?.isNotEmpty == true ? existing : null)
-            : (existing?.imageUrl.isNotEmpty == true ? existing : null));
+        (isMissing
+            ? null // 드라이브에 파일이 없으면 렌더링하지 않음 (Rule 3-1)
+            : (isThumb
+                ? (existing?.thumbnailUrl?.isNotEmpty == true ? existing : null)
+                : (existing?.imageUrl.isNotEmpty == true ? existing : null)));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

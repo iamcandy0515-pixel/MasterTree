@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../viewmodels/tree_sourcing_viewmodel.dart';
@@ -104,7 +104,7 @@ class _TreeSourcingContentState extends State<_TreeSourcingContent> {
               ),
               const SizedBox(width: 8),
               Text(
-                '?섎ぉ ?대?吏 異붿텧(?섎ぉ蹂?',
+                '수목 이미지 추출(수목별)',
                 style: TextStyle(
                   color: primaryColor,
                   fontSize: 18,
@@ -129,7 +129,7 @@ class _TreeSourcingContentState extends State<_TreeSourcingContent> {
       },
       icon: Icon(Icons.open_in_new, size: 14, color: primaryColor),
       label: Text(
-        '援???앸Ъ?뺣낫',
+        '국가생물정보',
         style: TextStyle(color: primaryColor, fontSize: 11),
       ),
     );
@@ -151,7 +151,7 @@ class _TreeSourcingContentState extends State<_TreeSourcingContent> {
         onSubmitted: (val) => vm.loadTrees(page: 1),
         style: const TextStyle(color: Colors.white, fontSize: 14),
         decoration: InputDecoration(
-          hintText: '?섎ぉ紐낆쑝濡?寃??..',
+          hintText: '수목명으로 검색..',
           hintStyle: TextStyle(color: Colors.grey[600], fontSize: 13),
           border: InputBorder.none,
           suffixIcon: IconButton(
@@ -163,4 +163,3 @@ class _TreeSourcingContentState extends State<_TreeSourcingContent> {
     );
   }
 }
-

@@ -8,10 +8,23 @@ extension TreeSourcingDetailExtension on TreeSourcingViewModel {
     _pendingImages.clear();
     _imageSources.clear();
     _fileMissing.clear();
+    _hasChanges = false;
+
+    // Rule 1: 화면 진입 시 DB 정보를 기본으로 표시
+    for (final img in tree.images) {
+      if (img.imageUrl.isNotEmpty) {
+        _imageSources['${img.imageType}_original'] = 'db';
+      }
+      if (img.thumbnailUrl?.isNotEmpty == true) {
+        _imageSources['${img.imageType}_thumb'] = 'db';
+      }
+    }
     notify();
 
     try {
-      await syncWithDrive();
+      // 초기 진입 시에는 isManual: false 로 동기화 (이미 존재하는 URL은 db 배지 유지)
+      await syncWithDrive(isManual: false);
+      _hasChanges = false; // 초기 로드 후에는 변경사항 없음으로 처리
     } finally {
       _isLoading = false;
       notify();
@@ -23,6 +36,7 @@ extension TreeSourcingDetailExtension on TreeSourcingViewModel {
     _hasChanges = false;
     _pendingImages.clear();
     _imageSources.clear();
+    _fileMissing.clear();
     for (final img in tree.images) {
       if (img.imageUrl.isNotEmpty) {
         _imageSources['${img.imageType}_original'] = 'db';

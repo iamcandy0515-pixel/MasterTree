@@ -46,7 +46,7 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
     await syncWithDrive();
   }
 
-  Future<void> syncWithDrive() async {
+  Future<void> syncWithDrive({bool isManual = false}) async {
     if (_selectedTree == null) return;
 
     _isLoading = true;
@@ -67,8 +67,10 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
           final driveOriginalUrl = original[type];
           if (driveOriginalUrl != null) {
             _fileMissing.remove('${type}_original');
-            // Drive에서 정보가 발견되면 박스와 URL 설정에 매치 (구글 정보 배지 포함)
-            if (dbImage == null || dbImage.imageUrl != driveOriginalUrl) {
+            // Rule 1 & 2: 
+            // - 수동 추출(isManual=true)인 경우 항상 'google' 표시
+            // - 자동 동기화인 경우 DB와 다를 때만 'google' 표시 (같으면 'db' 유지)
+            if (isManual || dbImage == null || dbImage.imageUrl != driveOriginalUrl) {
               stageImage(
                 type,
                 TreeImage(
@@ -76,7 +78,7 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
                   imageUrl: driveOriginalUrl,
                   thumbnailUrl: dbImage?.thumbnailUrl,
                 ),
-                source: 'google',
+                source: isManual ? 'google' : 'db', // Rule 9-1 & 9-2
               );
             }
           } else if (dbImage != null && dbImage.imageUrl.isNotEmpty) {
@@ -87,8 +89,7 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
           final driveThumbUrl = thumb[type];
           if (driveThumbUrl != null) {
             _fileMissing.remove('${type}_thumb');
-            // Drive에서 썸네일 정보가 발견되면 박스와 URL 설정에 매치 (구글 정보 배지 포함)
-            if (dbImage == null || dbImage.thumbnailUrl != driveThumbUrl) {
+            if (isManual || dbImage == null || dbImage.thumbnailUrl != driveThumbUrl) {
               final currentStaged =
                   _pendingImages['${type}_original'] as TreeImage?;
               stageImage(
@@ -99,7 +100,7 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
                   thumbnailUrl: driveThumbUrl,
                 ),
                 isThumbnail: true,
-                source: 'google',
+                source: isManual ? 'google' : 'db', // Rule 9-1 & 9-2
               );
             }
           } else if (dbImage != null &&
@@ -118,7 +119,7 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
   }
 
   Future<void> fetchFromDrive() async {
-    await syncWithDrive();
+    await syncWithDrive(isManual: true);
   }
 
   Future<void> aiSearch() async {

@@ -76,10 +76,11 @@ class ApiService {
   /// 외부 이미지를 위한 프록시 URL 반환
   static String getProxyImageUrl(String? url) {
     if (url == null || url.isEmpty) return '';
-    if (url.contains('drive.google.com')) {
-      return '${AppConstants.apiUrl}/uploads/proxy?url=${Uri.encodeComponent(url)}';
+    // 이미 프록시된 URL이거나 드라이브 링크가 아니면 그대로 반환
+    if (url.contains('/uploads/proxy') || !url.contains('drive.google.com')) {
+      return url;
     }
-    return url;
+    return '${AppConstants.apiUrl}/uploads/proxy?url=${Uri.encodeComponent(url)}';
   }
 
   /// 유사종 비교 그룹 리스트 가져오기
@@ -225,8 +226,9 @@ class ApiService {
   static Future<void> submitQuizAttempt({
     required int questionId,
     required bool isCorrect,
-    required int userAnswer,
+    required String userAnswer,
     int? categoryId,
+    int? sessionId,
     int timeTakenMs = 0,
   }) async {
     final url = Uri.parse('${AppConstants.apiUrl}/user-quiz/attempt');
@@ -242,6 +244,7 @@ class ApiService {
         },
         body: jsonEncode({
           'question_id': questionId,
+          'session_id': sessionId,
           'category_id': categoryId,
           'is_correct': isCorrect,
           'user_answer': userAnswer,
@@ -249,11 +252,45 @@ class ApiService {
         }),
       );
 
-      if (response.statusCode != 201) {
+      if (response.statusCode != 200 && response.statusCode != 201) {
         debugPrint('학습 결과 저장 실패: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
       debugPrint('ApiService.submitQuizAttempt Error: $e');
+    }
+  }
+
+  /// 특정 세션의 퀴즈 풀이 결과 일괄 저장 (Batch Submit)
+  static Future<bool> submitQuizSessionAttempts({
+    required int sessionId,
+    required List<Map<String, dynamic>> attempts,
+  }) async {
+    final url = Uri.parse('${AppConstants.apiUrl}/user-quiz/submit');
+    final session = Supabase.instance.client.auth.currentSession;
+    final token = session?.accessToken ?? '';
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'session_id': sessionId,
+          'attempts': attempts,
+        }),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      } else {
+        debugPrint('세션 결과 제출 실패: ${response.statusCode} - ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      debugPrint('ApiService.submitQuizSessionAttempts Error: $e');
+      return false;
     }
   }
 

@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../../../core/api_service.dart';
 import '../../../core/design_system.dart';
 import '../../../core/widgets/fullscreen_image_viewer.dart';
 
@@ -46,7 +47,7 @@ class QuizImageDisplay extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                _buildImage(imageUrl),
+                _buildImage(ApiService.getProxyImageUrl(imageUrl)),
                 _buildTopBlur(),
                 _buildBottomBlur(),
                 _buildZoomIcon(),

@@ -17,11 +17,45 @@ class _QuizDashboardScreenState extends State<QuizDashboardScreen> {
   @override
   void initState() {
     super.initState();
-    _controller.init();
+    _controller.init(() {
+      if (mounted) setState(() {});
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_controller.isLoading) {
+      return const Scaffold(
+        backgroundColor: AppColors.backgroundDark,
+        body: Center(child: CircularProgressIndicator(color: AppColors.primary)),
+      );
+    }
+
+    if (_controller.errorMessage != null) {
+      return Scaffold(
+        backgroundColor: AppColors.backgroundDark,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, color: Colors.redAccent, size: 48),
+              const SizedBox(height: 16),
+              Text(
+                '통계를 불러오지 못했습니다.\n${_controller.errorMessage}',
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: AppColors.textLight),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () => _controller.init(() => setState(() {})),
+                child: const Text('다시 시도'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
       appBar: AppBar(

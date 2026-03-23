@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import '../../../core/api_service.dart';
 import '../../../core/design_system.dart';
 import '../../species_comparison_detail_screen.dart';
 
@@ -100,7 +101,7 @@ class SimilarSpeciesCard extends StatelessWidget {
           border: Border.all(color: AppColors.backgroundDark, width: 2),
           image: url.isNotEmpty
               ? DecorationImage(
-                  image: NetworkImage(url),
+                  image: NetworkImage(ApiService.getProxyImageUrl(url)),
                   fit: BoxFit.cover,
                 )
               : null,
