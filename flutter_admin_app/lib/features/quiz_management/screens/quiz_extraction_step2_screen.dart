@@ -5,11 +5,9 @@ import '../viewmodels/quiz_extraction_step2_viewmodel.dart';
 import 'package:flutter_admin_app/core/utils/snackbar_util.dart';
 import 'widgets/quiz_extraction/1_google_drive_search_module.dart';
 import 'widgets/quiz_extraction/2_pdf_extraction_module.dart';
-import 'widgets/quiz_extraction/3_question_explanation_module.dart';
-import 'widgets/quiz_extraction/4_distractor_module.dart';
-import 'widgets/quiz_extraction/5_hint_module.dart';
-import 'widgets/quiz_extraction/6_related_question_module.dart';
-import 'widgets/quiz_extraction/7_db_registration_module.dart';
+import 'widgets/quiz_extraction/quiz_extraction_sticky_header.dart';
+import 'widgets/quiz_extraction/quiz_extraction_filter_summary.dart';
+import 'widgets/quiz_extraction/quiz_extraction_data_form.dart';
 
 class QuizExtractionStep2Screen extends StatelessWidget {
   final List<DriveFile> selectedFiles;
@@ -64,14 +62,10 @@ class _QuizExtractionStep2ScreenContentState
 
   final TextEditingController _questionController = TextEditingController();
   final TextEditingController _explanationController = TextEditingController();
-  final List<TextEditingController> _optionControllers = List.generate(
-    4,
-    (_) => TextEditingController(),
-  );
-  final List<TextEditingController> _hintControllers = List.generate(
-    5,
-    (_) => TextEditingController(),
-  );
+  final List<TextEditingController> _optionControllers =
+      List.generate(4, (_) => TextEditingController());
+  final List<TextEditingController> _hintControllers =
+      List.generate(5, (_) => TextEditingController());
 
   @override
   void initState() {
@@ -93,211 +87,122 @@ class _QuizExtractionStep2ScreenContentState
   void dispose() {
     _questionController.dispose();
     _explanationController.dispose();
-    for (var controller in _optionControllers) {
-      controller.dispose();
+    for (var c in _optionControllers) {
+      c.dispose();
     }
-    for (var controller in _hintControllers) {
-      controller.dispose();
+    for (var c in _hintControllers) {
+      c.dispose();
     }
     super.dispose();
   }
 
   Future<void> _validateFile() async {
     final vm = context.read<QuizExtractionStep2ViewModel>();
-    String? fallbackFileId;
-    if (widget.selectedFiles.isNotEmpty) {
-      fallbackFileId = widget.selectedFiles.first.id;
-    }
+    final fallbackId =
+        widget.selectedFiles.isNotEmpty ? widget.selectedFiles.first.id : null;
 
     try {
-      await vm.validateFile(fallbackFileId);
-      if (mounted) {
-        SnackBarUtil.showFloating(context, '파일 검증 성공! PDF 추출을 진행해 주세요.');
-      }
+      await vm.validateFile(fallbackId);
+      if (mounted) SnackBarUtil.showFloating(context, '파일 검증 성공! PDF 추출 시작 가능.');
     } catch (e) {
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            backgroundColor: const Color(0xFF1E1E1E),
-            title: Row(
-              children: const [
-                Icon(Icons.error_outline, color: Colors.orangeAccent),
-                SizedBox(width: 8),
-                Text(
-                  '검증 실패 / 불일치',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ],
-            ),
-            content: Text(
-              e.toString(),
-              style: const TextStyle(color: Colors.white70),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text(
-                  '확인',
-                  style: TextStyle(color: Colors.white54),
-                ),
-              ),
-            ],
-          ),
-        );
-      }
+      if (mounted) _showErrorDialog(e.toString());
     }
+  }
+
+  void _showErrorDialog(String error) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1E1E1E),
+        title: Row(
+          children: const [
+            Icon(Icons.error_outline, color: Colors.orangeAccent),
+            SizedBox(width: 8),
+            Text('검증 실패 / 불일치', style: TextStyle(color: Colors.white, fontSize: 16)),
+          ],
+        ),
+        content: Text(error, style: const TextStyle(color: Colors.white70)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('확인', style: TextStyle(color: Colors.white54)),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _extractQuiz() async {
     final vm = context.read<QuizExtractionStep2ViewModel>();
-
-    // Show loading indicator
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return const Center(
-          child: CircularProgressIndicator(color: primaryColor),
-        );
-      },
-    );
+    _showLoading();
 
     try {
       await vm.extractQuiz();
       final block = vm.populateExtractedQuiz();
-      if (block['content_blocks'] != null &&
-          block['content_blocks'].isNotEmpty) {
-        _questionController.text =
-            block['content_blocks'].first['content'] ?? '';
-      }
-      if (block['explanation_blocks'] != null &&
-          block['explanation_blocks'].isNotEmpty) {
-        _explanationController.text =
-            block['explanation_blocks'].first['content'] ?? '';
-      }
-      if (block['options'] != null) {
-        final options = block['options'] as List;
-        if (options.isNotEmpty) {
-          final correctIdx = block['correct_option_index'] ?? 0;
-          final correctText = options.length > correctIdx
-              ? options[correctIdx]['content'] ?? ''
-              : '';
-          final filtered = options.where((o) => options.indexOf(o) != correctIdx).toList();
-          final incorrectText = filtered.isNotEmpty ? filtered.first['content'] ?? '' : '';
-
-          _optionControllers[0].text = correctText;
-          _optionControllers[1].text = incorrectText;
-        }
-      }
-      if (block['hint_blocks'] != null) {
-        final hints = block['hint_blocks'] as List;
-        for (int i = 0; i < vm.hintsCount; i++) {
-          if (i < hints.length) {
-            _hintControllers[i].text = hints[i]['content'] ?? '';
-          } else {
-            _hintControllers[i].text = '';
-          }
-        }
-      }
-
+      _updateControllers(block, vm);
       if (mounted) {
-        Navigator.pop(context); // Dismiss loading dialog
+        Navigator.pop(context); // loading
         SnackBarUtil.showFloating(context, '기출문제가 성공적으로 추출되었습니다.');
       }
     } catch (e) {
       if (mounted) {
-        Navigator.pop(context); // Dismiss loading dialog
+        Navigator.pop(context); // loading
         SnackBarUtil.showFloating(context, e.toString(), isError: true);
       }
     }
   }
 
+  void _showLoading() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator(color: primaryColor)),
+    );
+  }
+
+  void _updateControllers(Map<String, dynamic> block, QuizExtractionStep2ViewModel vm) {
+    if (block['content_blocks']?.isNotEmpty ?? false) {
+      _questionController.text = block['content_blocks'].first['content'] ?? '';
+    }
+    if (block['explanation_blocks']?.isNotEmpty ?? false) {
+      _explanationController.text = block['explanation_blocks'].first['content'] ?? '';
+    }
+    if (block['options'] != null) {
+      final options = block['options'] as List;
+      final correctIdx = block['correct_option_index'] ?? 0;
+      final incorrect = options.where((o) => options.indexOf(o) != correctIdx).toList();
+      _optionControllers[0].text = options.length > correctIdx ? (options[correctIdx]['content'] ?? '') : '';
+      _optionControllers[1].text = incorrect.isNotEmpty ? (incorrect.first['content'] ?? '') : '';
+    }
+    final hintBlocks = block['hint_blocks'] as List? ?? [];
+    for (int i = 0; i < vm.hintsCount; i++) {
+      _hintControllers[i].text = i < hintBlocks.length ? (hintBlocks[i]['content'] ?? '') : '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: backgroundDark,
       body: Stack(
         children: [
-          // Main Content
+          // 1. Content
           Positioned.fill(
             child: SingleChildScrollView(
               padding: EdgeInsets.only(
-                top:
-                    MediaQuery.of(context).padding.top +
-                    56 +
-                    12, // header + spacing
-                bottom: 20, // removed footer padding
+                top: MediaQuery.of(context).padding.top + 72,
+                bottom: 24,
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    if (widget.initialSubject != null ||
-                        widget.initialYear != null ||
-                        widget.initialRound != null) ...[
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                        margin: const EdgeInsets.only(bottom: 16),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[900],
-                          border: Border.all(color: Colors.grey[800]!),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.filter_list,
-                              color: primaryColor,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            const Text(
-                              '검색필터',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            if (widget.initialSubject != null) ...[
-                              Text(
-                                widget.initialSubject!,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                            ],
-                            if (widget.initialYear != null) ...[
-                              Text(
-                                '${widget.initialYear}년',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                            ],
-                            if (widget.initialRound != null)
-                              Text(
-                                '${widget.initialRound}회',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ],
+                    QuizExtractionFilterSummary(
+                      subject: widget.initialSubject,
+                      year: widget.initialYear,
+                      round: widget.initialRound,
+                    ),
                     const GoogleDriveSearchModule(),
                     const SizedBox(height: 16),
                     PdfExtractionModule(
@@ -305,58 +210,11 @@ class _QuizExtractionStep2ScreenContentState
                       onExtractQuiz: _extractQuiz,
                     ),
                     const SizedBox(height: 16),
-                    // UI of Extraction Details
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.edit_note,
-                              color: primaryColor,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            const Text(
-                              '추출 데이터 상세',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const Spacer(),
-                            DbRegistrationModule(
-                              questionController: _questionController,
-                              explanationController: _explanationController,
-                              optionControllers: _optionControllers,
-                              hintControllers: _hintControllers,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        QuestionAndExplanationModule(
-                          questionController: _questionController,
-                          explanationController: _explanationController,
-                        ),
-                        const SizedBox(height: 12),
-                        DistractorModule(
-                          questionController: _questionController,
-                          optionControllers: _optionControllers,
-                        ),
-                        const SizedBox(height: 8),
-                        HintModule(
-                          questionController: _questionController,
-                          explanationController: _explanationController,
-                          hintControllers: _hintControllers,
-                        ),
-                        const SizedBox(height: 12),
-                        RelatedQuestionModule(
-                          questionController: _questionController,
-                        ),
-                        const SizedBox(height: 24),
-                      ],
+                    QuizExtractionDataForm(
+                      questionController: _questionController,
+                      explanationController: _explanationController,
+                      optionControllers: _optionControllers,
+                      hintControllers: _hintControllers,
                     ),
                   ],
                 ),
@@ -364,56 +222,11 @@ class _QuizExtractionStep2ScreenContentState
             ),
           ),
 
-          // Sticky Header
+          // 2. Header (Glassmorphism Sticky)
           Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: ClipRect(
-              child: Container(
-                padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).padding.top + 8,
-                  bottom: 16,
-                  left: 20,
-                  right: 20,
-                ),
-                decoration: BoxDecoration(
-                  color: backgroundDark.withOpacity(0.8),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Icon(
-                          Icons.arrow_back_ios_new,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                    const Expanded(
-                      child: Text(
-                        '기출문제 연동',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 36), // Balance the back button
-                  ],
-                ),
-              ),
+            top: 0, left: 0, right: 0,
+            child: QuizExtractionStickyHeader(
+              onBack: () => Navigator.pop(context),
             ),
           ),
         ],
@@ -421,4 +234,3 @@ class _QuizExtractionStep2ScreenContentState
     );
   }
 }
-
