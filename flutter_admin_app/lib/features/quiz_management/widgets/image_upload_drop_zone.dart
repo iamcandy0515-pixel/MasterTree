@@ -7,7 +7,7 @@ class ImageUploadDropZone extends StatefulWidget {
   final bool isFocused;
   final bool isLoading;
   final VoidCallback onPickImage;
-  final Function(XFile) onPasteImage;
+  final Function(Uint8List, String) onPasteImage;
 
   const ImageUploadDropZone({
     super.key,
@@ -28,12 +28,8 @@ class _ImageUploadDropZoneState extends State<ImageUploadDropZone> {
     try {
       final bytes = await Pasteboard.image;
       if (bytes != null) {
-        final xFile = XFile.fromData(
-          bytes,
-          mimeType: 'image/png',
-          name: 'pasted_image_${DateTime.now().millisecondsSinceEpoch}.png',
-        );
-        widget.onPasteImage(xFile);
+        final fileName = 'pasted_image_${DateTime.now().millisecondsSinceEpoch}.png';
+        widget.onPasteImage(bytes, fileName);
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

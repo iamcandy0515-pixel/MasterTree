@@ -91,15 +91,8 @@ class TreeRegistrationViewModel extends ChangeNotifier {
       final compressedBytes =
           await ImageProcessingUtil.compressImage(originalBytes);
 
-      // Step 3: Create optimized XFile
-      final optimizedFile = XFile.fromData(
-        compressedBytes,
-        name: xFile.name,
-        mimeType: 'image/jpeg',
-      );
-
       // Step 4: Upload
-      final publicUrl = await _repo.uploadImage(optimizedFile);
+      final publicUrl = await _repo.uploadImageByBytes(compressedBytes, xFile.name);
 
       _taggedImages[_activeTag] = TreeImage(
         imageType: _activeTag,
@@ -119,12 +112,12 @@ class TreeRegistrationViewModel extends ChangeNotifier {
   Future<void> pasteImageFromClipboard() async {
     try {
       await WebUtils.pasteImageFromClipboard((bytes, name, type) async {
-        final xFile = XFile.fromData(
-          Uint8List.fromList(bytes),
-          name: name,
-          mimeType: type,
-        );
-        await handleImageUpload(xFile);
+        _isUploading = true; notifyListeners();
+        final compressedBytes = await ImageProcessingUtil.compressImage(Uint8List.fromList(bytes));
+        final publicUrl = await _repo.uploadImageByBytes(compressedBytes, name);
+
+        _taggedImages[_activeTag] = TreeImage(imageType: _activeTag, imageUrl: publicUrl, hint: '');
+        _isUploading = false; notifyListeners();
       });
     } catch (e) {
       debugPrint('Error pasting image: $e');

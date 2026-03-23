@@ -128,12 +128,10 @@ class AddTreeViewModel extends ChangeNotifier {
       final bytes = await WebUtils.readFileAsBytes(file);
       if (bytes == null) throw Exception('파일을 읽을 수 없습니다.');
 
-      final xFile = XFile.fromData(
+      final publicUrl = await _mediaRepo.uploadImageFromBytes(
         Uint8List.fromList(bytes),
-        name: kIsWeb ? (file as dynamic).name : 'dropped_file',
-        mimeType: kIsWeb ? (file as dynamic).type : 'image/jpeg',
+        kIsWeb ? (file as dynamic).name : 'dropped_file',
       );
-      final publicUrl = await _mediaRepo.uploadImage(xFile);
 
       _uploadedImages.add(
         TreeImage(imageType: _selectedImageType, imageUrl: publicUrl),
@@ -162,13 +160,10 @@ class AddTreeViewModel extends ChangeNotifier {
       _isUploading = true;
       notifyListeners();
 
-      final xFile = XFile.fromData(
+      final publicUrl = await _mediaRepo.uploadImageFromBytes(
         file.bytes!,
-        name: file.name,
-        mimeType: 'image/${file.extension}',
+        file.name,
       );
-
-      final publicUrl = await _mediaRepo.uploadImage(xFile);
 
       _uploadedImages.add(
         TreeImage(imageType: _selectedImageType, imageUrl: publicUrl),
@@ -194,13 +189,11 @@ class AddTreeViewModel extends ChangeNotifier {
 
       bool imageFound = false;
       await WebUtils.pasteImageFromClipboard((bytes, name, type) async {
-        final xFile = XFile.fromData(
+        final publicUrl = await _mediaRepo.uploadImageFromBytes(
           Uint8List.fromList(bytes),
-          name: name,
-          mimeType: type,
+          name,
         );
 
-        final publicUrl = await _mediaRepo.uploadImage(xFile);
         _uploadedImages.add(
           TreeImage(imageType: _selectedImageType, imageUrl: publicUrl),
         );

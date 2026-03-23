@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../repositories/quiz_media_repository.dart';
@@ -8,13 +9,12 @@ mixin QuizImageHandlerMixin on ChangeNotifier {
   bool _isImageLoading = false;
   bool get isImageLoading => _isImageLoading;
 
-  Future<void> addImageToQuizInternal(String field, XFile file, Map<String, dynamic>? data) async {
+  Future<void> addImageToQuizInternal(String field, Uint8List bytes, String name, Map<String, dynamic>? data) async {
     if (data == null) return;
     try {
       _isImageLoading = true;
       notifyListeners();
-      final bytes = await file.readAsBytes();
-      final url = await _repository.uploadQuizImage(bytes, file.name);
+      final url = await _repository.uploadQuizImage(bytes, name);
 
       final key = (field == 'question') ? 'content_blocks' : 'explanation_blocks';
       List blocks = List.from(data[key] ?? []);

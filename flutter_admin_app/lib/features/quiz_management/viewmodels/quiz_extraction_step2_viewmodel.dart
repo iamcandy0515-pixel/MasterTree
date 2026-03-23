@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../repositories/quiz_repository.dart';
@@ -128,7 +129,7 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier
   }
 
   // Image Wrappers matching original names
-  Future<void> addImageToQuiz(String field, XFile file) => addImageToQuizInternal(field, file, validatedQuizData);
+  Future<void> addImageToQuiz(String field, Uint8List bytes, String name) => addImageToQuizInternal(field, bytes, name, validatedQuizData);
   bool hasImage(String field) => hasImageInternal(field, validatedQuizData);
   void removeImage(String field, int index) => removeImageInternal(field, index, validatedQuizData);
 }

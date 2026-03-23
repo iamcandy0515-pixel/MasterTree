@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../viewmodels/quiz_extraction_step2_viewmodel.dart';
@@ -41,10 +42,9 @@ class _SingleQuizImageManagerDialogState
     super.dispose();
   }
 
-  Future<void> _handleImageTask(XFile? file) async {
-    if (file == null) return;
+  Future<void> _handleImageTask(Uint8List bytes, String name) async {
     try {
-      await widget.viewModel.addImageToQuiz(widget.field, file);
+      await widget.viewModel.addImageToQuiz(widget.field, bytes, name);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('새 이미지가 성공적으로 추가되었습니다.')),
@@ -60,6 +60,12 @@ class _SingleQuizImageManagerDialogState
         );
       }
     }
+  }
+
+  Future<void> _handleXFile(XFile? file) async {
+    if (file == null) return;
+    final bytes = await file.readAsBytes();
+    await _handleImageTask(bytes, file.name);
   }
 
   @override
@@ -99,7 +105,7 @@ class _SingleQuizImageManagerDialogState
                   _focusNode.requestFocus();
                   final picker = ImagePicker();
                   final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-                  await _handleImageTask(image);
+                  await _handleXFile(image);
                 },
                 onPasteImage: _handleImageTask,
               ),

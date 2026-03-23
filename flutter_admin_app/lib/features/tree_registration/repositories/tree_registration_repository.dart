@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -52,6 +53,31 @@ class TreeRegistrationRepository {
     final bytes = await imageFile.readAsBytes();
     request.files.add(
       http.MultipartFile.fromBytes('file', bytes, filename: imageFile.name),
+    );
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsonResponse['success'] == true) {
+        return jsonResponse['data']['publicUrl'];
+      }
+    }
+    throw Exception('이미지 업로드에 실패했습니다: ${response.body}');
+  }
+
+  /// 이미지 업로드 (Bytes)
+  Future<String> uploadImageByBytes(Uint8List bytes, String fileName) async {
+    final url = Uri.parse('$_baseUrl/uploads/image');
+    final request = http.MultipartRequest('POST', url);
+
+    final session = Supabase.instance.client.auth.currentSession;
+    final token = session?.accessToken ?? '';
+    request.headers['Authorization'] = 'Bearer $token';
+
+    request.files.add(
+      http.MultipartFile.fromBytes('file', bytes, filename: fileName),
     );
 
     final streamedResponse = await request.send();

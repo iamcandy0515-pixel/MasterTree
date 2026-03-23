@@ -30,6 +30,30 @@ class MasterTreeMediaRepository extends BaseRepository {
     throw Exception('이미지 업로드 실패: ${response.body}');
   }
 
+  // POST /api/uploads/image (from raw bytes)
+  Future<String> uploadImageFromBytes(Uint8List bytes, String filename) async {
+    final url = Uri.parse('$baseUrl/uploads/image');
+    final request = http.MultipartRequest('POST', url);
+    final headers = await getHeaders();
+    request.headers.addAll(headers);
+
+    request.files.add(
+      http.MultipartFile.fromBytes('file', bytes, filename: filename),
+    );
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsonResponse['success'] == true) {
+        return jsonResponse['data']['publicUrl'];
+      }
+    }
+    checkAuthError(response.statusCode);
+    throw Exception('이미지 업로드 실패: ${response.body}');
+  }
+
   // Search Google Image
   Future<String?> searchGoogleImage(String treeName, String imageType) async {
     final url = Uri.parse('$baseUrl/external/google-images');
