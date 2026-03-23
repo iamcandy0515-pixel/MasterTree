@@ -1,9 +1,14 @@
+// ignore_for_file: prefer_final_fields
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../repositories/quiz_repository.dart';
 import '../repositories/quiz_ai_repository.dart';
 import '../repositories/quiz_media_repository.dart';
+
+part 'parts/quiz_ai_logic.part.dart';
+part 'parts/quiz_media_logic.part.dart';
+part 'parts/quiz_ui_state.part.dart';
 
 class QuizReviewDetailViewModel extends ChangeNotifier {
   final QuizRepository _repository = QuizRepository();
@@ -48,6 +53,8 @@ class QuizReviewDetailViewModel extends ChangeNotifier {
   List<Map<String, dynamic>> relatedQuizzesMetadata = [];
   int currentRelatedPage = 0;
 
+
+
   Future<void> loadQuiz(int quizId) async {
     _isLoading = true;
     notifyListeners();
@@ -69,7 +76,9 @@ class QuizReviewDetailViewModel extends ChangeNotifier {
       selectedRelatedIds = (response['related_quiz_ids'] as List<dynamic>?)
               ?.map((e) => int.parse(e.toString())).toList() ?? [];
 
-      if (selectedRelatedIds.isNotEmpty) loadRelatedQuizzesMetadata();
+      if (selectedRelatedIds.isNotEmpty) {
+        await loadRelatedQuizzesMetadata();
+      }
 
       contentBlocks = response['content_blocks'] as List<dynamic>? ?? [];
       questionText = _extractTextFromBlocks(contentBlocks);
@@ -97,14 +106,6 @@ class QuizReviewDetailViewModel extends ChangeNotifier {
       rethrow;
     }
     notifyListeners();
-  }
-
-  String _extractTextFromBlocks(List<dynamic> blocks) {
-    return blocks.map((b) {
-      if (b is Map && b['type'] == 'text') return b['content']?.toString() ?? '';
-      if (b is String) return b;
-      return '';
-    }).where((t) => t.isNotEmpty).join('\n');
   }
 
   Future<void> saveQuiz(int quizId) async {
@@ -150,54 +151,13 @@ class QuizReviewDetailViewModel extends ChangeNotifier {
     return newBlocks;
   }
 
-  Future<Map<String, dynamic>> aiReview() async {
-    _isReviewing = true;
-    notifyListeners();
-    try {
-      final rawText = relatedQuizzesMetadata.isNotEmpty ? _extractTextFromBlocks(relatedQuizzesMetadata.first['content_blocks'] ?? []) : '';
-      final res = await _aiRepo.reviewQuizAlignment(rawText, [{'type': 'text', 'content': explanationText}]);
-      _isReviewing = false;
-      notifyListeners();
-      return res;
-    } catch (e) {
-      _isReviewing = false;
-      notifyListeners();
-      rethrow;
-    }
-  }
-
-  Future<void> generateDistractors() async {
-    _isGenerating = true;
-    notifyListeners();
-    try {
-      final distractors = await _aiRepo.generateDistractors(questionText, correctOption);
-      incorrectOptions = distractors;
-      _isGenerating = false;
-    } catch (e) {
-      _isGenerating = false;
-      rethrow;
-    }
-    notifyListeners();
-  }
-
-  Future<List<dynamic>> recommendSimilar(int quizId) async {
-    _isRecommending = true;
-    notifyListeners();
-    try {
-      final related = await _aiRepo.recommendRelated(questionText: questionText);
-      _isRecommending = false;
-      notifyListeners();
-      return related.where((r) => r['id'] != quizId).toList();
-    } catch (e) {
-      _isRecommending = false;
-      notifyListeners();
-      rethrow;
-    }
-  }
-
   Future<void> loadRelatedQuizzesMetadata() async {
     try {
-      final response = await Supabase.instance.client.from('quiz_questions').select('id, question_number, quiz_exams(year, round, title), quiz_categories(name), content_blocks').filter('id', 'in', selectedRelatedIds);
+      final response = await Supabase.instance.client
+          .from('quiz_questions')
+          .select('id, question_number, quiz_exams(year, round, title), quiz_categories(name), content_blocks')
+          .filter('id', 'in', selectedRelatedIds);
+      
       relatedQuizzesMetadata = List<Map<String, dynamic>>.from(response);
       relatedQuizzesMetadata.sort((a, b) {
         final yearA = a['quiz_exams']?['year'] ?? 0;
@@ -205,41 +165,8 @@ class QuizReviewDetailViewModel extends ChangeNotifier {
         return yearA != yearB ? yearB.compareTo(yearA) : (b['quiz_exams']?['round'] ?? 0).compareTo(a['quiz_exams']?['round'] ?? 0);
       });
       notifyListeners();
-    } catch (e) { debugPrint(e.toString()); }
-  }
-
-  Future<void> uploadImage(Uint8List bytes, String name, String field) async {
-    final url = await _mediaRepo.uploadQuizImage(bytes, name);
-    if (field == 'content') {
-      contentBlocks.add({'type': 'image', 'content': url});
-    } else {
-      explanationBlocks.add({'type': 'image', 'content': url});
+    } catch (e) { 
+      debugPrint('Error loading related metadata: $e'); 
     }
-    notifyListeners();
-  }
-
-  void removeImage(int blockIdx, String field) {
-    if (field == 'content') {
-      contentBlocks.removeAt(blockIdx);
-    } else {
-      explanationBlocks.removeAt(blockIdx);
-    }
-    notifyListeners();
-  }
-
-  void toggleExpanded(String field) {
-    if (field == 'content') {
-      isContentExpanded = !isContentExpanded;
-    } else {
-      isExpExpanded = !isExpExpanded;
-    }
-    notifyListeners();
-  }
-
-  void setRelatedPage(int page) { currentRelatedPage = page; notifyListeners(); }
-  void removeRelated(int id) {
-    selectedRelatedIds.remove(id);
-    relatedQuizzesMetadata.removeWhere((m) => m['id'] == id);
-    notifyListeners();
   }
 }
