@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '3_question_explanation_module.dart';
-import '4_distractor_module.dart';
-import '5_hint_module.dart';
-import '6_related_question_module.dart';
-import '7_db_registration_module.dart';
+import 'question_explanation_module.dart';
+import 'distractor_module.dart';
+import 'hint_module.dart';
+import 'related_question_module.dart';
+import 'db_registration_module.dart';
 
 class QuizExtractionDataForm extends StatelessWidget {
   final TextEditingController questionController;
