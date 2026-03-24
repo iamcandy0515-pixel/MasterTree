@@ -3,12 +3,12 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../viewmodels/bulk_extraction_viewmodel.dart';
 import './widgets/bulk_extraction/bulk_extraction_filter_panel.dart';
-import './widgets/bulk_extraction/bulk_extraction_question_tabs.dart';
-import './widgets/bulk_extraction/bulk_extraction_editor_form.dart';
 import './widgets/bulk_extraction/bulk_extraction_header.dart';
 import './widgets/bulk_extraction/bulk_extraction_progress_bar.dart';
 import './widgets/bulk_extraction/bulk_extraction_status_overlay.dart';
 import './widgets/bulk_extraction/bulk_extraction_empty_view.dart';
+import './parts/bulk_extraction_result_dialog.dart';
+import './parts/bulk_extraction_editor_section.dart';
 
 class BulkExtractionScreen extends StatefulWidget {
   const BulkExtractionScreen({super.key});
@@ -80,6 +80,12 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
     return blocks.where((b) => b['type'] == 'text').map((b) => b['content']?.toString() ?? '').join('\n');
   }
 
+  void _syncFilters(BulkExtractionViewModel vm) {
+    if (_fileIdController.text != vm.fileId && vm.fileId != null) _fileIdController.text = vm.fileId!;
+    if (_startController.text != vm.startNumber.toString() && vm.startNumber > 0) _startController.text = vm.startNumber.toString();
+    if (_endController.text != vm.endNumber.toString() && vm.endNumber > 0) _endController.text = vm.endNumber.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -107,9 +113,47 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
                         status: vm.statusMessage,
                         onCancel: vm.cancelExtraction,
                       ),
-                    _buildFilterPanel(vm),
+                    BulkExtractionFilterPanel(
+                      fileIdController: _fileIdController,
+                      startController: _startController,
+                      endController: _endController,
+                      subject: vm.subject,
+                      year: vm.year,
+                      round: vm.round,
+                      isLoading: vm.isLoading,
+                      isFilterComplete: vm.isFilterComplete,
+                      onFileIdChanged: (val) => vm.updateFilters(fileId: val),
+                      onSubjectChanged: (val) => vm.updateFilters(subject: val),
+                      onYearChanged: (val) => vm.updateFilters(year: int.tryParse(val ?? '')),
+                      onRoundChanged: (val) => vm.updateFilters(round: int.tryParse(val ?? '')),
+                      onStartChanged: (val) => vm.updateFilters(start: int.tryParse(val)),
+                      onEndChanged: (val) => vm.updateFilters(end: int.tryParse(val)),
+                      onExtractPressed: () {
+                        _currentExtracted = 0;
+                        _totalToExtract = (vm.endNumber - vm.startNumber + 1);
+                        vm.startBatchExtraction(
+                          onProgress: (cur, total) => setState(() => _currentExtracted = cur),
+                          onMessage: (msg) => _showFloatingMessage(context, msg),
+                        );
+                      },
+                    ),
                     Expanded(
-                      child: vm.extractedQuizzes.isEmpty ? const BulkExtractionEmptyView() : _buildEditor(vm),
+                      child: vm.extractedQuizzes.isEmpty 
+                          ? const BulkExtractionEmptyView() 
+                          : BulkExtractionEditorSection(
+                              vm: vm,
+                              selectedTabIndex: _selectedTabIndex,
+                              scrollController: _scrollController,
+                              questionController: _questionController,
+                              answerController: _answerController,
+                              hintController: _hintController,
+                              wrongAnswerController: _wrongAnswerController,
+                              onTabSelected: (qNum) {
+                                setState(() => _selectedTabIndex = qNum);
+                                _updateEditorFields(vm.extractedQuizzes[qNum]);
+                                _scrollToSelectedTab(qNum, vm.startNumber);
+                              },
+                            ),
                     ),
                   ],
                 ),
@@ -126,90 +170,12 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
     );
   }
 
-  void _syncFilters(BulkExtractionViewModel vm) {
-    if (_fileIdController.text != vm.fileId && vm.fileId != null) _fileIdController.text = vm.fileId!;
-    if (_startController.text != vm.startNumber.toString() && vm.startNumber > 0) _startController.text = vm.startNumber.toString();
-    if (_endController.text != vm.endNumber.toString() && vm.endNumber > 0) _endController.text = vm.endNumber.toString();
-  }
-
-  Widget _buildFilterPanel(BulkExtractionViewModel vm) {
-    return BulkExtractionFilterPanel(
-      fileIdController: _fileIdController,
-      startController: _startController,
-      endController: _endController,
-      subject: vm.subject,
-      year: vm.year,
-      round: vm.round,
-      isLoading: vm.isLoading,
-      isFilterComplete: vm.isFilterComplete,
-      onFileIdChanged: (val) => vm.updateFilters(fileId: val),
-      onSubjectChanged: (val) => vm.updateFilters(subject: val),
-      onYearChanged: (val) => vm.updateFilters(year: int.tryParse(val ?? '')),
-      onRoundChanged: (val) => vm.updateFilters(round: int.tryParse(val ?? '')),
-      onStartChanged: (val) => vm.updateFilters(start: int.tryParse(val)),
-      onEndChanged: (val) => vm.updateFilters(end: int.tryParse(val)),
-      onExtractPressed: () {
-        _currentExtracted = 0;
-        _totalToExtract = (vm.endNumber - vm.startNumber + 1);
-        vm.startBatchExtraction(
-          onProgress: (cur, total) => setState(() => _currentExtracted = cur),
-          onMessage: (msg) => _showFloatingMessage(context, msg),
-        );
-      },
-    );
-  }
-
-  Widget _buildEditor(BulkExtractionViewModel vm) {
-    return Column(
-      children: [
-        BulkExtractionQuestionTabs(
-          startNumber: vm.startNumber,
-          endNumber: vm.endNumber,
-          selectedTabIndex: _selectedTabIndex,
-          scrollController: _scrollController,
-          extractedQuizzes: vm.extractedQuizzes,
-          hasImage: vm.hasImage,
-          onTabSelected: (qNum) {
-            setState(() => _selectedTabIndex = qNum);
-            _updateEditorFields(vm.extractedQuizzes[qNum]);
-            _scrollToSelectedTab(qNum, vm.startNumber);
-          },
-        ),
-        const Divider(height: 1, color: Colors.white10),
-        Expanded(
-          child: BulkExtractionEditorForm(
-            selectedTabIndex: _selectedTabIndex,
-            questionController: _questionController,
-            answerController: _answerController,
-            hintController: _hintController,
-            wrongAnswerController: _wrongAnswerController,
-            vm: vm,
-          ),
-        ),
-      ],
-    );
-  }
-
   void _showResultDialog(BuildContext context, Map<String, int> stats) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: surfaceDark,
-        title: const Text('DB 등록 결과', style: TextStyle(color: Colors.white, fontSize: 18)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('■ 총 문항: ${stats['total']}건', style: const TextStyle(color: Colors.white70)),
-            const SizedBox(height: 4),
-            Text('■ 성공: ${stats['success']}건', style: const TextStyle(color: Color(0xFF2BEE8C))),
-            const SizedBox(height: 4),
-            Text('■ 실패: ${stats['failed']}건', style: const TextStyle(color: Colors.redAccent)),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('확인', style: TextStyle(color: Color(0xFF2BEE8C)))),
-        ],
+      builder: (context) => BulkExtractionResultDialog(
+        stats: stats,
+        surfaceDark: surfaceDark,
       ),
     );
   }
