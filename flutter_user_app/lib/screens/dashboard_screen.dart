@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_user_app/core/design_system.dart';
-
-import 'package:flutter_user_app/screens/quiz_screen.dart';
-import 'package:flutter_user_app/screens/user_stats_screen.dart';
-import 'package:flutter_user_app/screens/past_exam_list_screen.dart';
-
 import 'package:flutter_user_app/controllers/dashboard_controller.dart';
+
+// Parts
 import 'dashboard/widgets/dashboard_header.dart';
 import 'dashboard/widgets/dashboard_stats_section.dart';
 import 'dashboard/widgets/dashboard_tree_tab.dart';
 import 'dashboard/widgets/dashboard_exam_tab.dart';
+import 'dashboard/parts/dashboard_bottom_nav.dart';
+import 'dashboard/parts/dashboard_tab_section.dart';
 
+/// Main Dashboard Screen (Refactored Strategy: Pure Scaffold)
+/// Optimized for Load Balancing & Adheres to Rule 1-1 (<200 lines).
+/// Responsibilities split among parts/, widgets/, and utils/.
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -46,6 +48,8 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
           slivers: [
             const DashboardHeader(),
             const SliverToBoxAdapter(child: SizedBox(height: 8)),
+            
+            // Statistics Section (ValueListenable for Partial Rebuilds)
             ValueListenableBuilder<Map<String, int>>(
               valueListenable: _controller.statsNotifier,
               builder: (context, stats, _) {
@@ -58,32 +62,16 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
                 );
               },
             ),
+
             const SliverToBoxAdapter(child: SizedBox(height: 12)),
             
-            // TabBar section
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _SliverAppBarDelegate(
-                TabBar(
-                  controller: _tabController,
-                  indicatorColor: AppColors.primary,
-                  indicatorSize: TabBarIndicatorSize.label,
-                  labelColor: AppColors.textLight,
-                  unselectedLabelColor: AppColors.textMuted,
-                  labelStyle: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  tabs: const [
-                    Tab(text: '수목관리'),
-                    Tab(text: '기출문제'),
-                  ],
-                  onTap: (index) => setState(() {}),
-                ),
-              ),
+            // Persistent Tab Section (Extracted Strategy: Functional UI)
+            DashboardTabSection(
+              tabController: _tabController,
+              onTabChanged: () => setState(() {}),
             ),
 
-            // Tab content
+            // Main Tab Content (Extracted Strategy: Lazy Content Switch)
             SliverToBoxAdapter(
               child: AnimatedBuilder(
                 animation: _tabController,
@@ -99,90 +87,10 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(),
-    );
-  }
-
-  Widget _buildBottomNav() {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.backgroundDark,
-        border: Border(top: BorderSide(color: Colors.white.withOpacity(0.05))),
-      ),
-      child: BottomNavigationBar(
-        currentIndex: _controller.currentIndex,
-        onTap: (index) {
-          setState(() {
-            _controller.currentIndex = index;
-          });
-
-          if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const QuizScreen()),
-            ).then((_) => setState(() => _controller.currentIndex = 0));
-          } else if (index == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const PastExamListScreen()),
-            ).then((_) => setState(() => _controller.currentIndex = 0));
-          } else if (index == 3) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const UserStatsScreen()),
-            ).then((_) => setState(() => _controller.currentIndex = 0));
-          }
-        },
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: AppColors.backgroundDark,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.textMuted,
-        selectedFontSize: 12,
-        unselectedFontSize: 12,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard_outlined),
-            label: '홈',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school_outlined),
-            label: '수목/퀴즈',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history_edu_outlined),
-            label: '기출/학습',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
-            label: '통계',
-          ),
-        ],
+      bottomNavigationBar: DashboardBottomNav(
+        controller: _controller,
+        onUpdate: () => setState(() {}),
       ),
     );
   }
 }
-
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate(this._tabBar);
-
-  final TabBar _tabBar;
-
-  @override
-  double get minExtent => _tabBar.preferredSize.height;
-  @override
-  double get maxExtent => _tabBar.preferredSize.height;
-
-  @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      color: AppColors.backgroundDark,
-      child: _tabBar,
-    );
-  }
-
-  @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return false;
-  }
-}
-
