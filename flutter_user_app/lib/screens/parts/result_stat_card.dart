@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../core/design_system.dart';
+import '../../core/design_system.dart';
 
 class ResultStatCard extends StatelessWidget {
   final int solvedCount;
