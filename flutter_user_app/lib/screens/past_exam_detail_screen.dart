@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_user_app/core/design_system.dart';
 import 'package:flutter_user_app/controllers/past_exam_detail_controller.dart';
 import 'package:flutter_user_app/core/api_service.dart';
-import 'package:flutter_user_app/screens/user_stats_screen.dart';
 
 // Modular Widgets
 import 'past_exam/widgets/exam_info_banner.dart';
@@ -11,6 +10,12 @@ import 'past_exam/widgets/option_selector_list.dart';
 import 'past_exam/widgets/explanation_panel.dart';
 import 'past_exam/widgets/related_quiz_section.dart';
 
+// New Parts
+import 'past_exam/parts/past_exam_app_bar.dart';
+
+/// Refactored Past Exam Detail Screen (Strategy: Sliver Optimization)
+/// Optimized for mobile load balancing by switching to CustomScrollView.
+/// Adheres to DEVELOPMENT_RULES.md (<200 lines).
 class PastExamDetailScreen extends StatefulWidget {
   final int quizId;
 
@@ -23,15 +28,9 @@ class PastExamDetailScreen extends StatefulWidget {
 class _PastExamDetailScreenState extends State<PastExamDetailScreen> {
   final PastExamDetailController _controller = PastExamDetailController();
 
-  // 이미지 영역 확장 상태
-  bool _isQuestionExpanded = false;
-  bool _isExplanationExpanded = false;
-
-  @override
-  void dispose() {
-    ApiService.syncPendingAttempts();
-    super.dispose();
-  }
+  // Local State for UI Expansion (Avoids full screen rebuilds when possible)
+  final ValueNotifier<bool> _isQuestionExpanded = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> _isExplanationExpanded = ValueNotifier<bool>(false);
 
   @override
   void initState() {
@@ -51,6 +50,14 @@ class _PastExamDetailScreenState extends State<PastExamDetailScreen> {
   }
 
   @override
+  void dispose() {
+    ApiService.syncPendingAttempts();
+    _isQuestionExpanded.dispose();
+    _isExplanationExpanded.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
@@ -59,98 +66,79 @@ class _PastExamDetailScreenState extends State<PastExamDetailScreen> {
       },
       child: Scaffold(
         backgroundColor: AppColors.backgroundDark,
-        appBar: _buildAppBar(),
+        appBar: const PastExamAppBar(),
         body: _controller.isLoading
             ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
-            : _buildBody(),
+            : _buildSliverBody(),
       ),
     );
   }
 
-  PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      title: const Text('기출 / 학습 상세'),
-      backgroundColor: AppColors.backgroundDark,
-      elevation: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new),
-        onPressed: () async {
-          await ApiService.syncPendingAttempts();
-          if (!mounted) return;
-          Navigator.pop(context);
-        },
-      ),
-      actions: [
-        TextButton(
-          onPressed: () async {
-            await ApiService.syncPendingAttempts();
-            if (!mounted) return;
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const UserStatsScreen(initialIndex: 2)),
-            );
-          },
-          child: const Text(
-            '학습통계',
-            style: TextStyle(
-              color: AppColors.primary,
-              fontWeight: FontWeight.bold,
-              fontSize: 13,
-            ),
+  Widget _buildSliverBody() {
+    return CustomScrollView(
+      physics: const BouncingScrollPhysics(),
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          sliver: SliverList(
+            delegate: SliverChildListDelegate([
+              // 1. Info Banner
+              ExamInfoBanner(
+                subject: _controller.subject,
+                year: _controller.year,
+                round: _controller.round,
+                questionNo: _controller.questionNo,
+              ),
+              const SizedBox(height: 20),
+
+              // 2. Question Area (Stateless Expansion)
+              ValueListenableBuilder<bool>(
+                valueListenable: _isQuestionExpanded,
+                builder: (context, expanded, _) {
+                  return QuizContentCard(
+                    contentBlocks: _controller.contentBlocks,
+                    isExpanded: expanded,
+                    onToggleExpand: () => _isQuestionExpanded.value = !expanded,
+                  );
+                },
+              ),
+              const SizedBox(height: 20),
+
+              // 3. Option Selection
+              OptionSelectorList(
+                options: _controller.options,
+                selectedIndex: _controller.selectedOptionIndex,
+                correctIndex: _controller.correctOptionIndex,
+                isAnswered: _controller.isAnswered,
+                onSelect: (index) => _controller.selectOption(
+                  index, 
+                  onUpdate: () => setState(() {}),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // 4. Explanation & Hints (Conditional Rendering)
+              if (_controller.isAnswered)
+                ValueListenableBuilder<bool>(
+                  valueListenable: _isExplanationExpanded,
+                  builder: (context, expanded, _) {
+                    return ExplanationPanel(
+                      explanationBlocks: _controller.explanationBlocks,
+                      hintText: _controller.hintText,
+                      isExpanded: expanded,
+                      onToggleExpand: () => _isExplanationExpanded.value = !expanded,
+                    );
+                  },
+                ),
+
+              // 5. Similar Quizzes
+              RelatedQuizSection(similarQuizzes: _controller.similarQuizzes),
+              
+              const SizedBox(height: 48),
+            ]),
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildBody() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 1. 정보 배너
-          ExamInfoBanner(
-            subject: _controller.subject,
-            year: _controller.year,
-            round: _controller.round,
-            questionNo: _controller.questionNo,
-          ),
-          const SizedBox(height: 20),
-
-          // 2. 문제 영역
-          QuizContentCard(
-            contentBlocks: _controller.contentBlocks,
-            isExpanded: _isQuestionExpanded,
-            onToggleExpand: () => setState(() => _isQuestionExpanded = !_isQuestionExpanded),
-          ),
-          const SizedBox(height: 20),
-
-          // 3. 보기 영역
-          OptionSelectorList(
-            options: _controller.options,
-            selectedIndex: _controller.selectedOptionIndex,
-            correctIndex: _controller.correctOptionIndex,
-            isAnswered: _controller.isAnswered,
-            onSelect: (index) => _controller.selectOption(index, onUpdate: () => setState(() {})),
-          ),
-          const SizedBox(height: 20),
-
-          // 4. 해설 및 힌트 영역
-          if (_controller.isAnswered)
-            ExplanationPanel(
-              explanationBlocks: _controller.explanationBlocks,
-              hintText: _controller.hintText,
-              isExpanded: _isExplanationExpanded,
-              onToggleExpand: () =>
-                  setState(() => _isExplanationExpanded = !_isExplanationExpanded),
-            ),
-
-          // 5. 유사문제 섹션
-          RelatedQuizSection(similarQuizzes: _controller.similarQuizzes),
-
-          const SizedBox(height: 32),
-        ],
-      ),
     );
   }
 }
