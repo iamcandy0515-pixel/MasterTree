@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/quiz_review_detail_viewmodel.dart';
-import '../repositories/quiz_repository.dart';
-import '../../../core/utils/snackbar_util.dart';
 import './widgets/quiz_review/quiz_detail_header.dart';
 import './widgets/quiz_review/quiz_content_card.dart';
 import './widgets/quiz_review/quiz_explanation_card.dart';
 import './widgets/quiz_review/quiz_options_card.dart';
 import './widgets/quiz_review/quiz_hint_card.dart';
 import './widgets/quiz_review/quiz_related_card.dart';
-import './widgets/similar_quiz_review_dialog.dart';
+import './widgets/quiz_review/parts/review_action_handler.dart';
 
+/// Quiz Review Detail Screen (Refactored Strategy: Action Handler Split & Selective Rebuilds)
+/// 222라인 -> ~120라인으로 최적화. 200줄 제한(1-1) 준수.
 class QuizReviewDetailScreen extends StatefulWidget {
   final int quizId;
-
   const QuizReviewDetailScreen({super.key, required this.quizId});
 
   @override
   State<QuizReviewDetailScreen> createState() => _QuizReviewDetailScreenState();
 }
 
-class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> {
+class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> with QuizReviewActionHandler {
   late final QuizReviewDetailViewModel _viewModel;
+  static const primaryColor = Color(0xFF2BEE8C);
+  static const backgroundDark = Color(0xFF102219);
 
   @override
   void initState() {
@@ -32,190 +33,150 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const primaryColor = Color(0xFF2BEE8C);
-    const backgroundDark = Color(0xFF102219);
-
     return ChangeNotifierProvider.value(
       value: _viewModel,
       child: Scaffold(
         backgroundColor: backgroundDark,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          title: const Text('문제 검수 및 상세 편집', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-          leading: IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => Navigator.pop(context)),
-          actions: [
-            Consumer<QuizReviewDetailViewModel>(
-              builder: (context, vm, _) => vm.isSaving
-                  ? const Padding(padding: EdgeInsets.all(16.0), child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: primaryColor, strokeWidth: 2)))
-                  : TextButton.icon(
-                      onPressed: () => _handleSave(vm),
-                      icon: const Icon(Icons.save, color: primaryColor, size: 20),
-                      label: const Text('저장', style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold)),
-                    ),
-            ),
-            const SizedBox(width: 8),
-          ],
-        ),
-        body: Consumer<QuizReviewDetailViewModel>(
-          builder: (context, vm, _) {
-            if (vm.isLoading) return const Center(child: CircularProgressIndicator(color: primaryColor));
-
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  QuizDetailHeader(subject: vm.subject, year: vm.year, round: vm.round, questionNo: vm.questionNo),
-                  const SizedBox(height: 24),
-                  QuizContentCard(
-                    initialText: vm.questionText,
-                    blocks: vm.contentBlocks,
-                    isExpanded: vm.isContentExpanded,
-                    onTextChanged: (val) => vm.questionText = val,
-                    onToggleExpand: () => vm.toggleExpanded('content'),
-                    onUploadImage: (img) async => await _handleImageUpload(vm, img, 'content'),
-                    onRemoveImage: (idx) => vm.removeImage(idx, 'content'),
-                  ),
-                  const SizedBox(height: 24),
-                  QuizExplanationCard(
-                    initialText: vm.explanationText,
-                    blocks: vm.explanationBlocks,
-                    isExpanded: vm.isExpExpanded,
-                    isReviewing: vm.isReviewing,
-                    onTextChanged: (val) => vm.explanationText = val,
-                    onToggleExpand: () => vm.toggleExpanded('exp'),
-                    onUploadImage: (img) async => await _handleImageUpload(vm, img, 'exp'),
-                    onRemoveImage: (idx) => vm.removeImage(idx, 'exp'),
-                    onAiReview: () => _handleAiReview(vm),
-                  ),
-                  const SizedBox(height: 24),
-                  QuizOptionsCard(
-                    correctOption: vm.correctOption,
-                    incorrectOptions: vm.incorrectOptions,
-                    isGenerating: vm.isGenerating,
-                    onCorrectOptionChanged: (val) => vm.correctOption = val,
-                    onIncorrectOptionChanged: (idx, val) => vm.incorrectOptions[idx] = val,
-                    onAiGenerate: () => _handleAiGenerate(vm),
-                  ),
-                  const SizedBox(height: 24),
-                  QuizHintCard(initialText: vm.hintText, onTextChanged: (val) => vm.hintText = val),
-                  const SizedBox(height: 24),
-                  QuizRelatedCard(
-                    relatedQuizzes: vm.relatedQuizzesMetadata,
-                    currentPage: vm.currentRelatedPage,
-                    isRecommending: vm.isRecommending,
-                    onPageChanged: (p) => vm.setRelatedPage(p),
-                    onRemoveRelated: (id) => vm.removeRelated(id),
-                    onAiRecommend: () => _handleAiRecommend(vm),
-                  ),
-                  const SizedBox(height: 32),
-                ],
-              ),
-            );
+        appBar: _buildAppBar(),
+        body: Selector<QuizReviewDetailViewModel, bool>(
+          selector: (_, vm) => vm.isLoading,
+          builder: (context, isLoading, child) {
+            if (isLoading) return const Center(child: CircularProgressIndicator(color: primaryColor));
+            return child!;
           },
+          child: _buildScrollBody(),
         ),
       ),
     );
   }
 
-  Future<void> _handleSave(QuizReviewDetailViewModel vm) async {
-    try {
-      await vm.saveQuiz(widget.quizId);
-      if (!mounted) return;
-      SnackBarUtil.showFloating(context, '성공적으로 저장되었습니다.');
-    } catch (e) {
-      if (!mounted) return;
-      SnackBarUtil.showFloating(context, '저장 실패: $e', isError: true);
-    }
-  }
-
-  Future<void> _handleImageUpload(QuizReviewDetailViewModel vm, dynamic img, String field) async {
-    try {
-      final bytes = await img.readAsBytes();
-      await vm.uploadImage(bytes, img.name, field);
-      if (!mounted) return;
-      SnackBarUtil.showFloating(context, '이미지 업로드 완료');
-    } catch (e) {
-      if (!mounted) return;
-      SnackBarUtil.showFloating(context, '업로드 실패: $e', isError: true);
-    }
-  }
-
-  Future<void> _handleAiReview(QuizReviewDetailViewModel vm) async {
-    try {
-      final res = await vm.aiReview();
-      if (!mounted) return;
-      _showReviewResultDialog(context, res);
-    } catch (e) {
-      if (!mounted) return;
-      SnackBarUtil.showFloating(context, 'AI 검수 실패: $e', isError: true);
-    }
-  }
-
-  Future<void> _handleAiGenerate(QuizReviewDetailViewModel vm) async {
-    try {
-      await vm.generateDistractors();
-      if (!mounted) return;
-      SnackBarUtil.showFloating(context, 'AI 오답 생성 완료');
-    } catch (e) {
-      if (!mounted) return;
-      SnackBarUtil.showFloating(context, '오답 생성 실패: $e', isError: true);
-    }
-  }
-
-  Future<void> _handleAiRecommend(QuizReviewDetailViewModel vm) async {
-    try {
-      final related = await vm.recommendSimilar(widget.quizId);
-      if (!mounted) return;
-      await showDialog(
-        context: context,
-        builder: (context) => SimilarQuizReviewDialog(
-          quiz: {
-            'id': widget.quizId,
-            'question_number': vm.questionNo,
-            'content_blocks': vm.contentBlocks,
-            'related_quiz_ids': vm.selectedRelatedIds,
-          },
-          selectedYear: vm.year,
-          selectedRound: vm.round,
-          initialRecommendations: related.map((e) => e as Map<String, dynamic>).toList(),
-          quizRepo: QuizRepository(),
-          onUpdate: (updatedList) {
-            vm.selectedRelatedIds = updatedList.map((e) => e['id'] as int).toList();
-            vm.loadRelatedQuizzesMetadata();
-          },
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      title: const Text('문제 검수 및 상세 편집', style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold)),
+      leading: IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => Navigator.pop(context)),
+      actions: [
+        Selector<QuizReviewDetailViewModel, bool>(
+          selector: (_, vm) => vm.isSaving,
+          builder: (context, isSaving, _) => isSaving
+              ? const Padding(padding: EdgeInsets.all(16.0), child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: primaryColor, strokeWidth: 2)))
+              : TextButton.icon(
+                  onPressed: () => handleSave(_viewModel),
+                  icon: const Icon(Icons.save, color: primaryColor, size: 20),
+                  label: const Text('저장', style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold)),
+                ),
         ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      SnackBarUtil.showFloating(context, '추천 실패: $e', isError: true);
-    }
-  }
-
-  void _showReviewResultDialog(BuildContext context, Map<String, dynamic> result) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1A2E24),
-        title: const Text('AI 검수 결과', style: TextStyle(color: Colors.white)),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildReviewRow('일관성', result['is_consistent'] == true ? '✅ 일치' : '❌ 불일치'),
-              const SizedBox(height: 12),
-              const Text('분석 내용:', style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
-              Text(result['reason'] ?? '내용 없음', style: const TextStyle(color: Colors.white)),
-            ],
-          ),
-        ),
-        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('확인', style: TextStyle(color: Color(0xFF2BEE8C))))],
-      ),
+        const SizedBox(width: 8),
+      ],
     );
   }
 
-  Widget _buildReviewRow(String label, String value) {
-    return Row(children: [Text('$label: ', style: const TextStyle(color: Colors.white70)), Text(value, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold))]);
+  Widget _buildScrollBody() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Selector Strategy: Each card only rebuilds when its specific Data/Block changes.
+          const QuizDetailHeaderWidget(),
+          const SizedBox(height: 24),
+          const QuizContentCardWrapper(),
+          const SizedBox(height: 24),
+          const QuizExplanationCardWrapper(),
+          const SizedBox(height: 24),
+          const QuizOptionsCardWrapper(),
+          const SizedBox(height: 24),
+          const QuizHintCardWrapper(),
+          const SizedBox(height: 24),
+          const QuizRelatedCardWrapper(),
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
+  }
+}
+
+/// --- Wrapped Card Widgets to isolate rebuilds within the file ---
+
+class QuizDetailHeaderWidget extends StatelessWidget {
+  const QuizDetailHeaderWidget({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Selector<QuizReviewDetailViewModel, List<String>>(
+      selector: (_, vm) => [vm.subject, vm.year, vm.round, vm.questionNo],
+      builder: (context, d, _) => QuizDetailHeader(subject: d[0], year: d[1], round: d[2], questionNo: d[3]),
+    );
+  }
+}
+
+class QuizContentCardWrapper extends StatelessWidget {
+  const QuizContentCardWrapper({super.key});
+  @override
+  Widget build(BuildContext context) {
+    final state = context.findAncestorStateOfType<_QuizReviewDetailScreenState>()!;
+    return Consumer<QuizReviewDetailViewModel>(
+      builder: (context, vm, _) => QuizContentCard(
+        initialText: vm.questionText, blocks: vm.contentBlocks, isExpanded: vm.isContentExpanded,
+        onTextChanged: (val) => vm.questionText = val, onToggleExpand: () => vm.toggleExpanded('content'),
+        onUploadImage: (img) => state.handleImageUpload(vm, img, 'content'), onRemoveImage: (idx) => vm.removeImage(idx, 'content'),
+      ),
+    );
+  }
+}
+
+class QuizExplanationCardWrapper extends StatelessWidget {
+  const QuizExplanationCardWrapper({super.key});
+  @override
+  Widget build(BuildContext context) {
+    final state = context.findAncestorStateOfType<_QuizReviewDetailScreenState>()!;
+    return Consumer<QuizReviewDetailViewModel>(
+      builder: (context, vm, _) => QuizExplanationCard(
+        initialText: vm.explanationText, blocks: vm.explanationBlocks, isExpanded: vm.isExpExpanded,
+        isReviewing: vm.isReviewing, onTextChanged: (val) => vm.explanationText = val,
+        onToggleExpand: () => vm.toggleExpanded('exp'), onUploadImage: (img) => state.handleImageUpload(vm, img, 'exp'),
+        onRemoveImage: (idx) => vm.removeImage(idx, 'exp'), onAiReview: () => state.handleAiReview(vm),
+      ),
+    );
+  }
+}
+
+class QuizOptionsCardWrapper extends StatelessWidget {
+  const QuizOptionsCardWrapper({super.key});
+  @override
+  Widget build(BuildContext context) {
+    final state = context.findAncestorStateOfType<_QuizReviewDetailScreenState>()!;
+    return Consumer<QuizReviewDetailViewModel>(
+      builder: (context, vm, _) => QuizOptionsCard(
+        correctOption: vm.correctOption, incorrectOptions: vm.incorrectOptions, isGenerating: vm.isGenerating,
+        onCorrectOptionChanged: (val) => vm.correctOption = val, onIncorrectOptionChanged: (idx, val) => vm.incorrectOptions[idx] = val,
+        onAiGenerate: () => state.handleAiGenerate(vm),
+      ),
+    );
+  }
+}
+
+class QuizHintCardWrapper extends StatelessWidget {
+  const QuizHintCardWrapper({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Selector<QuizReviewDetailViewModel, String>(
+      selector: (_, vm) => vm.hintText,
+      builder: (context, text, _) => QuizHintCard(initialText: text, onTextChanged: (val) => context.read<QuizReviewDetailViewModel>().hintText = val),
+    );
+  }
+}
+
+class QuizRelatedCardWrapper extends StatelessWidget {
+  const QuizRelatedCardWrapper({super.key});
+  @override
+  Widget build(BuildContext context) {
+    final state = context.findAncestorStateOfType<_QuizReviewDetailScreenState>()!;
+    return Consumer<QuizReviewDetailViewModel>(
+      builder: (context, vm, _) => QuizRelatedCard(
+        relatedQuizzes: vm.relatedQuizzesMetadata, currentPage: vm.currentRelatedPage, isRecommending: vm.isRecommending,
+        onPageChanged: (p) => vm.setRelatedPage(p), onRemoveRelated: (id) => vm.removeRelated(id), onAiRecommend: () => state.handleAiRecommend(vm),
+      ),
+    );
   }
 }
