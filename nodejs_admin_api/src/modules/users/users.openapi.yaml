@@ -1,0 +1,78 @@
+openapi: 3.0.0
+info:
+  title: Users API Specification
+  version: 1.0.0
+  description: API for user authentication and administrative management.
+
+paths:
+  /api/users/login:
+    post:
+      summary: User Login
+      tags: [Auth]
+      responses:
+        '200':
+          description: Login Success
+
+  /api/users/me:
+    get:
+      summary: Get own profile
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Profile data
+
+  /api/users:
+    get:
+      summary: List users (Admin)
+      tags: [Management]
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: status
+          schema:
+            type: string
+        - in: query
+          name: minimal
+          description: Returns lightweight user list (pruned metadata).
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: User list
+
+  /api/users/{id}/status:
+    patch:
+      summary: Update user status (Admin)
+      tags: [Management]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Status updated
+
+  /api/users/{id}:
+    delete:
+      summary: Delete user (Admin)
+      tags: [Management]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User deleted

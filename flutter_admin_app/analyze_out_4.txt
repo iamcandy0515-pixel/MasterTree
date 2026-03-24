@@ -1,0 +1,9 @@
+Analyzing flutter_admin_app...                                  
+
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\features\dashboard\screens\dashboard_screen.dart:96:35 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\features\dashboard\screens\dashboard_screen.dart:112:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\dashboard\screens\dashboard_screen.dart:113:36 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\features\dashboard\screens\dashboard_screen.dart:114:41 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\features\dashboard\screens\dashboard_screen.dart:115:33 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\dashboard\screens\dashboard_screen.dart:116:33 - prefer_const_constructors
+

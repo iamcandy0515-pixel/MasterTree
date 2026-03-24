@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_admin_app/features/tree_registration/viewmodels/tree_registration_viewmodel.dart';
-import 'package:flutter_admin_app/features/trees/models/tree.dart';
 import 'tree_registration_parts/tag_selector_row.dart';
 import 'tree_registration_parts/active_tag_editor.dart';
 

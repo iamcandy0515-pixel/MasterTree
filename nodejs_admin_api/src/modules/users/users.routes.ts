@@ -1,26 +1,35 @@
 import { Router } from "express";
-import { usersController } from "./users.controller";
+import { AuthController } from "./controllers/auth.controller";
+import { UserManagementController } from "./controllers/user-management.controller";
 import { verifyAdmin } from "../../middleware/verifyAdmin";
 
 const router = Router();
 
-// Public Routes
-router.post("/login", usersController.login.bind(usersController));
+/**
+ * Public Authentication Routes
+ */
+router.post("/login", AuthController.login);
 
-// Protected Routes
-router.get("/me", verifyAdmin, usersController.getMe.bind(usersController));
+/**
+ * Protected Personal Profile Routes
+ */
+router.get("/me", verifyAdmin, AuthController.getMe);
 
-// Admin List Users & Update Status
-router.get("/", verifyAdmin, usersController.listUsers.bind(usersController));
+/**
+ * Administrative User Management Routes
+ */
+router.get("/", verifyAdmin, UserManagementController.listUsers);
+
 router.patch(
     "/:id/status",
     verifyAdmin,
-    usersController.updateUserStatus.bind(usersController),
+    UserManagementController.updateUserStatus
 );
+
 router.delete(
     "/:id",
     verifyAdmin,
-    usersController.deleteUser.bind(usersController),
+    UserManagementController.deleteUser
 );
 
 export default router;

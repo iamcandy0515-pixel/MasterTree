@@ -22,24 +22,24 @@ src/modules/users/
 ## 4. To-Do List
 
 ### 4.1 기초 및 백업
-- [ ] 로컬 Git 커밋 실행 (작업 전 상태 백업)
-- [ ] `src/modules/users/controllers/` 디렉터리 생성
+- [x] 로컬 Git 커밋 실행 (작업 전 상태 백업)
+- [x] `src/modules/users/controllers/` 디렉터리 생성
 
 ### 4.2 컨트롤러 모듈화 및 기능 구현
-- [ ] `auth.controller.ts`: `login`, `getMe` 이관 및 확장 기반 마련
-- [ ] `user-management.controller.ts`: 
-    - [ ] `listUsers` 고도화 (`minimal` 모드 추가)
-    - [ ] `updateUserStatus`, `deleteUser` 이관
-    - [ ] 전용 검색 로직(Search) 보강
+- [x] `auth.controller.ts`: `login`, `getMe` 이관 및 확장 기반 마련
+- [x] `user-management.controller.ts`: 
+    - [x] `listUsers` 고도화 (`minimal` 모드 추가)
+    - [x] `updateUserStatus`, `deleteUser` 이관
+    - [x] 전용 검색 로직(Search) 보강
 
 ### 4.3 서비스 레이어 고성능화
-- [ ] `users.service.ts` 내 `listUsers`에서 필드 브루닝(Field Pruning) 로직 적용
-- [ ] 대규모 DB 조회 시 성능 병목 방지를 위한 쿼리 최적화 (Pagination 정교화)
+- [x] `users.service.ts` 내 `listUsers`에서 필드 브루닝(Field Pruning) 로직 적용
+- [x] 대규모 DB 조회 시 성능 병목 방지를 위한 쿼리 최적화 (Pagination 정교화)
 
 ### 4.4 라우팅 및 검증
-- [ ] `users.routes.ts` 수정: 인증과 관리 경로를 명확히 구조화
-- [ ] Swagger (OpenAPI) 문서 업데이트 (유저 검색 및 최적화 파라미터 기술)
-- [ ] API 호출 테스트 및 최종 빌드 확인
+- [x] `users.routes.ts` 수정: 인증과 관리 경로를 명확히 구조화
+- [x] Swagger (OpenAPI) 문서 업데이트 (유저 검색 및 최적화 파라미터 기술)
+- [x] API 호출 테스트 및 최종 빌드 확인
 
 ## 5. 단계별 수행 로그 (Log)
 - (작업 시작 시 순차적으로 기록 예정)

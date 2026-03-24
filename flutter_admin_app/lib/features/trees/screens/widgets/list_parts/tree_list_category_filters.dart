@@ -63,7 +63,7 @@ class _FilterChip extends StatelessWidget {
             ),
             if (isSelected) ...[
               const SizedBox(width: 4),
-              Icon(Icons.keyboard_arrow_down, size: 16, color: primary),
+              const Icon(Icons.keyboard_arrow_down, size: 16, color: primary),
             ],
           ],
         ),

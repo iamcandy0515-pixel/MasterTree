@@ -51,11 +51,8 @@ export class UsersService {
      * List Users (Admin)
      * Supports filtering by status if needed (will be handled in controller/service filter logic)
      */
-    async listUsers(page: number = 1, limit: number = 50, status?: string) {
-        let authUsers;
-
-        // Note: auth.admin.listUsers doesn't support complex filters directly.
-        // We fetch and filter in memory for now, or use profiles table if complexity increases.
+    async listUsers(page: number = 1, limit: number = 50, status?: string, minimal = false) {
+        // Fetch users from Supabase Auth Admin API
         const { data, error } = await supabase.auth.admin.listUsers({
             page,
             perPage: limit,
@@ -63,30 +60,46 @@ export class UsersService {
 
         if (error) throw error;
 
-        let users = data.users.map((u) => ({
-            id: u.id,
-            email: u.email,
-            name:
-                u.user_metadata?.full_name ||
-                u.user_metadata?.name ||
-                (u.email?.startsWith("u010") ? u.email.substring(1).split("@")[0] : u.email?.split("@")[0]) ||
-                "사용자",
-            role:
-                u.user_metadata?.role ||
-                (u.email?.includes("admin") ? "Master" : "User"),
-            status: u.user_metadata?.status || "pending", // Default to pending if not set
-            lastLogin: u.last_sign_in_at,
-            createdAt: u.created_at,
-        }));
+        let users = data.users.map((u) => {
+            const baseInfo = {
+                id: u.id,
+                email: u.email,
+                name:
+                    u.user_metadata?.full_name ||
+                    u.user_metadata?.name ||
+                    (u.email?.startsWith("u010") ? u.email.substring(1).split("@")[0] : u.email?.split("@")[0]) ||
+                    "사용자",
+                status: u.user_metadata?.status || "pending", // Default to pending if not set
+            };
+
+            // Mobile Optimization: Field Pruning
+            if (minimal) return baseInfo;
+
+            return {
+                ...baseInfo,
+                role:
+                    u.user_metadata?.role ||
+                    (u.email?.includes("admin") ? "Master" : "User"),
+                lastLogin: u.last_sign_in_at,
+                createdAt: u.created_at,
+            };
+        });
 
         // In-memory filter for status (since auth.admin.listUsers is limited)
         if (status) {
             users = users.filter((u) => u.status === status);
         }
 
+        const totalCount = data.total || 0;
+
         return {
-            users,
-            total: data.total,
+            data: users,
+            meta: {
+                total: totalCount,
+                page,
+                limit,
+                totalPages: Math.ceil(totalCount / limit),
+            },
         };
     }
 

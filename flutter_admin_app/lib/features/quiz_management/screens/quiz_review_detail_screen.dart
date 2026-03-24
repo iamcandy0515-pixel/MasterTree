@@ -77,20 +77,20 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> with Qu
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: const [
           // Selector Strategy: Each card only rebuilds when its specific Data/Block changes.
-          const QuizDetailHeaderWidget(),
-          const SizedBox(height: 24),
-          const QuizContentCardWrapper(),
-          const SizedBox(height: 24),
-          const QuizExplanationCardWrapper(),
-          const SizedBox(height: 24),
-          const QuizOptionsCardWrapper(),
-          const SizedBox(height: 24),
-          const QuizHintCardWrapper(),
-          const SizedBox(height: 24),
-          const QuizRelatedCardWrapper(),
-          const SizedBox(height: 32),
+          QuizDetailHeaderWidget(),
+          SizedBox(height: 24),
+          QuizContentCardWrapper(),
+          SizedBox(height: 24),
+          QuizExplanationCardWrapper(),
+          SizedBox(height: 24),
+          QuizOptionsCardWrapper(),
+          SizedBox(height: 24),
+          QuizHintCardWrapper(),
+          SizedBox(height: 24),
+          QuizRelatedCardWrapper(),
+          SizedBox(height: 32),
         ],
       ),
     );

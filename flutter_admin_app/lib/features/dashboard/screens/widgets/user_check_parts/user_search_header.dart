@@ -47,7 +47,7 @@ class UserSearchHeader extends StatelessWidget {
             onChanged: onSearchChanged,
             decoration: InputDecoration(
               hintText: '사용자 이름 또는 이메일 검색',
-              hintStyle: TextStyle(color: Colors.white24, fontSize: 13),
+              hintStyle: const TextStyle(color: Colors.white24, fontSize: 13),
               prefixIcon: Icon(Icons.search, color: primaryColor.withOpacity(0.5), size: 20),
               filled: true,
               fillColor: surfaceColor.withOpacity(0.5),

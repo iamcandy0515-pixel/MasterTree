@@ -93,12 +93,12 @@ class _DashboardScreenState extends State<_DashboardContent> {
                     child: DefaultTabController(
                       length: 2,
                       child: Column(
-                        children: [
-                          const TabBar(
+                        children: const [
+                          TabBar(
                             indicatorColor: primaryColor,
                             labelColor: Colors.white,
                             unselectedLabelColor: Colors.grey,
-                            tabs: const [
+                            tabs: [
                               Tab(
                                 icon: Icon(Icons.description, size: 20),
                                 text: '기출문제',
@@ -109,7 +109,7 @@ class _DashboardScreenState extends State<_DashboardContent> {
                               ),
                             ],
                           ),
-                          const Expanded(
+                          Expanded(
                             child: TabBarView(
                               children: [
                                 DashboardExamTab(),
