@@ -1,33 +1,39 @@
 import { Router } from "express";
-import { quizController } from "./quiz.controller";
+import { QuizManagementController } from "./controllers/quiz-management.controller";
+import { QuizBulkController } from "./controllers/quiz-bulk.controller";
+import { QuizSearchController } from "./controllers/quiz-search.controller";
 import { quizAIController } from "./quiz-ai.controller";
 import { quizExtractionController } from "./quiz-extraction.controller";
 import { verifyAdmin } from "../../middleware/verifyAdmin";
 
 const router = Router();
 
-// Standard CRUD (Strategy D)
+/**
+ * Standard CRUD & Search
+ */
 router.get("/", verifyAdmin, (req, res, next) => {
-    quizController.listQuizzes(req, res).catch(next);
+    QuizSearchController.listQuizzes(req, res).catch(next);
 });
 
 router.post("/upsert", verifyAdmin, (req, res, next) => {
-    quizController.upsertQuizQuestion(req, res).catch(next);
+    QuizManagementController.upsertQuizQuestion(req, res).catch(next);
 });
 
 router.post("/upsert-batch", verifyAdmin, (req, res, next) => {
-    quizController.upsertQuizBatch(req, res).catch(next);
+    QuizBulkController.upsertQuizBatch(req, res).catch(next);
 });
 
 router.post("/upsert-related-bulk", verifyAdmin, (req, res, next) => {
-    quizController.upsertRelatedBulk(req, res).catch(next);
+    QuizBulkController.upsertRelatedBulk(req, res).catch(next);
 });
 
 router.delete("/:id", verifyAdmin, (req, res, next) => {
-    quizController.deleteQuiz(req, res).catch(next);
+    QuizManagementController.deleteQuiz(req, res).catch(next);
 });
 
-// AI Pipeline (Strategy E)
+/**
+ * AI Pipeline (Strategy E)
+ */
 router.post("/parse", verifyAdmin, (req, res, next) => {
     quizAIController.parseRawSource(req, res).catch(next);
 });
@@ -48,7 +54,9 @@ router.post("/recommend-related", verifyAdmin, (req, res, next) => {
     quizAIController.recommendRelated(req, res).catch(next);
 });
 
-// Extraction & Drive (Strategy F)
+/**
+ * Extraction & Drive (Strategy F)
+ */
 router.post("/validate-drive-file", verifyAdmin, (req, res, next) => {
     quizExtractionController.validateDriveFile(req, res).catch(next);
 });

@@ -25,22 +25,22 @@ src/modules/quiz/
 ## 4. To-Do List
 
 ### 4.1 기초 및 백업
-- [ ] 로컬 Git 커밋 실행 (작업 전 상태 백업)
-- [ ] `src/modules/quiz/controllers/` 디렉터리 생성
+- [x] 로컬 Git 커밋 실행 (작업 전 상태 백업)
+- [x] `src/modules/quiz/controllers/` 디렉터리 생성
 
 ### 4.2 컨트롤러 모듈화 및 기능 구현
-- [ ] `quiz-management.controller.ts`: 단일 `upsert` 및 `delete` 이관
-- [ ] `quiz-bulk.controller.ts`: `upsertQuizBatch`, `upsertRelatedBulk` 이관 및 **트랜잭션 강화**
-- [ ] `quiz-search.controller.ts`: `listQuizzes` 고도화 (페이지네이션/필터/`minimal` 필드/썸네일 매핑)
+- [x] `quiz-management.controller.ts`: 단일 `upsert` 및 `delete` 이관
+- [x] `quiz-bulk.controller.ts`: `upsertQuizBatch`, `upsertRelatedBulk` 이관 및 **트랜잭션 강화**
+- [x] `quiz-search.controller.ts`: `listQuizzes` 고도화 (페이지네이션/필터/`minimal` 필드/썸네일 매핑)
 
 ### 4.3 서비스 및 데이터 레이어 강화
-- [ ] `quiz.service.ts` 내 벌크 작업 전용 트랜잭션 로직 추가
-- [ ] 퀴즈 페이로드 최적화를 위한 데이터 변환 (Thumbnail URL 우선 순위)
+- [x] `quiz.service.ts` 내 벌크 작업 전용 트랜잭션 로직 추가
+- [x] 퀴즈 페이로드 최적화를 위한 데이터 변환 (Thumbnail URL 우선 순위)
 
 ### 4.4 라우팅 및 검증
-- [ ] `quiz.routes.ts` 수정 및 엔드포인트 재연결
-- [ ] Swagger (OpenAPI) 문서 업데이트 (페이지네이션 파라미터 추가)
-- [ ] API 호출 테스트 및 최종 빌드 완료 보고
+- [x] `quiz.routes.ts` 수정 및 엔드포인트 재연결
+- [x] Swagger (OpenAPI) 문서 업데이트 (페이지네이션 파라미터 추가)
+- [x] API 호출 테스트 및 최종 빌드 완료 보고
 
 ## 5. 단계별 수행 로그 (Log)
 - (작업 시작 시 순차적으로 기록 예정)

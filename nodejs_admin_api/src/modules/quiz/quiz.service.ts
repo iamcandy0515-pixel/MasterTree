@@ -67,6 +67,13 @@ export class QuizService {
     }
 
     /**
+     * listQuizzes: Filtered & Paginated Search
+     */
+    async listQuizzes(filter: any) {
+        return await quizDataService.listQuizzes(filter);
+    }
+
+    /**
      * AI Recommendation & Vector Search
      */
     async recommendRelated(questionText: string, limitCount: number = 3) {

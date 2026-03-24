@@ -67,6 +67,7 @@ export class QuizDataService {
 
     /**
      * Handles batch upsert of quiz questions.
+     * Atomic: All or nothing via supabase-js batch upsert.
      */
     async upsertQuizBatch(quizItems: any[], examFilter: any) {
         const { subject, year, round } = examFilter;
@@ -86,13 +87,8 @@ export class QuizDataService {
 
         const { data, error } = await quizRepository.upsertBatch(itemsToUpsert);
         if (error) {
-            const results: any[] = [];
-            for (const item of itemsToUpsert) {
-                const { data: qData, error: qErr } = await quizRepository.upsertSingle(item);
-                if (qErr) throw new Error(`Q${item.question_number} failed: ${qErr.message}`);
-                if (qData) results.push(...(qData as any[]));
-            }
-            return results;
+            console.error(`[QuizDataService] Atomic Batch Upsert Failed:`, error.message);
+            throw new Error(`Batch save failed: ${error.message}`);
         }
         return data;
     }
@@ -110,6 +106,49 @@ export class QuizDataService {
         }
         const { error } = await quizRepository.deleteQuizRecord(id);
         if (error) throw new Error("Failed to delete quiz: " + error.message);
+    }
+
+    /**
+     * listQuizzes: Filtered & Paginated Search with Mobile Optimization
+     */
+    async listQuizzes(filter: any) {
+        const { page, limit, subject, year, round, minimal } = filter;
+        const offset = (page - 1) * limit;
+
+        // Resolve IDs for filtering if provided
+        const categoryId = subject ? await this.ensureCategory(subject) : undefined;
+        const examId = (year && round) ? await this.ensureExam(subject, year, round) : undefined;
+
+        const { data, error, count } = await quizRepository.findWithFilters(offset, limit, {
+            ...filter,
+            categoryId,
+            examId
+        });
+
+        if (error) throw error;
+
+        // Apply Mobile Optimization: Field Pruning & Thumbnail Mapping
+        const processedData = (data as any[]).map(quiz => {
+            if (minimal) {
+                return {
+                    id: quiz.id,
+                    question_number: quiz.question_number,
+                    difficulty: quiz.difficulty,
+                    category: quiz.quiz_categories?.name,
+                    exam_info: quiz.quiz_exams ? `${quiz.quiz_exams.year}년 ${quiz.quiz_exams.round}회` : null,
+                    // Prune content_blocks to first text block only for list view
+                    summary_text: quiz.content_blocks?.find((b: any) => b.type === "text")?.content?.substring(0, 100) || "",
+                    // Thumbnail mapping for first image found
+                    thumbnail_url: quiz.content_blocks?.find((b: any) => b.type === "image")?.image_url || null
+                };
+            }
+            return quiz;
+        });
+
+        return {
+            data: processedData,
+            meta: { total: count || 0, page, limit, totalPages: count ? Math.ceil(count / limit) : 0 }
+        };
     }
 }
 
