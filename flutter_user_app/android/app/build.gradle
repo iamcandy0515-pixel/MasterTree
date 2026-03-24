@@ -41,7 +41,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.flutter_user_app"
-        minSdkVersion 19 // flutter.minSdkVersion is 16, but some plugins require 19+
+        minSdkVersion 21 // Updated to match FLUTTER_3_7_12_TECH_SPEC.md (LTS)
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

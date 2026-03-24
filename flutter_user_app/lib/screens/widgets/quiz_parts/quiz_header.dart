@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../../core/design_system.dart';
-import '../../../core/api_service.dart';
+import 'package:flutter_user_app/core/design_system.dart';
+import 'package:flutter_user_app/core/api_service.dart';
 import '../../user_stats_screen.dart';
-import '../../../viewmodels/quiz_viewmodel.dart';
+import 'quiz_progress_bar.dart';
 
+/// Optimized Quiz Header (Strategy: SRP & Performance)
+/// No direct Provider.watch here to prevent total header rebuilds.
 class QuizHeader extends StatelessWidget {
   const QuizHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<QuizViewModel>();
-    
     return Container(
       padding: const EdgeInsets.only(top: 12, left: 12, right: 12, bottom: 8),
       decoration: BoxDecoration(
@@ -77,24 +76,11 @@ class QuizHeader extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: LinearProgressIndicator(
-                  value: vm.totalQuestions > 0
-                      ? vm.solvedCount / vm.totalQuestions
-                      : 0.0,
-                  backgroundColor: Colors.white.withOpacity(0.1),
-                  valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
-                  minHeight: 4,
-                ),
-              ),
-            ),
+            // Isolated Rebuild Area
+            const QuizProgressBar(),
           ],
         ),
       ),
     );
   }
 }
-
