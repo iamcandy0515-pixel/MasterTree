@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_user_app/core/design_system.dart';
 import 'package:flutter_user_app/screens/quiz_screen.dart';
 import '../controllers/quiz_result_controller.dart';
+import 'parts/result_title_section.dart';
+import 'parts/result_stat_card.dart';
 
 class QuizResultScreen extends StatefulWidget {
   final int correctCount;
@@ -34,10 +36,6 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final double avgHints = widget.solvedCount > 0
-        ? (widget.accumulatedHintCount / widget.solvedCount)
-        : 0.0;
-
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
       body: SafeArea(
@@ -55,128 +53,23 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
                 child: IntrinsicHeight(
                   child: Column(
                     children: [
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              Navigator.of(
-                                context,
-                              ).popUntil((route) => route.isFirst);
-                            },
-                            icon: const Icon(
-                              Icons.arrow_back_ios_new,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                            padding: EdgeInsets.zero,
-                            alignment: Alignment.centerLeft,
-                          ),
-                          const Spacer(),
-                        ],
-                      ),
+                      _buildHeader(context),
                       const Spacer(),
-                      Icon(
-                        _controller.titleIcon,
-                        size: 80,
-                        color: _controller.titleColor,
-                      ),
-                      const SizedBox(height: 24),
-                      Text(
-                        _controller.title,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        _controller.description,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.7),
-                          fontSize: 16,
-                        ),
+                      ResultTitleSection(
+                        icon: _controller.titleIcon,
+                        titleColor: _controller.titleColor,
+                        title: _controller.title,
+                        description: _controller.description,
                       ),
                       const SizedBox(height: 40),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton.icon(
-                            onPressed: () {
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (_) => const QuizScreen(),
-                                ),
-                              );
-                            },
-                            icon: const Icon(
-                              Icons.refresh,
-                              size: 16,
-                              color: AppColors.primary,
-                            ),
-                            label: const Text(
-                              '다시 도전',
-                              style: TextStyle(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              minimumSize: Size.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                          ),
-                        ],
-                      ),
+                      _buildRechallengeButton(context),
                       const SizedBox(height: 8),
-
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: _controller.titleColor.withOpacity(0.3),
-                          ),
-                        ),
-                        child: Column(
-                          children: [
-                            _buildStatRow(
-                              '총 대면한 문제',
-                              '${widget.solvedCount} 문제',
-                            ),
-                            const Divider(color: Colors.white12, height: 24),
-                            _buildStatRow(
-                              '정답 개수',
-                              '${widget.correctCount} 개',
-                              valueColor: AppColors.primary,
-                            ),
-                            const Divider(color: Colors.white12, height: 24),
-                            _buildStatRow(
-                              '평균 사용 힌트',
-                              '${avgHints.toStringAsFixed(1)} 개',
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  '(총 힌트 사용횟수: ${widget.accumulatedHintCount})',
-                                  style: const TextStyle(
-                                    color: Colors.white38,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                      ResultStatCard(
+                        solvedCount: widget.solvedCount,
+                        correctCount: widget.correctCount,
+                        avgHints: _controller.avgHints,
+                        totalHints: widget.accumulatedHintCount,
+                        borderColor: _controller.titleColor,
                       ),
                       const Spacer(flex: 2),
                     ],
@@ -190,24 +83,54 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
     );
   }
 
-  Widget _buildStatRow(String label, String value, {Color? valueColor}) {
+  Widget _buildHeader(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 16),
+        IconButton(
+          onPressed: () {
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          },
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            color: Colors.white,
+            size: 20,
+          ),
+          padding: EdgeInsets.zero,
+          alignment: Alignment.centerLeft,
         ),
-        Text(
-          value,
-          style: TextStyle(
-            color: valueColor ?? Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+      ],
+    );
+  }
+
+  Widget _buildRechallengeButton(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        TextButton.icon(
+          onPressed: () {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => const QuizScreen()),
+            );
+          },
+          icon: const Icon(
+            Icons.refresh,
+            size: 16,
+            color: AppColors.primary,
+          ),
+          label: const Text(
+            '다시 도전',
+            style: TextStyle(
+              color: AppColors.primary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          style: TextButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            minimumSize: Size.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
         ),
       ],
     );
   }
 }
-

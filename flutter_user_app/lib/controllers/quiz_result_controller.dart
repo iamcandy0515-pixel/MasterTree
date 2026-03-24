@@ -7,13 +7,14 @@ class QuizResultController {
   late Color titleColor;
   late IconData titleIcon;
   late String description;
+  double avgHints = 0.0;
 
   void initFromStats({
     required int correctCount,
     required int accumulatedHintCount,
     required int solvedCount,
   }) {
-    final double avgHints = solvedCount > 0
+    avgHints = solvedCount > 0
         ? (accumulatedHintCount / solvedCount)
         : 0.0;
     QuizRank rank;
