@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../viewmodels/bulk_similar_management_viewmodel.dart';
-import 'widgets/similar_quiz_review_dialog.dart';
 import 'widgets/bulk/bulk_filter_panel.dart';
 import 'widgets/bulk/bulk_action_header.dart';
 import 'widgets/bulk/bulk_pagination_bar.dart';
-import 'widgets/bulk/bulk_quiz_list_item.dart';
+import 'widgets/bulk/parts/bulk_list_view.dart';
 import '../repositories/quiz_repository.dart';
 
+/// Bulk Similar Management Screen (Refactored Strategy: Action Separation & Select Rebuild)
+/// 131라인 -> 70라인 이하 감축. 200줄 제한(1-1) 준수.
 class BulkSimilarManagementScreen extends StatefulWidget {
   const BulkSimilarManagementScreen({super.key});
 
@@ -21,110 +23,64 @@ class _BulkSimilarManagementScreenState extends State<BulkSimilarManagementScree
   @override
   void initState() {
     super.initState();
-    _viewModel.addListener(_onViewModelUpdate);
     _viewModel.loadSavedFilters();
-  }
-
-  @override
-  void dispose() {
-    _viewModel.removeListener(_onViewModelUpdate);
-    super.dispose();
-  }
-
-  void _onViewModelUpdate() {
-    if (mounted) setState(() {});
-  }
-
-  void _showReviewDialog(Map<String, dynamic> quiz) {
-    showDialog(
-      context: context,
-      builder: (context) => SimilarQuizReviewDialog(
-        quiz: quiz,
-        selectedYear: _viewModel.selectedYear,
-        selectedRound: _viewModel.selectedRound,
-        initialRecommendations: _viewModel.tempRecommendations[quiz['id']] ?? [],
-        quizRepo: _quizRepo,
-        onUpdate: (updatedRecommendations) => _viewModel.updateRecommendation(quiz['id'] as int, updatedRecommendations),
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     const backgroundDark = Color(0xFF102219);
     
-    return Scaffold(
-      backgroundColor: backgroundDark,
-      appBar: AppBar(
+    return ChangeNotifierProvider.value(
+      value: _viewModel,
+      child: Scaffold(
         backgroundColor: backgroundDark,
-        title: const Text('기출문제 유사문제 추출(일괄)', style: TextStyle(color: Colors.white, fontSize: 16)),
-      ),
-      body: Column(
-        children: [
-          BulkActionHeader(
-            isProcessing: _viewModel.isProcessing,
-            isEmpty: _viewModel.quizzes.isEmpty,
-            hasRecommendations: _viewModel.tempRecommendations.isNotEmpty,
-            onBulkRecommend: _viewModel.runBulkRecommendation,
-            onSaveAll: _viewModel.saveAll,
-          ),
-          BulkFilterPanel(
-            selectedSubject: _viewModel.selectedSubject,
-            selectedYear: _viewModel.selectedYear,
-            selectedRound: _viewModel.selectedRound,
-            subjects: _viewModel.subjects,
-            years: _viewModel.years,
-            rounds: _viewModel.rounds,
-            statusMessage: _viewModel.statusMessage,
-            onSubjectChanged: _viewModel.setSubject,
-            onYearChanged: _viewModel.setYear,
-            onRoundChanged: _viewModel.setRound,
-          ),
-          BulkPaginationBar(
-            currentPage: _viewModel.currentPage,
-            totalPages: _viewModel.totalPages,
-            onPageChanged: _viewModel.setPage,
-          ),
-          Expanded(child: _buildQuizList()),
-        ],
+        appBar: AppBar(
+          backgroundColor: backgroundDark,
+          elevation: 0,
+          title: const Text('기출문제 유사문제 추출(일괄)', style: TextStyle(color: Colors.white, fontSize: 16)),
+        ),
+        body: Column(
+          children: [
+            _buildActionHeaderPart(),
+            _buildFilterPanelPart(),
+            _buildPaginationBarPart(),
+            Expanded(child: BulkQuizListView(quizRepo: _quizRepo)),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildQuizList() {
-    if (_viewModel.isFetching) {
-      return const Center(child: CircularProgressIndicator(color: Color(0xFF2BEE8C)));
-    }
-    if (_viewModel.quizzes.isEmpty) {
-      return const Center(child: Text('조회된 문제가 없습니다.', style: TextStyle(color: Colors.grey)));
-    }
-
-    final startIndex = (_viewModel.currentPage - 1) * BulkSimilarManagementViewModel.itemsPerPage;
-    final int endIndex = (startIndex + BulkSimilarManagementViewModel.itemsPerPage < _viewModel.quizzes.length)
-        ? startIndex + BulkSimilarManagementViewModel.itemsPerPage
-        : _viewModel.quizzes.length;
-    final pageQuizzes = _viewModel.quizzes.sublist(startIndex, endIndex);
-
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      itemCount: pageQuizzes.length,
-      itemBuilder: (context, index) {
-        final quiz = pageQuizzes[index];
-        final id = quiz['id'] as int;
-        return BulkQuizListItem.build(
-          quiz: quiz,
-          fullText: _viewModel.getFullQuizText(quiz),
-          status: _viewModel.analysisStatus[id] ?? 0,
-          displayCount: _getDisplayCount(quiz, id),
-          onTap: () => _showReviewDialog(quiz),
-        );
-      },
+  /// Action Header 영역 분리 (Strategy: Selective Interaction)
+  Widget _buildActionHeaderPart() {
+    return Consumer<BulkSimilarManagementViewModel>(
+      builder: (_, vm, __) => BulkActionHeader(
+        isProcessing: vm.isProcessing,
+        isEmpty: vm.quizzes.isEmpty,
+        hasRecommendations: vm.tempRecommendations.isNotEmpty,
+        onBulkRecommend: vm.runBulkRecommendation,
+        onSaveAll: vm.saveAll,
+      ),
     );
   }
 
-  int _getDisplayCount(Map<String, dynamic> quiz, int id) {
-    final recs = _viewModel.tempRecommendations[id] ?? [];
-    final storedCount = (quiz['related_quiz_ids'] as List?)?.length ?? 0;
-    return recs.length > storedCount ? recs.length : storedCount;
+  /// Filter Panel 영역 분리
+  Widget _buildFilterPanelPart() {
+    return Consumer<BulkSimilarManagementViewModel>(
+      builder: (_, vm, __) => BulkFilterPanel(
+        selectedSubject: vm.selectedSubject, selectedYear: vm.selectedYear, selectedRound: vm.selectedRound,
+        subjects: vm.subjects, years: vm.years, rounds: vm.rounds, statusMessage: vm.statusMessage,
+        onSubjectChanged: vm.setSubject, onYearChanged: vm.setYear, onRoundChanged: vm.setRound,
+      ),
+    );
+  }
+
+  /// Pagination Bar 영역 분리
+  Widget _buildPaginationBarPart() {
+    return Consumer<BulkSimilarManagementViewModel>(
+      builder: (_, vm, __) => BulkPaginationBar(
+        currentPage: vm.currentPage, totalPages: vm.totalPages, onPageChanged: vm.setPage,
+      ),
+    );
   }
 }

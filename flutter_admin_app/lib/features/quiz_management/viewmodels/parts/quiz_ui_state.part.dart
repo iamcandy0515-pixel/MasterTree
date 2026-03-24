@@ -15,17 +15,20 @@ extension QuizUiState on QuizReviewDetailViewModel {
     } else {
       isExpExpanded = !isExpExpanded;
     }
+    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
     notifyListeners();
   }
 
   void setRelatedPage(int page) { 
     currentRelatedPage = page; 
+    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
     notifyListeners(); 
   }
 
   void removeRelated(int id) {
     selectedRelatedIds.remove(id);
     relatedQuizzesMetadata.removeWhere((m) => m['id'] == id);
+    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
     notifyListeners();
   }
 }

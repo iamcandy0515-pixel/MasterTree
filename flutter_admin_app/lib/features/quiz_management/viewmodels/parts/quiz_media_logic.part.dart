@@ -8,6 +8,7 @@ extension QuizMediaLogic on QuizReviewDetailViewModel {
     } else {
       explanationBlocks.add({'type': 'image', 'content': url});
     }
+    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
     notifyListeners();
   }
 
@@ -17,6 +18,7 @@ extension QuizMediaLogic on QuizReviewDetailViewModel {
     } else {
       explanationBlocks.removeAt(blockIdx);
     }
+    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
     notifyListeners();
   }
 }

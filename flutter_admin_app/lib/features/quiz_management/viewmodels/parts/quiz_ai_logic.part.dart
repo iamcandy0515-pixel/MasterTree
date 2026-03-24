@@ -3,6 +3,7 @@ part of '../quiz_review_detail_viewmodel.dart';
 extension QuizAiLogic on QuizReviewDetailViewModel {
   Future<Map<String, dynamic>> aiReview() async {
     _isReviewing = true;
+    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
     notifyListeners();
     try {
       final rawText = relatedQuizzesMetadata.isNotEmpty 
@@ -13,10 +14,12 @@ extension QuizAiLogic on QuizReviewDetailViewModel {
         [{'type': 'text', 'content': explanationText}]
       );
       _isReviewing = false;
+      // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
       notifyListeners();
       return res;
     } catch (e) {
       _isReviewing = false;
+      // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
       notifyListeners();
       rethrow;
     }
@@ -24,6 +27,7 @@ extension QuizAiLogic on QuizReviewDetailViewModel {
 
   Future<void> generateDistractors() async {
     _isGenerating = true;
+    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
     notifyListeners();
     try {
       final distractors = await _aiRepo.generateDistractors(questionText, correctOption);
@@ -33,19 +37,23 @@ extension QuizAiLogic on QuizReviewDetailViewModel {
       _isGenerating = false;
       rethrow;
     }
+    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
     notifyListeners();
   }
 
   Future<List<dynamic>> recommendSimilar(int quizId) async {
     _isRecommending = true;
+    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
     notifyListeners();
     try {
       final related = await _aiRepo.recommendRelated(questionText: questionText);
       _isRecommending = false;
+      // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
       notifyListeners();
       return related.where((r) => r['id'] != quizId).toList();
     } catch (e) {
       _isRecommending = false;
+      // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
       notifyListeners();
       rethrow;
     }
