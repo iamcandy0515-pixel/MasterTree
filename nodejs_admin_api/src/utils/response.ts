@@ -18,8 +18,14 @@ export const successResponse = <T>(
     data: T,
     message: string = "Success",
     statusCode: number = 200,
+    meta?: any,
 ): void => {
-    sendResponse(res, statusCode, message, data);
+    res.status(statusCode).json({
+        success: true,
+        message,
+        data,
+        meta,
+    });
 };
 
 export const errorResponse = (

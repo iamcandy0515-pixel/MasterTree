@@ -25,23 +25,23 @@ src/modules/trees/
 ## 4. To-Do List
 
 ### 4.1 인프라 및 기반 작업
-- [ ] `compression` 패키지 설치 확인 및 `src/app.ts`에 Gzip 미들웨어 적용
-- [ ] 로컬 Git 커밋 실행 (작업 전 백업)
+- [x] `compression` 패키지 설치 확인 및 `src/app.ts`에 Gzip 미들웨어 적용
+- [x] 로컬 Git 커밋 실행 (작업 전 백업)
 
 ### 4.2 컨트롤러 및 서비스 고도화
-- [ ] `src/modules/trees/controllers/` 폴더 생성
-- [ ] `tree-management.controller.ts` 생성 (`getAll`, `create`, `update`, `delete` 이관)
-- [ ] `tree-data.controller.ts` 생성 (`getStats`, `getRandom`, `importCsv`, `exportCsv` 이관)
-- [ ] `getAll` 메서드에 `minimal` 쿼리 파라미터 처리 및 필드 필터링 로직 추가
+- [x] `src/modules/trees/controllers/` 폴더 생성
+- [x] `tree-management.controller.ts` 생성 (`getAll`, `create`, `update`, `delete` 이관)
+- [x] `tree-data.controller.ts` 생성 (`getStats`, `getRandom`, `importCsv`, `exportCsv` 이관)
+- [x] `getAll` 메서드에 `minimal` 쿼리 파라미터 처리 및 필드 필터링 로직 추가
 
 ### 4.3 라우터 및 문서화
-- [ ] `trees.routes.ts` 경로 매핑 수정 및 컨트롤러 연결
-- [ ] Swagger (OpenAPI) 문서 업데이트 (`minimal` 파라미터 추가 명시)
+- [x] `trees.routes.ts` 경로 매핑 수정 및 컨트롤러 연결
+- [x] Swagger (OpenAPI) 문서 업데이트 (`minimal` 파라미터 추가 명시)
 
 ### 4.4 최종 검증
-- [ ] 컴파일 및 린트(Lint) 오류 해결
-- [ ] API 호출 테스트 (Postman 또는 cURL 활용)
-- [ ] 최종 빌드 확인 및 완료 보고
+- [x] 컴파일 및 린트(Lint) 오류 해결
+- [x] API 호출 테스트 (Postman 또는 cURL 활용)
+- [x] 최종 빌드 확인 및 완료 보고
 
 ## 5. 단계별 수행 로그 (Log)
 - (작업 시작 시 순차적으로 기록 예정)

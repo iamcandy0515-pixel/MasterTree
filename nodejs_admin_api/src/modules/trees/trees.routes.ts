@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { TreeController } from "./trees.controller";
+import { TreeManagementController } from "./controllers/tree-management.controller";
+import { TreeDataController } from "./controllers/tree-data.controller";
 import { verifyAdmin } from "../../middleware/verifyAdmin";
 
 import multer from "multer";
@@ -7,44 +8,62 @@ import multer from "multer";
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
-// Public: Get random trees for distractors
+/** 
+ * Public: Get random trees for distractors 
+ * Swagger note: Query params: count, category, excludeName
+ */
 router.get("/random", (req, res, next) => {
-    TreeController.getRandom(req, res).catch(next);
+    TreeDataController.getRandom(req, res).catch(next);
 });
 
-// Public: Get Detailed Stats
+/** 
+ * Public: Get Detailed Stats 
+ */
 router.get("/stats", (req, res, next) => {
-    TreeController.getStats(req, res).catch(next);
+    TreeDataController.getStats(req, res).catch(next);
 });
 
-// Protected: Bulk Export
+/** 
+ * Protected: Bulk Export (Admin ONLY)
+ */
 router.get("/export", verifyAdmin, (req, res, next) => {
-    TreeController.exportCsv(req, res).catch(next);
+    TreeDataController.exportCsv(req, res).catch(next);
 });
 
-// Protected: Bulk Import
+/** 
+ * Protected: Bulk Import (Admin ONLY)
+ */
 router.post("/import", verifyAdmin, upload.single("file"), (req, res, next) => {
-    TreeController.importCsv(req, res).catch(next);
+    TreeDataController.importCsv(req, res).catch(next);
 });
 
-// Public: Get all trees
+/** 
+ * Public: Get all trees 
+ * Mobile optimized: ?minimal=true to prune large optional fields.
+ */
 router.get("/", (req, res, next) => {
-    TreeController.getAll(req, res).catch(next);
+    TreeManagementController.getAll(req, res).catch(next);
 });
 
-// Protected: Create new tree (requires admin auth)
+/** 
+ * Protected: Create new tree (Admin Auth Required)
+ */
 router.post("/", verifyAdmin, (req, res, next) => {
-    TreeController.create(req, res).catch(next);
+    TreeManagementController.create(req, res).catch(next);
 });
 
-// Protected: Update tree (requires admin auth)
+/** 
+ * Protected: Update tree (Admin Auth Required)
+ */
 router.put("/:id", verifyAdmin, (req, res, next) => {
-    TreeController.update(req, res).catch(next);
+    TreeManagementController.update(req, res).catch(next);
 });
 
-// Protected: Delete tree (requires admin auth)
+/** 
+ * Protected: Delete tree (Admin Auth Required)
+ */
 router.delete("/:id", verifyAdmin, (req, res, next) => {
-    TreeController.delete(req, res).catch(next);
+    TreeManagementController.delete(req, res).catch(next);
 });
 
 export default router;

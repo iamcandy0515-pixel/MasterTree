@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import compression from "compression";
 
 import treeRoutes from "./modules/trees/trees.routes";
 import treeRegistrationRoutes from "./modules/tree-registration/tree-registration.routes";
@@ -21,6 +22,7 @@ app.use(cors({
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
+app.use(compression() as any);
 app.use(express.json());
 
 // Debug logging middleware

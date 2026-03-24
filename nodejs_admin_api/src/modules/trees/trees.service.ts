@@ -11,7 +11,7 @@ export class TreeService {
     /**
      * Retrieves trees with pagination and in-memory deduplication/merging
      */
-    static async getAll(page = 1, limit = 20, search?: string, category?: string) {
+    static async getAll(page = 1, limit = 20, search?: string, category?: string, minimal = false) {
         const offset = (page - 1) * limit;
         const { data, error, count } = await treeRepository.findAll(offset, limit, search, category);
 
@@ -23,9 +23,23 @@ export class TreeService {
         // Deduplication/Merging logic (Rule 3 Optimization)
         const uniqueTreeMap = new Map<string, any>();
         for (const tree of (data as any[]) || []) {
+            let processedTree = { ...(tree as any) };
+            
+            // Mobile Optimization: Field Pruning
+            if (minimal) {
+                processedTree = {
+                    id: tree.id,
+                    name_kr: tree.name_kr,
+                    scientific_name: tree.scientific_name,
+                    category: tree.category,
+                    image_url: tree.tree_images?.[0]?.image_url || null
+                };
+            }
+
             if (!uniqueTreeMap.has(tree.name_kr)) {
-                uniqueTreeMap.set(tree.name_kr, { ...(tree as any) });
-            } else {
+                uniqueTreeMap.set(tree.name_kr, processedTree);
+            } else if (!minimal) {
+                // Merge images ONLY in non-minimal mode to further save memory
                 const existing = uniqueTreeMap.get(tree.name_kr);
                 if (tree.tree_images && Array.isArray(tree.tree_images)) {
                     existing.tree_images = [...(existing.tree_images || []), ...tree.tree_images];
