@@ -4,14 +4,47 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_admin_app/core/repositories/base_repository.dart';
 
 class SystemSettingsRepository extends BaseRepository {
+  // Generic Fetch Helper (Rule 3-1: DRY)
+  Future<T> _fetchSetting<T>(String endpoint, {required T defaultValue, String dataKey = 'url'}) async {
+    final url = Uri.parse('$baseUrl$endpoint');
+    final headers = await getHeaders();
+    try {
+      final response = await http.get(url, headers: headers);
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+        if (jsonResponse['success'] == true) {
+          return (jsonResponse['data'][dataKey] as T?) ?? defaultValue;
+        }
+      }
+      checkAuthError(response.statusCode);
+    } catch (e) {
+      debugPrint('Fetch error at $endpoint: $e');
+    }
+    return defaultValue;
+  }
+
+  // Generic Update Helper (Rule 3-1: DRY)
+  Future<T> _postSetting<T>(String endpoint, Map<String, dynamic> body, {String dataKey = 'url', String errorPrefix = '업데이트 실패'}) async {
+    final url = Uri.parse('$baseUrl$endpoint');
+    final headers = await getHeaders();
+    final response = await http.post(url, headers: headers, body: jsonEncode(body));
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsonResponse['success'] == true) {
+        return (jsonResponse['data'][dataKey] as T);
+      }
+    }
+    checkAuthError(response.statusCode);
+    throw Exception('$errorPrefix: ${response.body}');
+  }
+
   // System Restart Commands
   Future<void> restartAdminServer() async {
     final url = Uri.parse('$baseUrl/system/restart/admin');
     final headers = await getHeaders();
     try {
-      await http
-          .post(url, headers: headers)
-          .timeout(const Duration(seconds: 2));
+      await http.post(url, headers: headers).timeout(const Duration(seconds: 2));
     } catch (e) {
       debugPrint('Admin restart triggered (Connection might be lost): $e');
     }
@@ -27,219 +60,30 @@ class SystemSettingsRepository extends BaseRepository {
     }
   }
 
-  // GET /api/settings/entry-code
-  Future<String> getEntryCode() async {
-    final url = Uri.parse('$baseUrl/settings/entry-code');
-    final headers = await getHeaders();
-    try {
-      final response = await http.get(url, headers: headers);
-      if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-        if (jsonResponse['success'] == true) {
-          return jsonResponse['data']['entryCode'] ?? '1234';
-        }
-      }
-      checkAuthError(response.statusCode);
-    } catch (e) {
-      debugPrint('getEntryCode error: $e');
-    }
-    return '1234';
-  }
+  // Settings Management
+  Future<String> getEntryCode() => _fetchSetting('/settings/entry-code', defaultValue: '1234', dataKey: 'entryCode');
+  Future<String> updateEntryCode(String newCode) => _postSetting('/settings/entry-code', {'entryCode': newCode}, dataKey: 'entryCode', errorPrefix: '입장 코드 업데이트 실패');
 
-  // POST /api/settings/entry-code
-  Future<String> updateEntryCode(String newCode) async {
-    final url = Uri.parse('$baseUrl/settings/entry-code');
-    final headers = await getHeaders();
-    final response = await http.post(
-      url,
-      headers: headers,
-      body: jsonEncode({'entryCode': newCode}),
-    );
+  Future<String> getUserAppUrl() => _fetchSetting('/settings/user-url', defaultValue: 'http://localhost:8080');
+  Future<String> updateUserAppUrl(String newUrl) => _postSetting('/settings/user-url', {'url': newUrl}, errorPrefix: '사용자 URL 업데이트 실패');
 
-    if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      if (jsonResponse['success'] == true) {
-        return jsonResponse['data']['entryCode'];
-      }
-    }
-    checkAuthError(response.statusCode);
-    throw Exception('입장 코드 업데이트 실패: ${response.body}');
-  }
+  Future<String> getGoogleDriveFolderUrl() => _fetchSetting('/settings/drive-url', defaultValue: '');
+  Future<String> updateGoogleDriveFolderUrl(String newUrl) => _postSetting('/settings/drive-url', {'url': newUrl}, errorPrefix: '구글 드라이브 URL 업데이트 실패');
 
-  // GET /api/settings/user-url
-  Future<String> getUserAppUrl() async {
-    final url = Uri.parse('$baseUrl/settings/user-url');
-    final headers = await getHeaders();
-    try {
-      final response = await http.get(url, headers: headers);
-      if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-        if (jsonResponse['success'] == true) {
-          return jsonResponse['data']['url'] ?? 'http://localhost:8080';
-        }
-      }
-      checkAuthError(response.statusCode);
-    } catch (e) {
-      debugPrint('getUserAppUrl error: $e');
-    }
-    return 'http://localhost:8080';
-  }
+  Future<String> getThumbnailDriveUrl() => _fetchSetting('/settings/thumbnail-drive-url', defaultValue: '');
+  Future<String> updateThumbnailDriveUrl(String newUrl) => _postSetting('/settings/thumbnail-drive-url', {'url': newUrl}, errorPrefix: '구글 썸네일 URL 업데이트 실패');
 
-  // POST /api/settings/user-url
-  Future<String> updateUserAppUrl(String newUrl) async {
-    final url = Uri.parse('$baseUrl/settings/user-url');
-    final headers = await getHeaders();
-    final response = await http.post(
-      url,
-      headers: headers,
-      body: jsonEncode({'url': newUrl}),
-    );
+  Future<String> getExamDriveUrl() => _fetchSetting('/settings/exam-drive-url', defaultValue: '');
+  Future<String> updateExamDriveUrl(String newUrl) => _postSetting('/settings/exam-drive-url', {'url': newUrl}, errorPrefix: '기출문제 폴더 URL 업데이트 실패');
 
-    if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      if (jsonResponse['success'] == true) {
-        return jsonResponse['data']['url'];
-      }
-    }
-    checkAuthError(response.statusCode);
-    throw Exception('사용자 URL 업데이트 실패: ${response.body}');
-  }
-
-  // GET /api/settings/drive-url
-  Future<String> getGoogleDriveFolderUrl() async {
-    final url = Uri.parse('$baseUrl/settings/drive-url');
-    final headers = await getHeaders();
-    try {
-      final response = await http.get(url, headers: headers);
-      if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-        if (jsonResponse['success'] == true) {
-          return jsonResponse['data']['url'] ?? '';
-        }
-      }
-      checkAuthError(response.statusCode);
-    } catch (e) {
-      debugPrint('getGoogleDriveFolderUrl error: $e');
-    }
-    return '';
-  }
-
-  // POST /api/settings/drive-url
-  Future<String> updateGoogleDriveFolderUrl(String newUrl) async {
-    final url = Uri.parse('$baseUrl/settings/drive-url');
-    final headers = await getHeaders();
-    final response = await http.post(
-      url,
-      headers: headers,
-      body: jsonEncode({'url': newUrl}),
-    );
-
-    if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      if (jsonResponse['success'] == true) {
-        return jsonResponse['data']['url'];
-      }
-    }
-    checkAuthError(response.statusCode);
-    throw Exception('구글 드라이브 URL 업데이트 실패: ${response.body}');
-  }
-
-  // GET /api/settings/thumbnail-drive-url
-  Future<String> getThumbnailDriveUrl() async {
-    final url = Uri.parse('$baseUrl/settings/thumbnail-drive-url');
-    final headers = await getHeaders();
-    try {
-      final response = await http.get(url, headers: headers);
-      if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-        if (jsonResponse['success'] == true) {
-          return jsonResponse['data']['url'] ?? '';
-        }
-      }
-      checkAuthError(response.statusCode);
-    } catch (e) {
-      debugPrint('getThumbnailDriveUrl error: $e');
-    }
-    return '';
-  }
-
-  // POST /api/settings/thumbnail-drive-url
-  Future<String> updateThumbnailDriveUrl(String newUrl) async {
-    final url = Uri.parse('$baseUrl/settings/thumbnail-drive-url');
-    final headers = await getHeaders();
-    final response = await http.post(
-      url,
-      headers: headers,
-      body: jsonEncode({'url': newUrl}),
-    );
-
-    if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      if (jsonResponse['success'] == true) {
-        return jsonResponse['data']['url'];
-      }
-    }
-    checkAuthError(response.statusCode);
-    throw Exception('구글 썸네일 URL 업데이트 실패: ${response.body}');
-  }
-
-  // GET /api/settings/exam-drive-url
-  Future<String> getExamDriveUrl() async {
-    final url = Uri.parse('$baseUrl/settings/exam-drive-url');
-    final headers = await getHeaders();
-    try {
-      final response = await http.get(url, headers: headers);
-      if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-        if (jsonResponse['success'] == true) {
-          return jsonResponse['data']['url'] ?? '';
-        }
-      }
-      checkAuthError(response.statusCode);
-    } catch (e) {
-      debugPrint('getExamDriveUrl error: $e');
-    }
-    return '';
-  }
-
-  // POST /api/settings/exam-drive-url
-  Future<String> updateExamDriveUrl(String newUrl) async {
-    final url = Uri.parse('$baseUrl/settings/exam-drive-url');
-    final headers = await getHeaders();
-    final response = await http.post(
-      url,
-      headers: headers,
-      body: jsonEncode({'url': newUrl}),
-    );
-
-    if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      if (jsonResponse['success'] == true) {
-        return jsonResponse['data']['url'];
-      }
-    }
-    checkAuthError(response.statusCode);
-    throw Exception('기출문제 폴더 URL 업데이트 실패: ${response.body}');
-  }
-
-  // Check URL status (Ping/Head delegated to Backend)
+  // URL Validation (Specific Logic)
   Future<bool> checkUrlStatus(String urlString) async {
-    if (urlString.isEmpty) return false;
-
-    // 1차 클라이언트측 기본 형식 검사 (시간/네트워크 낭비 방지)
-    if (!urlString.startsWith('http://') && !urlString.startsWith('https://')) {
-      return false;
-    }
+    if (urlString.isEmpty || (!urlString.startsWith('http://') && !urlString.startsWith('https://'))) return false;
 
     try {
       final url = Uri.parse('$baseUrl/settings/validate-url');
       final headers = await getHeaders();
-
-      final response = await http.post(
-        url,
-        headers: headers,
-        body: jsonEncode({'url': urlString}),
-      );
+      final response = await http.post(url, headers: headers, body: jsonEncode({'url': urlString}));
 
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
@@ -249,7 +93,7 @@ class SystemSettingsRepository extends BaseRepository {
       }
       return false;
     } catch (e) {
-      debugPrint('checkUrlStatus (Backend delegated) error ($urlString): $e');
+      debugPrint('checkUrlStatus fatal error ($urlString): $e');
       return false;
     }
   }
