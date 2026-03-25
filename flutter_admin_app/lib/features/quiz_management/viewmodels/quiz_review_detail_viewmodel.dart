@@ -123,6 +123,10 @@ class QuizReviewDetailViewModel extends ChangeNotifier {
 
       await _repository.upsertQuizQuestion({
         'id': quizId,
+        'subject': subject,
+        'year': int.tryParse(year),
+        'round': int.tryParse(round),
+        'question_number': int.tryParse(questionNo) ?? int.parse(quizId.toString()),
         'content_blocks': newContent,
         'question_text': questionText,
         'explanation_blocks': newExp,
