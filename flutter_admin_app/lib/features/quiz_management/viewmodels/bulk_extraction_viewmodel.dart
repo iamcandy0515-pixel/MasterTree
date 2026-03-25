@@ -91,8 +91,10 @@ class BulkExtractionViewModel extends ChangeNotifier
     if (!_extractedQuizzes.containsKey(qNum)) return;
 
     var item = _extractedQuizzes[qNum]!;
-    if (field == 'question' || field == 'explanation' || field == 'hint' || field == 'wrong_answer') {
+    if (field == 'question' || field == 'explanation') {
       item = BulkDataUtility.updateBlockContent(item, field, value.toString());
+    } else if (field == 'hint' || field == 'wrong_answer') {
+      item[field] = value.toString();
     } else {
       item[field] = value;
     }
@@ -109,66 +111,42 @@ class BulkExtractionViewModel extends ChangeNotifier
 
   Future<bool> addImageToQuiz(int qNum, String field, XFile file) async {
     try {
-      _isLoading = true;
-      notifyListeners();
-      
+      _isLoading = true; notifyListeners();
       final url = await uploadAndAddImage(file);
       if (url == null) return false;
-
-      final item = _extractedQuizzes.putIfAbsent(qNum, () => createInitialQuizEntry(qNum));
-      
-      final data = item[field];
-      List blocks;
-      if (data is List) {
-        blocks = List.from(data);
-      } else if (data is String && data.isNotEmpty) {
-        blocks = [{'type': 'text', 'content': data}];
-      } else {
-        blocks = [];
-      }
-      
-      blocks.add({'type': 'image', 'content': url});
-      item[field] = blocks;
-      
-      markDirty();
-      await saveBackupLocal(_extractedQuizzes);
-      return true;
+      return await _appendImageUrlToQuiz(qNum, field, url);
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      _isLoading = false; notifyListeners();
     }
   }
 
   Future<bool> addImageBytesToQuiz(int qNum, String field, Uint8List bytes, String fileName) async {
     try {
-      _isLoading = true;
-      notifyListeners();
-      
+      _isLoading = true; notifyListeners();
       final url = await uploadImageBytes(bytes, fileName);
       if (url == null) return false;
-
-      final item = _extractedQuizzes.putIfAbsent(qNum, () => createInitialQuizEntry(qNum));
-      
-      final data = item[field];
-      List blocks;
-      if (data is List) {
-        blocks = List.from(data);
-      } else if (data is String && data.isNotEmpty) {
-        blocks = [{'type': 'text', 'content': data}];
-      } else {
-        blocks = [];
-      }
-      
-      blocks.add({'type': 'image', 'content': url});
-      item[field] = blocks;
-      
-      markDirty();
-      await saveBackupLocal(_extractedQuizzes);
-      return true;
+      return await _appendImageUrlToQuiz(qNum, field, url);
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      _isLoading = false; notifyListeners();
     }
+  }
+
+  Future<bool> _appendImageUrlToQuiz(int qNum, String field, String url) async {
+    final item = _extractedQuizzes.putIfAbsent(qNum, () => createInitialQuizEntry(qNum));
+    final data = item[field];
+    List blocks;
+    if (data is List) {
+      blocks = List.from(data);
+    } else if (data is String && data.isNotEmpty) {
+      blocks = [{'type': 'text', 'content': data}];
+    } else {
+      blocks = [];
+    }
+    blocks.add({'type': 'image', 'content': url});
+    item[field] = blocks;
+    markDirty();
+    await saveBackupLocal(_extractedQuizzes);
+    return true;
   }
 
   bool hasImage(int qNum, [String? field]) => BulkDataUtility.hasImage(_extractedQuizzes, qNum, field);

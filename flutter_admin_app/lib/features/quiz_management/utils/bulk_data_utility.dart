@@ -69,8 +69,6 @@ class BulkDataUtility {
     }
     
     return _checkBlocks(quiz['question']) ||
-           _checkBlocks(quiz['explanation']) ||
-           _checkBlocks(quiz['hint']) ||
-           _checkBlocks(quiz['wrong_answer']);
+           _checkBlocks(quiz['explanation']);
   }
 }
