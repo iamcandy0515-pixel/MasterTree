@@ -1,20 +1,25 @@
-import { googleDriveAuthService } from "./src/modules/external/google_drive_auth.service";
-import { googleDriveFileService } from "./src/modules/external/google_drive_file.service";
-import * as dotenv from 'dotenv';
-dotenv.config();
+import { GoogleDriveService } from "./src/modules/external/google_drive.service";
+import { settingsService } from "./src/modules/settings/settings.service";
+import { extractDriveFolderId } from "./src/utils/drive-helper";
 
-async function checkDriveHealth() {
-  console.log('--- Google Drive Health Check ---');
-  console.log('Is Configured:', googleDriveAuthService.isConfigured());
-  
-  try {
-    const drive = googleDriveFileService.getDrive();
-    const response = await drive.files.list({ pageSize: 1 });
-    console.log('✅ Drive API connected successfully.');
-    console.log('Found files:', response.data.files?.length);
-  } catch (e: any) {
-    console.error('❌ Drive API connection failed:', e.message);
-  }
+async function check() {
+    try {
+        const folderUrl = (await settingsService.getExamDriveUrl()) || (await settingsService.getGoogleDriveFolderUrl());
+        console.log("Folder URL:", folderUrl);
+        const folderId = extractDriveFolderId(folderUrl);
+        console.log("Folder ID:", folderId);
+
+        const driveService = new GoogleDriveService();
+        // check with literal '산림'
+        const files = await driveService.searchFilesInFolder(folderId, '산림');
+        console.log("Files found with '산림':", files.map(f => f.name));
+        
+        // check with literal '2013'
+        const files2 = await driveService.searchFilesInFolder(folderId, '2013');
+        console.log("Files found with '2013':", files2.map(f => f.name));
+        
+    } catch(e) {
+        console.error(e);
+    }
 }
-
-checkDriveHealth();
+check();

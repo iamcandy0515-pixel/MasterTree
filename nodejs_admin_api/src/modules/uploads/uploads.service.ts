@@ -54,9 +54,10 @@ export class UploadService {
             }
         }
 
+        const safeName = originalName.replace(/[^a-zA-Z0-9.\-_]/g, "").substring(0, 50);
         const fileName = `${folder}/${Date.now()}_${Math.random()
             .toString(36)
-            .substring(7)}_${originalName}`;
+            .substring(7)}_${safeName || "image.webp"}`;
 
         /** Storage 업로드 */
         const { data, error } = await supabase.storage
