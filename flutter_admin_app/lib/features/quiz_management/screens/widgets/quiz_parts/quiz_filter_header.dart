@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_admin_app/core/theme/neo_theme.dart';
 import 'package:flutter_admin_app/features/quiz_management/viewmodels/quiz_management_viewmodel.dart';
-import '../../quiz_extraction_step2_screen.dart';
 
 class QuizFilterHeader extends StatelessWidget {
   const QuizFilterHeader({super.key});
@@ -56,36 +55,6 @@ class QuizFilterHeader extends StatelessWidget {
                 ],
               );
             },
-          ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => QuizExtractionStep2Screen(
-                        selectedFiles: const [],
-                        initialSubject: viewModel.selectedSubject,
-                        initialYear: viewModel.selectedYear != null ? int.tryParse(viewModel.selectedYear!) : null,
-                        initialRound: viewModel.selectedSession != null ? int.tryParse(viewModel.selectedSession!) : null,
-                      ),
-                    ),
-                  ).then((_) => viewModel.fetchQuizzes());
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: NeoColors.acidLime,
-                  foregroundColor: NeoColors.voidGreen,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                icon: const Icon(Icons.add, size: 18),
-                label: const Text('신규 기출등록', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-              ),
-            ],
           ),
         ],
       ),

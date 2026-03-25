@@ -32,7 +32,7 @@ class _QuizManagementContent extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: backgroundDark,
         title: const Text(
-          '기출문제 관리',
+          '기출문제 일람',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         iconTheme: const IconThemeData(color: Colors.white),

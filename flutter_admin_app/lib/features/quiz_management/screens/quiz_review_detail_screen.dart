@@ -52,9 +52,9 @@ class _QuizReviewDetailScreenState extends State<QuizReviewDetailScreen> with Qu
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      title: const Text('문제 검수 및 상세 편집', style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold)),
+      backgroundColor: const Color(0xFF102219),
+      title: const Text('기출문제 상세편집', style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold)),
+      iconTheme: const IconThemeData(color: Colors.white),
       leading: IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => Navigator.pop(context)),
       actions: [
         Selector<QuizReviewDetailViewModel, bool>(
