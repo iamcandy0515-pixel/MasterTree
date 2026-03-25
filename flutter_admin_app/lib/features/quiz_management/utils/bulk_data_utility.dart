@@ -6,9 +6,18 @@ class BulkDataUtility {
     String value,
   ) {
     final newItem = Map<String, dynamic>.from(item);
-    List blocks = List.from(newItem[field] ?? []);
     
-    int firstTextIdx = blocks.indexWhere((b) => b['type'] == 'text');
+    final data = newItem[field];
+    List blocks;
+    if (data is List) {
+      blocks = List.from(data);
+    } else if (data is String && data.isNotEmpty) {
+      blocks = [{'type': 'text', 'content': data}];
+    } else {
+      blocks = [];
+    }
+    
+    int firstTextIdx = blocks.indexWhere((b) => b is Map && b['type'] == 'text');
     final newBlock = {'type': 'text', 'content': value};
 
     if (firstTextIdx >= 0) {
@@ -32,7 +41,8 @@ class BulkDataUtility {
   ) {
     final newItem = Map<String, dynamic>.from(item);
     final options = List<String>.from(newItem['options'] ?? []);
-    final cIdx = (newItem['correct_option_index'] as int?) ?? 0;
+    final rawIdx = newItem['correct_option_index'];
+    final cIdx = rawIdx is int ? rawIdx : int.tryParse(rawIdx?.toString() ?? '0') ?? 0;
     
     if (options.length >= 2) {
       final wIdx = 1 - cIdx;
@@ -49,15 +59,18 @@ class BulkDataUtility {
     if (!quizzes.containsKey(qNum)) return false;
     final quiz = quizzes[qNum]!;
     
+    bool _checkBlocks(dynamic data) {
+      if (data is! List) return false;
+      return data.any((b) => b is Map && b['type'] == 'image');
+    }
+
     if (field != null) {
-      final blocks = (quiz[field] as List? ?? []);
-      return blocks.any((b) => b is Map && b['type'] == 'image');
+      return _checkBlocks(quiz[field]);
     }
     
-    final qBlocks = (quiz['question'] as List? ?? []);
-    final eBlocks = (quiz['explanation'] as List? ?? []);
-    
-    return qBlocks.any((b) => b is Map && b['type'] == 'image') ||
-           eBlocks.any((b) => b is Map && b['type'] == 'image');
+    return _checkBlocks(quiz['question']) ||
+           _checkBlocks(quiz['explanation']) ||
+           _checkBlocks(quiz['hint']) ||
+           _checkBlocks(quiz['wrong_answer']);
   }
 }

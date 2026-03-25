@@ -49,15 +49,16 @@ class QuizExtractionService {
       'question_number': qNum,
       'question': item['content_blocks'] ?? item['question'] ?? [],
       'explanation': item['explanation_blocks'] ?? item['explanation'] ?? [],
-      'hint': _processHint(item),
+      'hint': _processHintToBlocks(item),
       'correct_option_index': _toInt(item['correct_option_index']),
       'options': item['options'] ?? [],
     };
 
     _ensureBlocks(mappedItem, 'question', item['question']);
     _ensureBlocks(mappedItem, 'explanation', explanation);
+    _ensureBlocks(mappedItem, 'hint', '');
 
-    // 오답 대표값 설정
+    // 오답 대표값 설정 및 블록화
     final options = mappedItem['options'] as List;
     final cIdx = mappedItem['correct_option_index'] as int;
     if (options.length >= 2) {
@@ -66,19 +67,20 @@ class QuizExtractionService {
         mappedItem['wrong_answer'] = options[wIdx].toString();
       }
     }
+    _ensureBlocks(mappedItem, 'wrong_answer', '');
 
     return mappedItem;
   }
 
-  String _processHint(Map<String, dynamic> item) {
+  dynamic _processHintToBlocks(Map<String, dynamic> item) {
     if (item['hint_blocks'] is List) {
-      return (item['hint_blocks'] as List)
-          .map(
-            (h) => h is Map ? (h['content']?.toString() ?? '') : h.toString(),
-          )
-          .join('\n');
+      return item['hint_blocks'];
     }
-    return (item['hint'] ?? '').toString();
+    final hint = (item['hint'] ?? '').toString();
+    if (hint.isEmpty) return [];
+    return [
+      {'type': 'text', 'content': hint}
+    ];
   }
 
   int _toInt(dynamic value) {
@@ -108,7 +110,6 @@ class QuizExtractionService {
   ) {
     return quizzes.map((quiz) {
       final qNum = quiz['question_number'];
-      final String hintStr = quiz['hint']?.toString() ?? '';
 
       return {
         'question_number': qNum,
@@ -117,13 +118,7 @@ class QuizExtractionService {
         'correct_option_index': quiz['correct_option_index'],
         'options': quiz['options'],
         'status': 'active',
-        'hint_blocks': hintStr.isNotEmpty
-            ? hintStr
-                  .split('\n')
-                  .where((h) => h.trim().isNotEmpty)
-                  .map((h) => {'type': 'text', 'content': h})
-                  .toList()
-            : [],
+        'hint_blocks': quiz['hint'] ?? [],
       };
     }).toList();
   }

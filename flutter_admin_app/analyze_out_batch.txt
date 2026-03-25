@@ -1,0 +1,4 @@
+Analyzing flutter_admin_app...                                  
+
+   info - The import of 'dart:typed_data' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/foundation.dart' - lib\features\quiz_management\viewmodels\mixins\bulk_media_mixin.dart:1:8 - unnecessary_import
+

@@ -6,10 +6,14 @@ class BulkTextUtils {
     if (blocks == null) return '';
     if (blocks is! List) return blocks.toString();
     
-    return blocks
-        .where((b) => b['type'] == 'text')
-        .map((b) => b['content']?.toString() ?? '')
-        .join('\n');
+    return blocks.map((b) {
+      if (b is Map && b['type'] == 'text') {
+        return b['content']?.toString() ?? '';
+      } else if (b is String) {
+        return b;
+      }
+      return '';
+    }).where((s) => s.isNotEmpty).join('\n');
   }
 
   /// 탭이 선택되었을 때 에디터 필드에 채울 데이터 매핑.
@@ -26,8 +30,8 @@ class BulkTextUtils {
     return {
       'question': getTextFromBlocks(data['question']),
       'answer': getTextFromBlocks(data['explanation']),
-      'hint': data['hint']?.toString() ?? '',
-      'wrong': data['wrong_answer']?.toString() ?? '',
+      'hint': getTextFromBlocks(data['hint']),
+      'wrong': getTextFromBlocks(data['wrong_answer']),
     };
   }
 }

@@ -9,10 +9,23 @@ mixin BulkMediaMixin on ChangeNotifier {
   Future<String?> uploadAndAddImage(XFile file) async {
     try {
       final bytes = await file.readAsBytes();
-      final url = await mediaRepo.uploadQuizImage(bytes, file.name);
+      final parts = file.name.split('.');
+      final ext = parts.length > 1 ? parts.last : 'png';
+      final safeName = 'gallery_${DateTime.now().millisecondsSinceEpoch}.$ext';
+      return await uploadImageBytes(bytes, safeName);
+    } catch (e) {
+      debugPrint('Error uploading image (XFile) in media mixin: $e');
+      return null;
+    }
+  }
+
+  /// Direct byte upload for clipboard or other raw data
+  Future<String?> uploadImageBytes(Uint8List bytes, String fileName) async {
+    try {
+      final url = await mediaRepo.uploadQuizImage(bytes, fileName);
       return url;
     } catch (e) {
-      debugPrint('Error uploading image in media mixin: $e');
+      debugPrint('Error uploading image (Bytes) in media mixin: $e');
       return null;
     }
   }

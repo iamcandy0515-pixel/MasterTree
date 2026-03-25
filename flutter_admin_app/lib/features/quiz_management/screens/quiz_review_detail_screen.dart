@@ -119,7 +119,9 @@ class QuizContentCardWrapper extends StatelessWidget {
       builder: (context, vm, _) => QuizContentCard(
         initialText: vm.questionText, blocks: vm.contentBlocks, isExpanded: vm.isContentExpanded,
         onTextChanged: (val) => vm.questionText = val, onToggleExpand: () => vm.toggleExpanded('content'),
-        onUploadImage: (img) => state.handleImageUpload(vm, img, 'content'), onRemoveImage: (idx) => vm.removeImage(idx, 'content'),
+        onUploadImage: (img) => state.handleImageUpload(vm, img, 'content'), 
+        onPasteImage: (bytes, name) => state.handleImageBytesUpload(vm, bytes, name, 'content'),
+        onRemoveImage: (idx) => vm.removeImage(idx, 'content'),
       ),
     );
   }
@@ -135,6 +137,7 @@ class QuizExplanationCardWrapper extends StatelessWidget {
         initialText: vm.explanationText, blocks: vm.explanationBlocks, isExpanded: vm.isExpExpanded,
         isReviewing: vm.isReviewing, onTextChanged: (val) => vm.explanationText = val,
         onToggleExpand: () => vm.toggleExpanded('exp'), onUploadImage: (img) => state.handleImageUpload(vm, img, 'exp'),
+        onPasteImage: (bytes, name) => state.handleImageBytesUpload(vm, bytes, name, 'exp'),
         onRemoveImage: (idx) => vm.removeImage(idx, 'exp'), onAiReview: () => state.handleAiReview(vm),
       ),
     );

@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_admin_app/features/quiz_management/repositories/quiz_repository.dart';
@@ -90,7 +91,7 @@ class BulkExtractionViewModel extends ChangeNotifier
     if (!_extractedQuizzes.containsKey(qNum)) return;
 
     var item = _extractedQuizzes[qNum]!;
-    if (field == 'question' || field == 'explanation') {
+    if (field == 'question' || field == 'explanation' || field == 'hint' || field == 'wrong_answer') {
       item = BulkDataUtility.updateBlockContent(item, field, value.toString());
     } else {
       item[field] = value;
@@ -106,21 +107,64 @@ class BulkExtractionViewModel extends ChangeNotifier
     notifyListeners();
   }
 
-  Future<void> addImageToQuiz(int qNum, String field, XFile file) async {
+  Future<bool> addImageToQuiz(int qNum, String field, XFile file) async {
     try {
       _isLoading = true;
       notifyListeners();
       
       final url = await uploadAndAddImage(file);
-      if (url == null) return;
+      if (url == null) return false;
 
       final item = _extractedQuizzes.putIfAbsent(qNum, () => createInitialQuizEntry(qNum));
-      List blocks = List.from(item[field] ?? []);
+      
+      final data = item[field];
+      List blocks;
+      if (data is List) {
+        blocks = List.from(data);
+      } else if (data is String && data.isNotEmpty) {
+        blocks = [{'type': 'text', 'content': data}];
+      } else {
+        blocks = [];
+      }
+      
       blocks.add({'type': 'image', 'content': url});
       item[field] = blocks;
       
       markDirty();
       await saveBackupLocal(_extractedQuizzes);
+      return true;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> addImageBytesToQuiz(int qNum, String field, Uint8List bytes, String fileName) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+      
+      final url = await uploadImageBytes(bytes, fileName);
+      if (url == null) return false;
+
+      final item = _extractedQuizzes.putIfAbsent(qNum, () => createInitialQuizEntry(qNum));
+      
+      final data = item[field];
+      List blocks;
+      if (data is List) {
+        blocks = List.from(data);
+      } else if (data is String && data.isNotEmpty) {
+        blocks = [{'type': 'text', 'content': data}];
+      } else {
+        blocks = [];
+      }
+      
+      blocks.add({'type': 'image', 'content': url});
+      item[field] = blocks;
+      
+      markDirty();
+      await saveBackupLocal(_extractedQuizzes);
+      return true;
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -129,9 +173,18 @@ class BulkExtractionViewModel extends ChangeNotifier
 
   bool hasImage(int qNum, [String? field]) => BulkDataUtility.hasImage(_extractedQuizzes, qNum, field);
 
+  /// Get image blocks for a field
+  List<Map<String, dynamic>> getImages(int qNum, String field) {
+    if (!_extractedQuizzes.containsKey(qNum)) return [];
+    final blocks = _extractedQuizzes[qNum]![field];
+    if (blocks is! List) return [];
+    return blocks.where((b) => b is Map && b['type'] == 'image').cast<Map<String, dynamic>>().toList();
+  }
+
   void removeImage(int qNum, String field, int index) {
     if (!_extractedQuizzes.containsKey(qNum)) return;
-    List blocks = List.from(_extractedQuizzes[qNum]![field] ?? []);
+    final data = _extractedQuizzes[qNum]![field];
+    List blocks = data is List ? List.from(data) : [];
     if (index >= 0 && index < blocks.length) {
       blocks.removeAt(index);
       _extractedQuizzes[qNum]![field] = blocks;

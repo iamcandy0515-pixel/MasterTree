@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../../../../viewmodels/quiz_review_detail_viewmodel.dart';
 import '../../../../repositories/quiz_repository.dart';
@@ -30,6 +31,18 @@ mixin QuizReviewActionHandler on State<QuizReviewDetailScreen> {
     } catch (e) {
       if (!mounted) return;
       SnackBarUtil.showFloating(context, '업로드 실패: $e', isError: true);
+    }
+  }
+
+  /// 클립보드 이미지 바이트 업로드 핸들러
+  Future<void> handleImageBytesUpload(QuizReviewDetailViewModel vm, Uint8List bytes, String fileName, String field) async {
+    try {
+      await vm.uploadImage(bytes, fileName, field);
+      if (!mounted) return;
+      SnackBarUtil.showFloating(context, '클립보드 이미지 추가 완료');
+    } catch (e) {
+      if (!mounted) return;
+      SnackBarUtil.showFloating(context, '클립보드 이미지 업로드 실패: $e', isError: true);
     }
   }
 

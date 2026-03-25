@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../viewmodels/bulk_extraction_viewmodel.dart';
-import '../../../widgets/image_manager_dialog.dart';
+import './bulk_image_editor_section.dart';
 
 class BulkExtractionEditorForm extends StatelessWidget {
   final int selectedTabIndex;
@@ -31,102 +30,44 @@ class BulkExtractionEditorForm extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _buildEditFieldWithImages(
-            context,
-            '문제',
-            questionController,
-            (v) => vm.updateQuizContent(selectedTabIndex, 'question', v),
-            5,
-            'question',
+          BulkImageEditorSection(
+            label: '문제',
+            controller: questionController,
+            onChanged: (v) => vm.updateQuizContent(selectedTabIndex, 'question', v),
+            lines: 5,
+            field: 'question',
+            selectedTabIndex: selectedTabIndex,
+            vm: vm,
           ),
-          _buildEditFieldWithImages(
-            context,
-            '정답 및 해설',
-            answerController,
-            (v) => vm.updateQuizContent(selectedTabIndex, 'explanation', v),
-            5,
-            'explanation',
+          BulkImageEditorSection(
+            label: '정답 및 해설',
+            controller: answerController,
+            onChanged: (v) => vm.updateQuizContent(selectedTabIndex, 'explanation', v),
+            lines: 5,
+            field: 'explanation',
+            selectedTabIndex: selectedTabIndex,
+            vm: vm,
           ),
-          _buildEditField(
-            '힌트',
-            hintController,
-            (v) => vm.updateQuizContent(selectedTabIndex, 'hint', v),
-            3,
+          BulkImageEditorSection(
+            label: '힌트',
+            controller: hintController,
+            onChanged: (v) => vm.updateQuizContent(selectedTabIndex, 'hint', v),
+            lines: 3,
+            field: 'hint',
+            selectedTabIndex: selectedTabIndex,
+            vm: vm,
           ),
-          _buildEditField(
-            '오답 (대표)',
-            wrongAnswerController,
-            (v) => vm.updateQuizContent(selectedTabIndex, 'wrong_answer', v),
-            2,
+          BulkImageEditorSection(
+            label: '오답 (대표)',
+            controller: wrongAnswerController,
+            onChanged: (v) => vm.updateQuizContent(selectedTabIndex, 'wrong_answer', v),
+            lines: 2,
+            field: 'wrong_answer',
+            selectedTabIndex: selectedTabIndex,
+            vm: vm,
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildEditFieldWithImages(
-    BuildContext context,
-    String label,
-    TextEditingController controller,
-    Function(String) onChanged,
-    int lines,
-    String field,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: GoogleFonts.inter(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
-            ),
-            TextButton.icon(
-              onPressed: () => showDialog(
-                context: context,
-                builder: (_) => ImageManagerDialog(
-                  viewModel: vm,
-                  qNum: selectedTabIndex,
-                  field: field,
-                ),
-              ),
-              icon: Icon(
-                vm.hasImage(selectedTabIndex, field)
-                    ? Icons.image
-                    : Icons.image_outlined,
-                color: primaryColor,
-                size: 18,
-              ),
-              label: Text(
-                '이미지 관리${vm.hasImage(selectedTabIndex, field) ? ' (첨부됨)' : ''}',
-                style: const TextStyle(color: primaryColor, fontSize: 12),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          maxLines: lines,
-          onChanged: onChanged,
-          style: const TextStyle(color: Colors.white, fontSize: 13),
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.black26,
-            contentPadding: const EdgeInsets.all(12),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide.none,
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-      ],
     );
   }
 
@@ -151,7 +92,7 @@ class BulkExtractionEditorForm extends StatelessWidget {
         TextField(
           controller: controller,
           maxLines: lines,
-          style: const TextStyle(color: Colors.white, fontSize: 14),
+          style: const TextStyle(color: Colors.white, fontSize: 13),
           decoration: InputDecoration(
             filled: true,
             fillColor: surfaceDark,

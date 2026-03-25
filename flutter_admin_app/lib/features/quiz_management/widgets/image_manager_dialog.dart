@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pasteboard/pasteboard.dart';
 import 'package:flutter_admin_app/features/quiz_management/viewmodels/bulk_extraction_viewmodel.dart';
 import 'image_manager/image_manager_header.dart';
 import 'image_manager/image_upload_zone.dart';
@@ -56,9 +57,22 @@ class _ImageManagerDialogState extends State<ImageManagerDialog> {
   }
 
   Future<void> _handlePaste() async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('붙여넣기 기능이 현재 비활성화되어 있습니다.')),
-    );
+    final imageBytes = await Pasteboard.image;
+    if (imageBytes != null) {
+      final fileName = 'pasted_image_${DateTime.now().millisecondsSinceEpoch}.png';
+      final success = await widget.viewModel.addImageBytesToQuiz(widget.qNum, widget.field, imageBytes, fileName);
+      if (mounted) {
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('✅ 이미지가 성공적으로 붙여넣기 되었습니다.')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('❌ 클립보드 이미지 추가에 실패했습니다.')),
+          );
+        }
+      }
+    }
   }
 
   Future<void> _uploadImage(XFile file) async {
@@ -89,8 +103,9 @@ class _ImageManagerDialogState extends State<ImageManagerDialog> {
   @override
   Widget build(BuildContext context) {
     final quiz = widget.viewModel.extractedQuizzes[widget.qNum];
-    final List blocks = quiz?[widget.field] ?? [];
-    final imageBlocks = blocks.where((b) => b['type'] == 'image').toList();
+    final data = quiz?[widget.field];
+    final List blocks = data is List ? List.from(data) : [];
+    final imageBlocks = blocks.where((b) => b is Map && b['type'] == 'image').toList();
 
     return AlertDialog(
       backgroundColor: surfaceDark,
