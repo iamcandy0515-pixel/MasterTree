@@ -124,8 +124,11 @@ class QuizReviewDetailViewModel extends ChangeNotifier {
       await _repository.upsertQuizQuestion({
         'id': quizId,
         'content_blocks': newContent,
+        'question_text': questionText,
         'explanation_blocks': newExp,
+        'explanation_text': explanationText,
         'hint_blocks': newHint,
+        'hint_text': hintText,
         'options': newOptions,
         'correct_option_index': 0,
         'status': 'published',
