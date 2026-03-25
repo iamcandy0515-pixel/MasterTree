@@ -220,9 +220,7 @@ class _QuizContentCardState extends State<QuizContentCard> {
                         alignment: Alignment.centerLeft,
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(maxHeight: 600),
-                          child: InteractiveViewer(
-                            child: Image.network(imageUrl),
-                          ),
+                          child: Image.network(imageUrl),
                         ),
                       ),
                     ),
@@ -242,25 +240,7 @@ class _QuizContentCardState extends State<QuizContentCard> {
               ),
             );
           }),
-          GestureDetector(
-            onTap: _submitPaste,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.white24, style: BorderStyle.none),
-                color: Colors.white.withOpacity(0.04),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(Icons.paste_outlined, color: Colors.white54, size: 28),
-                  SizedBox(height: 8),
-                  Text('추가 클립보드 붙여넣기', style: TextStyle(color: Colors.white54, fontSize: 11)),
-                ],
-              ),
-            ),
-          ),
+
         ],
       ),
     );
