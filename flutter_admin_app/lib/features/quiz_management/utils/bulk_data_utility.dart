@@ -59,16 +59,16 @@ class BulkDataUtility {
     if (!quizzes.containsKey(qNum)) return false;
     final quiz = quizzes[qNum]!;
     
-    bool _checkBlocks(dynamic data) {
+    bool checkBlocks(dynamic data) {
       if (data is! List) return false;
       return data.any((b) => b is Map && b['type'] == 'image');
     }
 
     if (field != null) {
-      return _checkBlocks(quiz[field]);
+      return checkBlocks(quiz[field]);
     }
     
-    return _checkBlocks(quiz['question']) ||
-           _checkBlocks(quiz['explanation']);
+    return checkBlocks(quiz['question']) ||
+           checkBlocks(quiz['explanation']);
   }
 }

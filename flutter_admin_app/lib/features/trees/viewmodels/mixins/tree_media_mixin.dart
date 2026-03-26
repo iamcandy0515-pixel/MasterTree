@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_admin_app/core/utils/web_utils.dart';
+import 'package:flutter_admin_app/core/repositories/base_repository.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
 import 'package:flutter_admin_app/features/trees/repositories/master_tree_media_repository.dart';
 
@@ -23,6 +24,13 @@ mixin TreeMediaMixin on ChangeNotifier {
   void removeImage(int index) {
     _uploadedImages.removeAt(index);
     notifyListeners();
+  }
+
+  void updateImageHint(int index, String hint) {
+    if (index >= 0 && index < _uploadedImages.length) {
+      _uploadedImages[index] = _uploadedImages[index].copyWith(hint: hint);
+      notifyListeners();
+    }
   }
 
   void clearImages() {
@@ -51,7 +59,11 @@ mixin TreeMediaMixin on ChangeNotifier {
       );
 
       _uploadedImages.add(
-        TreeImage(imageType: _selectedImageType, imageUrl: publicUrl),
+        TreeImage(
+          imageType: _selectedImageType,
+          imageUrl: BaseRepository.staticProxyUrl(publicUrl),
+          originUrl: publicUrl,
+        ),
       );
       _isUploading = false;
       notifyListeners();
@@ -83,7 +95,11 @@ mixin TreeMediaMixin on ChangeNotifier {
       );
 
       _uploadedImages.add(
-        TreeImage(imageType: _selectedImageType, imageUrl: publicUrl),
+        TreeImage(
+          imageType: _selectedImageType,
+          imageUrl: BaseRepository.staticProxyUrl(publicUrl),
+          originUrl: publicUrl,
+        ),
       );
       _isUploading = false;
       notifyListeners();
@@ -110,9 +126,13 @@ mixin TreeMediaMixin on ChangeNotifier {
           name,
         );
 
-        _uploadedImages.add(
-          TreeImage(imageType: _selectedImageType, imageUrl: publicUrl),
-        );
+      _uploadedImages.add(
+        TreeImage(
+          imageType: _selectedImageType,
+          imageUrl: BaseRepository.staticProxyUrl(publicUrl),
+          originUrl: publicUrl,
+        ),
+      );
         imageFound = true;
       });
 

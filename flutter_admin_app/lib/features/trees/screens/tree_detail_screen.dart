@@ -45,12 +45,11 @@ class _TreeDetailContent extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Basic Info Header
-            const TreeBasicInfoSection(),
-            const SizedBox(height: 32),
-            const TreeHintSection(),
-            const SizedBox(height: 32),
+          children: const [
+            TreeBasicInfoSection(),
+            SizedBox(height: 32),
+            TreeHintSection(),
+            SizedBox(height: 32),
           ],
         ),
       ),

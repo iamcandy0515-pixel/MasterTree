@@ -3,7 +3,8 @@ import 'package:flutter_admin_app/core/repositories/base_repository.dart';
 class TreeImage {
   final int? id;
   final String imageType; // 'leaf', 'bark', etc.
-  final String imageUrl;
+  final String imageUrl; // Display URL (Proxied)
+  final String? originUrl; // Original URL (RAW)
   final String? thumbnailUrl;
   final String? hint; // Quiz answer hint
   final bool isQuizEnabled; // Quiz activation toggle
@@ -12,6 +13,7 @@ class TreeImage {
     this.id,
     required this.imageType,
     required this.imageUrl,
+    this.originUrl,
     this.thumbnailUrl,
     this.hint,
     this.isQuizEnabled = true,
@@ -51,6 +53,7 @@ class TreeImage {
         return _typeMapping[rawType] ?? rawType;
       }(),
       imageUrl: BaseRepository.staticProxyUrl(rawUrl),
+      originUrl: rawUrl,
       thumbnailUrl: thumbUrl != null ? BaseRepository.staticProxyUrl(thumbUrl) : null,
       hint: json['hint'],
       isQuizEnabled: json['is_quiz_enabled'] ?? true,
@@ -61,6 +64,7 @@ class TreeImage {
     int? id,
     String? imageType,
     String? imageUrl,
+    String? originUrl,
     String? thumbnailUrl,
     String? hint,
     bool? isQuizEnabled,
@@ -69,6 +73,7 @@ class TreeImage {
       id: id ?? this.id,
       imageType: imageType ?? this.imageType,
       imageUrl: imageUrl ?? this.imageUrl,
+      originUrl: originUrl ?? this.originUrl,
       thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
       hint: hint ?? this.hint,
       isQuizEnabled: isQuizEnabled ?? this.isQuizEnabled,
@@ -77,7 +82,7 @@ class TreeImage {
 
   Map<String, dynamic> toJson() => {
     'image_type': imageType,
-    'image_url': imageUrl,
+    'image_url': originUrl ?? imageUrl, // rawUrl이 있으면 그것을 사용
     'thumbnail_url': thumbnailUrl,
     'hint': hint,
     'is_quiz_enabled': isQuizEnabled,

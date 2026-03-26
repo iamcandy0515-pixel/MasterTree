@@ -70,8 +70,12 @@ class AddTreeUploadBox extends StatelessWidget {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              isDragging ? '여기에 놓으세요' : '클릭/드래그/붙여넣기 업로드',
-                              style: const TextStyle(color: Colors.white38, fontSize: 13),
+                              isDragging ? '여기에 놓으세요' : '클릭/드래그 또는 [Ctrl+V] 붙여넣기',
+                              style: TextStyle(
+                                color: focusNode.hasFocus ? NeoColors.acidLime : Colors.white38,
+                                fontSize: 13,
+                                fontWeight: focusNode.hasFocus ? FontWeight.bold : FontWeight.normal,
+                              ),
                             ),
                           ],
                         ),
