@@ -10,9 +10,13 @@ class LookalikeTabSelector extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildTab(vm, '잎 (Leaf)', 'leaf'),
-        const SizedBox(width: 16),
-        _buildTab(vm, '수피 (Bark)', 'bark'),
+        _buildTab(vm, '잎', 'leaf'),
+        const SizedBox(width: 12),
+        _buildTab(vm, '수피', 'bark'),
+        const SizedBox(width: 12),
+        _buildTab(vm, '꽃', 'flower'),
+        const SizedBox(width: 12),
+        _buildTab(vm, '열매', 'fruit'),
       ],
     );
   }
@@ -21,32 +25,23 @@ class LookalikeTabSelector extends StatelessWidget {
     final isSelected = vm.selectedTab == value;
     const primaryColor = Color(0xFF80F20D);
 
-    return GestureDetector(
-      onTap: () => vm.setSelectedTab(value),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? primaryColor : Colors.white.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isSelected ? primaryColor : Colors.white24),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: primaryColor.withOpacity(0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : null,
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: ChoiceChip(
+        label: Text(label),
+        selected: isSelected,
+        onSelected: (selected) {
+          if (selected) vm.setSelectedTab(value);
+        },
+        selectedColor: primaryColor,
+        backgroundColor: Colors.white.withOpacity(0.05),
+        labelStyle: TextStyle(
+          color: isSelected ? Colors.black : Colors.white70,
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
         ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? Colors.black : Colors.white70,
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-          ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
         ),
       ),
     );

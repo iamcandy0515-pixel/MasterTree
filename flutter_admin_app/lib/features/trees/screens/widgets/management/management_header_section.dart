@@ -22,7 +22,7 @@ class ManagementHeaderSection extends StatelessWidget {
               ),
               Expanded(
                 child: Text(
-                  '비교 수목 관리',
+                  '비교 수목 일람',
                   style: GoogleFonts.notoSans(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,

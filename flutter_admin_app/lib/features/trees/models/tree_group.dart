@@ -53,6 +53,23 @@ class TreeGroupMember {
     this.isAutoQuizEnabled = true,
   });
 
+  static const Map<String, String> _typeMapping = {
+    '잎': 'leaf',
+    '잎새': 'leaf',
+    'leaf': 'leaf',
+    'leaves': 'leaf',
+    '수피': 'bark',
+    '나무껍질': 'bark',
+    'bark': 'bark',
+    'bark_skin': 'bark',
+    '꽃': 'flower',
+    'flower': 'flower',
+    'blossom': 'flower',
+    '열매': 'fruit',
+    'fruit': 'fruit',
+    'seed': 'fruit',
+  };
+
   factory TreeGroupMember.fromJson(Map<String, dynamic> json) {
     final treeData = json['trees'] as Map<String, dynamic>?;
     final imagesList = treeData?['tree_images'] as List<dynamic>? ?? [];
@@ -61,9 +78,11 @@ class TreeGroupMember {
     final Map<String, String> hintsMap = {};
     for (var img in imagesList) {
       if (img is Map) {
-        final type = img['image_type']?.toString() ?? 'unknown';
+        final rawType = (img['image_type']?.toString() ?? 'unknown').toLowerCase().trim();
+        final type = _typeMapping[rawType] ?? rawType;
         final url = img['image_url']?.toString();
         final hint = img['hint']?.toString();
+
         if (url != null) {
           typesMap[type] = _ensurePngForPlaceholder(url)!;
         }
@@ -92,8 +111,10 @@ class TreeGroupMember {
     );
   }
 
-  String? get leafImageUrl => imageTypes['leaf'] ?? imageTypes['leaves'];
-  String? get barkImageUrl => imageTypes['bark'];
+  String? get leafImageUrl => imageTypes['leaf'] ?? imageTypes['leaves'] ?? imageTypes['잎'];
+  String? get barkImageUrl => imageTypes['bark'] ?? imageTypes['수피'];
+  String? get flowerImageUrl => imageTypes['flower'] ?? imageTypes['꽃'];
+  String? get fruitImageUrl => imageTypes['fruit'] ?? imageTypes['열매'];
 
   static String? _ensurePngForPlaceholder(String? url) {
     if (url != null && url.contains('placehold.co') && !url.contains('.png')) {

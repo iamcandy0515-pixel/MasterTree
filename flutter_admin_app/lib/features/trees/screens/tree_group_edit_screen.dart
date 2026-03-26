@@ -91,7 +91,7 @@ class _TreeGroupEditContentState extends State<_TreeGroupEditContent> {
     return Scaffold(
       backgroundColor: NeoTheme.darkTheme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(vm.isEditing ? '유사수목 그룹 수정' : '유사수목 그룹 등록'),
+        title: Text(vm.isEditing ? '비교 수목 상세' : '유사수목 그룹 등록'),
         actions: [
           TreeGroupPreviewAction(group: vm.toGroup()),
           TextButton(

@@ -23,10 +23,31 @@ class LookalikeTreeColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Determine image and hint based on selected tab
-    final String? imageUrl = (selectedTab == 'leaf') ? member.leafImageUrl : member.barkImageUrl;
-    final String hintText = (selectedTab == 'leaf') 
-        ? (member.imageHints['leaf'] ?? member.imageHints['leaves'] ?? '-')
-        : (member.imageHints['bark'] ?? '-');
+    String? imageUrl;
+    if (selectedTab == 'leaf') {
+      imageUrl = member.leafImageUrl;
+    } else if (selectedTab == 'bark') {
+      imageUrl = member.barkImageUrl;
+    } else if (selectedTab == 'flower') {
+      imageUrl = member.flowerImageUrl;
+    } else if (selectedTab == 'fruit') {
+      imageUrl = member.fruitImageUrl;
+    } else {
+      imageUrl = member.imageUrl;
+    }
+
+    String hintText;
+    if (selectedTab == 'leaf') {
+      hintText = member.imageHints['leaf'] ?? member.imageHints['leaves'] ?? member.imageHints['잎'] ?? '-';
+    } else if (selectedTab == 'bark') {
+      hintText = member.imageHints['bark'] ?? member.imageHints['수피'] ?? '-';
+    } else if (selectedTab == 'flower') {
+      hintText = member.imageHints['flower'] ?? member.imageHints['꽃'] ?? '-';
+    } else if (selectedTab == 'fruit') {
+      hintText = member.imageHints['fruit'] ?? member.imageHints['열매'] ?? '-';
+    } else {
+      hintText = '-';
+    }
 
     return Container(
       width: columnWidth,

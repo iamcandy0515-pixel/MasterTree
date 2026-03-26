@@ -32,20 +32,22 @@ class _TreeDetailContent extends StatelessWidget {
     return Scaffold(
       backgroundColor: NeoTheme.darkTheme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: _TreeTitle(tree: tree),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(child: _TreeTitle(tree: tree)),
+            const SizedBox(width: 8),
+            _PreviewButton(vm: vm),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Expanded(child: TreeBasicInfoSection()),
-                _PreviewButton(vm: vm),
-              ],
-            ),
+            // Basic Info Header
+            const TreeBasicInfoSection(),
             const SizedBox(height: 32),
             const TreeHintSection(),
             const SizedBox(height: 32),
@@ -97,8 +99,14 @@ class _PreviewButton extends StatelessWidget {
     return TextButton.icon(
       onPressed: () => TreePreviewDialog.show(
         context,
-        barkImages: vm.tree.images.where((img) => img.imageType == 'bark').toList(),
-        leafImages: vm.tree.images.where((img) => img.imageType == 'leaf').toList(),
+        barkImages: vm.tree.images.where((img) {
+          final type = img.imageType.toLowerCase();
+          return type == 'bark' || type == '수피';
+        }).toList(),
+        leafImages: vm.tree.images.where((img) {
+          final type = img.imageType.toLowerCase();
+          return type == 'leaf' || type == 'leaves' || type == '잎';
+        }).toList(),
         barkHint: vm.hintControllers['bark']?.text ?? '',
         leafHint: vm.hintControllers['leaf']?.text ?? '',
       ),

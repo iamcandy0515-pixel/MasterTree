@@ -44,16 +44,22 @@ class TreeLookalikeViewModel extends ChangeNotifier {
   // Dynamic getters for current content based on tab
   String? getLeftImageUrl() {
     if (_group == null || _group!.members.isEmpty) return null;
-    return _selectedTab == 'leaf'
-        ? _group!.members[0].leafImageUrl
-        : _group!.members[0].barkImageUrl;
+    final member = _group!.members[0];
+    if (_selectedTab == 'leaf') return member.leafImageUrl;
+    if (_selectedTab == 'bark') return member.barkImageUrl;
+    if (_selectedTab == 'flower') return member.flowerImageUrl;
+    if (_selectedTab == 'fruit') return member.fruitImageUrl;
+    return member.imageUrl;
   }
 
   String? getRightImageUrl() {
     if (_group == null || _group!.members.length < 2) return null;
-    return _selectedTab == 'leaf'
-        ? _group!.members[1].leafImageUrl
-        : _group!.members[1].barkImageUrl;
+    final member = _group!.members[1];
+    if (_selectedTab == 'leaf') return member.leafImageUrl;
+    if (_selectedTab == 'bark') return member.barkImageUrl;
+    if (_selectedTab == 'flower') return member.flowerImageUrl;
+    if (_selectedTab == 'fruit') return member.fruitImageUrl;
+    return member.imageUrl;
   }
 
   String getHint() {
@@ -64,24 +70,28 @@ class TreeLookalikeViewModel extends ChangeNotifier {
   String getLeftHint() {
     if (_group == null || _group!.members.isEmpty) return '데이터 없음';
     final member = _group!.members[0];
-
-    if (_selectedTab == 'leaf') {
-      return member.imageHints['leaf'] ??
-          member.imageHints['leaves'] ??
-          '등록된 잎 특징이 없습니다.';
-    }
-    return member.imageHints['bark'] ?? '등록된 수피 특징이 없습니다.';
+    return _getHintForMember(member);
   }
 
   String getRightHint() {
     if (_group == null || _group!.members.length < 2) return '데이터 없음';
     final member = _group!.members[1];
+    return _getHintForMember(member);
+  }
 
+  String _getHintForMember(TreeGroupMember member) {
     if (_selectedTab == 'leaf') {
       return member.imageHints['leaf'] ??
           member.imageHints['leaves'] ??
+          member.imageHints['잎'] ??
           '등록된 잎 특징이 없습니다.';
+    } else if (_selectedTab == 'bark') {
+      return member.imageHints['bark'] ?? member.imageHints['수피'] ?? '등록된 수피 특징이 없습니다.';
+    } else if (_selectedTab == 'flower') {
+      return member.imageHints['flower'] ?? member.imageHints['꽃'] ?? '등록된 꽃 특징이 없습니다.';
+    } else if (_selectedTab == 'fruit') {
+      return member.imageHints['fruit'] ?? member.imageHints['열매'] ?? '등록된 열매 특징이 없습니다.';
     }
-    return member.imageHints['bark'] ?? '등록된 수피 특징이 없습니다.';
+    return '-';
   }
 }

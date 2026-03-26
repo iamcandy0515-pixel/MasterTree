@@ -15,10 +15,30 @@ class TreeImage {
     this.isQuizEnabled = true,
   });
 
+  static const Map<String, String> _typeMapping = {
+    '잎': 'leaf',
+    '잎새': 'leaf',
+    'leaf': 'leaf',
+    'leaves': 'leaf',
+    '수피': 'bark',
+    '나무껍질': 'bark',
+    'bark': 'bark',
+    'bark_skin': 'bark',
+    '꽃': 'flower',
+    'flower': 'flower',
+    'blossom': 'flower',
+    '열매': 'fruit',
+    'fruit': 'fruit',
+    'seed': 'fruit',
+  };
+
   factory TreeImage.fromJson(Map<String, dynamic> json) {
     return TreeImage(
       id: json['id'] != null ? int.tryParse(json['id'].toString()) : null,
-      imageType: json['image_type'] ?? '',
+      imageType: () {
+        final rawType = (json['image_type'] ?? '').toString().toLowerCase().trim();
+        return _typeMapping[rawType] ?? rawType;
+      }(),
       imageUrl: json['image_url'] ?? '',
       thumbnailUrl: json['thumbnail_url'],
       hint: json['hint'],
