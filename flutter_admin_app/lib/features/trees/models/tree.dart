@@ -1,3 +1,5 @@
+import 'package:flutter_admin_app/core/repositories/base_repository.dart';
+
 class TreeImage {
   final int? id;
   final String imageType; // 'leaf', 'bark', etc.
@@ -23,24 +25,33 @@ class TreeImage {
     '수피': 'bark',
     '나무껍질': 'bark',
     'bark': 'bark',
+    'branch': 'bark',
+    'twig': 'bark',
+    'stem': 'bark',
     'bark_skin': 'bark',
     '꽃': 'flower',
     'flower': 'flower',
     'blossom': 'flower',
     '열매': 'fruit',
     'fruit': 'fruit',
+    'fruit_bud': 'fruit',
+    'winter_bud': 'fruit',
+    'bud': 'fruit',
     'seed': 'fruit',
   };
 
   factory TreeImage.fromJson(Map<String, dynamic> json) {
+    final rawUrl = json['image_url'] ?? '';
+    final thumbUrl = json['thumbnail_url'];
+
     return TreeImage(
       id: json['id'] != null ? int.tryParse(json['id'].toString()) : null,
       imageType: () {
         final rawType = (json['image_type'] ?? '').toString().toLowerCase().trim();
         return _typeMapping[rawType] ?? rawType;
       }(),
-      imageUrl: json['image_url'] ?? '',
-      thumbnailUrl: json['thumbnail_url'],
+      imageUrl: BaseRepository.staticProxyUrl(rawUrl),
+      thumbnailUrl: thumbUrl != null ? BaseRepository.staticProxyUrl(thumbUrl) : null,
       hint: json['hint'],
       isQuizEnabled: json['is_quiz_enabled'] ?? true,
     );
@@ -72,6 +83,7 @@ class TreeImage {
     'is_quiz_enabled': isQuizEnabled,
   };
 }
+
 
 class Tree {
   final int id;
@@ -151,62 +163,3 @@ class Tree {
   }
 }
 
-class CreateTreeRequest {
-  final String nameKr;
-  final String? nameEn;
-  final String? scientificName;
-  final String? description;
-  final String? category;
-  final int difficulty;
-  final List<TreeImage> images;
-  final List<String> quizDistractors;
-  final bool isAutoQuizEnabled;
-
-  CreateTreeRequest({
-    required this.nameKr,
-    this.nameEn,
-    this.scientificName,
-    this.description,
-    this.category,
-    this.difficulty = 1,
-    this.images = const [],
-    this.quizDistractors = const [],
-    this.isAutoQuizEnabled = true,
-  });
-
-  Map<String, dynamic> toJson() => {
-    'name_kr': nameKr,
-    'name_en': nameEn,
-    'scientific_name': scientificName,
-    'description': description,
-    'category': category,
-    'difficulty': difficulty,
-    'images': images.map((e) => e.toJson()).toList(),
-    'quiz_distractors': quizDistractors,
-    'is_auto_quiz_enabled': isAutoQuizEnabled,
-  };
-
-  CreateTreeRequest copyWith({
-    String? nameKr,
-    String? nameEn,
-    String? scientificName,
-    String? description,
-    String? category,
-    int? difficulty,
-    List<TreeImage>? images,
-    List<String>? quizDistractors,
-    bool? isAutoQuizEnabled,
-  }) {
-    return CreateTreeRequest(
-      nameKr: nameKr ?? this.nameKr,
-      nameEn: nameEn ?? this.nameEn,
-      scientificName: scientificName ?? this.scientificName,
-      description: description ?? this.description,
-      category: category ?? this.category,
-      difficulty: difficulty ?? this.difficulty,
-      images: images ?? this.images,
-      quizDistractors: quizDistractors ?? this.quizDistractors,
-      isAutoQuizEnabled: isAutoQuizEnabled ?? this.isAutoQuizEnabled,
-    );
-  }
-}

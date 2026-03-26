@@ -40,14 +40,14 @@
 
 ## 4. To-Do List
 
-- [ ] `flutter_admin_app/lib/features/trees/models/tree_group.dart` 수정.
-  - [ ] 매핑 테이블(`_typeMapping`)에 `branch`, `twig`, `stem`, `fruit_bud`, `winter_bud`, `bud` 키워드 추가.
-  - [ ] `_ensurePngForPlaceholder` 및 반환 객체에 `BaseRepository.staticProxyUrl` 적용을 위한 import 및 호출 로직 추가.
-- [ ] 소환된 URL 파싱 시 200줄을 넘어가지 않는지 파일 라인 체크.
-- [ ] 로컬 테스트 (http://localhost:8081).
-  - [ ] '박달나무 vs 자작나무' 등 디테일 화면 스크롤, 버튼 클릭 및 전체화면 모달 열어보기 테스트로 오버플로우(Overflow)나 CORS 오류 해결 체크.
-- [ ] `flutter analyze` 실행하여 린트 오류 점검.
-- [ ] 작업 완료 후 작업 내용 리뷰.
+- [x] `flutter_admin_app/lib/features/trees/models/tree_group.dart` 수정.
+  - [x] 매핑 테이블(`_typeMapping`)에 `branch`, `twig`, `stem`, `fruit_bud`, `winter_bud`, `bud` 키워드 추가.
+  - [x] `_ensurePngForPlaceholder` 및 반환 객체에 `BaseRepository.staticProxyUrl` 적용을 위한 import 및 호출 로직 추가.
+- [x] 소환된 URL 파싱 시 200줄을 넘어가지 않는지 파일 라인 체크.
+- [x] 로컬 테스트 (http://localhost:8081).
+  - [x] '박달나무 vs 자작나무' 등 디테일 화면 스크롤, 버튼 클릭 및 전체화면 모달 열어보기 테스트로 오버플로우(Overflow)나 CORS 오류 해결 체크.
+- [x] `flutter analyze` 실행하여 린트 오류 점검.
+- [x] 작업 완료 후 작업 내용 리뷰.
 
 ---
-**진행 상태**: 대기 중 (Pending User Approval)
+**진행 상태**: 완료 (Completed)

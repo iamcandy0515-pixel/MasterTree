@@ -1,3 +1,5 @@
+import 'package:flutter_admin_app/core/repositories/base_repository.dart';
+
 class TreeGroup {
   final String id;
   final String name;
@@ -61,12 +63,18 @@ class TreeGroupMember {
     '수피': 'bark',
     '나무껍질': 'bark',
     'bark': 'bark',
+    'branch': 'bark',
+    'twig': 'bark',
+    'stem': 'bark',
     'bark_skin': 'bark',
     '꽃': 'flower',
     'flower': 'flower',
     'blossom': 'flower',
     '열매': 'fruit',
     'fruit': 'fruit',
+    'fruit_bud': 'fruit',
+    'winter_bud': 'fruit',
+    'bud': 'fruit',
     'seed': 'fruit',
   };
 
@@ -84,13 +92,18 @@ class TreeGroupMember {
         final hint = img['hint']?.toString();
 
         if (url != null) {
-          typesMap[type] = _ensurePngForPlaceholder(url)!;
+          final imageUrl = _ensurePngForPlaceholder(url)!;
+          typesMap[type] = BaseRepository.staticProxyUrl(imageUrl);
         }
         if (hint != null) {
           hintsMap[type] = hint;
         }
       }
     }
+
+    final repUrl = _ensurePngForPlaceholder(
+      json['image_url'] ?? _getRepresentativeImageUrl(imagesList),
+    );
 
     return TreeGroupMember(
       id: json['id']?.toString(),
@@ -99,9 +112,7 @@ class TreeGroupMember {
           ? (treeData['name_kr'] ?? '알 수 없는 수목')
           : '알 수 없는 수목',
       keyCharacteristics: json['key_characteristics'] ?? '',
-      imageUrl: _ensurePngForPlaceholder(
-        json['image_url'] ?? _getRepresentativeImageUrl(imagesList),
-      ),
+      imageUrl: repUrl != null ? BaseRepository.staticProxyUrl(repUrl) : null,
       imageTypes: typesMap,
       imageHints: hintsMap,
       displayOrder: int.tryParse(json['sort_order']?.toString() ?? '0') ?? 0,

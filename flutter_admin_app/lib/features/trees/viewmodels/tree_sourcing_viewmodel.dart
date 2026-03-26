@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/tree.dart';
+import '../models/create_tree_request.dart';
 import '../repositories/master_tree_repository.dart';
 import '../repositories/master_tree_media_repository.dart';
 

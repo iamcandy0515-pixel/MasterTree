@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
+import 'package:flutter_admin_app/features/trees/models/create_tree_request.dart';
 import 'package:flutter_admin_app/features/trees/repositories/master_tree_repository.dart';
 
 class TreeDetailViewModel extends ChangeNotifier {

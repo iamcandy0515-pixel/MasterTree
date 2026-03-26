@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_admin_app/core/repositories/base_repository.dart';
 import '../models/tree.dart';
+import '../models/create_tree_request.dart';
 import './parts/master_tree_cache_mixin.dart';
 
 class PaginatedTrees {
