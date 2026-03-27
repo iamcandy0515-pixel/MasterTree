@@ -34,7 +34,7 @@ class TreeListHeader extends StatelessWidget {
                 const Expanded(
                   child: Center(
                     child: Text(
-                      '수목도감 알람',
+                      '수목도감 일람',
                       style: TextStyle(
                         color: AppColors.textLight,
                         fontSize: 20,
@@ -83,15 +83,22 @@ class TreeListHeader extends StatelessWidget {
         hintText: '나무 이름 검색',
         hintStyle: const TextStyle(color: AppColors.textMuted),
         prefixIcon: const Icon(Icons.search, color: AppColors.primary),
-        suffixIcon: searchController.text.isNotEmpty
-            ? IconButton(
-                icon: const Icon(Icons.clear, color: AppColors.textMuted, size: 20),
-                onPressed: () {
-                  searchController.clear();
-                  controller.filterTrees('', onUpdate);
-                },
-              )
-            : null,
+        suffixIcon: SizedBox(
+          width: 40,
+          child: Visibility(
+            visible: searchController.text.isNotEmpty,
+            maintainSize: true,
+            maintainAnimation: true,
+            maintainState: true,
+            child: IconButton(
+              icon: const Icon(Icons.clear, color: AppColors.textMuted, size: 20),
+              onPressed: () {
+                searchController.clear();
+                controller.filterTrees('', onUpdate);
+              },
+            ),
+          ),
+        ),
         filled: true,
         fillColor: AppColors.surfaceDark,
         border: OutlineInputBorder(

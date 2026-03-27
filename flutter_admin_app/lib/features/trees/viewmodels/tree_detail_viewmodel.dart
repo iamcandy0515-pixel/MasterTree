@@ -5,7 +5,7 @@ import 'package:flutter_admin_app/features/trees/repositories/master_tree_reposi
 
 class TreeDetailViewModel extends ChangeNotifier {
   final MasterTreeRepository _repository = MasterTreeRepository();
-  final Tree tree;
+  Tree tree;
 
   bool _isSaving = false;
   bool get isSaving => _isSaving;
@@ -20,10 +20,23 @@ class TreeDetailViewModel extends ChangeNotifier {
   };
 
   TreeDetailViewModel({required this.tree}) {
+    _initControllers();
+  }
+
+  void _initControllers() {
     descController.text = tree.description ?? '';
-    for (var img in tree.images) {
+    // Clear first to avoid duplication
+    hintControllers.forEach((_, c) => c.text = '');
+    
+    // Sort to prioritize records with actual hints
+    final sortedImages = List<TreeImage>.from(tree.images)
+      ..sort((a, b) => (b.hint?.length ?? 0).compareTo(a.hint?.length ?? 0));
+
+    for (var img in sortedImages) {
       if (hintControllers.containsKey(img.imageType)) {
-        hintControllers[img.imageType]!.text = img.hint ?? '';
+        if (img.hint != null && img.hint!.isNotEmpty && hintControllers[img.imageType]!.text.isEmpty) {
+          hintControllers[img.imageType]!.text = img.hint!;
+        }
       }
     }
   }
@@ -42,24 +55,50 @@ class TreeDetailViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Create updated images array
-      List<TreeImage> updatedImages = tree.images.map((img) {
-        String? newHint = hintControllers[img.imageType]?.text;
-        return img.copyWith(hint: newHint ?? img.hint);
-      }).toList();
+      final List<TreeImage> finalImages = [];
+      final List<String> categories = ['main', 'leaf', 'bark', 'flower', 'fruit'];
+      
+      for (var cat in categories) {
+        final hint = hintControllers[cat]?.text ?? '';
+        final existing = tree.images.where((i) => i.imageType == cat).toList();
+        
+        if (existing.isNotEmpty) {
+          // Update all existing images of this type with the same hint
+          finalImages.addAll(existing.map((i) => i.copyWith(hint: hint)));
+        } else if (hint.isNotEmpty) {
+          // Create a new "hint-only" record with null imageUrl
+          finalImages.add(TreeImage(
+            imageType: cat,
+            imageUrl: '', // Will be mapped to null in toJson()
+            hint: hint,
+            isQuizEnabled: false,
+          ));
+        }
+      }
+      
+      // Preserve images from other categories
+      finalOtherImages() {
+        return tree.images.where((i) => !categories.contains(i.imageType));
+      }
+      finalImages.addAll(finalOtherImages());
 
       final request = CreateTreeRequest(
         nameKr: tree.nameKr,
+        nameEn: tree.nameEn,
         scientificName: tree.scientificName,
         description: descController.text,
         category: tree.category,
         difficulty: tree.difficulty,
         quizDistractors: tree.quizDistractors,
         isAutoQuizEnabled: tree.isAutoQuizEnabled,
-        images: updatedImages,
+        images: finalImages,
       );
 
-      await _repository.updateTree(tree.id, request);
+      final updated = await _repository.updateTree(tree.id, request);
+      
+      // Sync local state
+      tree = updated;
+      _initControllers(); // Re-sync controllers with backend data
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

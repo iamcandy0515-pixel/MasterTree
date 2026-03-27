@@ -129,13 +129,18 @@ class TreePreviewDialog extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          Image.network(
-            image.imageUrl,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => const Center(
-              child: Icon(Icons.broken_image, color: Colors.grey),
+          if (image.imageUrl.isNotEmpty)
+            Image.network(
+              image.imageUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => const Center(
+                child: Icon(Icons.broken_image, color: Colors.grey),
+              ),
+            )
+          else
+            const Center(
+              child: Icon(Icons.image_not_supported, color: Colors.grey, size: 40),
             ),
-          ),
           if (hint.isNotEmpty)
             Positioned(
               bottom: 0,

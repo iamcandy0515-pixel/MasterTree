@@ -12,7 +12,7 @@ class TreeImage {
   TreeImage({
     this.id,
     required this.imageType,
-    required this.imageUrl,
+    this.imageUrl = '',
     this.originUrl,
     this.thumbnailUrl,
     this.hint,
@@ -20,6 +20,9 @@ class TreeImage {
   });
 
   static const Map<String, String> _typeMapping = {
+    '대표': 'main',
+    '전체': 'main',
+    'main': 'main',
     '잎': 'leaf',
     '잎새': 'leaf',
     'leaf': 'leaf',
@@ -82,7 +85,9 @@ class TreeImage {
 
   Map<String, dynamic> toJson() => {
     'image_type': imageType,
-    'image_url': originUrl ?? imageUrl, // rawUrl이 있으면 그것을 사용
+    'image_url': (originUrl != null && originUrl!.isNotEmpty) 
+        ? originUrl 
+        : (imageUrl.isNotEmpty ? imageUrl : null),
     'thumbnail_url': thumbnailUrl,
     'hint': hint,
     'is_quiz_enabled': isQuizEnabled,
@@ -116,7 +121,7 @@ class Tree {
   });
 
   String? get imageUrl => images.isNotEmpty ? images.first.imageUrl : null;
-  List<String>? get imageUrls => images.map((e) => e.imageUrl).toList();
+  List<String> get imageUrls => images.map((e) => e.imageUrl).whereType<String>().toList();
 
   Tree copyWith({
     int? id,

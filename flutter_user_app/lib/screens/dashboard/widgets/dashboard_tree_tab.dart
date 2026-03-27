@@ -16,7 +16,7 @@ class DashboardTreeTab extends StatelessWidget {
           const SizedBox(height: 12),
           _buildMenuCard(
             context,
-            '수목도감 열람',
+            '수목도감 일람',
             '모든 수목 정보를 확인하세요.',
             Icons.menu_book,
             AppColors.primary,
@@ -40,7 +40,7 @@ class DashboardTreeTab extends StatelessWidget {
           const SizedBox(height: 10),
           _buildMenuCard(
             context,
-            '비교 수목 열람',
+            '비교 수목 일람',
             '헷갈리는 수목들을 비교 학습하세요.',
             Icons.compare_arrows,
             Colors.purpleAccent,

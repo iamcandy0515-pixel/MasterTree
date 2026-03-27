@@ -14,8 +14,20 @@ export class TreeRepository {
             .from("trees")
             .select(
                 `
-                *,
+                id, 
+                name_kr, 
+                name_en, 
+                scientific_name, 
+                description, 
+                category, 
+                difficulty, 
+                shape, 
+                quiz_distractors, 
+                is_auto_quiz_enabled, 
+                created_at, 
+                created_by,
                 tree_images (
+                    id,
                     image_type,
                     image_url,
                     thumbnail_url,
@@ -29,7 +41,7 @@ export class TreeRepository {
             .range(offset, offset + limit - 1);
 
         if (search) {
-            query = query.or(`name_kr.eq.${search},scientific_name.ilike.%${search}%`);
+            query = query.or(`name_kr.ilike.%${search}%,scientific_name.ilike.%${search}%`);
         }
         if (category && category !== "전체") {
             query = query.or(`category.ilike.%${category}%,description.ilike.%${category}%`);

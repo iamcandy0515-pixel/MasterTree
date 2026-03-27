@@ -36,15 +36,29 @@ export class TreeService {
                 };
             }
 
-            if (!uniqueTreeMap.has(tree.name_kr)) {
-                uniqueTreeMap.set(tree.name_kr, processedTree);
-            } else if (!minimal) {
-                // Merge images ONLY in non-minimal mode to further save memory
-                const existing = uniqueTreeMap.get(tree.name_kr);
-                if (tree.tree_images && Array.isArray(tree.tree_images)) {
-                    existing.tree_images = [...(existing.tree_images || []), ...tree.tree_images];
+            const treeId = tree.id.toString();
+            if (!uniqueTreeMap.has(treeId)) {
+                uniqueTreeMap.set(treeId, processedTree);
+            } else if (!minimal && tree.tree_images) {
+                const existing = uniqueTreeMap.get(treeId);
+                
+                // Keep description if existing is empty but current has it
+                if (!existing.description && processedTree.description) {
+                    existing.description = processedTree.description;
                 }
-                uniqueTreeMap.set(tree.name_kr, existing);
+
+                // Merge images properly by checking their IDs
+                const currentImages = existing.tree_images || [];
+                const newImages = tree.tree_images || [];
+                
+                for (const img of newImages) {
+                    if (!currentImages.some((existingImg: any) => existingImg.id === img.id)) {
+                        currentImages.push(img);
+                    }
+                }
+                
+                existing.tree_images = currentImages;
+                uniqueTreeMap.set(treeId, existing);
             }
         }
 
@@ -90,10 +104,14 @@ export class TreeService {
             throw treeError;
         }
 
-        await treeRepository.deleteImagesByTreeId(id); // Choice 1.A
+        // Choice 1.A: Re-sync images by delete-and-insert
+        const { error: deleteError } = await treeRepository.deleteImagesByTreeId(id);
+        if (deleteError) throw deleteError;
+
         if (dto.images && dto.images.length > 0) {
             const imageRecords = dto.images.map(img => ({ ...img, tree_id: id, uploaded_by: userId }));
-            await treeRepository.insertImages(imageRecords);
+            const { error: insertError } = await treeRepository.insertImages(imageRecords);
+            if (insertError) throw insertError;
         }
 
         return { ...treeData, tree_images: dto.images };

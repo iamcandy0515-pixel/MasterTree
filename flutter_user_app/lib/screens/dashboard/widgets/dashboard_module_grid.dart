@@ -14,7 +14,7 @@ class DashboardModuleGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> modules = [
       {
-        'title': '수목도감 알람',
+        'title': '수목도감 일람',
         'subtitle': '모든 수목 정보를 확인하세요',
         'icon': Icons.menu_book,
         'color': AppColors.primary,
@@ -35,7 +35,7 @@ class DashboardModuleGrid extends StatelessWidget {
         'screen': const PastExamListScreen(),
       },
       {
-        'title': '비교 수목 알람',
+        'title': '비교 수목 일람',
         'subtitle': '헷갈리는 수목들을 비교 학습하세요',
         'icon': Icons.compare_arrows,
         'color': Colors.purpleAccent,
