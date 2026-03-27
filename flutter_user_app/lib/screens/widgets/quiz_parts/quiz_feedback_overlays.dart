@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/design_system.dart';
 import '../../../viewmodels/quiz_viewmodel.dart';
@@ -62,7 +62,7 @@ class QuizFeedbackOverlays extends StatelessWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      '${vm.selectedHint} ?뚰듃',
+                      '${vm.selectedHint} 파트',
                       style: const TextStyle(
                         color: AppColors.primary,
                         fontSize: 14,
@@ -132,7 +132,7 @@ class QuizFeedbackOverlays extends StatelessWidget {
                   const SizedBox(width: 12),
                   const Expanded(
                     child: Text(
-                      '?뺣떟?낅땲??',
+                      '정답입니다',
                       style: TextStyle(
                         color: AppColors.primary,
                         fontSize: 16,

@@ -11,7 +11,7 @@ class QuizActionFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = context.watch<QuizViewModel>();
     
-    // ?좏깮???듬????놁쑝硫??쒖떆?섏? ?딆쓬 (怨듦컙? 李⑥??섏? ?딅룄濡?Row ?대??먯꽌 泥섎━??
+    // 선택된 답변이 없으면 표시하지 않음 (공간을 차지하지 않도록 Row 내부에서 처리)
     if (vm.selectedAnswer == null) return const SizedBox.shrink();
 
     return Row(
