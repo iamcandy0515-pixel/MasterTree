@@ -39,6 +39,15 @@ nodejs_admin_api/*.txt
 flutter_admin_app/*.txt
 flutter_user_app/*.txt
 
+# --- Implementation Plans & Tasks (Local Only) ---
+*-plan.md
+*-plan-v*.md
+*.plan
+tasks/
+design/tasks/
+*.todo.md
+ADMIN_TODO.md
+
 # Custom
 .temp_ag_kit/
 antigravity-doc
