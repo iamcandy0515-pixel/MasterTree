@@ -1,45 +1,54 @@
-# Common
+# -------------------------------------------------------------------------
+# MasterTreeApp Monorepo .gitignore
+# 이 파일에 등록된 내용은 로컬에만 보존되고 GitHub에는 올라가지 않습니다.
+# -------------------------------------------------------------------------
+
+# --- Common Dependencies ---
 node_modules/
 .DS_Store
-*.log
-*.txt
-*.analyze
-*.out
-.env
-.env.*
 dist/
-build/
 .turbo/
+.temp_ag_kit/
+antigravity-doc
+tests/
+others/
+scripts/
 
-# Flutter/Dart
+# --- Build & Artifacts ---
+build/
+bin/
+out/
+*.out
+
+# --- Flutter/Dart (Local Cache) ---
 .dart_tool/
 .packages
 .pub-cache/
 .pub/
-build/
 
-# IDE
+# --- IDE Configs ---
 .vscode/
 .idea/
 
-# Security and Temporary Files (PII/Secret Protection)
-tmp/
-src/tmp/
-scripts/
-src/scripts/
-temp_*.js
-temp_*.ts
-test_*.js
-test_*.ts
-test_*.dart
-nodejs_admin_api/tmp_*
-nodejs_admin_api/test_*
-nodejs_admin_api/temp_*
-nodejs_admin_api/*.txt
-flutter_admin_app/*.txt
-flutter_user_app/*.txt
+# --- !!! SECURITY & PRIVATE DATA (CRITICAL) !!! ---
+.env
+.env.*
+.vercel/
+!.vercel/project.json
 
-# --- Implementation Plans & Tasks (Local Only) ---
+# --- DEVELOPMENT ARTIFACTS & LOGS (LOCAL ONLY) ---
+*.log
+*.txt
+*.analyze
+*.csv
+analyze_*
+log_*
+*_log.txt
+repair_*.txt
+inspect_*.txt
+test_result.json
+
+# --- IMPLEMENTATION PLANS & TASKS (KEEP LOCAL ONLY) ---
 *-plan.md
 *-plan-v*.md
 *.plan
@@ -47,9 +56,19 @@ tasks/
 design/tasks/
 *.todo.md
 ADMIN_TODO.md
+TODO.md
 
-# Custom
-.temp_ag_kit/
-antigravity-doc
-tests
-others
+# --- TEMPORARY & SCRATCH SCRIPTS ---
+tmp/
+nodejs_admin_api/tmp_*
+nodejs_admin_api/test_*
+nodejs_admin_api/temp_*
+flutter_admin_app/tmp_*
+flutter_user_app/tmp_*
+temp_*.js
+temp_*.ts
+test_*.js
+test_*.ts
+test_*.dart
+scratch_*.js
+scratch_*.ts
