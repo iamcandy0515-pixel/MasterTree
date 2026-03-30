@@ -1,4 +1,0 @@
-{
-  "message": "Failed to extract quiz from PDF buffer.",
-  "stack": "Error: Failed to extract quiz from PDF buffer.\n    at QuizService.extractQuizFromPdfBuffer (D:\\MasterTreeApp\\tree_app_monorepo\\nodejs_admin_api\\src\\modules\\quiz\\quiz.service.ts:142:19)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async main (D:\\MasterTreeApp\\tree_app_monorepo\\nodejs_admin_api\\test-pdf.ts:26:24)"
-}
