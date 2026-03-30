@@ -8,8 +8,8 @@ class QuizViewModel extends ChangeNotifier with QuizDataHandler {
   List<QuizQuestion> _questions = [];
   bool _isLoading = true;
   int _currentIndex = 0;
-  String _selectedHint = '대표';
-  final Set<String> _viewedHints = {'대표'};
+  String _selectedHint = '전체';
+  final Set<String> _viewedHints = {'전체'};
   bool _showHintMessage = false;
   Timer? _hintTimer;
   int? _selectedAnswer;
@@ -157,9 +157,9 @@ class QuizViewModel extends ChangeNotifier with QuizDataHandler {
     _isCorrect = false;
     _showDescription = false;
     _showHintMessage = false;
-    _selectedHint = '대표';
+    _selectedHint = '전체';
     _viewedHints.clear();
-    _viewedHints.add('대표');
+    _viewedHints.add('전체');
     _hintTimer?.cancel();
     _descriptionTimer?.cancel();
   }

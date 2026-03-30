@@ -68,14 +68,13 @@ class QuizDataMapper {
   }
 
   static String? _getTypeKey(String? type) {
-    switch (type) {
-      case 'main': return '대표';
-      case 'leaf': return '잎';
-      case 'bark': return '수피';
-      case 'flower': return '꽃';
-      case 'fruit': return '열매/겨울눈';
-      default: return null;
-    }
+    final lowerType = type?.toLowerCase().trim() ?? '';
+    if (lowerType == 'main' || lowerType == '전체' || lowerType == '대표' || lowerType == 'full') return '전체';
+    if (lowerType == 'leaf' || lowerType == '잎' || lowerType == '잎새' || lowerType == 'leaves') return '잎';
+    if (lowerType == 'bark' || lowerType == '수피' || lowerType == '나무껍질' || lowerType == 'bark_skin') return '수피';
+    if (lowerType == 'flower' || lowerType == '꽃' || lowerType == 'blossom') return '꽃';
+    if (lowerType == 'fruit' || lowerType == '열매' || lowerType == 'fruit_bud' || lowerType == 'winter_bud') return '열매/겨울눈';
+    return null;
   }
 
   static List<QuizQuestion> getDummyData() {
@@ -86,7 +85,7 @@ class QuizDataMapper {
         imageUrl: 'https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&q=80&w=800',
         options: ['소나무', '잣나무', '전나무'],
         correctAnswerIndex: 0,
-        hints: {'잎': '2개씩 뭉쳐남', '수피': '붉은색 거북등', '대표': '애국가 소나무'},
+        hints: {'잎': '2개씩 뭉쳐남', '수피': '붉은색 거북등', '전체': '애국가 소나무'},
       ),
     ];
   }

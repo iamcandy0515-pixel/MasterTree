@@ -25,12 +25,18 @@ mixin QuizDataHandler {
         }
 
         String? koreanKey;
-        switch (type) {
-          case 'main': koreanKey = '대표'; break;
-          case 'leaf': koreanKey = '잎'; break;
-          case 'bark': koreanKey = '수피'; break;
-          case 'flower': koreanKey = '꽃'; break;
-          case 'fruit': koreanKey = '열매/겨울눈'; break;
+        final lowerType = type?.toString().toLowerCase() ?? '';
+        
+        if (lowerType == 'main' || lowerType == '전체' || lowerType == '대표' || lowerType == 'full') {
+          koreanKey = '전체';
+        } else if (lowerType == 'leaf' || lowerType == '잎' || lowerType == '잎새' || lowerType == 'leaves') {
+          koreanKey = '잎';
+        } else if (lowerType == 'bark' || lowerType == '수피' || lowerType == '나무껍질' || lowerType == 'bark_skin') {
+          koreanKey = '수피';
+        } else if (lowerType == 'flower' || lowerType == '꽃' || lowerType == 'blossom') {
+          koreanKey = '꽃';
+        } else if (lowerType == 'fruit' || lowerType == '열매' || lowerType == 'fruit_bud' || lowerType == 'winter_bud') {
+          koreanKey = '열매/겨울눈';
         }
 
         if (koreanKey != null && hint != null && hint.toString().trim().isNotEmpty) {
@@ -79,7 +85,7 @@ mixin QuizDataHandler {
         imageUrl: 'https://images.unsplash.com/photo-1542273917363-3b1817f69a2d',
         correctAnswerIndex: 0,
         options: ['소나무', '은행나무', '단풍나무', '벚나무'],
-        hints: {'대표': '사계절 내내 푸른 바늘잎나무입니다.', '잎': '바늘 모양의 잎이 2개씩 뭉쳐 납니다.'},
+        hints: {'전체': '사계절 내내 푸른 바늘잎나무입니다.', '잎': '바늘 모양의 잎이 2개씩 뭉쳐 납니다.'},
         description: '소나무는 한국을 대표하는 나무로, 척박한 땅에서도 잘 자랍니다.',
       ),
     ];

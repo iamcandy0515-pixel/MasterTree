@@ -48,7 +48,7 @@ class QuizHintToolbar extends StatelessWidget {
     return Row(
       children: [
         const Text(
-          '파트 보기',
+          '힌트 보기',
           style: TextStyle(
             color: AppColors.textMuted,
             fontSize: 10,
