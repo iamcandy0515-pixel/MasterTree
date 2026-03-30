@@ -24,3 +24,6 @@ build/
 antigravity-doc
 tests
 others
+
+tmp/
+
