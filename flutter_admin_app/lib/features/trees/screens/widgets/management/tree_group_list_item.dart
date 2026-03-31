@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_admin_app/core/theme/neo_theme.dart';
-import 'package:flutter_admin_app/core/api/node_api.dart';
 import '../../../models/tree_group.dart';
 import '../../../viewmodels/tree_group_management_viewmodel.dart';
 import '../../tree_group_edit_screen.dart';
@@ -51,20 +49,21 @@ class TreeGroupListItem extends StatelessWidget {
       height: 48,
       child: Stack(
         children: [
-          if (m1?.imageUrl != null)
-            Positioned(
-              left: 0,
-              child: _buildAvatar(m1!.imageUrl!),
-            ),
-          if (m2?.imageUrl != null)
+          Positioned(
+            left: 0,
+            child: _buildIconAvatar(Icons.park_rounded),
+          ),
+          if (count > 1)
             Positioned(
               left: 24,
               child: Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: NeoTheme.darkTheme.scaffoldBackgroundColor, width: 2),
+                  border: Border.all(
+                      color: NeoTheme.darkTheme.scaffoldBackgroundColor,
+                      width: 2),
                 ),
-                child: _buildAvatar(m2!.imageUrl!),
+                child: _buildIconAvatar(Icons.nature_rounded),
               ),
             ),
           if (count > 2)
@@ -73,12 +72,15 @@ class TreeGroupListItem extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: NeoTheme.darkTheme.scaffoldBackgroundColor, width: 2),
+                  border: Border.all(
+                      color: NeoTheme.darkTheme.scaffoldBackgroundColor,
+                      width: 2),
                 ),
                 child: CircleAvatar(
                   radius: 12,
                   backgroundColor: NeoColors.acidLime.withOpacity(0.2),
-                  child: const Icon(Icons.more_horiz, size: 16, color: NeoColors.acidLime),
+                  child: const Icon(Icons.more_horiz,
+                      size: 16, color: NeoColors.acidLime),
                 ),
               ),
             ),
@@ -87,13 +89,11 @@ class TreeGroupListItem extends StatelessWidget {
     );
   }
 
-  Widget _buildAvatar(String url) {
+  Widget _buildIconAvatar(IconData icon) {
     return CircleAvatar(
       radius: 20,
-      backgroundColor: Colors.grey[800],
-      backgroundImage: CachedNetworkImageProvider(
-        NodeApi.getProxyImageUrl(url, width: 80),
-      ),
+      backgroundColor: NeoColors.acidLime.withOpacity(0.1),
+      child: Icon(icon, color: NeoColors.acidLime, size: 20),
     );
   }
 

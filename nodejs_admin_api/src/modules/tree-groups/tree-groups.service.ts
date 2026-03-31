@@ -25,12 +25,7 @@ export class TreeGroupsService {
                     *,
                     trees (
                         id,
-                        name_kr,
-                        tree_images (
-                            image_type,
-                            image_url,
-                            hint
-                        )
+                        name_kr
                     )
                 )
             `,
