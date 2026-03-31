@@ -174,10 +174,10 @@ class _TreePreviewDialogState extends State<TreePreviewDialog> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            children: [
-              const Icon(Icons.lightbulb_outline, color: NeoColors.acidLime, size: 16),
-              const SizedBox(width: 8),
-              const Text('부위별 힌트 (AI)', style: TextStyle(color: NeoColors.acidLime, fontWeight: FontWeight.bold, fontSize: 12)),
+            children: const [
+              Icon(Icons.lightbulb_outline, color: NeoColors.acidLime, size: 16),
+              SizedBox(width: 8),
+              Text('부위별 힌트 (AI)', style: TextStyle(color: NeoColors.acidLime, fontWeight: FontWeight.bold, fontSize: 12)),
             ],
           ),
           const SizedBox(height: 8),

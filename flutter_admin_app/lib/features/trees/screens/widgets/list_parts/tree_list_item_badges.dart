@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_admin_app/core/theme/neo_theme.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
 
 class TreeListItemBadges extends StatelessWidget {
@@ -17,7 +16,7 @@ class TreeListItemBadges extends StatelessWidget {
         _PublishedBadge(color: primary),
         if (!tree.isAutoQuizEnabled) ...[
           const SizedBox(width: 8),
-          _ComparisonOnlyBadge(),
+          const _ComparisonOnlyBadge(),
         ],
       ],
     );
@@ -59,6 +58,7 @@ class _PublishedBadge extends StatelessWidget {
 }
 
 class _ComparisonOnlyBadge extends StatelessWidget {
+  const _ComparisonOnlyBadge();
   @override
   Widget build(BuildContext context) {
     return Container(
