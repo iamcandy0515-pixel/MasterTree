@@ -121,9 +121,8 @@ class NodeApi {
     if (url.contains('drive.google.com') ||
         url.contains('googleusercontent.com')) {
       // baseUrl에서 /api를 제외한 서빙 경로를 찾거나 직접 지정
-      final String rootUrl = baseUrl.split('/api')[0];
       String proxyUrl =
-          '$rootUrl/uploads/proxy?url=${Uri.encodeComponent(url)}';
+          '$baseUrl/uploads/proxy?url=${Uri.encodeComponent(url)}';
       if (width != null) proxyUrl += '&w=$width';
       if (height != null) proxyUrl += '&h=$height';
       return proxyUrl;

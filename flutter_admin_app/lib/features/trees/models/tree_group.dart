@@ -1,4 +1,4 @@
-import 'package:flutter_admin_app/core/repositories/base_repository.dart';
+import 'package:flutter_admin_app/core/api/node_api.dart';
 
 class TreeGroup {
   final String id;
@@ -93,7 +93,7 @@ class TreeGroupMember {
 
         if (url != null) {
           final imageUrl = _ensurePngForPlaceholder(url)!;
-          typesMap[type] = BaseRepository.staticProxyUrl(imageUrl);
+          typesMap[type] = NodeApi.getProxyImageUrl(imageUrl);
         }
         if (hint != null) {
           hintsMap[type] = hint;
@@ -112,7 +112,7 @@ class TreeGroupMember {
           ? (treeData['name_kr'] ?? '알 수 없는 수목')
           : '알 수 없는 수목',
       keyCharacteristics: json['key_characteristics'] ?? '',
-      imageUrl: repUrl != null ? BaseRepository.staticProxyUrl(repUrl) : null,
+      imageUrl: repUrl != null ? NodeApi.getProxyImageUrl(repUrl) : null,
       imageTypes: typesMap,
       imageHints: hintsMap,
       displayOrder: int.tryParse(json['sort_order']?.toString() ?? '0') ?? 0,

@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_admin_app/core/utils/web_utils.dart';
-import 'package:flutter_admin_app/core/repositories/base_repository.dart';
+import 'package:flutter_admin_app/core/api/node_api.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
 import 'package:flutter_admin_app/features/trees/repositories/master_tree_media_repository.dart';
 
@@ -61,7 +61,7 @@ mixin TreeMediaMixin on ChangeNotifier {
       _uploadedImages.add(
         TreeImage(
           imageType: _selectedImageType,
-          imageUrl: BaseRepository.staticProxyUrl(publicUrl),
+          imageUrl: NodeApi.getProxyImageUrl(publicUrl),
           originUrl: publicUrl,
         ),
       );
@@ -97,7 +97,7 @@ mixin TreeMediaMixin on ChangeNotifier {
       _uploadedImages.add(
         TreeImage(
           imageType: _selectedImageType,
-          imageUrl: BaseRepository.staticProxyUrl(publicUrl),
+          imageUrl: NodeApi.getProxyImageUrl(publicUrl),
           originUrl: publicUrl,
         ),
       );
@@ -129,7 +129,7 @@ mixin TreeMediaMixin on ChangeNotifier {
       _uploadedImages.add(
         TreeImage(
           imageType: _selectedImageType,
-          imageUrl: BaseRepository.staticProxyUrl(publicUrl),
+          imageUrl: NodeApi.getProxyImageUrl(publicUrl),
           originUrl: publicUrl,
         ),
       );

@@ -1,4 +1,4 @@
-import 'package:flutter_admin_app/core/repositories/base_repository.dart';
+import 'package:flutter_admin_app/core/api/node_api.dart';
 
 class TreeImage {
   final int? id;
@@ -55,9 +55,9 @@ class TreeImage {
         final rawType = (json['image_type'] ?? '').toString().toLowerCase().trim();
         return _typeMapping[rawType] ?? rawType;
       }(),
-      imageUrl: BaseRepository.staticProxyUrl(rawUrl),
+      imageUrl: NodeApi.getProxyImageUrl(rawUrl),
       originUrl: rawUrl,
-      thumbnailUrl: thumbUrl != null ? BaseRepository.staticProxyUrl(thumbUrl) : null,
+      thumbnailUrl: thumbUrl != null ? NodeApi.getProxyImageUrl(thumbUrl) : null,
       hint: json['hint'],
       isQuizEnabled: json['is_quiz_enabled'] ?? true,
     );
