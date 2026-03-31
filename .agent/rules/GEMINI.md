@@ -72,8 +72,9 @@ Before ANY code/design:
 ### 📝 Working Memory Protocol (Plan → Execute → Review)
 
 > 🔴 **MANDATORY for file edits:** You must use `{task-slug}.md` as working memory.
+> **Location:** 작업계획서는 반드시 프로젝트 루트의 `docs/plan/` 디렉토리에 작성해야 합니다.
 
-1. **Plan (상태 기록):** 수정 전 `{task-slug}.md`를 생성해 목적과 범위 명시 후 확인받기.
+1. **Plan (상태 기록):** 수정 전 `docs/plan/{task-slug}.md`를 생성해 목적과 범위 명시 후 확인받기.
 2. **Execute (실행):** 계획에 따라 작업. 사이드 이펙트 발생 시 즉시 문서 업데이트.
 3. **Review (사후 점검):** 완료 후 문서 하단에 `Risk Analysis` 기록.
     - **사용자 출력 보고 시:** '상태 기록', '실행', '사후 점검'의 핵심 내용만 요약해서 레포트로 출력하고, **'완료된 결과(Result)' 출력은 생략**할 것.
