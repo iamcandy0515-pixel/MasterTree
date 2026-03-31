@@ -38,7 +38,8 @@ class TreeGroupMember {
   final String treeName;
   final String keyCharacteristics;
   final String? imageUrl; // Representative/Main image
-  final Map<String, String> imageTypes; // Map of type -> url
+  final Map<String, String> imageTypes; // Map of type -> raw_url
+  final Map<String, String> thumbnailTypes; // Map of type -> thumbnail_url
   final Map<String, String> imageHints; // Map of type -> hint
   final int displayOrder;
   final bool isAutoQuizEnabled; // Is standard 78 tree (quiz target)
@@ -50,6 +51,7 @@ class TreeGroupMember {
     required this.keyCharacteristics,
     this.imageUrl,
     this.imageTypes = const {},
+    this.thumbnailTypes = const {},
     this.imageHints = const {},
     this.displayOrder = 0,
     this.isAutoQuizEnabled = true,
@@ -83,17 +85,21 @@ class TreeGroupMember {
     final imagesList = treeData?['tree_images'] as List<dynamic>? ?? [];
 
     final Map<String, String> typesMap = {};
+    final Map<String, String> thumbMap = {};
     final Map<String, String> hintsMap = {};
     for (var img in imagesList) {
       if (img is Map) {
         final rawType = (img['image_type']?.toString() ?? 'unknown').toLowerCase().trim();
         final type = _typeMapping[rawType] ?? rawType;
         final url = img['image_url']?.toString();
+        final thumb = img['thumbnail_url']?.toString();
         final hint = img['hint']?.toString();
 
         if (url != null) {
-          final imageUrl = _ensurePngForPlaceholder(url)!;
-          typesMap[type] = NodeApi.getProxyImageUrl(imageUrl);
+          typesMap[type] = _ensurePngForPlaceholder(url)!;
+        }
+        if (thumb != null) {
+          thumbMap[type] = _ensurePngForPlaceholder(thumb)!;
         }
         if (hint != null) {
           hintsMap[type] = hint;
@@ -101,9 +107,8 @@ class TreeGroupMember {
       }
     }
 
-    final repUrl = _ensurePngForPlaceholder(
-      json['image_url'] ?? _getRepresentativeImageUrl(imagesList),
-    );
+    final String? rawRepUrl = json['image_url'] ?? _getRepresentativeImageUrl(imagesList);
+    final repUrl = _ensurePngForPlaceholder(rawRepUrl);
 
     return TreeGroupMember(
       id: json['id']?.toString(),
@@ -112,8 +117,9 @@ class TreeGroupMember {
           ? (treeData['name_kr'] ?? '알 수 없는 수목')
           : '알 수 없는 수목',
       keyCharacteristics: json['key_characteristics'] ?? '',
-      imageUrl: repUrl != null ? NodeApi.getProxyImageUrl(repUrl) : null,
+      imageUrl: repUrl, // Raw URL (handled by UI)
       imageTypes: typesMap,
+      thumbnailTypes: thumbMap,
       imageHints: hintsMap,
       displayOrder: int.tryParse(json['sort_order']?.toString() ?? '0') ?? 0,
       isAutoQuizEnabled: treeData != null
@@ -123,9 +129,16 @@ class TreeGroupMember {
   }
 
   String? get leafImageUrl => imageTypes['leaf'] ?? imageTypes['leaves'] ?? imageTypes['잎'];
+  String? get leafThumbnailUrl => thumbnailTypes['leaf'] ?? thumbnailTypes['leaves'] ?? thumbnailTypes['잎'];
+
   String? get barkImageUrl => imageTypes['bark'] ?? imageTypes['수피'];
+  String? get barkThumbnailUrl => thumbnailTypes['bark'] ?? thumbnailTypes['수피'];
+
   String? get flowerImageUrl => imageTypes['flower'] ?? imageTypes['꽃'];
+  String? get flowerThumbnailUrl => thumbnailTypes['flower'] ?? thumbnailTypes['꽃'];
+
   String? get fruitImageUrl => imageTypes['fruit'] ?? imageTypes['열매'];
+  String? get fruitThumbnailUrl => thumbnailTypes['fruit'] ?? thumbnailTypes['열매'];
 
   static String? _ensurePngForPlaceholder(String? url) {
     if (url != null && url.contains('placehold.co') && !url.contains('.png')) {

@@ -119,11 +119,13 @@ class TreeListController {
           .toList();
 
       String? imageUrl;
+      String? thumbnailUrl;
       List<String> hints = [];
 
       for (var img in images) {
-        // 첫 번째 이미지 URL을 대표로 선택
+        // 첫 번째 이미지 URL 및 썸네일을 대표로 선택
         imageUrl ??= img['image_url']?.toString();
+        thumbnailUrl ??= img['thumbnail_url']?.toString();
 
         final hint = img['hint']?.toString();
         if (hint != null && hint.isNotEmpty && hint != '자료없음') {
@@ -135,6 +137,7 @@ class TreeListController {
 
       imageData[koreanTag] = {
         'image_url': imageUrl,
+        'thumbnail_url': thumbnailUrl,
         'hint': hints.isEmpty ? null : hints.join('\n\n'),
       };
     }

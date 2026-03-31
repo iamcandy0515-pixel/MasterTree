@@ -64,64 +64,67 @@ export class UploadController {
                 return;
             }
 
-            let imageStream;
-            let contentType = "image/jpeg";
+            let imageBuffer;
+            let sourceContentType = "image/jpeg";
 
             // [1] 구글 드라이브 인증 스트림 시도
             if (url.includes("drive.google.com") && url.includes("id=")) {
                 try {
                     const fileId = url.split("id=")[1].split("&")[0];
-                    console.log(`📡 [Proxy] Authenticated Drive Stream: ${fileId} (Resizing: ${width}x${height})`);
+                    console.log(`📡 [Proxy] Authenticated Drive: ${fileId} (Request: ${width}x${height})`);
                     
                     const { googleDriveFileService } = require("../external/google_drive_file.service");
                     const driveInstance = googleDriveFileService.getDrive();
                     
                     const driveResponse = await driveInstance.files.get(
                         { fileId, alt: "media" },
-                        { responseType: "stream" }
+                        { responseType: "arraybuffer" } // 스트림 대신 버퍼로 안정적 확보
                     );
 
-                    imageStream = driveResponse.data;
-                    contentType = driveResponse.headers["content-type"] || "image/jpeg";
+                    imageBuffer = Buffer.from(driveResponse.data);
+                    sourceContentType = driveResponse.headers["content-type"] || "image/jpeg";
                 } catch (driveError: any) {
                     console.warn(`⚠️ [Proxy] Authenticated Drive failed: ${driveError.message}`);
                 }
             }
 
             // [2] 일반 외부 이미지 또는 드라이브 폴백
-            if (!imageStream) {
-                console.log(`🌐 [Proxy] Public Proxying: ${url} (Resizing: ${width}x${height})`);
+            if (!imageBuffer) {
+                console.log(`🌐 [Proxy] Public Proxying: ${url} (Request: ${width}x${height})`);
                 const response = await axios.get(url, {
-                    responseType: "stream",
-                    timeout: 15000,
+                    responseType: "arraybuffer", // 버퍼로 확실하게 받음
+                    timeout: 20000,
                     headers: {
                         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
                     }
                 });
-                imageStream = response.data;
-                contentType = response.headers["content-type"] || "image/jpeg";
+                imageBuffer = Buffer.from(response.data);
+                sourceContentType = response.headers["content-type"] || "image/jpeg";
             }
 
-            // [3] 공통 헤더 설정
-            res.setHeader("Content-Type", contentType);
-            res.setHeader("Cache-Control", "public, max-age=86400");
+            // [3] 공통 헤더 설정 (WebP 기반 강력한 캐싱)
+            res.setHeader("Cache-Control", "public, max-age=31471200, immutable"); // 최장기 캐싱 유지
 
-            // [4] 리사이징 적용 (sharp)
-            if (width || height) {
+            // [4] 리사이징 및 WebP 변환 (sharp)
+            if (width || height || sourceContentType !== "image/webp") {
                 const sharp = require("sharp");
-                const resizer = sharp().resize(width, height, {
-                    fit: "inside",
-                    withoutEnlargement: true
-                });
-                
-                // 에러 핸들링 추가
-                resizer.on("error", (err: any) => {
-                    console.error("❌ [Proxy] Sharp Error:", err);
-                });
+                let pipeline = sharp(imageBuffer);
 
-                imageStream.pipe(resizer).pipe(res);
+                if (width || height) {
+                    pipeline = pipeline.resize(width, height, {
+                        fit: "inside",
+                        withoutEnlargement: true
+                    });
+                }
+
+                // 퀄리티 최적화된 WebP로 강제 전환 (최고 효율)
+                const finalBuffer = await pipeline.webp({ quality: 80 }).toBuffer();
+                
+                res.setHeader("Content-Type", "image/webp");
+                res.send(finalBuffer);
             } else {
-                imageStream.pipe(res);
+                res.setHeader("Content-Type", sourceContentType);
+                res.send(imageBuffer);
             }
 
         } catch (error: any) {

@@ -1,6 +1,7 @@
 class QuizQuestion {
   final int id;
   final String imageUrl;
+  final String? thumbnailUrl; // 최적화된 썸네일 경로 추가
   final String description; // 정답 시 보여줄 설명
   final int correctAnswerIndex;
   final List<String> options;
@@ -9,6 +10,7 @@ class QuizQuestion {
   QuizQuestion({
     required this.id,
     required this.imageUrl,
+    this.thumbnailUrl,
     required this.description,
     required this.correctAnswerIndex,
     required this.options,

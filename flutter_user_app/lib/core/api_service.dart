@@ -14,7 +14,7 @@ class ApiService {
 
   static Future<List<Map<String, dynamic>>> getTreeImages(int treeId) => TreeService.getTreeImages(treeId);
 
-  static String getProxyImageUrl(String? url) => TreeService.getProxyImageUrl(url);
+  static String getProxyImageUrl(String? url, {int? width, int? height}) => TreeService.getProxyImageUrl(url, width: width, height: height);
 
   // Groups
   static Future<List<Map<String, dynamic>>> getTreeGroups() => GroupService.getTreeGroups();

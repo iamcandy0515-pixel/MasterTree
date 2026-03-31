@@ -25,17 +25,28 @@ class LookalikeTreeColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     // Determine image and hint based on selected tab
     String? imageUrl;
+    String? thumbUrl;
+
     if (selectedTab == 'leaf') {
       imageUrl = member.leafImageUrl;
+      thumbUrl = member.leafThumbnailUrl;
     } else if (selectedTab == 'bark') {
       imageUrl = member.barkImageUrl;
+      thumbUrl = member.barkThumbnailUrl;
     } else if (selectedTab == 'flower') {
       imageUrl = member.flowerImageUrl;
+      thumbUrl = member.flowerThumbnailUrl;
     } else if (selectedTab == 'fruit') {
       imageUrl = member.fruitImageUrl;
+      thumbUrl = member.fruitThumbnailUrl;
     } else {
       imageUrl = member.imageUrl;
+      // Representative image might not have a separate thumbnail in this model easily
+      thumbUrl = null; 
     }
+
+    // [전략 변경] 썸네일이 있으면 최우선 사용, 없으면 원본 프록시 사용
+    final effectiveUrl = thumbUrl ?? imageUrl;
 
     String hintText;
     if (selectedTab == 'leaf') {
@@ -58,7 +69,7 @@ class LookalikeTreeColumn extends StatelessWidget {
       child: Column(
         children: [
           // 1. Image Cell with Fullscreen Dialog support
-          _buildImageCell(context, imageUrl),
+          _buildImageCell(context, effectiveUrl, originalUrl: imageUrl),
           const Divider(height: 1, color: Colors.white10),
 
           // 2. Name Cell
@@ -72,33 +83,24 @@ class LookalikeTreeColumn extends StatelessWidget {
     );
   }
 
-  Widget _buildImageCell(BuildContext context, String? imageUrl) {
+  Widget _buildImageCell(BuildContext context, String? imageUrl, {String? originalUrl}) {
     return SizedBox(
       height: imageRowHeight,
       child: imageUrl != null
           ? GestureDetector(
-              onTap: () => _showFullScreenImage(context, imageUrl, member.treeName),
-              child: CachedNetworkImage(
-                imageUrl:
-                    NodeApi.getProxyImageUrl(imageUrl, width: 400), // 리사이징 프록시 적용
+              onTap: () => _showFullScreenImage(
+                  context, originalUrl ?? imageUrl, member.treeName),
+              child: OptimizedNetworkImage(
+                imageUrl: imageUrl, // 썸네일이 있으면 썸네일, 없으면 원본
+                width: 400,
                 fit: BoxFit.cover,
-                memCacheWidth: 400, // 메모리 캐시 하드웨어 최적화
-                placeholder: (context, url) => Container(
-                  color: Colors.grey[900],
-                  child: const Center(
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  color: Colors.grey[850],
-                  child: const Icon(Icons.broken_image, color: Colors.white24),
-                ),
               ),
             )
           : Container(
               color: Colors.grey[850],
               child: const Center(
-                child: Text('이미지 없음', style: TextStyle(color: Colors.white24, fontSize: 12)),
+                child: Text('이미지 없음',
+                    style: TextStyle(color: Colors.white24, fontSize: 12)),
               ),
             ),
     );
@@ -154,12 +156,10 @@ class LookalikeTreeColumn extends StatelessWidget {
               panEnabled: true,
               minScale: 0.5,
               maxScale: 4.0,
-              child: CachedNetworkImage(
-                imageUrl: NodeApi.getProxyImageUrl(url, width: 1000), // 상세 화면도 최적화
-                placeholder: (context, url) => const Center(
-                  child: CircularProgressIndicator(color: Color(0xFF80F20D)),
-                ),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
+              child: OptimizedNetworkImage(
+                imageUrl: url,
+                width: 1000, // 상세 미리보기는 고화질
+                fit: BoxFit.contain,
               ),
             ),
             Positioned(
@@ -171,7 +171,10 @@ class LookalikeTreeColumn extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18),
                   ),
                   IconButton(
                     icon: const Icon(Icons.close, color: Colors.white, size: 30),
@@ -179,6 +182,80 @@ class LookalikeTreeColumn extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// [Added] 에러 발생 시 새로고침 기능이 포함된 최적화 이미지 위젯
+class OptimizedNetworkImage extends StatefulWidget {
+  final String imageUrl;
+  final int? width;
+  final int? height;
+  final BoxFit fit;
+
+  const OptimizedNetworkImage({
+    super.key,
+    required this.imageUrl,
+    this.width,
+    this.height,
+    this.fit = BoxFit.cover,
+  });
+
+  @override
+  State<OptimizedNetworkImage> createState() => _OptimizedNetworkImageState();
+}
+
+class _OptimizedNetworkImageState extends State<OptimizedNetworkImage> {
+  int _retryKey = 0; // 재시도를 위한 키 값
+
+  void _handleReload() async {
+    // 1. 캐시 강제 삭제
+    final proxiedUrl = NodeApi.getProxyImageUrl(widget.imageUrl,
+        width: widget.width, height: widget.height);
+    await CachedNetworkImage.evictFromCache(proxiedUrl);
+
+    // 2. 위젯 리렌더링 유발
+    setState(() {
+      _retryKey++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final proxiedUrl = NodeApi.getProxyImageUrl(widget.imageUrl,
+        width: widget.width, height: widget.height);
+
+    return CachedNetworkImage(
+      key: ValueKey('${proxiedUrl}_$_retryKey'), // 키가 바뀌면 새로 로드함
+      imageUrl: proxiedUrl,
+      fit: widget.fit,
+      memCacheWidth: widget.width,
+      memCacheHeight: widget.height,
+      placeholder: (context, url) => Container(
+        color: Colors.grey[900],
+        child: const Center(
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: Color(0xFF80F20D),
+          ),
+        ),
+      ),
+      errorWidget: (context, url, error) => Container(
+        color: Colors.grey[850],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.broken_image, color: Colors.white24, size: 32),
+            const SizedBox(height: 8),
+            TextButton.icon(
+              onPressed: _handleReload,
+              icon: const Icon(Icons.refresh, size: 16, color: Color(0xFF80F20D)),
+              label: const Text('새로고침',
+                  style: TextStyle(color: Color(0xFF80F20D), fontSize: 12)),
             ),
           ],
         ),

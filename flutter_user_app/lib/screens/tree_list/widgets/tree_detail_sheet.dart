@@ -32,13 +32,16 @@ class _TreeDetailSheetState extends State<TreeDetailSheet> {
       final imageData = TreeListController.processImageData(widget.tree);
       _imageData = imageData;
       
-      // Proactive Image Pre-fetching for all tags
+      // [최적화] 모든 원본 로드 대신 썸네일 또는 초경량 리사이징 프리칭
       if (mounted) {
         for (var tag in _tags) {
           final urlData = _imageData[tag];
-          if (urlData != null && urlData['image_url'] != null) {
+          // 썸네일이 있으면 최우선, 없으면 200px 리사이징으로 아주 가볍게 로드
+          final thumbUrl = urlData?['thumbnail_url'] ?? urlData?['image_url'];
+          
+          if (thumbUrl != null) {
             precacheImage(
-              NetworkImage(ApiService.getProxyImageUrl(urlData['image_url']!)),
+              NetworkImage(ApiService.getProxyImageUrl(thumbUrl, width: 200)),
               context,
             );
           }
@@ -91,9 +94,11 @@ class _TreeDetailSheetState extends State<TreeDetailSheet> {
                         TreeHeroSection(
                           name: widget.tree['name_kr'] ?? '이름 없음',
                           scientificName: widget.tree['scientific_name'] ?? 'N/A',
+                          // [최적화] 기기 너비에 최적화된 리사이징 URL 요청 (600px)
                           imageUrl: ApiService.getProxyImageUrl(
                             _imageData[_selectedTag]?['image_url'] ?? 
                             'https://picsum.photos/seed/${widget.tree['id']}/600/600',
+                            width: 600,
                           ),
                           tag: _selectedTag,
                         ),

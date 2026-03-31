@@ -1,5 +1,6 @@
 import 'dart:math';
 import '../models/quiz_model.dart';
+import '../core/api/tree_service.dart';
 
 mixin QuizDataHandler {
   List<QuizQuestion> processQuizData(List<dynamic> data) {
@@ -11,16 +12,19 @@ mixin QuizDataHandler {
       final String correctName = tree['name_kr'] as String;
       Map<String, String> hintsMap = {};
       String questionImageUrl = '';
+      String? questionThumbnailUrl;
 
       final List<dynamic> images = tree['tree_images'] ?? [];
       for (var img in images) {
         final type = img['image_type'];
         final hint = img['hint'];
         final url = img['image_url'];
+        final thumb = img['thumbnail_url'];
 
         if (url != null && url.isNotEmpty) {
           if (type == 'main' || questionImageUrl.isEmpty) {
             questionImageUrl = url;
+            questionThumbnailUrl = thumb;
           }
         }
 
@@ -66,7 +70,9 @@ mixin QuizDataHandler {
 
       loadedQuestions.add(QuizQuestion(
         id: tree['id'] is int ? tree['id'] : int.tryParse(tree['id'].toString()) ?? 0,
-        imageUrl: questionImageUrl,
+        // 600px 너비로 리사이징 요청 (네트워크 절감)
+        imageUrl: TreeService.getProxyImageUrl(questionImageUrl, width: 600),
+        thumbnailUrl: TreeService.getProxyImageUrl(questionThumbnailUrl, width: 300),
         correctAnswerIndex: correctIdx,
         options: options,
         hints: hintsMap,
