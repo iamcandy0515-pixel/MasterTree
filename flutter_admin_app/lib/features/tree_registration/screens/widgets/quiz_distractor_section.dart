@@ -13,7 +13,7 @@ class QuizDistractorSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          '3. 퀴즈 오답 설정 (오답 2개)',
+          '퀴즈 오답',
           style: TextStyle(
             color: Color(0xFF80F20D),
             fontSize: 16,

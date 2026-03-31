@@ -28,14 +28,16 @@ class MasterTreeRepository extends BaseRepository with MasterTreeCacheMixin {
     int limit = 20,
     String? search,
     String? category,
+    bool minimal = true,
   }) async {
-    final cacheKey = generateCacheKey(page, limit, search, category);
+    final cacheKey = '${generateCacheKey(page, limit, search, category)}&minimal=$minimal';
     final cached = getCachedData<PaginatedTrees>(cacheKey);
     if (cached != null) return cached;
 
     final queryParams = {
       'page': page.toString(),
       'limit': limit.toString(),
+      'minimal': minimal.toString(),
       if (search != null && search.isNotEmpty) 'search': search,
       if (category != null && category != '전체') 'category': category,
     };

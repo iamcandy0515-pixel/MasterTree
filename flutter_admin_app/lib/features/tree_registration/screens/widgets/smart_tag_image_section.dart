@@ -29,14 +29,19 @@ class SmartTagImageSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '2. 부위별 이미지 및 힌트',
+            '이미지 및 힌트',
             style: TextStyle(
               color: Color(0xFF80F20D),
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
+          const Text(
+            'text 스마트 태그',
+            style: TextStyle(color: Colors.white38, fontSize: 11, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 8),
 
           // Tag Selection Row (Rebuilds when activeTag or taggedImages changes labels)
           Consumer<TreeRegistrationViewModel>(

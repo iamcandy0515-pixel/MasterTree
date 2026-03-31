@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_admin_app/core/api/node_api.dart';
 
 class LoginViewModel extends ChangeNotifier {
   bool _isLoading = false;
@@ -29,32 +32,45 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      debugPrint('🚀 [LoginViewModel] Attempting login with: $email');
+      debugPrint('🚀 [LoginViewModel] Attempting login via Auth Proxy: $email');
 
-      final response = await Supabase.instance.client.auth.signInWithPassword(
-        email: email,
-        password: password,
+      // Use Node API as a Proxy to bypass CORS
+      final url = Uri.parse('${NodeApi.baseUrl}/users/login');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email, 'password': password}),
       );
 
-      if (response.user != null) {
-        // Save credentials locally
-        try {
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('saved_email', email);
-          await prefs.setString('saved_password', password);
-          debugPrint('✅ [LoginViewModel] Credentials saved successfully.');
-        } catch (e) {
-          debugPrint('❌ [LoginViewModel] Error saving credentials: $e');
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['success'] == true) {
+          final session = data['data']['session'];
+          final user = data['data']['user'];
+
+          if (session != null) {
+            // Manually set the session in the local Supabase client using refresh_token
+            await Supabase.instance.client.auth.setSession(session['refresh_token']);
+            
+            // Save credentials locally
+            try {
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.setString('saved_email', email);
+              await prefs.setString('saved_password', password);
+              debugPrint('✅ [LoginViewModel] Login successful via Proxy & Session set.');
+            } catch (e) {
+              debugPrint('❌ [LoginViewModel] Error saving credentials: $e');
+            }
+            return true;
+          }
         }
-        return true;
       }
+      
+      debugPrint('❌ [LoginViewModel] Login failed: ${response.body}');
       return false;
-    } on AuthException catch (e) {
-      debugPrint('❌ [LoginViewModel] Auth Error: ${e.message}');
-      throw e.message;
     } catch (e) {
       debugPrint('❌ [LoginViewModel] Unexpected Error: $e');
-      throw 'Unexpected error occurred';
+      throw '인증 서버와의 통신에 실패했습니다: $e';
     } finally {
       _isLoading = false;
       notifyListeners();

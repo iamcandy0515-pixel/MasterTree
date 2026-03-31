@@ -27,31 +27,14 @@ class RegistrationHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
+              children: const [
+                Text(
                   '신규 수목 등록',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
-                ),
-                Row(
-                  children: [
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: const BoxDecoration(
-                        color: Colors.green,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    const Text(
-                      '서버 상태: 정상',
-                      style: TextStyle(color: Colors.white54, fontSize: 11),
-                    ),
-                  ],
                 ),
               ],
             ),
@@ -66,34 +49,18 @@ class RegistrationHeader extends StatelessWidget {
               ),
             )
           else
-            Container(
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: primaryColor.withOpacity(0.3),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+            TextButton(
+              onPressed: () => _handleRegister(context, vm),
+              style: TextButton.styleFrom(
+                foregroundColor: primaryColor,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
               ),
-              child: ElevatedButton(
-                onPressed: () => _handleRegister(context, vm),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryColor,
-                  foregroundColor: Colors.black,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 10,
-                  ),
-                ),
-                child: const Text(
-                  'DB 등록',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+              child: const Text(
+                'DB 등록',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
         ],

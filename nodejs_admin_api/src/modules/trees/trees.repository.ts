@@ -67,7 +67,6 @@ export class TreeRepository {
                     image_type,
                     image_url,
                     thumbnail_url,
-                    thumbnail_types,
                     hint,
                     is_quiz_enabled,
                     created_at

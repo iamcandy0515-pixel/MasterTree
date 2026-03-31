@@ -167,34 +167,44 @@ class SourcingImageSlot extends StatelessWidget {
   }
 
   Widget _buildImageDisplay(dynamic displayItem) {
-    if (displayItem is XFile) {
-      return Image.network(
-        displayItem.path,
-        fit: BoxFit.cover,
-        errorBuilder: (c, e, s) => const Icon(Icons.broken_image),
-      );
-    } else if (displayItem is Uint8List) {
-      return Image.memory(displayItem, fit: BoxFit.cover);
-    } else if (displayItem is TreeImage) {
-      final url = isThumb ? displayItem.thumbnailUrl : displayItem.imageUrl;
-      if (url == null || url.isEmpty) {
-        return const Center(child: Icon(Icons.image_not_supported));
+    bool hasData = false;
+    if (displayItem != null) {
+      if (displayItem is TreeImage) {
+        final url = isThumb ? displayItem.thumbnailUrl : displayItem.imageUrl;
+        hasData = url != null && url.isNotEmpty;
+      } else {
+        hasData = true; // XFile or Uint8List (Staged)
       }
+    }
 
-      return CachedNetworkImage(
-        imageUrl: NodeApi.getProxyImageUrl(
-          url,
-          width: isThumb ? 300 : 800,
+    if (!hasData) {
+      return const Center(
+        child: Icon(
+          Icons.add_a_photo_outlined,
+          color: Colors.white10,
+          size: 32,
         ),
-        fit: BoxFit.cover,
-        placeholder: (context, url) =>
-            const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-        errorWidget: (context, url, error) =>
-            const Icon(Icons.broken_image, color: Colors.redAccent, size: 24),
-        memCacheWidth: isThumb ? 300 : 800,
       );
     }
-    return const SizedBox();
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.fact_check_outlined,
+              color: NeoColors.acidLime.withOpacity(0.5), size: 40),
+          const SizedBox(height: 12),
+          Text(
+            isThumb ? '썸네일 정보 확보됨' : '원본 URL 확보됨',
+            style: TextStyle(
+              color: NeoColors.acidLime.withOpacity(0.5),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _showUrlInputDialog(BuildContext context) async {

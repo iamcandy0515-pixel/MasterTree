@@ -16,6 +16,7 @@ extension TreeSourcingListExtension on TreeSourcingViewModel {
         page: page,
         limit: TreeSourcingViewModel._pageSize,
         search: _searchQuery.trim(),
+        minimal: false,
       );
 
       _trees = result.trees;

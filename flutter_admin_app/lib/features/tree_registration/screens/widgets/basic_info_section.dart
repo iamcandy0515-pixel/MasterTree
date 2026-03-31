@@ -32,7 +32,7 @@ class BasicInfoSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '1. 기본 정보',
+            '기본 정보',
             style: TextStyle(
               color: Color(0xFF80F20D),
               fontSize: 16,

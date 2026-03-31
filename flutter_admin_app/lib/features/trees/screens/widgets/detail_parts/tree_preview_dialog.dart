@@ -73,7 +73,7 @@ class _TreePreviewDialogState extends State<TreePreviewDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '스마트 미리보기',
+              '수목 미리보기',
               style: TextStyle(color: NeoColors.acidLime, fontSize: 14, fontWeight: FontWeight.bold),
             ),
             Text(
@@ -91,27 +91,37 @@ class _TreePreviewDialogState extends State<TreePreviewDialog> {
   }
 
   Widget _buildSmartTags() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: _categories.map((cat) {
-          final isSelected = _selectedCategory == cat['id'];
-          return Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: ChoiceChip(
-              label: Text(cat['label']!),
-              selected: isSelected,
-              onSelected: (val) => setState(() => _selectedCategory = cat['id']!),
-              selectedColor: NeoColors.acidLime,
-              backgroundColor: Colors.white.withOpacity(0.05),
-              labelStyle: TextStyle(
-                color: isSelected ? Colors.black : Colors.white70,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          );
-        }).toList(),
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'text스마트 태그',
+          style: TextStyle(color: Colors.white38, fontSize: 11, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 8),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: _categories.map((cat) {
+              final isSelected = _selectedCategory == cat['id'];
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: ChoiceChip(
+                  label: Text(cat['label']!),
+                  selected: isSelected,
+                  onSelected: (val) => setState(() => _selectedCategory = cat['id']!),
+                  selectedColor: NeoColors.acidLime,
+                  backgroundColor: Colors.white.withOpacity(0.05),
+                  labelStyle: TextStyle(
+                    color: isSelected ? Colors.black : Colors.white70,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ],
     );
   }
 
@@ -119,10 +129,12 @@ class _TreePreviewDialogState extends State<TreePreviewDialog> {
     final images = widget.tree.images.where((img) => img.imageType == _selectedCategory).toList();
     final hint = widget.hints[_selectedCategory] ?? '';
 
-    return Column(
+    return ListView(
+      shrinkWrap: true,
       children: [
-        Expanded(
-          flex: 3,
+        // Fix image size by using fixed AspectRatio
+        AspectRatio(
+          aspectRatio: 16 / 10,
           child: _buildImageSection(images.isNotEmpty ? images.first : null),
         ),
         if (hint.isNotEmpty) ...[
