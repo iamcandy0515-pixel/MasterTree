@@ -88,6 +88,20 @@ class MasterTreeRepository extends BaseRepository with MasterTreeCacheMixin {
     return [];
   }
 
+  // GET /api/trees/:id
+  Future<Tree> getTreeById(int id) async {
+    final url = Uri.parse('$baseUrl/trees/$id');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsonResponse['success'] == true) {
+        return Tree.fromJson(jsonResponse['data']);
+      }
+    }
+    throw Exception('수목 상세 정보 로드 실패: ${response.body}');
+  }
+
   // CRUD Operations
   Future<Tree> updateTree(int id, CreateTreeRequest request) async {
     final url = Uri.parse('$baseUrl/trees/$id');

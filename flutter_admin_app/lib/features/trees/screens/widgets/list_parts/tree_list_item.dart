@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_admin_app/core/theme/neo_theme.dart';
-import 'package:flutter_admin_app/core/api/node_api.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
 import 'package:flutter_admin_app/features/trees/screens/tree_detail_screen.dart';
 import 'package:flutter_admin_app/features/trees/viewmodels/tree_list_viewmodel.dart';
+import 'tree_list_item_thumbnail.dart';
+import 'tree_list_item_badges.dart';
 
 class TreeListItem extends StatelessWidget {
   final Tree tree;
@@ -14,15 +14,33 @@ class TreeListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const primary = NeoColors.acidLime;
+    
     return InkWell(
-      onTap: () => _navigateToEdit(context),
+      onTap: () => _navigateToDetail(context),
       child: Container(
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            _buildThumbnail(tree),
+            TreeListItemThumbnail(tree: tree),
             const SizedBox(width: 16),
-            Expanded(child: _ItemContent(tree: tree, primary: primary)),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    tree.nameKr,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  TreeListItemBadges(tree: tree, primary: primary),
+                ],
+              ),
+            ),
             _DeleteButton(tree: tree),
             const Icon(Icons.chevron_right, color: Colors.white24),
           ],
@@ -31,37 +49,7 @@ class TreeListItem extends StatelessWidget {
     );
   }
 
-  Widget _buildThumbnail(Tree tree) {
-    final imageUrl = tree.images.isNotEmpty ? tree.images.first.imageUrl : '';
-    
-    return Container(
-      width: 60,
-      height: 60,
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white10),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: imageUrl.isNotEmpty
-          ? CachedNetworkImage(
-              imageUrl: NodeApi.getProxyImageUrl(imageUrl, width: 120),
-              fit: BoxFit.cover,
-              memCacheWidth: 120,
-              placeholder: (context, url) => const Center(
-                child: SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: NeoColors.acidLime),
-                ),
-              ),
-              errorWidget: (context, url, error) => const Icon(Icons.park_outlined, color: Colors.white24, size: 30),
-            )
-          : const Icon(Icons.park_outlined, color: Colors.white24, size: 30),
-    );
-  }
-
-  void _navigateToEdit(BuildContext context) async {
+  void _navigateToDetail(BuildContext context) async {
     final vm = context.read<TreeListViewModel>();
     final result = await Navigator.push(
       context,
@@ -71,140 +59,10 @@ class TreeListItem extends StatelessWidget {
   }
 }
 
-class _ItemContent extends StatelessWidget {
-  final Tree tree;
-  final Color primary;
-  const _ItemContent({required this.tree, required this.primary});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Flexible(child: _Title(name: tree.nameKr)),
-            const SizedBox(width: 8),
-            if (!tree.isAutoQuizEnabled) _ComparisonOnlyBadge(),
-            const SizedBox(width: 8),
-            ...tree.category?.split('/').map((c) => _SmallTag(label: c.trim(), color: primary)) ?? [],
-            const SizedBox(width: 8),
-            _PublishedBadge(color: primary),
-          ],
-        ),
-        const SizedBox(height: 8),
-        _BadgeRow(tree: tree),
-      ],
-    );
-  }
-}
-
-class _Title extends StatelessWidget {
-  final String name;
-  const _Title({required this.name});
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      name,
-      style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-      overflow: TextOverflow.ellipsis,
-    );
-  }
-}
-
-class _ComparisonOnlyBadge extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-      decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: Colors.red.withOpacity(0.2)),
-      ),
-      child: const Text('비교 전용', style: TextStyle(color: Colors.redAccent, fontSize: 10, fontWeight: FontWeight.bold)),
-    );
-  }
-}
-
-class _SmallTag extends StatelessWidget {
-  final String label;
-  final Color color;
-  const _SmallTag({required this.label, required this.color});
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(right: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: color.withOpacity(0.2), width: 0.5),
-      ),
-      child: Text(label, style: TextStyle(color: color, fontSize: 9, fontWeight: FontWeight.bold)),
-    );
-  }
-}
-
-class _PublishedBadge extends StatelessWidget {
-  final Color color;
-  const _PublishedBadge({required this.color});
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Text('게시됨', style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold)),
-    );
-  }
-}
-
-class _BadgeRow extends StatelessWidget {
-  final Tree tree;
-  const _BadgeRow({required this.tree});
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        _CountBadge(
-          icon: Icons.image_outlined,
-          count: tree.images.length,
-          color: Colors.blueAccent.withOpacity(0.7),
-        ),
-        const SizedBox(width: 12),
-        _CountBadge(
-          icon: Icons.lightbulb_outline,
-          count: tree.images.where((img) => img.hint != null && img.hint!.isNotEmpty).length,
-          color: Colors.orangeAccent.withOpacity(0.7),
-        ),
-      ],
-    );
-  }
-}
-
-class _CountBadge extends StatelessWidget {
-  final IconData icon;
-  final int count;
-  final Color color;
-  const _CountBadge({required this.icon, required this.count, required this.color});
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, size: 14, color: color),
-        const SizedBox(width: 4),
-        Text(count.toString(), style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.bold)),
-      ],
-    );
-  }
-}
-
 class _DeleteButton extends StatelessWidget {
   final Tree tree;
   const _DeleteButton({required this.tree});
+
   @override
   Widget build(BuildContext context) {
     return IconButton(
@@ -222,11 +80,21 @@ class _DeleteButton extends StatelessWidget {
         title: const Text('수목 삭제'),
         content: Text('${tree.nameKr} 수목을 정말 삭제하시겠습니까?'),
         backgroundColor: const Color(0xFF15281E),
-        titleTextStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+        ),
         contentTextStyle: const TextStyle(color: Colors.white70),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('취소', style: TextStyle(color: Colors.grey))),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('확인', style: TextStyle(color: Colors.redAccent))),
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('취소', style: TextStyle(color: Colors.grey)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('확인', style: TextStyle(color: Colors.redAccent)),
+          ),
         ],
       ),
     );
@@ -234,7 +102,9 @@ class _DeleteButton extends StatelessWidget {
     if (confirmed == true && context.mounted) {
       await context.read<TreeListViewModel>().deleteTree(tree.id);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('삭제되었습니다.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('삭제되었습니다.')),
+        );
       }
     }
   }

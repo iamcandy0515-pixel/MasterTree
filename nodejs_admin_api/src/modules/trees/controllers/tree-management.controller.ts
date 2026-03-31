@@ -18,13 +18,31 @@ export class TreeManagementController {
             const limit = parseInt(req.query.limit as string) || 20;
             const search = req.query.search as string;
             const category = req.query.category as string;
-            const minimal = req.query.minimal === "true";
+            
+            // Default to minimal=true for high list performance
+            const minimal = req.query.minimal !== "false";
 
             const result = await TreeService.getAll(page, limit, search, category, minimal);
 
             successResponse(res, result.data, "Trees retrieved successfully", 200, result.meta);
         } catch (error: any) {
             errorResponse(res, error.message || "Failed to retrieve trees");
+        }
+    }
+
+    /**
+     * getOne: Detailed tree info (includes all images and hints)
+     */
+    static async getOne(req: Request, res: Response) {
+        try {
+            const id = parseInt(req.params.id);
+            if (isNaN(id)) return errorResponse(res, "Invalid tree ID", 400);
+
+            const tree = await TreeService.getOne(id);
+            successResponse(res, tree, "Tree details retrieved successfully");
+        } catch (error: any) {
+            const status = (error as any).statusCode || 500;
+            errorResponse(res, error.message || "Failed to fetch tree details", status);
         }
     }
 

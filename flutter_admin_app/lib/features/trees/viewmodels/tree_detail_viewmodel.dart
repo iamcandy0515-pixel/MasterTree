@@ -7,6 +7,9 @@ class TreeDetailViewModel extends ChangeNotifier {
   final MasterTreeRepository _repository = MasterTreeRepository();
   Tree tree;
 
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
   bool _isSaving = false;
   bool get isSaving => _isSaving;
 
@@ -21,6 +24,22 @@ class TreeDetailViewModel extends ChangeNotifier {
 
   TreeDetailViewModel({required this.tree}) {
     _initControllers();
+  }
+
+  Future<void> fetchDetails() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final detailedTree = await _repository.getTreeById(tree.id);
+      tree = detailedTree;
+      _initControllers();
+    } catch (e) {
+      debugPrint('[TreeDetailViewModel] fetchDetails failed: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   void _initControllers() {

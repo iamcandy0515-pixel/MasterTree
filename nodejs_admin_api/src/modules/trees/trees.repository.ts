@@ -7,25 +7,26 @@ import { supabase } from "../../config/supabaseClient";
  */
 export class TreeRepository {
     /**
-     * Fetches trees with their associated images using pagination and filters
+     * Fetches trees with optional associated images using pagination and filters
      */
-    async findAll(offset: number, limit: number, search?: string, category?: string) {
-        let query = supabase
-            .from("trees")
-            .select(
-                `
-                id, 
-                name_kr, 
-                name_en, 
-                scientific_name, 
-                description, 
-                category, 
-                difficulty, 
-                shape, 
-                quiz_distractors, 
-                is_auto_quiz_enabled, 
-                created_at, 
-                created_by,
+    async findAll(offset: number, limit: number, search?: string, category?: string, withImages = false) {
+        let queryStr = `
+            id, 
+            name_kr, 
+            name_en, 
+            scientific_name, 
+            description, 
+            category, 
+            difficulty, 
+            shape, 
+            quiz_distractors, 
+            is_auto_quiz_enabled, 
+            created_at, 
+            created_by
+        `;
+
+        if (withImages) {
+            queryStr += `,
                 tree_images (
                     id,
                     image_type,
@@ -34,9 +35,12 @@ export class TreeRepository {
                     hint,
                     is_quiz_enabled
                 )
-            `,
-                { count: "exact" },
-            )
+            `;
+        }
+
+        let query = supabase
+            .from("trees")
+            .select(queryStr, { count: "exact" })
             .order("name_kr", { ascending: true })
             .range(offset, offset + limit - 1);
 
@@ -48,6 +52,29 @@ export class TreeRepository {
         }
 
         return await query;
+    }
+
+    /**
+     * Fetches a specific tree with all images and hints for detail/preview
+     */
+    async findById(id: number) {
+        return await supabase
+            .from("trees")
+            .select(`
+                *,
+                tree_images (
+                    id,
+                    image_type,
+                    image_url,
+                    thumbnail_url,
+                    thumbnail_types,
+                    hint,
+                    is_quiz_enabled,
+                    created_at
+                )
+            `)
+            .eq("id", id)
+            .single();
     }
 
     /**

@@ -9,63 +9,54 @@ import { logger } from "../../utils/logger";
  */
 export class TreeService {
     /**
-     * Retrieves trees with pagination and in-memory deduplication/merging
+     * Retrieves trees with pagination and lazy-loaded images (minimal mode)
      */
-    static async getAll(page = 1, limit = 20, search?: string, category?: string, minimal = false) {
+    static async getAll(page = 1, limit = 20, search?: string, category?: string, minimal = true) {
         const offset = (page - 1) * limit;
-        const { data, error, count } = await treeRepository.findAll(offset, limit, search, category);
+        
+        // Minimal is true by default for list performance (Rule: No images in list)
+        const { data, error, count } = await treeRepository.findAll(offset, limit, search, category, !minimal);
 
         if (error) {
             logger.error("[TreeService] Failed to fetch trees:", error);
             throw error;
         }
 
-        // Deduplication/Merging logic (Rule 3 Optimization)
-        const uniqueTreeMap = new Map<string, any>();
-        for (const tree of (data as any[]) || []) {
-            let processedTree = { ...(tree as any) };
-            
-            // Mobile Optimization: Field Pruning
-            if (minimal) {
-                processedTree = {
-                    id: tree.id,
-                    name_kr: tree.name_kr,
-                    scientific_name: tree.scientific_name,
-                    category: tree.category,
-                    image_url: tree.tree_images?.[0]?.image_url || null
-                };
-            }
-
-            const treeId = tree.id.toString();
-            if (!uniqueTreeMap.has(treeId)) {
-                uniqueTreeMap.set(treeId, processedTree);
-            } else if (!minimal && tree.tree_images) {
-                const existing = uniqueTreeMap.get(treeId);
-                
-                // Keep description if existing is empty but current has it
-                if (!existing.description && processedTree.description) {
-                    existing.description = processedTree.description;
-                }
-
-                // Merge images properly by checking their IDs
-                const currentImages = existing.tree_images || [];
-                const newImages = tree.tree_images || [];
-                
-                for (const img of newImages) {
-                    if (!currentImages.some((existingImg: any) => existingImg.id === img.id)) {
-                        currentImages.push(img);
-                    }
-                }
-                
-                existing.tree_images = currentImages;
-                uniqueTreeMap.set(treeId, existing);
-            }
-        }
+        const processedData = (data as any[]) || [];
+        
+        // Mapping for UI consistency (if needed)
+        const result = processedData.map(tree => ({
+            ...tree,
+            // Add a placeholder if images are missing but UI expects it
+            tree_images: tree.tree_images || []
+        }));
 
         return {
-            data: Array.from(uniqueTreeMap.values()),
-            meta: { total: count || 0, page, limit, totalPages: count ? Math.ceil(count / limit) : 0 },
+            data: result,
+            meta: { 
+                total: count || 0, 
+                page, 
+                limit, 
+                totalPages: count ? Math.ceil(count / limit) : 0 
+            },
         };
+    }
+
+    /**
+     * Retrieves a single tree with all images and hints for detail/preview
+     */
+    static async getOne(id: number) {
+        const { data, error } = await treeRepository.findById(id);
+        if (error) {
+            logger.error(`[TreeService] Failed to fetch tree ${id}:`, error);
+            throw error;
+        }
+        if (!data) {
+            const err = new Error("해당 수목을 찾을 수 없습니다.");
+            (err as any).statusCode = 404;
+            throw err;
+        }
+        return data;
     }
 
     /**

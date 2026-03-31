@@ -21,13 +21,37 @@ class TreeDetailScreen extends StatelessWidget {
   }
 }
 
-class _TreeDetailContent extends StatelessWidget {
+class _TreeDetailContent extends StatefulWidget {
   const _TreeDetailContent();
+
+  @override
+  State<_TreeDetailContent> createState() => _TreeDetailContentState();
+}
+
+class _TreeDetailContentState extends State<_TreeDetailContent> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<TreeDetailViewModel>().fetchDetails();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<TreeDetailViewModel>();
     final tree = vm.tree;
+
+    if (vm.isLoading) {
+      return const Scaffold(
+        backgroundColor: Color(0xFF102219),
+        body: Center(
+          child: CircularProgressIndicator(color: NeoColors.acidLime),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: NeoTheme.darkTheme.scaffoldBackgroundColor,
@@ -98,16 +122,14 @@ class _PreviewButton extends StatelessWidget {
     return TextButton.icon(
       onPressed: () => TreePreviewDialog.show(
         context,
-        barkImages: vm.tree.images.where((img) {
-          final type = img.imageType.toLowerCase();
-          return type == 'bark' || type == '수피';
-        }).toList(),
-        leafImages: vm.tree.images.where((img) {
-          final type = img.imageType.toLowerCase();
-          return type == 'leaf' || type == 'leaves' || type == '잎';
-        }).toList(),
-        barkHint: vm.hintControllers['bark']?.text ?? '',
-        leafHint: vm.hintControllers['leaf']?.text ?? '',
+        tree: vm.tree,
+        hints: {
+          'main': vm.hintControllers['main']?.text ?? '',
+          'leaf': vm.hintControllers['leaf']?.text ?? '',
+          'bark': vm.hintControllers['bark']?.text ?? '',
+          'flower': vm.hintControllers['flower']?.text ?? '',
+          'fruit': vm.hintControllers['fruit']?.text ?? '',
+        },
       ),
       icon: const Icon(Icons.remove_red_eye, size: 16, color: NeoColors.acidLime),
       label: const Text(

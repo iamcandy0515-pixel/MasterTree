@@ -45,6 +45,13 @@ router.get("/", (req, res, next) => {
     TreeManagementController.getAll(req, res).catch(next);
 });
 
+/**
+ * Public/Protected: Get single tree detail
+ */
+router.get("/:id", (req, res, next) => {
+    TreeManagementController.getOne(req, res).catch(next);
+});
+
 /** 
  * Protected: Create new tree (Admin Auth Required)
  */
