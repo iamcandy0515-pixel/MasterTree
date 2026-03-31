@@ -1,4 +1,3 @@
-import 'package:flutter_admin_app/core/api/node_api.dart';
 
 class TreeGroup {
   final String id;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -167,17 +168,7 @@ class SourcingImageSlot extends StatelessWidget {
   }
 
   Widget _buildImageDisplay(dynamic displayItem) {
-    bool hasData = false;
-    if (displayItem != null) {
-      if (displayItem is TreeImage) {
-        final url = isThumb ? displayItem.thumbnailUrl : displayItem.imageUrl;
-        hasData = url != null && url.isNotEmpty;
-      } else {
-        hasData = true; // XFile or Uint8List (Staged)
-      }
-    }
-
-    if (!hasData) {
+    if (displayItem == null) {
       return const Center(
         child: Icon(
           Icons.add_a_photo_outlined,
@@ -187,24 +178,68 @@ class SourcingImageSlot extends StatelessWidget {
       );
     }
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.fact_check_outlined,
-              color: NeoColors.acidLime.withOpacity(0.5), size: 40),
-          const SizedBox(height: 12),
-          Text(
-            isThumb ? '썸네일 정보 확보됨' : '원본 URL 확보됨',
-            style: TextStyle(
+    if (displayItem is XFile) {
+      return Image.file(
+        File(displayItem.path),
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+      );
+    }
+
+    if (displayItem is Uint8List) {
+      return Image.memory(
+        displayItem,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+      );
+    }
+
+    if (displayItem is TreeImage) {
+      final rawUrl = isThumb ? displayItem.thumbnailUrl : displayItem.imageUrl;
+      if (rawUrl == null || rawUrl.isEmpty) {
+        return const Center(
+          child: Icon(
+            Icons.image_not_supported_outlined,
+            color: Colors.white10,
+            size: 32,
+          ),
+        );
+      }
+
+      // 프록시 URL 적용 & 리사이징 (썸네일 300, 원본 800)
+      final proxyUrl = NodeApi.getProxyImageUrl(
+        rawUrl,
+        width: isThumb ? 300 : 800,
+      );
+
+      return CachedNetworkImage(
+        imageUrl: proxyUrl,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+        placeholder: (context, url) => Center(
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
               color: NeoColors.acidLime.withOpacity(0.5),
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
             ),
           ),
-        ],
-      ),
-    );
+        ),
+        errorWidget: (context, url, error) => Center(
+          child: Icon(
+            Icons.warning_amber_rounded,
+            color: Colors.red.withOpacity(0.5),
+            size: 32,
+          ),
+        ),
+      );
+    }
+
+    return const SizedBox.shrink();
   }
 
   Future<void> _showUrlInputDialog(BuildContext context) async {

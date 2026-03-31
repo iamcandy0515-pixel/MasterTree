@@ -46,8 +46,6 @@ class LoginViewModel extends ChangeNotifier {
         final data = jsonDecode(response.body);
         if (data['success'] == true) {
           final session = data['data']['session'];
-          final user = data['data']['user'];
-
           if (session != null) {
             // Manually set the session in the local Supabase client using refresh_token
             await Supabase.instance.client.auth.setSession(session['refresh_token']);

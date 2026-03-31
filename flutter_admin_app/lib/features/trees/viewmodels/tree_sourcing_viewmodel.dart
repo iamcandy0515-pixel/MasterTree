@@ -10,6 +10,7 @@ import '../repositories/master_tree_media_repository.dart';
 part 'parts/tree_sourcing_viewmodel_list.part.dart';
 part 'parts/tree_sourcing_viewmodel_detail.part.dart';
 part 'parts/tree_sourcing_viewmodel_drive.part.dart';
+part 'parts/tree_sourcing_viewmodel_save.part.dart';
 
 class TreeSourcingViewModel extends ChangeNotifier {
   final _repository = MasterTreeRepository();
