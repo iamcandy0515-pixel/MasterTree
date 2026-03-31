@@ -103,4 +103,38 @@ class NodeApi {
       throw Exception('Failed to download google image: ${resp.body}');
     }
   }
+
+  /// [Added] Get Proxy URL for optimizing image performance (Resizing + WebP)
+  static String getProxyImageUrl(String? url, {int? width, int? height}) {
+    if (url == null || url.isEmpty) return '';
+
+    // [1] Supabase Storage 리사이징 활용 (가장 가벼움)
+    if (url.contains('supabase.co/storage/v1/object/public/')) {
+      if (width != null) {
+        final separator = url.contains('?') ? '&' : '?';
+        return '$url${separator}width=$width&quality=85';
+      }
+      return url;
+    }
+
+    // [2] 구글 드라이브 또는 외부 URL 프록시 리사이징
+    if (url.contains('drive.google.com') ||
+        url.contains('googleusercontent.com')) {
+      // baseUrl에서 /api를 제외한 서빙 경로를 찾거나 직접 지정
+      final String rootUrl = baseUrl.split('/api')[0];
+      String proxyUrl =
+          '$rootUrl/uploads/proxy?url=${Uri.encodeComponent(url)}';
+      if (width != null) proxyUrl += '&w=$width';
+      if (height != null) proxyUrl += '&h=$height';
+      return proxyUrl;
+    }
+
+    // [3] 이미 프록시 처리되었거나 기타 URL
+    if (url.contains('/uploads/proxy')) {
+      if (width != null && !url.contains('&w=')) return '$url&w=$width';
+      return url;
+    }
+
+    return url;
+  }
 }

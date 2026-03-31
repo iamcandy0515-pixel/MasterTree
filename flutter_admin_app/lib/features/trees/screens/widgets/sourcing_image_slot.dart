@@ -6,6 +6,7 @@ import '../../models/tree.dart';
 import '../../../../core/repositories/base_repository.dart';
 import '../../viewmodels/tree_sourcing_viewmodel.dart';
 import '../../../../core/theme/neo_theme.dart';
+import '../../../../core/api/node_api.dart';
 
 class SourcingImageSlot extends StatelessWidget {
   final TreeSourcingViewModel vm;
@@ -182,9 +183,9 @@ class SourcingImageSlot extends StatelessWidget {
       }
 
       return CachedNetworkImage(
-        imageUrl: BaseRepository.staticProxyUrl(
+        imageUrl: NodeApi.getProxyImageUrl(
           url,
-          width: isThumb ? 300 : 800, // 썸네일은 300px 정도로 요청 (Retina 대응)
+          width: isThumb ? 300 : 800,
         ),
         fit: BoxFit.cover,
         placeholder: (context, url) =>

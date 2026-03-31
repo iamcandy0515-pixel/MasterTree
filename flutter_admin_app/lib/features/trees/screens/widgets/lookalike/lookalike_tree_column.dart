@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_admin_app/features/trees/models/tree_group.dart';
+import 'package:flutter_admin_app/core/api/node_api.dart';
 
 class LookalikeTreeColumn extends StatelessWidget {
   final TreeGroupMember member;
@@ -78,9 +79,10 @@ class LookalikeTreeColumn extends StatelessWidget {
           ? GestureDetector(
               onTap: () => _showFullScreenImage(context, imageUrl, member.treeName),
               child: CachedNetworkImage(
-                imageUrl: imageUrl,
+                imageUrl:
+                    NodeApi.getProxyImageUrl(imageUrl, width: 400), // 리사이징 프록시 적용
                 fit: BoxFit.cover,
-                memCacheWidth: 400,
+                memCacheWidth: 400, // 메모리 캐시 하드웨어 최적화
                 placeholder: (context, url) => Container(
                   color: Colors.grey[900],
                   child: const Center(
@@ -153,8 +155,10 @@ class LookalikeTreeColumn extends StatelessWidget {
               minScale: 0.5,
               maxScale: 4.0,
               child: CachedNetworkImage(
-                imageUrl: url,
-                placeholder: (context, url) => const CircularProgressIndicator(),
+                imageUrl: NodeApi.getProxyImageUrl(url, width: 1000), // 상세 화면도 최적화
+                placeholder: (context, url) => const Center(
+                  child: CircularProgressIndicator(color: Color(0xFF80F20D)),
+                ),
                 errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),

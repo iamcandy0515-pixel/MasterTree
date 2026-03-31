@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_admin_app/features/trees/models/tree.dart';
-import 'package:flutter_admin_app/features/trees/viewmodels/tree_list_viewmodel.dart';
-import 'package:flutter_admin_app/features/trees/screens/tree_detail_screen.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_admin_app/core/theme/neo_theme.dart';
+import 'package:flutter_admin_app/core/api/node_api.dart';
+import 'package:flutter_admin_app/features/trees/models/tree.dart';
+import 'package:flutter_admin_app/features/trees/screens/tree_detail_screen.dart';
+import 'package:flutter_admin_app/features/trees/viewmodels/tree_list_viewmodel.dart';
 
 class TreeListItem extends StatelessWidget {
   final Tree tree;
@@ -18,12 +20,44 @@ class TreeListItem extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
+            _buildThumbnail(tree),
+            const SizedBox(width: 16),
             Expanded(child: _ItemContent(tree: tree, primary: primary)),
             _DeleteButton(tree: tree),
             const Icon(Icons.chevron_right, color: Colors.white24),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildThumbnail(Tree tree) {
+    final imageUrl = tree.images.isNotEmpty ? tree.images.first.imageUrl : '';
+    
+    return Container(
+      width: 60,
+      height: 60,
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white10),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: imageUrl.isNotEmpty
+          ? CachedNetworkImage(
+              imageUrl: NodeApi.getProxyImageUrl(imageUrl, width: 120),
+              fit: BoxFit.cover,
+              memCacheWidth: 120,
+              placeholder: (context, url) => const Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2, color: NeoColors.acidLime),
+                ),
+              ),
+              errorWidget: (context, url, error) => const Icon(Icons.park_outlined, color: Colors.white24, size: 30),
+            )
+          : const Icon(Icons.park_outlined, color: Colors.white24, size: 30),
     );
   }
 

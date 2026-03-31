@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_admin_app/core/theme/neo_theme.dart';
+import 'package:flutter_admin_app/core/api/node_api.dart';
 import '../../../models/tree_group.dart';
 import '../../../viewmodels/tree_group_management_viewmodel.dart';
 import '../../tree_group_edit_screen.dart';
@@ -90,7 +91,9 @@ class TreeGroupListItem extends StatelessWidget {
     return CircleAvatar(
       radius: 20,
       backgroundColor: Colors.grey[800],
-      backgroundImage: CachedNetworkImageProvider(url), // Switched to CachedNetworkImageProvider
+      backgroundImage: CachedNetworkImageProvider(
+        NodeApi.getProxyImageUrl(url, width: 80),
+      ),
     );
   }
 

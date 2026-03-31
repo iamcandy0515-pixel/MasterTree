@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_admin_app/core/theme/neo_theme.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
+import 'package:flutter_admin_app/core/api/node_api.dart';
 
 class TreePreviewDialog extends StatelessWidget {
   final List<TreeImage> barkImages;
@@ -130,10 +132,14 @@ class TreePreviewDialog extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           if (image.imageUrl.isNotEmpty)
-            Image.network(
-              image.imageUrl,
+            CachedNetworkImage(
+              imageUrl: NodeApi.getProxyImageUrl(image.imageUrl, width: 400),
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => const Center(
+              memCacheWidth: 400,
+              placeholder: (context, url) => const Center(
+                child: CircularProgressIndicator(strokeWidth: 2, color: NeoColors.acidLime),
+              ),
+              errorWidget: (context, url, error) => const Center(
                 child: Icon(Icons.broken_image, color: Colors.grey),
               ),
             )
