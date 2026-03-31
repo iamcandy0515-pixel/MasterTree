@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../models/tree.dart';
-import '../../../../core/repositories/base_repository.dart';
 import '../../viewmodels/tree_sourcing_viewmodel.dart';
 import '../../../../core/theme/neo_theme.dart';
 import '../../../../core/api/node_api.dart';
