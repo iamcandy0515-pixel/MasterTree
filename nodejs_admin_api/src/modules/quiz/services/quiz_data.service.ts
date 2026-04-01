@@ -34,10 +34,26 @@ export class QuizDataService {
     async upsertQuizQuestion(data: any) {
         const categoryId = await this.ensureCategory(data.subject);
         const examId = await this.ensureExam(data.subject, data.year, data.round);
+        const wrapBlock = (val: any) => Array.isArray(val) ? val : [{ type: "text", content: val || "" }];
+
+        // [Safety check] If no ID provided, check for existing (Exam, QNum) collision to merge instead of insert
+        let finalId = data.id;
+        let existingBlocks: any[] = [];
+        
+        if (!finalId && examId) {
+            const { data: existing } = await quizQueryRepository.findQuestionsByExamAndNumbers(examId as number, [data.question_number]);
+            if (existing && (existing as any[]).length > 0) {
+                finalId = (existing as any[])[0].id;
+                existingBlocks = (existing as any[])[0].content_blocks || [];
+            }
+        } else if (finalId) {
+            const { data: existing } = await quizQueryRepository.findQuizForDeletion(finalId);
+            existingBlocks = (existing as any)?.content_blocks || [];
+        }
 
         const payload: any = {
             raw_source_text: data.raw_source_text,
-            content_blocks: data.content_blocks,
+            content_blocks: QuizFormatter.mergeBlocks(wrapBlock(data.content_blocks), existingBlocks),
             hint_blocks: data.hint_blocks,
             options: data.options,
             correct_option_index: data.correct_option_index,
@@ -56,9 +72,9 @@ export class QuizDataService {
             if (embedding) payload.embedding = embedding;
         }
 
-        if (data.id) {
-            await quizRepository.updateQuiz(data.id, payload);
-            return { id: data.id, ...payload };
+        if (finalId) {
+            await quizRepository.updateQuiz(finalId, payload);
+            return { id: finalId, ...payload };
         } else {
             const res = await quizRepository.insertQuiz(payload);
             if (res.error) throw res.error;
@@ -83,9 +99,15 @@ export class QuizDataService {
         console.log(`[QuizDataService] Batch Upsert Start: subject=${subject}, year=${year}, round=${round}`);
         console.log(`[QuizDataService] Resolved IDs: categoryId=${categoryId}, examId=${examId}`);
 
+        // Fetch existing questions to preserve images
+        const qNumbers = quizItems.map(i => parseInt(i.question_number.toString(), 10));
+        const { data: existingList } = await quizQueryRepository.findQuestionsByExamAndNumbers(examId, qNumbers);
+        const existingMap = new Map((existingList as any[] || []).map(q => [q.question_number, q.content_blocks]));
+
         const itemsToUpsert: any[] = [];
         for (const item of quizItems) {
-            const payload: any = QuizFormatter.formatBatchItem(item, examId, categoryId);
+            const qNum = parseInt(item.question_number.toString(), 10);
+            const payload: any = QuizFormatter.formatBatchItem(item, examId, categoryId, existingMap.get(qNum));
             const embedText = QuizFormatter.getEmbeddingSourceText(payload);
             if (embedText) {
                 const embedding = await quizAIService.generateEmbedding(embedText);

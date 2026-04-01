@@ -30,15 +30,19 @@ export const QuizFormatter = {
     },
 
     /**
-     * Standardizes individual batch items for DB insertion.
+     * Standardizes individual batch items for DB insertion, merging existing images if found.
      */
-    formatBatchItem(item: any, examId: any, categoryId: any) {
+    formatBatchItem(item: any, examId: any, categoryId: any, existingBlocks?: any[]) {
         const wrapBlock = (val: any) => Array.isArray(val) ? val : [{ type: "text", content: val || "" }];
+        
+        const newContentBlocks = wrapBlock(item.content_blocks);
+        const mergedContentBlocks = this.mergeBlocks(newContentBlocks, existingBlocks || []);
+
         return {
             exam_id: examId,
             category_id: categoryId,
             question_number: parseInt(item.question_number.toString(), 10),
-            content_blocks: wrapBlock(item.content_blocks),
+            content_blocks: mergedContentBlocks,
             explanation_blocks: wrapBlock(item.explanation_blocks),
             hint_blocks: Array.isArray(item.hint_blocks) 
                 ? item.hint_blocks.map((h: any) => typeof h === "string" ? { type: "text", content: h } : h) 
@@ -50,5 +54,19 @@ export const QuizFormatter = {
             difficulty: item.difficulty || 2,
             status: "draft",
         };
+    },
+
+    /**
+     * Merges new text blocks with existing image blocks to prevent loss during re-extraction.
+     */
+    mergeBlocks(newBlocks: any[], existingBlocks: any[]): any[] {
+        const existingImages = existingBlocks.filter(b => b && b.type === "image");
+        const containsNewImage = newBlocks.some(b => b && b.type === "image");
+
+        // [Strategy] If new data has NO images but old data HAS images, keep those images.
+        if (existingImages.length > 0 && !containsNewImage) {
+            return [...newBlocks, ...existingImages];
+        }
+        return newBlocks;
     }
 };

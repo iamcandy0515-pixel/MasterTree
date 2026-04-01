@@ -80,6 +80,17 @@ export class QuizQueryRepository {
             .range(offset, offset + limit - 1)
             .order("id", { ascending: false });
     }
+
+    /**
+     * Fetches questions by exam ID and a list of question numbers
+     */
+    async findQuestionsByExamAndNumbers(examId: number, questionNumbers: number[]) {
+        return await supabase
+            .from("quiz_questions")
+            .select("id, question_number, content_blocks, explanation_blocks, hint_blocks")
+            .eq("exam_id", examId)
+            .in("question_number", questionNumbers);
+    }
 }
 
 export const quizQueryRepository = new QuizQueryRepository();
