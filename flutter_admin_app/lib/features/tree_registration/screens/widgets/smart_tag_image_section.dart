@@ -37,11 +37,7 @@ class SmartTagImageSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          const Text(
-            'text 스마트 태그',
-            style: TextStyle(color: Colors.white38, fontSize: 11, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 8),
+
 
           // Tag Selection Row (Rebuilds when activeTag or taggedImages changes labels)
           Consumer<TreeRegistrationViewModel>(

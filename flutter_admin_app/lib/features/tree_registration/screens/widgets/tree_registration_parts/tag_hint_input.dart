@@ -44,7 +44,7 @@ class _TagHintInputState extends State<TagHintInput> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          '이 부위의 퀴즈 힌트',
+          '퀴즈 힌트',
           style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12),
         ),
         const SizedBox(height: 8),
