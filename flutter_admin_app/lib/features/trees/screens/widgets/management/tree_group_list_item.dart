@@ -101,30 +101,27 @@ class TreeGroupListItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RichText(
-          text: TextSpan(
-            children: [
-              TextSpan(
-                text: m1?.treeName ?? 'A',
-                style: GoogleFonts.notoSans(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-              ),
-              TextSpan(
-                text: ' vs ',
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                group.name.isNotEmpty
+                    ? group.name
+                    : '${m1?.treeName ?? 'A'} vs ${m2?.treeName ?? 'B'}',
                 style: GoogleFonts.notoSans(
-                    fontSize: 12, fontWeight: FontWeight.w500, color: Colors.grey[500], fontStyle: FontStyle.italic),
+                    fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              TextSpan(
-                text: m2?.treeName ?? 'B',
-                style: GoogleFonts.notoSans(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-              ),
-              TextSpan(
-                text: ' (${group.members.length}건)',
-                style: GoogleFonts.notoSans(fontSize: 16, fontWeight: FontWeight.bold, color: NeoColors.acidLime),
-              ),
-            ],
-          ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+            ),
+            Text(
+              ' (${group.members.length}건)',
+              style: GoogleFonts.notoSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: NeoColors.acidLime),
+            ),
+          ],
         ),
         const SizedBox(height: 4),
         Row(
@@ -134,7 +131,10 @@ class TreeGroupListItem extends StatelessWidget {
             Expanded(
               child: Text(
                 group.description,
-                style: GoogleFonts.notoSans(fontSize: 12, color: NeoColors.acidLime, fontWeight: FontWeight.w500),
+                style: GoogleFonts.notoSans(
+                    fontSize: 12,
+                    color: NeoColors.acidLime,
+                    fontWeight: FontWeight.w500),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),

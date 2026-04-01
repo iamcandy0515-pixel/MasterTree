@@ -67,6 +67,7 @@ class SimilarSpeciesController {
           'desc': g['description'] ?? '비교 설명이 없습니다.',
           'img1': ApiService.getProxyImageUrl(img1),
           'img2': ApiService.getProxyImageUrl(img2),
+          'count': members.length,
         };
       }).toList();
       isLoading = false;

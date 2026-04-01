@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/api_service.dart';
 import '../../../core/design_system.dart';
 import '../../species_comparison_detail_screen.dart';
 
@@ -33,25 +32,41 @@ class SimilarSpeciesCard extends StatelessWidget {
           ),
           child: Row(
             children: [
-              _buildImageStack(item['img1']!, item['img2']!),
+              _buildImageStack(item['count'] ?? 0),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      item['group_name'] ?? '${item['tree1']} vs ${item['tree2']}',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textLight,
-                      ),
-                      overflow: TextOverflow.ellipsis,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item['group_name'] ??
+                                '${item['tree1']} vs ${item['tree2']}',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textLight,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Text(
+                          ' (${item['count']}건)',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        const Icon(Icons.info, color: AppColors.primary, size: 14),
+                        const Icon(Icons.info,
+                            color: AppColors.primary, size: 14),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
@@ -77,39 +92,49 @@ class SimilarSpeciesCard extends StatelessWidget {
     );
   }
 
-  Widget _buildImageStack(String img1, String img2) {
+  Widget _buildImageStack(int count) {
     return SizedBox(
-      width: 64,
+      width: 72,
       height: 40,
       child: Stack(
         children: [
-          _buildCircleAvatar(0, img1),
-          _buildCircleAvatar(1, img2),
+          Positioned(
+            left: 0,
+            child: _buildIconAvatar(Icons.park_rounded, 0),
+          ),
+          if (count > 1)
+            Positioned(
+              left: 24,
+              child: _buildIconAvatar(Icons.nature_rounded, 1),
+            ),
+          if (count > 2)
+            Positioned(
+              left: 48,
+              child: _buildIconAvatar(Icons.more_horiz, 2, isEllipsis: true),
+            ),
         ],
       ),
     );
   }
 
-  Widget _buildCircleAvatar(int index, String url) {
-    return Positioned(
-      left: index * 24.0,
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(color: AppColors.backgroundDark, width: 2),
-          image: url.isNotEmpty
-              ? DecorationImage(
-                  image: NetworkImage(ApiService.getProxyImageUrl(url)),
-                  fit: BoxFit.cover,
-                )
-              : null,
-          color: Colors.white.withOpacity(0.05),
+  Widget _buildIconAvatar(IconData icon, int index, {bool isEllipsis = false}) {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        color: AppColors.primary.withOpacity(0.1),
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: AppColors.backgroundDark,
+          width: 2,
         ),
-        child: url.isEmpty
-            ? const Center(child: Icon(Icons.park, size: 24, color: Colors.white10))
-            : null,
+      ),
+      child: Center(
+        child: Icon(
+          icon,
+          color: AppColors.primary,
+          size: isEllipsis ? 16 : 20,
+        ),
       ),
     );
   }
