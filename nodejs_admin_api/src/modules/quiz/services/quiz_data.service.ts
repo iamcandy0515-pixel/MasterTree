@@ -74,6 +74,14 @@ export class QuizDataService {
         const categoryId = await this.ensureCategory(subject);
         const examId = await this.ensureExam(subject, year, round);
 
+        if (!categoryId || !examId) {
+            console.error(`[QuizDataService] Identity Resolution Failed: categoryId=${categoryId}, examId=${examId}. Filter:`, examFilter);
+            throw new Error(`Invalid exam or category configuration. Please check if year/round/subject are correctly set.`);
+        }
+
+        console.log(`[QuizDataService] Batch Upsert Start: subject=${subject}, year=${year}, round=${round}`);
+        console.log(`[QuizDataService] Resolved IDs: categoryId=${categoryId}, examId=${examId}`);
+
         const itemsToUpsert: any[] = [];
         for (const item of quizItems) {
             const payload: any = QuizFormatter.formatBatchItem(item, examId, categoryId);
@@ -84,6 +92,8 @@ export class QuizDataService {
             }
             itemsToUpsert.push(payload);
         }
+
+        console.log(`[QuizDataService] Prepared ${itemsToUpsert.length} items to database. First item q_num: ${itemsToUpsert[0]?.question_number}`);
 
         const { data, error } = await quizRepository.upsertBatch(itemsToUpsert);
         if (error) {

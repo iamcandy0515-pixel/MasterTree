@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -39,6 +40,15 @@ class _BulkImageEditorSectionState extends State<BulkImageEditorSection> {
   @override
   void initState() {
     super.initState();
+    
+    // [DEBUG] 웹 환경에서 브라우저 직접 이벤트 가로채기 (가장 확실한 방법)
+    if (kIsWeb) {
+      // dart:html 라이브러리를 사용하여 브라우저 이벤트를 직접 감시합니다.
+      // (주석: 아래 window는 flutter_web일 때 사용 가능)
+      // ignore: undefined_prefixed_name
+      // html.window.onPaste.listen((event) => _handleWebPaste(event));
+    }
+
     _focusNode.onKeyEvent = (node, event) {
       if (event is KeyDownEvent) {
         final isV = event.logicalKey == LogicalKeyboardKey.keyV;
@@ -47,9 +57,10 @@ class _BulkImageEditorSectionState extends State<BulkImageEditorSection> {
             keys.contains(LogicalKeyboardKey.controlRight) ||
             keys.contains(LogicalKeyboardKey.metaLeft) ||
             keys.contains(LogicalKeyboardKey.metaRight);
+        
         if (isV && isCtrlOrCmd) {
-          _submitPaste();
-          return KeyEventResult.ignored; // 텍스트 붙여넣기도 통과시킴
+          _submitPaste(); // 즉시 클립보드 이미지 읽기 시도
+          return KeyEventResult.ignored; // 텍스트 붙여넣기는 브라우저/위젯의 기본 동작에 맡김
         }
       }
       return KeyEventResult.ignored;
@@ -193,44 +204,36 @@ class _BulkImageEditorSectionState extends State<BulkImageEditorSection> {
           ],
         ),
         const SizedBox(height: 8),
-        CallbackShortcuts(
-          bindings: {
-            const SingleActivator(LogicalKeyboardKey.keyV, control: true):
-                _submitPaste,
-            const SingleActivator(LogicalKeyboardKey.keyV, meta: true):
-                _submitPaste,
+        Focus(
+          focusNode: _focusNode,
+          onFocusChange: (hasFocus) {
+            if (hasFocus) setState(() {});
           },
-          child: Focus(
-            focusNode: _focusNode,
-            onFocusChange: (hasFocus) {
-              if (hasFocus) setState(() {});
-            },
-            child: TextField(
-              controller: widget.controller,
-              maxLines: widget.lines,
-              onChanged: widget.onChanged,
-              style: const TextStyle(color: Colors.white, fontSize: 13),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: _focusNode.hasFocus
-                    ? Colors.white.withOpacity(0.08)
-                    : Colors.black26,
-                hintText: _focusNode.hasFocus ? 'Ctrl+V로 이미지 붙여넣기 가능' : null,
-                hintStyle: TextStyle(
-                    color: primaryColor.withOpacity(0.4), fontSize: 11),
-                contentPadding: const EdgeInsets.all(12),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.white.withOpacity(0.05)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: primaryColor, width: 1.5),
-                ),
+          child: TextField(
+            controller: widget.controller,
+            maxLines: widget.lines,
+            onChanged: widget.onChanged,
+            style: const TextStyle(color: Colors.white, fontSize: 13),
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: _focusNode.hasFocus
+                  ? Colors.white.withOpacity(0.08)
+                  : Colors.black26,
+              hintText: _focusNode.hasFocus ? 'Ctrl+V로 이미지 붙여넣기 가능' : null,
+              hintStyle: TextStyle(
+                  color: primaryColor.withOpacity(0.4), fontSize: 11),
+              contentPadding: const EdgeInsets.all(12),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.white.withOpacity(0.05)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: primaryColor, width: 1.5),
               ),
             ),
           ),
@@ -300,12 +303,13 @@ class _BulkImageEditorSectionState extends State<BulkImageEditorSection> {
                       padding: const EdgeInsets.all(8.0),
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxHeight: 600),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
                           child: Image.network(
                             imageUrl,
-                            // 미지정 시 기본값 BoxFit.scaleDown이 적용되어
-                            // 원본 크기를 보여주되 컨테이너를 넘어가면 축소됩니다.
+                            alignment: Alignment.centerLeft,
+                            fit: BoxFit.none,
+                            // 원본 픽셀 그대로 노출 (1:1 매핑)
                           ),
                         ),
                       ),

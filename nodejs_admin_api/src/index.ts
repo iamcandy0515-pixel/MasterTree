@@ -1,6 +1,4 @@
-import dotenv from "dotenv";
-dotenv.config();
-
+import "./env"; // 🚨 ESSENTIAL: Load environment variables before any other imports
 import app from "./app";
 import treesRoutes from "./modules/trees/trees.routes";
 import externalRoutes from "./modules/external/external.routes"; // Import External routes

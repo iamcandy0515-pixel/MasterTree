@@ -176,7 +176,12 @@ class BulkExtractionViewModel extends ChangeNotifier
     void Function(int current, int total)? onProgress,
     void Function(String message)? onMessage,
   }) async {
-    if (_extractedQuizzes.isEmpty || subject == null) return {'total': 0, 'success': 0, 'failed': 0};
+    if (_extractedQuizzes.isEmpty) return {'total': 0, 'success': 0, 'failed': 0};
+    
+    if (subject == null || year == null || round == null) {
+      onMessage?.call('⚠️ 과목, 년도, 회차 정보를 모두 선택해주세요.');
+      return {'total': 0, 'success': 0, 'failed': 0};
+    }
 
     _isLoading = true;
     statusMessageText = '데이터베이스 등록 중...';

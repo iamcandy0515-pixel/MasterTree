@@ -72,3 +72,6 @@ test_*.ts
 test_*.dart
 scratch_*.js
 scratch_*.ts
+
+# --- EXCLUDED DIRECTORIES (USER REQUEST) ---
+lookalike_species_setup/

@@ -77,12 +77,24 @@ export class QuizRepository {
      * Upserts a batch of quiz questions
      */
     async upsertBatch(items: any[]) {
-        return await supabase
+        // [DEBUG] Ensure we are using the Service Role at the moment of request
+        const headers = (supabase as any).rest?.headers || {};
+        const authHeader = headers['apikey'] || headers['Authorization'] || 'None';
+        if (items.length > 0) {
+            console.log(`[QuizRepo] Sample Item Structure (exam_id: ${items[0].exam_id}, category_id: ${items[0].category_id}, q_num: ${items[0].question_number})`);
+        }
+
+        const { data, error } = await supabase
             .from("quiz_questions")
             .upsert(items, {
                 onConflict: "exam_id, question_number",
             })
             .select();
+
+        if (error) {
+            console.error("❌ [QuizRepo] DB Error Object:", JSON.stringify(error, null, 2));
+        }
+        return { data, error };
     }
 
     /**
