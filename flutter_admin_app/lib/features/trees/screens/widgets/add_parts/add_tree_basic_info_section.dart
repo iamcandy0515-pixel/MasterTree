@@ -25,7 +25,6 @@ class AddTreeBasicInfoSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
                 '기본 정보',
@@ -35,6 +34,25 @@ class AddTreeBasicInfoSection extends StatelessWidget {
                   color: NeoColors.acidLime,
                 ),
               ),
+              const SizedBox(width: 12),
+              // U-1, U-2: 조회 버튼 추가
+              if (vm.isSearching)
+                const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2, color: NeoColors.acidLime),
+                )
+              else
+                TextButton.icon(
+                  onPressed: vm.nameKrController.text.isNotEmpty ? () => vm.searchTreeByName() : null,
+                  icon: const Icon(Icons.search, size: 14),
+                  label: const Text('조회', style: TextStyle(fontSize: 12)),
+                  style: TextButton.styleFrom(
+                    foregroundColor: NeoColors.acidLime.withOpacity(0.8),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                  ),
+                ),
+              const Spacer(),
               AddTreeSubmitButton(formKey: formKey, isEditMode: isEditMode),
             ],
           ),

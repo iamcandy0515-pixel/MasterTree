@@ -18,13 +18,52 @@ class AddTreeViewModel extends ChangeNotifier with TreeMediaMixin, TreeQuizMixin
   String? _selectedCategory;
   int _difficulty = 1;
   bool _isSubmitting = false;
+  bool _isSearching = false; // T-1: 검색 상태 추가
   String? _errorMessage;
 
   // Getters
   String? get selectedCategory => _selectedCategory;
   int get difficulty => _difficulty;
   bool get isSubmitting => _isSubmitting;
+  bool get isSearching => _isSearching; // T-1: 검색 상태 Getter
   String? get errorMessage => _errorMessage;
+
+  /// T-2: 수목명으로 기존 정보 조회
+  Future<void> searchTreeByName() async {
+    final name = nameKrController.text.trim();
+    if (name.isEmpty) return;
+
+    _isSearching = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      // minimal: false를 통해 전체 상세 정보를 가져옴
+      final result = await _repo.getTrees(search: name, minimal: false);
+      
+      if (result.trees.isNotEmpty) {
+        // 가장 유사한 첫 번째 결과 사용 (승인된 답변 2번: 즉시 덮어쓰기)
+        final tree = result.trees.first;
+        scientificNameController.text = tree.scientificName ?? '';
+        descriptionController.text = tree.description ?? '';
+        _selectedCategory = tree.category;
+        _difficulty = tree.difficulty;
+        
+        // 이미지 및 퀴즈 정보 초기화 (기존 정보 활용 시 대비)
+        initializeImages(tree.images);
+        initializeQuiz(tree.quizDistractors, tree.isAutoQuizEnabled);
+        
+        _errorMessage = "기존 등록된 '${tree.nameKr}' 정보를 불러왔습니다.";
+      } else {
+        _errorMessage = "'$name'으로 등록된 수목 정보가 없습니다.";
+      }
+    } catch (e) {
+      _errorMessage = "조회 실패: ${e.toString()}";
+    } finally {
+      _isSearching = false;
+      notifyListeners();
+    }
+  }
 
   AddTreeViewModel(this.originalTree) {
     if (originalTree != null) {
