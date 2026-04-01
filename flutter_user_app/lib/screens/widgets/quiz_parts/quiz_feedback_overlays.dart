@@ -62,7 +62,7 @@ class QuizFeedbackOverlays extends StatelessWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      '${vm.selectedHint} 파트',
+                      '${vm.selectedHint} 힌트',
                       style: const TextStyle(
                         color: AppColors.primary,
                         fontSize: 14,

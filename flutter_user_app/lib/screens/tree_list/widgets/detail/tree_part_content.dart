@@ -41,7 +41,7 @@ class TreePartContent extends StatelessWidget {
           ),
         ),
         child: Text(
-          isEmpty ? '$selectedTag 파트가 없습니다.' : hint!,
+          isEmpty ? '$selectedTag 힌트 정보가 없습니다.' : hint!,
           style: TextStyle(
             color: isEmpty ? AppColors.textMuted : AppColors.textLight,
             fontSize: 13,
