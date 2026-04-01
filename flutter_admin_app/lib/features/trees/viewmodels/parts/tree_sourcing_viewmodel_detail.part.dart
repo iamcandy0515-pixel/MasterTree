@@ -22,9 +22,9 @@ extension TreeSourcingDetailExtension on TreeSourcingViewModel {
     notify();
 
     try {
-      // 초기 진입 시에는 isManual: false 로 동기화 (이미 존재하는 URL은 db 배지 유지)
-      await syncWithDrive(isManual: false);
-      _hasChanges = false; // 초기 로드 후에는 변경사항 없음으로 처리
+      // 초기 진입 시에는 DB 정보만 표시하고, 자동 동기화는 수행하지 않음
+      // 사용자가 드라이브 추출 버튼을 눌렀을 때만 동기화 하도록 변경
+      _hasChanges = false; 
     } finally {
       _isLoading = false;
       notify();

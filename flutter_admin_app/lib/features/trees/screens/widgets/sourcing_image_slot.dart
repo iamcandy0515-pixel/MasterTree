@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
+import 'dart:io' as io;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -200,8 +201,16 @@ class SourcingImageSlot extends StatelessWidget {
     }
 
     if (displayItem is XFile) {
+      if (kIsWeb) {
+        return Image.network(
+          displayItem.path,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+        );
+      }
       return Image.file(
-        File(displayItem.path),
+        io.File(displayItem.path),
         fit: BoxFit.cover,
         width: double.infinity,
         height: double.infinity,

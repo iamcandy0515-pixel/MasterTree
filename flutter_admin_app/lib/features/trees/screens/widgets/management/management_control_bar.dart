@@ -30,20 +30,11 @@ class ManagementControlBar extends StatelessWidget {
       textBaseline: TextBaseline.alphabetic,
       children: [
         Text(
-          '추천 비교 가이드',
+          '전체 (${vm.totalCount})',
           style: GoogleFonts.notoSans(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey[500],
-          ),
-        ),
-        const SizedBox(width: 8),
-        Text(
-          '총 ${vm.totalCount}개',
-          style: GoogleFonts.notoSans(
-            fontSize: 12,
+            fontSize: 13,
             color: NeoColors.acidLime,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ],

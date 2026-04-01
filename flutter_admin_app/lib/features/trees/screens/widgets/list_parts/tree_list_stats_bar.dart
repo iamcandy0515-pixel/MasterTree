@@ -36,15 +36,7 @@ class _StatInfo extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '수목 현황',
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.4),
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
-          '총 $count건',
+          '전체 ($count)',
           style: const TextStyle(
             color: NeoColors.acidLime,
             fontSize: 14,

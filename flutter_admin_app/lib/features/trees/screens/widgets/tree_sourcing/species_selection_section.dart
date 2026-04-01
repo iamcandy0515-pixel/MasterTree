@@ -20,6 +20,12 @@ class SpeciesSelectionSection extends StatelessWidget {
 
     return Column(
       children: [
+        // 상단 페이지네이션 컨트롤
+        if (vm.trees.isNotEmpty && !vm.isLoading) ...[
+          _buildPaginationControls(vm),
+          const SizedBox(height: 16),
+        ],
+
         // 나무 리스트
         if (vm.isLoading)
           const Padding(
@@ -39,10 +45,6 @@ class SpeciesSelectionSection extends StatelessWidget {
               return _buildTreeCard(context, tree, vm);
             },
           ),
-
-        const SizedBox(height: 16),
-        // 페이지네이션 컨트롤
-        _buildPaginationControls(vm),
       ],
     );
   }
