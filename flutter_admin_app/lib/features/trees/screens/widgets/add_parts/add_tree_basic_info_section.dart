@@ -44,7 +44,7 @@ class AddTreeBasicInfoSection extends StatelessWidget {
                 )
               else
                 TextButton.icon(
-                  onPressed: vm.nameKrController.text.isNotEmpty ? () => vm.searchTreeByName() : null,
+                  onPressed: () => vm.searchTreeByName(),
                   icon: const Icon(Icons.search, size: 14),
                   label: const Text('조회', style: TextStyle(fontSize: 12)),
                   style: TextButton.styleFrom(
@@ -84,6 +84,7 @@ class _NameInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: vm.nameKrController,
+      onChanged: (_) => vm.updateUI(),
       decoration: const InputDecoration(
         labelText: '한글 이름 (필수)',
         border: InputBorder.none,

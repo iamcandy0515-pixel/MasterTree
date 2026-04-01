@@ -31,7 +31,11 @@ class AddTreeViewModel extends ChangeNotifier with TreeMediaMixin, TreeQuizMixin
   /// T-2: 수목명으로 기존 정보 조회
   Future<void> searchTreeByName() async {
     final name = nameKrController.text.trim();
-    if (name.isEmpty) return;
+    if (name.isEmpty) {
+      _errorMessage = "조회를 위한 수목명을 입력해주세요.";
+      notifyListeners();
+      return;
+    }
 
     _isSearching = true;
     _errorMessage = null;
@@ -165,4 +169,6 @@ class AddTreeViewModel extends ChangeNotifier with TreeMediaMixin, TreeQuizMixin
     clearQuiz();
     notifyListeners();
   }
+
+  void updateUI() => notifyListeners();
 }
