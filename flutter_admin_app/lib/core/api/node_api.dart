@@ -110,6 +110,14 @@ class NodeApi {
 
     // [1] 이미 프록시 처리되었거나 기타 이미지 서버 URL
     if (url.contains('/uploads/proxy')) {
+      // ⚠️ 포트가 다르거나 도메인이 다를 경우 현재 baseUrl로 교체 (DB에 옛날 포트로 저장된 경우 대응)
+      if (!url.startsWith(baseUrl)) {
+        final proxyPathIndex = url.indexOf('/api/uploads/proxy');
+        if (proxyPathIndex != -1) {
+          url = baseUrl + url.substring(proxyPathIndex + 4); // "/api" 제외 후 baseUrl 결합
+        }
+      }
+      
       if (width != null && !url.contains('&w=')) return '$url&w=$width';
       return url;
     }

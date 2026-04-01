@@ -93,22 +93,20 @@ export class SettingsService {
         return data.value;
     }
 
-    // Get Google Drive folder URL
+    // Get Google Drive folder URL (Original Images)
     async getGoogleDriveFolderUrl() {
         const { data, error } = await supabase
             .from("app_settings")
             .select("value")
-            .eq("key", "google_drive_folder_url")
-            .single();
+            .in("key", ["google_drive_folder_url", "tree_image_drive_url"]) // Fallback keys
+            .order('updated_at', { ascending: false }) // 최신 것 우선
+            .limit(1);
 
-        if (error) {
-            if (error.code === "PGRST116") {
-                return "";
-            }
-            throw error;
+        if (error || !data || data.length === 0) {
+            return "";
         }
 
-        return data.value;
+        return data[0].value;
     }
 
     // Update Google Drive folder URL
@@ -141,17 +139,15 @@ export class SettingsService {
         const { data, error } = await supabase
             .from("app_settings")
             .select("value")
-            .eq("key", "thumbnail_drive_url")
-            .single();
+            .in("key", ["thumbnail_drive_url", "tree_thumbnail_drive_url"]) // Fallback keys
+            .order('updated_at', { ascending: false })
+            .limit(1);
 
-        if (error) {
-            if (error.code === "PGRST116") {
-                return "";
-            }
-            throw error;
+        if (error || !data || data.length === 0) {
+            return "";
         }
 
-        return data.value;
+        return data[0].value;
     }
 
     // Update Thumbnail Drive URL

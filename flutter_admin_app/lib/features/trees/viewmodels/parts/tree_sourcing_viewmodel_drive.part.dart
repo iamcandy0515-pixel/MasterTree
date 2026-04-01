@@ -67,9 +67,7 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
           final driveOriginalUrl = original[type];
           if (driveOriginalUrl != null) {
             _fileMissing.remove('${type}_original');
-            // Rule 1 & 2: 
-            // - 수동 추출(isManual=true)인 경우 항상 'google' 표시
-            // - 자동 동기화인 경우 DB와 다를 때만 'google' 표시 (같으면 'db' 유지)
+            // 수동 또는 DB 정보와 다를 때(신규 포함) 스테이징
             if (isManual || dbImage == null || dbImage.imageUrl != driveOriginalUrl) {
               stageImage(
                 type,
@@ -78,7 +76,8 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
                   imageUrl: driveOriginalUrl,
                   thumbnailUrl: dbImage?.thumbnailUrl,
                 ),
-                source: isManual ? 'google' : 'db', // Rule 9-1 & 9-2
+                // DB와 일치하면 'db', 아니면 'google' (이미지 존재 시)
+                source: (dbImage != null && dbImage.imageUrl == driveOriginalUrl) ? 'db' : 'google',
               );
             }
           } else if (dbImage != null && dbImage.imageUrl.isNotEmpty) {
@@ -100,7 +99,8 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
                   thumbnailUrl: driveThumbUrl,
                 ),
                 isThumbnail: true,
-                source: isManual ? 'google' : 'db', // Rule 9-1 & 9-2
+                // DB와 일치하면 'db', 아니면 'google'
+                source: (dbImage != null && dbImage.thumbnailUrl == driveThumbUrl) ? 'db' : 'google',
               );
             }
           } else if (dbImage != null &&

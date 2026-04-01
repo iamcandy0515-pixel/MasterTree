@@ -32,11 +32,9 @@ class SourcingImageSlot extends StatelessWidget {
     final stagedData = vm.pendingImages[key];
     final displayItem =
         stagedData ??
-        (isMissing
-            ? null // 드라이브에 파일이 없으면 렌더링하지 않음 (Rule 3-1)
-            : (isThumb
-                ? (existing?.thumbnailUrl?.isNotEmpty == true ? existing : null)
-                : (existing?.imageUrl.isNotEmpty == true ? existing : null)));
+        (isThumb
+            ? (existing?.thumbnailUrl?.isNotEmpty == true ? existing : null)
+            : (existing?.imageUrl.isNotEmpty == true ? existing : null));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,13 +78,33 @@ class SourcingImageSlot extends StatelessWidget {
                       ),
               ),
               if (isMissing)
-                const Positioned(
-                  left: 8,
-                  top: 8,
-                  child: Icon(
-                    Icons.warning_amber_rounded,
-                    color: Colors.redAccent,
-                    size: 20,
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.warning_amber_rounded,
+                            color: Colors.redAccent.withOpacity(0.8),
+                            size: 40,
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                            'Drive 실물 없음',
+                            style: TextStyle(
+                              color: Colors.redAccent,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               if (displayItem != null)
@@ -137,10 +155,13 @@ class SourcingImageSlot extends StatelessWidget {
 
   Widget _buildSourceBadge(String key, dynamic displayItem) {
     final source = vm.imageSources[key] ?? 'db';
-    String text = 'DB 정보';
-    Color color = Colors.blue.withOpacity(0.8);
+    String text = '정보 없음';
+    Color color = Colors.grey;
 
-    if (source == 'google') {
+    if (source == 'db') {
+      text = 'DB 정보';
+      color = Colors.blue.withOpacity(0.9);
+    } else if (source == 'google') {
       text = '구글 정보';
       color = NeoColors.acidLime.withOpacity(0.9);
     } else if (source == 'manual') {
