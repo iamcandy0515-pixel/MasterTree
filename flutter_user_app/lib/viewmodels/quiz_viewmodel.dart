@@ -59,6 +59,7 @@ class QuizViewModel extends ChangeNotifier with QuizDataHandler {
     try {
       final List<Map<String, dynamic>> data = await ApiService.getTrees(
         limit: 100,
+        minimal: false,
       );
       if (data.isNotEmpty) {
         _questions = processQuizData(data);

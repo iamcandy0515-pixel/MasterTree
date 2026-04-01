@@ -8,10 +8,12 @@ class TreeService {
     int limit = 100,
     String? search,
     String? category,
+    bool minimal = true,
   }) async {
     final queryParams = {
       'page': page.toString(),
       'limit': limit.toString(),
+      'minimal': minimal.toString(),
       if (search != null && search.isNotEmpty) 'search': search,
       if (category != null && category != '전체') 'category': category,
     };

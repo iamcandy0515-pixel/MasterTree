@@ -10,7 +10,8 @@ class ApiService {
     int limit = 100,
     String? search,
     String? category,
-  }) => TreeService.getTrees(page: page, limit: limit, search: search, category: category);
+    bool minimal = true,
+  }) => TreeService.getTrees(page: page, limit: limit, search: search, category: category, minimal: minimal);
 
   static Future<Map<String, dynamic>?> getTreeOne(int id) => TreeService.getTreeOne(id);
 
