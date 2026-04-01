@@ -29,21 +29,31 @@ class QuizExtractionDataForm extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(
-              Icons.edit_note,
-              color: primaryColor,
-              size: 22,
-            ),
-            const SizedBox(width: 8),
-            const Text(
-              '추출 데이터 상세',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
+            Expanded(
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.edit_note,
+                    color: primaryColor,
+                    size: 22,
+                  ),
+                  const SizedBox(width: 8),
+                  const Flexible(
+                    child: Text(
+                      '추출 데이터 상세',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const Spacer(),
+            const SizedBox(width: 8), // Minimal spacing
             DbRegistrationModule(
               questionController: questionController,
               explanationController: explanationController,

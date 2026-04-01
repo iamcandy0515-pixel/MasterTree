@@ -63,6 +63,7 @@ class QuizExtractionFilterSummary extends StatelessWidget {
 
   Widget _buildTag(String text) {
     return Container(
+      constraints: const BoxConstraints(maxWidth: 180), // Prevent excessive width
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.05),
@@ -71,6 +72,8 @@ class QuizExtractionFilterSummary extends StatelessWidget {
       ),
       child: Text(
         text,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: const TextStyle(
           color: Colors.white70,
           fontSize: 12,

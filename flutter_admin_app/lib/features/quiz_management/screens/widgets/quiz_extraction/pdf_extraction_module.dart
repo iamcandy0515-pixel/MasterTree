@@ -45,55 +45,66 @@ class PdfExtractionModule extends StatelessWidget {
                 ),
               ],
             ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextButton(
-                  onPressed: vm.isValidating ? null : onValidateFile,
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.orangeAccent,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  child: vm.isValidating
-                      ? const SizedBox(
-                          width: 14,
-                          height: 14,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.orangeAccent,
-                          ),
-                        )
-                      : const Text(
-                          '파일검증',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
+            Flexible(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Flexible(
+                    child: TextButton(
+                      onPressed: vm.isValidating ? null : onValidateFile,
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.orangeAccent,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
                         ),
-                ),
-                const SizedBox(width: 8),
-                TextButton(
-                  onPressed: onExtractQuiz,
-                  style: TextButton.styleFrom(
-                    foregroundColor: primaryColor,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: vm.isValidating
+                          ? const SizedBox(
+                              width: 14,
+                              height: 14,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.orangeAccent,
+                              ),
+                            )
+                          : const Text(
+                              '파일검증',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                     ),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                  child: const Text(
-                    'PDF 추출',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  const SizedBox(width: 4),
+                  Flexible(
+                    child: TextButton(
+                      onPressed: onExtractQuiz,
+                      style: TextButton.styleFrom(
+                        foregroundColor: primaryColor,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: const Text(
+                        'PDF 추출',
+                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
