@@ -110,42 +110,6 @@ export class QuizRepository {
     }
 
     /**
-     * Performs vector search for related questions
-     */
-    async matchQuestions(embedding: number[], threshold: number, count: number) {
-        return await supabase.rpc("match_quiz_questions", {
-            query_embedding: embedding,
-            match_threshold: threshold,
-            match_count: count,
-        });
-    }
-
-    /**
-     * Fetches basic info for multiple quiz IDs
-     */
-    async findQuizzesByIds(ids: number[]) {
-        return await supabase
-            .from("quiz_questions")
-            .select(
-                `id, question_number, content_blocks, quiz_exams(year, round, title)`,
-            )
-            .in("id", ids);
-    }
-
-    /**
-     * Fetches recent quizzes as fallback candidates
-     */
-    async findRecentQuizzes(limit: number) {
-        return await supabase
-            .from("quiz_questions")
-            .select(
-                `id, question_number, content_blocks, quiz_exams(year, round, title)`,
-            )
-            .limit(limit)
-            .order("created_at", { ascending: false });
-    }
-
-    /**
      * Fetches full quiz data including image paths for deletion
      */
     async findQuizForDeletion(id: number) {
@@ -176,34 +140,6 @@ export class QuizRepository {
             .eq("id", quizId);
     }
 
-    /**
-     * Finds quizzes with pagination and filters
-     */
-    async findWithFilters(offset: number, limit: number, filters: any) {
-        let query = supabase
-            .from("quiz_questions")
-            .select(
-                `
-                id, question_number, content_blocks, options, correct_option_index, 
-                explanation_blocks, difficulty, category_id, exam_id,
-                quiz_categories(name), quiz_exams(year, round, title)
-                `,
-                { count: "exact" },
-            );
-
-        if (filters.difficulty) query = query.eq("difficulty", filters.difficulty);
-        if (filters.search) {
-            query = query.ilike("raw_source_text", `%${filters.search}%`);
-        }
-        
-        // Relationship filters often require sub-selects or separate ID IDs in Supabase
-        if (filters.categoryId) query = query.eq("category_id", filters.categoryId);
-        if (filters.examId) query = query.eq("exam_id", filters.examId);
-
-        return await query
-            .range(offset, offset + limit - 1)
-            .order("id", { ascending: false });
-    }
 }
 
 export const quizRepository = new QuizRepository();

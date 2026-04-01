@@ -27,16 +27,25 @@
 
 ## 3. 향후 작업 계획 (Step-by-Step)
 
-### [단계 1] DB 제약 조건 최종 확인 (Linter 및 Schema 체크)
-- `quiz_questions` 테이블에 `(exam_id, question_number)` 복합 유니크 인덱스가 실제로 적용되어 있는지 Supabase 대시보드 또는 SQL 정의서를 통해 최종 확인합니다. (현재 코드는 이를 전제로 동작 중)
+### [Phase 1: 사전 준비 및 백업]
+- [x] 현재 Git 브랜치 상태 확인 및 백업 (`git commit` 완료)
+- [x] 터미널 인코딩 설정 확인 (`chcp 65001`)
 
-### [단계 2] 예외 상황 테스트
-- 이미지 데이터가 포함된 경우 Upsert 시 기존 이미지 URL이 소실되지 않고 `content_blocks` 내에서 정상적으로 유지/갱신되는지 확인합니다.
-- 배치 등록(`upsert-batch`) 시 일부 데이터 오류가 전체 트랜잭션에 미치는 영향을 점검합니다.
+### [Phase 2: 코드 정밀 분석 및 검증]
+- [x] `nodejs_admin_api/src/modules/quiz/quiz.repository.ts` 내 `upsertBatch` 메서드의 `onConflict` 설정 재확인 (결과: `exam_id, question_number` 기반 동작 확인)
+- [x] `QuizDataService.ensureExam` 분석 (과목+년도+회차 조합으로 `exam_id` 고유성 보장 확인)
+- [x] 200줄 초과 파일 조사 및 분리: `quiz.repository.ts` (분리 완료: `quiz_query.repository.ts` 생성)
 
-### [단계 3] UI 개선 (선택 사항)
-- Upsert 발생 시 사용자에게 "기존 문제를 업데이트했습니다" 또는 "새 문제를 등록했습니다"와 같은 세분화된 피드백 메시지를 제공하도록 SnackBar 로직을 고도화할 수 있습니다.
+### [Phase 3: 구현 및 최적화]
+- [x] **[Rule 1-1]** Repository 소스 분리 (CRUD vs Search) 및 의존성 업데이트 완료
+- [ ] **[Risk Fix]** 이미지 데이터 보존 로직 추가 (현재 Upsert 시 `content_blocks` 전체 덮어쓰기로 인한 기존 이미지 소실 위험 대응 필요)
+- [x] **[Rule 3-2]** `npm run lint` (`tsc --noEmit`) 실행 및 오류 없음 확인
+
+### [Phase 4: 최종 점검]
+- [x] 수정된 소스의 `diff` 분석 (정합성 체크 완료)
+- [ ] 최종 결과 보고 및 개발자 승인
 
 ---
 **작성자:** Antigravity (AI Coding Assistant)
 **작성일:** 2026-04-01
+**상태:** 데이터 정합성 강화(이미지 보존) 단계 대기 중

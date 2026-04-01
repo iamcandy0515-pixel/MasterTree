@@ -1,5 +1,6 @@
 import { quizAIService } from "./ai/quiz-ai.service";
 import { quizRepository } from "./quiz.repository";
+import { quizQueryRepository } from "./quiz_query.repository";
 import { quizExtractionService } from "./quiz-extraction.service";
 import { quizDataService } from "./services/quiz_data.service";
 
@@ -81,14 +82,14 @@ export class QuizService {
         let questions: any[] = [];
 
         if (queryEmbedding && queryEmbedding.length > 0) {
-            const { data, error } = await quizRepository.matchQuestions(queryEmbedding, 0.5, 50);
+            const { data, error } = await quizQueryRepository.matchQuestions(queryEmbedding, 0.5, 50);
             if (!error && data && (data as any[]).length > 0) {
-                const { data: fullData } = await quizRepository.findQuizzesByIds((data as any[]).map((d: any) => d.id));
+                const { data: fullData } = await quizQueryRepository.findQuizzesByIds((data as any[]).map((d: any) => d.id));
                 questions = fullData || [];
             }
         }
         if (questions.length === 0) {
-            const { data } = await quizRepository.findRecentQuizzes(50);
+            const { data } = await quizQueryRepository.findRecentQuizzes(50);
             questions = data || [];
         }
 

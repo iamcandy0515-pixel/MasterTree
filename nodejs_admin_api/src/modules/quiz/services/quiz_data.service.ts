@@ -1,4 +1,5 @@
 import { quizRepository } from "../quiz.repository";
+import { quizQueryRepository } from "../quiz_query.repository";
 import { quizAIService } from "../ai/quiz-ai.service";
 import { UploadService } from "../../uploads/uploads.service";
 import { QuizFormatter } from "../utils/quiz_formatter";
@@ -107,7 +108,7 @@ export class QuizDataService {
      * Deletes a quiz and cleans up storage images.
      */
     async deleteQuiz(id: number) {
-        const { data: quiz } = await quizRepository.findQuizForDeletion(id) as any;
+        const { data: quiz } = await quizQueryRepository.findQuizForDeletion(id) as any;
         if (quiz) {
             const imagePaths = QuizFormatter.extractImagePaths([...(quiz.content_blocks || []), ...(quiz.explanation_blocks || [])]);
             if (imagePaths.length > 0) {
@@ -129,7 +130,7 @@ export class QuizDataService {
         const categoryId = subject ? await this.ensureCategory(subject) : undefined;
         const examId = (year && round) ? await this.ensureExam(subject, year, round) : undefined;
 
-        const { data, error, count } = await quizRepository.findWithFilters(offset, limit, {
+        const { data, error, count } = await quizQueryRepository.findWithFilters(offset, limit, {
             ...filter,
             categoryId,
             examId
