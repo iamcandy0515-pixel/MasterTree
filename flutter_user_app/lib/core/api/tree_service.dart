@@ -44,8 +44,21 @@ class TreeService {
     }
   }
 
+  static Future<Map<String, dynamic>?> getTreeOne(int id) async {
+    final url = Uri.parse('${AppConstants.apiUrl}/trees/$id');
+    try {
+      final jsonResponse = await BaseApiService.get(url);
+      if (jsonResponse['success'] == true) {
+        return Map<String, dynamic>.from(jsonResponse['data']);
+      }
+    } catch (e) {
+      debugPrint('TreeService.getTreeOne Error: $e');
+    }
+    return null;
+  }
+
   static Future<List<Map<String, dynamic>>> getTreeImages(int treeId) async {
-    final url = Uri.parse('${AppConstants.apiUrl}/trees?search=$treeId');
+    final url = Uri.parse('${AppConstants.apiUrl}/trees?search=$treeId&minimal=false');
     try {
       final jsonResponse = await BaseApiService.get(url);
       if (jsonResponse['success'] == true && jsonResponse['data'].isNotEmpty) {

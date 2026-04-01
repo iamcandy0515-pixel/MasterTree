@@ -4,7 +4,7 @@ import 'package:flutter_user_app/core/api_service.dart';
 import 'package:flutter_user_app/controllers/tree_list_controller.dart';
 import 'detail/tree_part_selector.dart';
 import 'detail/tree_hero_section.dart';
-import 'detail/tree_attribute_row.dart';
+import 'detail/tree_part_content.dart';
 import 'detail/tree_detail_skeleton.dart';
 
 class TreeDetailSheet extends StatefulWidget {
@@ -17,6 +17,7 @@ class TreeDetailSheet extends StatefulWidget {
 
 class _TreeDetailSheetState extends State<TreeDetailSheet> {
   String _selectedTag = '대표';
+  Map<String, dynamic>? _fullTree;
   Map<String, Map<String, String?>> _imageData = {};
   bool _isLoading = true;
   final List<String> _tags = ['대표', '잎', '수피', '꽃', '열매/겨울눈'];
@@ -29,30 +30,29 @@ class _TreeDetailSheetState extends State<TreeDetailSheet> {
 
   Future<void> _loadImageData() async {
     try {
-      final imageData = TreeListController.processImageData(widget.tree);
-      _imageData = imageData;
+      final treeId = widget.tree['id'];
+      if (treeId == null) throw Exception('Tree ID is missing');
+
+      // [방식 A] 서버에서 상세 정보를 다시 가져옵니다 (이미지 및 힌트 포함)
+      final fullTree = await ApiService.getTreeOne(treeId);
       
-      // [최적화] 모든 원본 로드 대신 썸네일 또는 초경량 리사이징 프리칭
       if (mounted) {
-        for (var tag in _tags) {
-          final urlData = _imageData[tag];
-          // 썸네일이 있으면 최우선, 없으면 200px 리사이징으로 아주 가볍게 로드
-          final thumbUrl = urlData?['thumbnail_url'] ?? urlData?['image_url'];
+        if (fullTree != null) {
+          _fullTree = fullTree;
+          _imageData = TreeListController.processImageData(fullTree);
           
-          if (thumbUrl != null) {
-            precacheImage(
-              NetworkImage(ApiService.getProxyImageUrl(thumbUrl, width: 200)),
-              context,
-            );
+          // 가벼운 로딩을 위해 썸네일 프리칭
+          for (var tag in _tags) {
+            final thumbUrl = _imageData[tag]?['thumbnail_url'] ?? _imageData[tag]?['image_url'];
+            if (thumbUrl != null) {
+              precacheImage(NetworkImage(ApiService.getProxyImageUrl(thumbUrl, width: 200)), context);
+            }
           }
         }
+        setState(() => _isLoading = false);
       }
-
-      setState(() {
-        _isLoading = false;
-      });
     } catch (e) {
-      debugPrint('Error processing image data: $e');
+      debugPrint('Error loading tree details: $e');
       if (mounted) setState(() => _isLoading = false);
     }
   }
@@ -92,9 +92,8 @@ class _TreeDetailSheetState extends State<TreeDetailSheet> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         TreeHeroSection(
-                          name: widget.tree['name_kr'] ?? '이름 없음',
-                          scientificName: widget.tree['scientific_name'] ?? 'N/A',
-                          // [최적화] 기기 너비에 최적화된 리사이징 URL 요청 (600px)
+                          name: (_fullTree ?? widget.tree)['name_kr'] ?? '이름 없음',
+                          scientificName: (_fullTree ?? widget.tree)['scientific_name'] ?? 'N/A',
                           imageUrl: ApiService.getProxyImageUrl(
                             _imageData[_selectedTag]?['image_url'] ?? 
                             'https://picsum.photos/seed/${widget.tree['id']}/600/600',
@@ -103,9 +102,11 @@ class _TreeDetailSheetState extends State<TreeDetailSheet> {
                           tag: _selectedTag,
                         ),
                         const SizedBox(height: 24),
-                        _buildHint(),
-                        const SizedBox(height: 24),
-                        _buildDetailsList(),
+                        TreePartContent(
+                          selectedTag: _selectedTag,
+                          hint: _imageData[_selectedTag]?['hint'],
+                          tree: _fullTree ?? widget.tree,
+                        ),
                         const SizedBox(height: 48),
                       ],
                     ),
@@ -124,61 +125,6 @@ class _TreeDetailSheetState extends State<TreeDetailSheet> {
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.1),
         borderRadius: BorderRadius.circular(2),
-      ),
-    );
-  }
-
-  Widget _buildHint() {
-    final hint = _imageData[_selectedTag]?['hint'];
-    final bool isEmpty = hint == null || hint.isEmpty || hint == '자료없음';
-    
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: isEmpty ? Colors.white.withOpacity(0.03) : AppColors.primary.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isEmpty ? Colors.white.withOpacity(0.05) : AppColors.primary.withOpacity(0.3),
-          ),
-        ),
-        child: Text(
-          isEmpty ? '$_selectedTag 파트가 없습니다.' : hint,
-          style: TextStyle(
-            color: isEmpty ? AppColors.textMuted : AppColors.textLight,
-            fontSize: 13,
-            height: 1.5,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailsList() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
-        children: [
-          TreeAttributeRow(
-            icon: Icons.category,
-            label: '구분',
-            content: widget.tree['category'] ?? '미분류',
-          ),
-          const SizedBox(height: 16),
-          TreeAttributeRow(
-            icon: Icons.filter_vintage,
-            label: '수형',
-            content: widget.tree['shape'] ?? '정보 없음',
-          ),
-          const SizedBox(height: 16),
-          TreeAttributeRow(
-            icon: Icons.description,
-            label: '상세 설명',
-            content: widget.tree['description'] ?? '설명 없음',
-          ),
-        ],
       ),
     );
   }
