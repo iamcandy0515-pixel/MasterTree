@@ -6,10 +6,12 @@ import '../../../core/widgets/fullscreen_image_viewer.dart';
 
 class QuizImageDisplay extends StatelessWidget {
   final String imageUrl;
+  final String? thumbnailUrl;
 
   const QuizImageDisplay({
     super.key,
     required this.imageUrl,
+    this.thumbnailUrl,
   });
 
   @override
@@ -48,33 +50,65 @@ class QuizImageDisplay extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                // [최적화 1] 원본 이미지 + 메모리 캐싱 (RAM 절감)
-                CachedNetworkImage(
-                  imageUrl: ApiService.getProxyImageUrl(imageUrl, width: 600),
-                  fit: BoxFit.cover,
-                  memCacheWidth: 600, // 기기 메모리 캐시 최적화
-                  placeholder: (context, url) => const Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.primary,
-                      strokeWidth: 2,
-                    ),
+                // [마스킹 1] 중앙 집중 크롭 (상/하단 텍스트 제거)
+                Transform.scale(
+                  scale: 1.25, // 125% 확대하여 가장자리 텍스트 영역을 Clip 밖으로 밀어냄
+                  alignment: Alignment.center,
+                  child: CachedNetworkImage(
+                    imageUrl: ApiService.getProxyImageUrl(imageUrl, width: 450),
+                    fit: BoxFit.cover,
+                    memCacheWidth: 450,
+                    // [최적화] 썸네일을 먼저 보여주는 프로그레시브 로딩
+                    placeholder: (context, url) => thumbnailUrl != null 
+                      ? Image.network(
+                          ApiService.getProxyImageUrl(thumbnailUrl, width: 300),
+                          fit: BoxFit.cover,
+                        )
+                      : const Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primary,
+                            strokeWidth: 2,
+                          ),
+                        ),
+                    errorWidget: (context, url, error) => _buildErrorWidget(),
                   ),
-                  errorWidget: (context, url, error) => _buildErrorWidget(),
                 ),
 
-                // [최적화 2] BackdropFilter 제거 (GPU 부하 절감)
-                // 하단에 텍스트나 아이콘의 가공성을 높이기 위한 가벼운 그라데이션
-                Positioned.fill(
+                // [마스킹 2] 상단 텍스트 유출 방지용 그라데이션
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: 60,
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
+                          Colors.black.withOpacity(0.85),
                           Colors.transparent,
-                          Colors.black.withOpacity(0.4),
                         ],
-                        stops: const [0.7, 1.0],
+                      ),
+                    ),
+                  ),
+                ),
+
+                // [마스킹 3] 하단 텍스트 및 그라데이션 강화
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: 60,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [
+                          Colors.black.withOpacity(0.85),
+                          Colors.transparent,
+                        ],
                       ),
                     ),
                   ),

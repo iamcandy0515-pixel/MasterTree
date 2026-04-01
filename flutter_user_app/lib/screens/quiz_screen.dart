@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_user_app/core/design_system.dart';
 import 'package:flutter_user_app/viewmodels/quiz_viewmodel.dart';
 import 'package:flutter_user_app/core/api_service.dart';
+import 'package:flutter_user_app/models/quiz_model.dart';
 import 'widgets/quiz_parts/quiz_header.dart';
 import 'widgets/quiz_parts/quiz_image_display.dart';
 import 'widgets/quiz_parts/quiz_hint_toolbar.dart';
@@ -77,10 +78,13 @@ class _QuizScreenContentState extends State<_QuizScreenContent> {
                           const SizedBox(height: 12),
                           
                           // Question-Specific Rebuilds
-                          Selector<QuizViewModel, String>(
-                            selector: (_, vm) => vm.currentQuestion.imageUrl,
-                            builder: (context, imageUrl, _) {
-                              return QuizImageDisplay(imageUrl: imageUrl);
+                          Selector<QuizViewModel, QuizQuestion>(
+                            selector: (_, vm) => vm.currentQuestion,
+                            builder: (context, question, _) {
+                              return QuizImageDisplay(
+                                imageUrl: question.imageUrl,
+                                thumbnailUrl: question.thumbnailUrl,
+                              );
                             },
                           ),
                           

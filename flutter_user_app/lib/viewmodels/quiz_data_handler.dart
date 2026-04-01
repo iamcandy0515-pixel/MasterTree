@@ -70,8 +70,8 @@ mixin QuizDataHandler {
 
       loadedQuestions.add(QuizQuestion(
         id: tree['id'] is int ? tree['id'] : int.tryParse(tree['id'].toString()) ?? 0,
-        // 600px 너비로 리사이징 요청 (네트워크 절감)
-        imageUrl: TreeService.getProxyImageUrl(questionImageUrl, width: 600),
+        // 450px 너비로 리사이징 요청 (성능/부하 최적화)
+        imageUrl: TreeService.getProxyImageUrl(questionImageUrl, width: 450),
         thumbnailUrl: TreeService.getProxyImageUrl(questionThumbnailUrl, width: 300),
         correctAnswerIndex: correctIdx,
         options: options,
