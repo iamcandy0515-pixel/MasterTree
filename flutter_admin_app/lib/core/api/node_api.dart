@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -8,8 +9,14 @@ import 'package:flutter_admin_app/core/globals.dart';
 import 'package:flutter_admin_app/features/auth/screens/login_screen.dart';
 
 class NodeApi {
-  static String get baseUrl =>
-      dotenv.env['NODE_API_URL'] ?? 'http://localhost:4000/api';
+  static String get baseUrl {
+    // [1] 배포 환경이거나 브라우저 주소가 localhost가 아니면 무조건 리얼 서버 사용
+    if (kReleaseMode || !Uri.base.toString().contains('localhost')) {
+      return 'https://mastertree-api-final.vercel.app/api';
+    }
+    // [2] 로컬 테스트 환경일 때만 localhost 사용
+    return dotenv.env['NODE_API_URL'] ?? 'http://localhost:5000/api';
+  }
 
   /// Get headers with Auth Token
   static Future<Map<String, String>> _getHeaders() async {

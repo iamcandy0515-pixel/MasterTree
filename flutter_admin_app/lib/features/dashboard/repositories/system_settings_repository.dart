@@ -64,7 +64,7 @@ class SystemSettingsRepository extends BaseRepository {
   Future<String> getEntryCode() => _fetchSetting('/settings/entry-code', defaultValue: '1234', dataKey: 'entryCode');
   Future<String> updateEntryCode(String newCode) => _postSetting('/settings/entry-code', {'entryCode': newCode}, dataKey: 'entryCode', errorPrefix: '입장 코드 업데이트 실패');
 
-  Future<String> getUserAppUrl() => _fetchSetting('/settings/user-url', defaultValue: 'http://localhost:8080');
+  Future<String> getUserAppUrl() => _fetchSetting('/settings/user-url', defaultValue: 'https://mastertree-user-app.vercel.app');
   Future<String> updateUserAppUrl(String newUrl) => _postSetting('/settings/user-url', {'url': newUrl}, errorPrefix: '사용자 URL 업데이트 실패');
 
   Future<String> getGoogleDriveFolderUrl() => _fetchSetting('/settings/drive-url', defaultValue: '');

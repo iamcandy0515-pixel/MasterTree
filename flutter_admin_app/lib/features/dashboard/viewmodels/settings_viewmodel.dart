@@ -16,7 +16,7 @@ class SettingsViewModel extends ChangeNotifier {
   String _entryCode = "1234";
   String get entryCode => _entryCode;
 
-  String _userAppUrl = "http://localhost:8080";
+  String _userAppUrl = "https://mastertree-user-app.vercel.app";
   String get userAppUrl => _userAppUrl;
 
   String _googleDriveUrl = "";

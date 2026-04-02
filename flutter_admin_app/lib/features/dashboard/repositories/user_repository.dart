@@ -2,12 +2,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_admin_app/core/api/node_api.dart';
 
 class UserRepository {
   final String _baseUrl;
 
   UserRepository()
-    : _baseUrl = dotenv.env['API_URL'] ?? 'http://localhost:3000/api';
+    : _baseUrl = NodeApi.baseUrl;
 
   Future<List<Map<String, dynamic>>> getUsers({
     int page = 1,

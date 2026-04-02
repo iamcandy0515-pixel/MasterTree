@@ -5,12 +5,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_admin_app/features/tree_registration/models/tree_registration_request.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_admin_app/core/api/node_api.dart';
 
 class TreeRegistrationRepository {
   final String _baseUrl;
 
   TreeRegistrationRepository()
-    : _baseUrl = dotenv.env['API_URL'] ?? 'http://localhost:3000/api';
+    : _baseUrl = NodeApi.baseUrl;
 
   // Helper to get headers with Auth Token
   Future<Map<String, String>> _getHeaders() async {

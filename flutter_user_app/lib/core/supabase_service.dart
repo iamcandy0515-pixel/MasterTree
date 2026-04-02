@@ -175,15 +175,17 @@ class SupabaseService {
         final data = jsonDecode(utf8.decode(response.bodyBytes));
         debugPrint('Response Data: $data');
         if (data['success'] == true) {
-          return data['data']['entryCode'] ?? '1234';
+          final code = data['data']['entryCode'];
+          if (code != null) return code;
         }
       } else {
-        debugPrint('Failed to load entry code: ${response.body}');
+        debugPrint('Failed to load entry code: ${response.statusCode}');
       }
     } catch (e) {
-      debugPrint('Error fetching global entry code from $url: $e');
+      debugPrint('Error fetching global entry code: $e');
     }
-    return '1234';
+    // 기본값 1234를 제거하고 빈 값을 반환하여 실패 처리
+    return '';
   }
 
   /// Check if global/required entry code is valid
@@ -192,9 +194,8 @@ class SupabaseService {
     Map<String, dynamic>? user,
   }) async {
     final serverCode = await fetchGlobalEntryCode();
-    // Allow if it matches either the global server code OR the specific user's code
-    if (serverCode == code) return true;
-    if (user != null && user['entry_code'] == code) return true;
-    return false;
+    // 서버에서 가져온 코드가 없거나(실패), 입력한 코드와 다르면 거부
+    if (serverCode.isEmpty) return false;
+    return serverCode == code;
   }
 }

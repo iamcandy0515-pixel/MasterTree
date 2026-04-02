@@ -3,12 +3,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_admin_app/core/globals.dart';
 import 'package:flutter_admin_app/features/auth/screens/login_screen.dart';
+import 'package:flutter_admin_app/core/api/node_api.dart';
 
 abstract class BaseRepository {
   final String baseUrl;
 
   BaseRepository()
-      : baseUrl = dotenv.env['API_URL'] ?? 'http://localhost:3000/api';
+      : baseUrl = NodeApi.baseUrl;
 
   /// Auth Token을 포함한 공통 헤더 생성
   Future<Map<String, String>> getHeaders() async {
@@ -51,7 +52,7 @@ abstract class BaseRepository {
     int? height,
   }) {
     if (url.contains('drive.google.com') || url.startsWith('http')) {
-      final base = baseUrl ?? dotenv.env['API_URL'] ?? 'http://localhost:3000/api';
+      final base = baseUrl ?? NodeApi.baseUrl;
       String proxyUrl = '$base/uploads/proxy?url=${Uri.encodeComponent(url)}';
       if (width != null) proxyUrl += '&w=$width';
       if (height != null) proxyUrl += '&h=$height';

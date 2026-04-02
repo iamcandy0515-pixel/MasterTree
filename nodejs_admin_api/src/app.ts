@@ -28,17 +28,13 @@ const allowedOrigins = [
     "http://127.0.0.1:4000",
     "http://127.0.0.1:5000",
     "http://127.0.0.1:5001",
-    "http://127.0.0.1:8081"
+    "http://127.0.0.1:8081",
+    "https://mastertree-user-app.vercel.app",
+    "https://mastertree-admin-app.vercel.app"
 ];
 
 app.use(cors({
-    origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error("Not allowed by CORS"));
-        }
-    },
+    origin: true,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"]
