@@ -103,6 +103,7 @@ class _UserListBuilder extends StatelessWidget {
               primaryColor: primaryColor,
               onApprove: (id) => vm.approveUser(id),
               onReject: (id) => vm.rejectUser(id),
+              onPending: (id) => vm.pendingUser(id),
               onDelete: (id, name) => _handleDelete(context, vm, id, name),
             );
           },

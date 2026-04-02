@@ -24,7 +24,7 @@ export class UserManagementController {
             const meta = (result as any).meta || null;
             const data = (result as any).data || result;
 
-            return successResponse(res, data, "Users retrieved successfully", 200, meta);
+            return successResponse(res, { users: data }, "Users retrieved successfully", 200, meta);
         } catch (error: any) {
             console.error("[UserManagement] List Error:", error.message);
             return errorResponse(res, error.message, 500);

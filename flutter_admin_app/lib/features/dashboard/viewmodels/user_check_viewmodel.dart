@@ -58,6 +58,7 @@ class UserCheckViewModel extends ChangeNotifier {
 
   Future<void> approveUser(String userId) => updateStatus(userId, 'approved');
   Future<void> rejectUser(String userId) => updateStatus(userId, 'rejected');
+  Future<void> pendingUser(String userId) => updateStatus(userId, 'pending');
 
   Future<void> deleteUser(String userId) async {
     try {

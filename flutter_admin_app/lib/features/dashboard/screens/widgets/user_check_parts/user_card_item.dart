@@ -8,6 +8,7 @@ class UserCardItem extends StatelessWidget {
   final Color primaryColor;
   final Function(String) onApprove;
   final Function(String) onReject;
+  final Function(String) onPending;
   final Function(String, String) onDelete;
 
   const UserCardItem({
@@ -17,6 +18,7 @@ class UserCardItem extends StatelessWidget {
     required this.primaryColor,
     required this.onApprove,
     required this.onReject,
+    required this.onPending,
     required this.onDelete,
   });
 
@@ -96,6 +98,28 @@ class UserCardItem extends StatelessWidget {
                 ),
               ),
               _buildStatusBadge(user['role'] ?? 'User', primaryColor),
+              if (user['isDuplicate'] == true) ...[
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.redAccent.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: Colors.redAccent.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 10),
+                      const SizedBox(width: 4),
+                      const Text(
+                        '중복 가능성',
+                        style: TextStyle(color: Colors.redAccent, fontSize: 9, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
               const SizedBox(width: 4),
               IconButton(
                 icon: const Icon(
@@ -124,6 +148,7 @@ class UserCardItem extends StatelessWidget {
                 status: currentStatus,
                 onApprove: () => onApprove(user['id']!),
                 onReject: () => onReject(user['id']!),
+                onPending: () => onPending(user['id']!),
                 primaryColor: primaryColor,
               ),
             ],

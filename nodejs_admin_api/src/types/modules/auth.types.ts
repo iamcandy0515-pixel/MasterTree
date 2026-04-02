@@ -41,30 +41,36 @@ export type AuthTables = {
   }
   users: {
     Row: {
+      auth_id: string | null
       created_at: string
       email: string | null
       entry_code: string
       id: string
       name: string
       phone: string
+      role: string | null
       status: string | null
     }
     Insert: {
+      auth_id?: string | null
       created_at?: string
       email?: string | null
       entry_code: string
       id?: string
       name: string
       phone: string
+      role?: string | null
       status?: string | null
     }
     Update: {
+      auth_id?: string | null
       created_at?: string
       email?: string | null
       entry_code?: string
       id?: string
       name?: string
       phone?: string
+      role?: string | null
       status?: string | null
     }
     Relationships: []

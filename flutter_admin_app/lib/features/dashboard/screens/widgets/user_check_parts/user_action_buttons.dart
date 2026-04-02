@@ -4,6 +4,7 @@ class UserActionButtons extends StatelessWidget {
   final String status;
   final VoidCallback onApprove;
   final VoidCallback onReject;
+  final VoidCallback onPending;
   final Color primaryColor;
 
   const UserActionButtons({
@@ -11,6 +12,7 @@ class UserActionButtons extends StatelessWidget {
     required this.status,
     required this.onApprove,
     required this.onReject,
+    required this.onPending,
     required this.primaryColor,
   });
 
@@ -29,9 +31,9 @@ class UserActionButtons extends StatelessWidget {
           const SizedBox(width: 8),
           _NeoScaleButton(
             onPressed: onApprove,
+            isTextButton: true,
             label: '승인',
             color: primaryColor,
-            textColor: Colors.black,
           ),
         ],
       );
@@ -43,11 +45,23 @@ class UserActionButtons extends StatelessWidget {
         color: primaryColor,
       );
     } else {
-      return _NeoScaleButton(
-        onPressed: onReject,
-        isTextButton: true,
-        label: '활동 정지',
-        color: Colors.redAccent,
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _NeoScaleButton(
+            onPressed: onPending,
+            isTextButton: true,
+            label: '대기중',
+            color: Colors.blueAccent,
+          ),
+          const SizedBox(width: 4),
+          _NeoScaleButton(
+            onPressed: onReject,
+            isTextButton: true,
+            label: '활동 정지',
+            color: Colors.redAccent,
+          ),
+        ],
       );
     }
   }
@@ -57,14 +71,12 @@ class _NeoScaleButton extends StatefulWidget {
   final VoidCallback onPressed;
   final String label;
   final Color color;
-  final Color? textColor;
   final bool isTextButton;
 
   const _NeoScaleButton({
     required this.onPressed,
     required this.label,
     required this.color,
-    this.textColor,
     this.isTextButton = false,
   });
 
@@ -117,7 +129,7 @@ class _NeoScaleButtonState extends State<_NeoScaleButton> {
                 child: Text(
                   widget.label,
                   style: TextStyle(
-                    color: widget.textColor ?? Colors.white,
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
                   ),

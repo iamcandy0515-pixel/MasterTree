@@ -49,48 +49,77 @@ export class UsersService {
 
     /**
      * List Users (Admin)
-     * Supports filtering by status if needed (will be handled in controller/service filter logic)
+     * Fetches from 'public.users' table for accurate server-side filtering and persistence.
      */
     async listUsers(page: number = 1, limit: number = 50, status?: string, minimal = false) {
-        // Fetch users from Supabase Auth Admin API
-        const { data, error } = await supabase.auth.admin.listUsers({
-            page,
-            perPage: limit,
-        });
+        const offset = (page - 1) * limit;
 
-        if (error) throw error;
+        // 1. Fetch from 'public.users' table
+        let query = supabase
+            .from('users')
+            .select('*', { count: 'exact' })
+            .order('created_at', { ascending: false });
 
-        let users = data.users.map((u) => {
+        if (status) {
+            query = query.eq('status', status);
+        }
+
+        const { data: dbUsers, error, count } = await query.range(offset, offset + limit - 1);
+
+        if (error) {
+            logger.error("Failed to fetch users from DB", error);
+            throw error;
+        }
+
+        // 2. Check for duplicates across the entire table
+        const emails = dbUsers.map(u => u.email).filter(Boolean);
+        const phones = dbUsers.map(u => u.phone).filter(Boolean);
+
+        let duplicateMap: Record<string, { email?: boolean, phone?: boolean }> = {};
+
+        if (emails.length > 0 || phones.length > 0) {
+            const { data: allMatches } = await supabase
+                .from('users')
+                .select('id, email, phone')
+                .or(`email.in.(${emails.map(e => `"${e}"`).join(',')}),phone.in.(${phones.map(p => `"${p}"`).join(',')})`);
+
+            if (allMatches) {
+                dbUsers.forEach(u => {
+                    const otherEmailMatch = allMatches.some(m => m.id !== u.id && m.email === u.email && u.email);
+                    const otherPhoneMatch = allMatches.some(m => m.id !== u.id && m.phone === u.phone && u.phone);
+                    if (otherEmailMatch || otherPhoneMatch) {
+                        duplicateMap[u.id] = { email: otherEmailMatch, phone: otherPhoneMatch };
+                    }
+                });
+            }
+        }
+
+        // 3. Map DB users to standardized format
+        const users = dbUsers.map((u) => {
+            const isDuplicate = !!duplicateMap[u.id];
             const baseInfo = {
-                id: u.id,
+                id: u.auth_id || u.id,
+                dbId: u.id,
                 email: u.email,
-                name:
-                    u.user_metadata?.full_name ||
-                    u.user_metadata?.name ||
-                    (u.email?.startsWith("u010") ? u.email.substring(1).split("@")[0] : u.email?.split("@")[0]) ||
-                    "사용자",
-                status: u.user_metadata?.status || "pending", // Default to pending if not set
+                phone: u.phone,
+                name: u.name || "사용자",
+                status: u.status || "pending",
+                lastLogin: null,
+                createdAt: u.created_at,
+                isDuplicate,
+                duplicateDetails: duplicateMap[u.id] || null,
             };
 
-            // Mobile Optimization: Field Pruning
             if (minimal) return baseInfo;
 
             return {
                 ...baseInfo,
-                role:
-                    u.user_metadata?.role ||
-                    (u.email?.includes("admin") ? "Master" : "User"),
-                lastLogin: u.last_sign_in_at,
-                createdAt: u.created_at,
+                role: u.role || (u.email?.includes("admin") ? "Master" : "User"),
+                entryCode: u.entry_code,
             };
         });
 
-        // In-memory filter for status (since auth.admin.listUsers is limited)
-        if (status) {
-            users = users.filter((u) => u.status === status);
-        }
-
-        const totalCount = data.total || 0;
+        const totalCount = count || 0;
 
         return {
             data: users,
@@ -105,21 +134,34 @@ export class UsersService {
 
     /**
      * Update User Status (Admin)
+     * Syncs status to both 'public.users' table and 'auth' metadata.
      */
     async updateUserStatus(userId: string, status: string) {
-        const { data, error } = await supabase.auth.admin.updateUserById(
+        // 1. Update public.users table (Primary source of truth for app)
+        const { error: dbError } = await supabase
+            .from('users')
+            .update({ status })
+            .or(`auth_id.eq.${userId},id.eq.${userId}`);
+
+        if (dbError) {
+            logger.error(`Failed to update DB status for ${userId}`, dbError);
+            throw new Error(`Database update failed: ${dbError.message}`);
+        }
+
+        // 2. Update Auth Metadata (For redundancy and auth-level checks)
+        const { data, error: authError } = await supabase.auth.admin.updateUserById(
             userId,
             {
                 user_metadata: { status },
             },
         );
 
-        if (error) {
-            logger.error(`Failed to update user status for ${userId}`, error);
-            throw error;
+        if (authError) {
+            logger.warn(`Auth metadata update failed for ${userId} (non-critical): ${authError.message}`);
+            // We don't throw here if DB update succeeded, as public.users is the main source.
         }
 
-        return data.user;
+        return data?.user || { id: userId, status };
     }
 
     /**
