@@ -72,7 +72,7 @@ class _QuizExtractionStep2ScreenContentState
 
   void _validateFile() async {
     final vm = context.read<QuizExtractionStep2ViewModel>();
-    await vm.validateFile();
+    await vm.performValidation();
   }
 
   void _extractQuiz() async {

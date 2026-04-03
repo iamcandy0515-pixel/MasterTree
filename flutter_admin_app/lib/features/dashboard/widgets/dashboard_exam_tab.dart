@@ -36,7 +36,7 @@ class DashboardExamTab extends StatelessWidget {
             subLabel: '파일 선택 후 한 문항씩 정밀 추출',
             onTap: () => _navigateTo(
               context,
-              const QuizExtractionStep2Screen(selectedFiles: []),
+              const QuizExtractionStep2Screen(),
             ),
             color: secondaryBlue,
           ),

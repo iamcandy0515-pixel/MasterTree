@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../viewmodels/quiz_extraction_step2_viewmodel.dart';
+import '../../../viewmodels/quiz_extraction_step2_viewmodel.dart';
 
 class PdfExtractionModule extends StatelessWidget {
   final VoidCallback onValidateFile;
@@ -102,7 +101,6 @@ class PdfExtractionModule extends StatelessWidget {
     );
   }
 
-  // 🔥 [Nuclear Cast] The ultimate release-mode int safety
   int _safeInt(dynamic val) {
     if (val == null) return 1;
     if (val is int) return val;
@@ -121,7 +119,7 @@ class PdfExtractionModule extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-                side: Border.all(color: Colors.white10),
+                side: const BorderSide(color: Colors.white10),
               ),
             ),
             icon: vm.isStep1Validating
