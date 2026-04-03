@@ -5,7 +5,8 @@ class QuizExtractionFilterSummary extends StatelessWidget {
   final int? year;
   final int? round;
 
-  const QuizExtractionFilterSummary({
+  // 🔥 [FIX] Removed 'const' to allow runtime parsing in initializer list
+  QuizExtractionFilterSummary({
     super.key,
     dynamic subject,
     dynamic year,
@@ -34,7 +35,8 @@ class QuizExtractionFilterSummary extends StatelessWidget {
         runSpacing: 8,
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
-          _buildItem(Icons.bookmark_active, subject ?? '과목미지정'),
+          // 🔥 [FIX] Changed bookmark_active (invalid) to bookmark
+          _buildItem(Icons.bookmark, subject ?? '과목미지정'),
           _buildItem(Icons.calendar_today, year != null ? '$year년' : '연도미상'),
           _buildItem(Icons.history, round != null ? '$round회차' : '회차정보없음'),
         ],
