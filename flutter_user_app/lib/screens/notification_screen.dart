@@ -98,9 +98,7 @@ class _NotificationContent extends StatelessWidget {
       },
       child: Container(
         padding: const EdgeInsets.all(20),
-        color: notification.isRead
-            ? Colors.transparent
-            : Colors.white.withOpacity(0.03),
+        color: Colors.white.withOpacity(0.03),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -122,14 +120,10 @@ class _NotificationContent extends StatelessWidget {
                     children: [
                       Text(
                         notification.title,
-                        style: TextStyle(
-                          color: notification.isRead
-                              ? Colors.grey[400]
-                              : Colors.white,
+                        style: const TextStyle(
+                          color: Colors.white,
                           fontSize: 15,
-                          fontWeight: notification.isRead
-                              ? FontWeight.normal
-                              : FontWeight.bold,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
@@ -141,8 +135,8 @@ class _NotificationContent extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     notification.message,
-                    style: TextStyle(
-                      color: Colors.grey[500],
+                    style: const TextStyle(
+                      color: Colors.white70,
                       fontSize: 13,
                       height: 1.4,
                     ),
