@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../viewmodels/quiz_extraction_step2_viewmodel.dart';
+import '../../viewmodels/quiz_extraction_step2_viewmodel.dart';
 
 class PdfExtractionModule extends StatelessWidget {
   final VoidCallback onValidateFile;
@@ -12,157 +12,143 @@ class PdfExtractionModule extends StatelessWidget {
     required this.onExtractQuiz,
   });
 
-  static const primaryColor = Color(0xFF2BEE8C);
-  static const backgroundDark = Color(0xFF102219);
-
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<QuizExtractionStep2ViewModel>();
+    const primaryColor = Color(0xFF2BEE8C);
+    const backgroundDark = Color(0xFF102219);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Wrap(
-          alignment: WrapAlignment.spaceBetween,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: const [
-                Icon(
-                  Icons.settings_input_component,
-                  color: primaryColor,
-                  size: 20,
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A2E24),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.picture_as_pdf, color: primaryColor, size: 20),
+              const SizedBox(width: 10),
+              const Text(
+                'PDF 퀴즈 추출',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
-                SizedBox(width: 8),
-                Text(
-                  '추출조건',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            Flexible(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Flexible(
-                    child: TextButton(
-                      onPressed: vm.isValidating ? null : onValidateFile,
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.orangeAccent,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      child: vm.isValidating
-                          ? const SizedBox(
-                              width: 14,
-                              height: 14,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.orangeAccent,
-                              ),
-                            )
-                          : const Text(
-                              '파일검증',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Flexible(
-                    child: TextButton(
-                      onPressed: onExtractQuiz,
-                      style: TextButton.styleFrom(
-                        foregroundColor: primaryColor,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      child: const Text(
-                        'PDF 추출',
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                ],
               ),
-            ),
-          ],
+              const Spacer(),
+              _buildQuestionSelector(vm, backgroundDark, primaryColor),
+            ],
+          ),
+          const SizedBox(height: 20),
+          _buildActionButtons(vm, primaryColor),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuestionSelector(
+    QuizExtractionStep2ViewModel vm,
+    Color backgroundDark,
+    Color primaryColor,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        const Text(
+          '추출할 문항 번호',
+          style: TextStyle(color: Colors.grey, fontSize: 10),
         ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 12,
-          runSpacing: 8,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            const Text(
-              '문제번호 :',
-              style: TextStyle(
+        const SizedBox(height: 4),
+        Container(
+          height: 36,
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<int>(
+              value: _safeInt(vm.selectedQuestion),
+              isExpanded: false,
+              dropdownColor: backgroundDark,
+              icon: const Icon(Icons.expand_more, color: primaryColor, size: 16),
+              style: const TextStyle(
                 color: Colors.white,
-                fontSize: 13,
+                fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),
-            ),
-            Container(
-              height: 36,
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<int>(
-                  value: (vm.selectedQuestion as dynamic).toString().isEmpty ? 1 : int.tryParse(vm.selectedQuestion.toString()) ?? 1,
-                  isExpanded: false,
-                  dropdownColor: backgroundDark,
-                  icon: const Icon(
-                    Icons.expand_more,
-                    color: primaryColor,
-                    size: 16,
+              onChanged: (int? newValue) {
+                if (newValue != null) vm.setSelectedQuestion(newValue);
+              },
+              items: List.generate(
+                _safeInt(vm.selectedQuestion) > 20 ? _safeInt(vm.selectedQuestion) : 20,
+                (index) => index + 1,
+              )
+              .map(
+                (value) => DropdownMenuItem<int>(
+                  value: value,
+                  child: Text(
+                    'Q$value',
+                    style: const TextStyle(fontSize: 12),
                   ),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  onChanged: (int? newValue) {
-                    if (newValue != null) vm.setSelectedQuestion(newValue);
-                  },
-                  items:
-                      List.generate(
-                            (int.tryParse(vm.selectedQuestion.toString()) ?? 1) > 20 ? (int.tryParse(vm.selectedQuestion.toString()) ?? 1) : 20,
-                            (index) => index + 1,
-                          )
-                          .map(
-                            (value) => DropdownMenuItem<int>(
-                              value: value,
-                              child: Text(
-                                'Q$value',
-                                style: const TextStyle(fontSize: 12),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          )
-                          .toList(),
                 ),
+              )
+              .toList(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // 🔥 [Nuclear Cast] The ultimate release-mode int safety
+  int _safeInt(dynamic val) {
+    if (val == null) return 1;
+    if (val is int) return val;
+    return int.tryParse(val.toString()) ?? 1;
+  }
+
+  Widget _buildActionButtons(QuizExtractionStep2ViewModel vm, Color primaryColor) {
+    return Row(
+      children: [
+        Expanded(
+          child: ElevatedButton.icon(
+            onPressed: vm.isStep1Validating ? null : onValidateFile,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white.withOpacity(0.05),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: Border.all(color: Colors.white10),
               ),
             ),
-          ],
+            icon: vm.isStep1Validating
+                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                : const Icon(Icons.check_circle_outline, size: 18),
+            label: const Text('파일 검증', style: TextStyle(fontSize: 13)),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          flex: 2,
+          child: ElevatedButton.icon(
+            onPressed: (vm.isStep1Validating || vm.isStep2Extracting || !vm.isStep1Done)
+                ? null
+                : onExtractQuiz,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: primaryColor,
+              foregroundColor: Colors.black,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              elevation: 0,
+            ),
+            icon: vm.isStep2Extracting
+                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2))
+                : const Icon(Icons.auto_awesome, size: 18),
+            label: const Text('AI 퀴즈 추출', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+          ),
         ),
       ],
     );

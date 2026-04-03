@@ -9,8 +9,11 @@ class DashboardStatsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DashboardViewModel>(
       builder: (context, vm, child) {
-        // Defensive type casting within build for minified JS
-        final Map<String, dynamic> stats = Map<String, dynamic>.from(vm.stats);
+        // 🔥 [MEM-Safe] Avoid Map.from() in release mode for minified JS
+        final dynamic raw = vm.stats;
+        final Map<String, dynamic> stats = (raw is Map) 
+          ? raw.map((k, v) => MapEntry(k.toString(), v)) 
+          : <String, dynamic>{};
         
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),

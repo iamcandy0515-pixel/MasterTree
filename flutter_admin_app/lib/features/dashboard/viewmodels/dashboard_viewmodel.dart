@@ -20,9 +20,10 @@ class DashboardViewModel extends ChangeNotifier {
   Map<String, dynamic> get stats => _stats;
   bool get isLoading => _isLoading;
 
-  /// MEM (Manual Entry Mapping) - Survive minified JS crashes
+  /// MEM (Manual Entry Mapping) - Nuclear Cast 2.0
   Map<String, dynamic> _forceCast(dynamic data) {
     if (data is! Map) return <String, dynamic>{};
+    // Survive minified JS crashes by explicit entry-by-entry mapping
     return data.map((k, v) => MapEntry(k.toString(), v));
   }
 
@@ -44,7 +45,10 @@ class DashboardViewModel extends ChangeNotifier {
 
     try {
       final dynamic rawData = await _statsRepo.getDashboardStats();
+      
+      // 🔥 [Nuclear Cast 2.0] Direct mapping of entries
       _stats = _forceCast(rawData);
+      
       debugPrint('✅ [DashboardVM] stats loaded');
     } catch (e) {
       debugPrint('❌ [DashboardVM] error: $e');
