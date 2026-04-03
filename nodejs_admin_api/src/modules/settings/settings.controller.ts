@@ -60,7 +60,7 @@ export class SettingsController {
     static async getUserNotification(req: Request, res: Response) {
         try {
             const data = await settingsService.getUserNotification();
-            successResponse(res, { notification: data || "" });
+            successResponse(res, { value: data || "" });
         } catch (error: any) {
             errorResponse(res, error.message || "Failed to get user notification");
         }
@@ -72,7 +72,7 @@ export class SettingsController {
             if (notification === undefined) return errorResponse(res, "Notification message is required", 400);
 
             const updated = await settingsService.updateUserNotification(notification);
-            successResponse(res, { notification: updated }, "User notification updated successfully");
+            successResponse(res, { value: updated }, "User notification updated successfully");
         } catch (error: any) {
             errorResponse(res, error.message || "Failed to update user notification");
         }

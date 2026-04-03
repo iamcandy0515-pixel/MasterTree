@@ -26,7 +26,7 @@ router.post("/user-url", verifyAdmin, SettingsController.updateUserAppUrl);
 // -----------------------------------------------------------------------------
 
 // GET /api/settings/notification
-router.get("/notification", verifyAdmin, SettingsController.getUserNotification);
+router.get("/notification", SettingsController.getUserNotification);
 
 // POST /api/settings/notification
 router.post("/notification", verifyAdmin, SettingsController.updateUserNotification);

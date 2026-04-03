@@ -47,8 +47,8 @@ class SystemSettingsRepository extends BaseRepository {
   Future<String> updateUserAppUrl(String newUrl) => _postSetting('/settings/user-url', {'url': newUrl}, errorPrefix: '사용자 URL 업데이트 실패');
 
   // New: User Notification Management
-  Future<String> getUserNotification() => _fetchSetting('/settings/notification', defaultValue: '', dataKey: 'notification');
-  Future<String> updateUserNotification(String message) => _postSetting('/settings/notification', {'notification': message}, dataKey: 'notification', errorPrefix: '알림 정보 업데이트 실패');
+  Future<String> getUserNotification() => _fetchSetting('/settings/notification', defaultValue: '', dataKey: 'value');
+  Future<String> updateUserNotification(String message) => _postSetting('/settings/notification', {'notification': message}, dataKey: 'value', errorPrefix: '알림 정보 업데이트 실패');
 
   Future<String> getGoogleDriveFolderUrl() => _fetchSetting('/settings/drive-url', defaultValue: '');
   Future<String> updateGoogleDriveFolderUrl(String newUrl) => _postSetting('/settings/drive-url', {'url': newUrl}, errorPrefix: '구글 드라이브 URL 업데이트 실패');
