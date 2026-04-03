@@ -45,26 +45,30 @@ class _NotificationContent extends StatelessWidget {
           const SizedBox(width: 8),
         ],
       ),
-      body: viewModel.notifications.isEmpty
+      body: viewModel.isLoading
           ? const Center(
-              child: Text(
-                '새로운 알림이 없습니다.',
-                style: TextStyle(color: Colors.grey),
-              ),
+              child: CircularProgressIndicator(color: primaryColor),
             )
-          : ListView.separated(
-              itemCount: viewModel.notifications.length,
-              separatorBuilder: (context, index) =>
-                  Divider(color: Colors.white.withOpacity(0.05), height: 1),
-              itemBuilder: (context, index) {
-                final notification = viewModel.notifications[index];
-                return _buildNotificationItem(
-                  context,
-                  notification,
-                  primaryColor,
-                );
-              },
-            ),
+          : viewModel.notifications.isEmpty
+              ? const Center(
+                  child: Text(
+                    '새로운 알림이 없습니다.',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                )
+              : ListView.separated(
+                  itemCount: viewModel.notifications.length,
+                  separatorBuilder: (context, index) =>
+                      Divider(color: Colors.white.withOpacity(0.05), height: 1),
+                  itemBuilder: (context, index) {
+                    final notification = viewModel.notifications[index];
+                    return _buildNotificationItem(
+                      context,
+                      notification,
+                      primaryColor,
+                    );
+                  },
+                ),
     );
   }
 
