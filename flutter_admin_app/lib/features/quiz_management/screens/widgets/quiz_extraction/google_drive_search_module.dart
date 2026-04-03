@@ -43,22 +43,16 @@ class _GoogleDriveSearchModuleState extends State<GoogleDriveSearchModule> {
   }
 
   String _getSelectedFileName(List<DriveFile> files, String? selectedId) {
-    if (files.isEmpty) return '파일이 없습니다.';
+    if (files.isEmpty) return '선택된 파일이 없습니다.';
     
     try {
-      // Safely find selected file or fallback to first
-      final DriveFile selected;
-      if (selectedId != null) {
-        selected = files.firstWhere(
-          (f) => f.id == selectedId,
-          orElse: () => files.first,
-        );
-      } else {
-        selected = files.first;
-      }
-      return selected.name;
+      final String targetId = selectedId ?? files.first.id;
+      // Use where + firstOrElse for maximum release stability
+      final matching = files.where((f) => f.id == targetId);
+      return matching.isNotEmpty ? matching.first.name : files.first.name;
     } catch (e) {
-      return files.first.name;
+      debugPrint('❌ [_getSelectedFileName] Fallback error: $e');
+      return files.isNotEmpty ? files.first.name : '파일 없음';
     }
   }
 
@@ -66,7 +60,8 @@ class _GoogleDriveSearchModuleState extends State<GoogleDriveSearchModule> {
   Widget build(BuildContext context) {
     return Consumer<QuizExtractionStep2ViewModel>(
       builder: (context, vm, _) {
-        final List<DriveFile> files = List<DriveFile>.from(vm.driveFiles);
+        // 🔥 [FTF] Safely extract list from ViewModel
+        final List<DriveFile> files = vm.driveFiles.toList();
         final String? selectedId = vm.selectedFileId;
 
         return Container(
@@ -93,32 +88,20 @@ class _GoogleDriveSearchModuleState extends State<GoogleDriveSearchModule> {
                     onPressed: vm.isSearching ? null : _searchFiles,
                     style: TextButton.styleFrom(
                       foregroundColor: primaryColor,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
                     child: vm.isSearching
                         ? const SizedBox(
                             width: 16,
                             height: 16,
-                            child: CircularProgressIndicator(
-                              color: primaryColor,
-                              strokeWidth: 2,
-                            ),
+                            child: CircularProgressIndicator(color: primaryColor, strokeWidth: 2),
                           )
                         : Wrap(
                             crossAxisAlignment: WrapCrossAlignment.center,
                             children: const [
                               Icon(Icons.search, size: 16),
                               SizedBox(width: 4),
-                              Text(
-                                '드라이브 검색',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 13,
-                                ),
-                              ),
+                              Text('드라이브 검색', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                             ],
                           ),
                   ),
@@ -139,10 +122,7 @@ class _GoogleDriveSearchModuleState extends State<GoogleDriveSearchModule> {
                           hintStyle: TextStyle(color: Colors.grey[600]),
                           filled: true,
                           fillColor: backgroundDark,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                           border: InputBorder.none,
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none,
@@ -152,15 +132,13 @@ class _GoogleDriveSearchModuleState extends State<GoogleDriveSearchModule> {
                   ],
                 ),
               ),
+              // Use if check + list directly to avoid redundant builds
               if (files.isNotEmpty) ...[
                 const SizedBox(height: 12),
                 ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 400),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
                       color: backgroundDark,
                       borderRadius: BorderRadius.circular(8),

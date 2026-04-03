@@ -4,6 +4,7 @@ import '../repositories/quiz_repository.dart';
 import 'parts/quiz_file_handler_mixin.dart';
 import 'parts/quiz_ai_assistant_mixin.dart';
 import 'parts/quiz_image_handler_mixin.dart';
+import '../models/drive_file.dart';
 
 class QuizExtractionStep2ViewModel extends ChangeNotifier
     with QuizFileHandlerMixin, QuizAiAssistantMixin, QuizImageHandlerMixin {
@@ -31,16 +32,16 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier
   bool get isExtracting => isExtractingInternal;
   double get extractionProgress => _extractionProgress;
   
-  // UI Compatibility Getters
+  // UI Compatibility Getters (Hardened with FTF)
   int get selectedQuestionNumber => _selectedQuestion;
-  List<Map<String, dynamic>> get relatedQuizzes => relatedQuestions;
+  List<Map<String, dynamic>> get relatedQuizzes => List<Map<String, dynamic>>.from(relatedQuestions);
   String? get selectedSubject => _initialSubject;
   int? get selectedYear => _initialYear;
   int? get selectedRound => _initialRound;
   String? get extractedSubject => _initialSubject;
   int? get extractedYear => _initialYear;
   int? get extractedRound => _initialRound;
-  Map<String, dynamic>? get extractedBlock => validatedQuizData;
+  Map<String, dynamic>? get extractedBlock => validatedQuizData != null ? Map<String, dynamic>.from(validatedQuizData!) : null;
 
   void setHintsCount(int count) {
     if (count > 0 && count <= 5) { _hintsCount = count; notifyListeners(); }
@@ -48,6 +49,7 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier
 
   void setInitialFilter(String? subject, int? year, int? round) {
     _initialSubject = subject; _initialYear = year; _initialRound = round;
+    notifyListeners();
   }
 
   void setSelectedQuestion(int question) { _selectedQuestion = question; notifyListeners(); }
@@ -61,13 +63,17 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier
   }
 
   // Wrapper for parameterless extraction
-  Future<Map<String, dynamic>> extractQuiz() => extractQuizInternal(_selectedQuestion, _hintsCount);
+  Future<Map<String, dynamic>> extractQuiz() async {
+    final data = await extractQuizInternal(_selectedQuestion, _hintsCount);
+    return Map<String, dynamic>.from(data);
+  }
 
   Map<String, dynamic> populateExtractedQuiz() {
     if (validatedQuizData == null) throw '문제를 먼저 추출해주세요.';
-    _correctOptionIndex = validatedQuizData!['correct_option_index'] ?? 0;
+    final data = Map<String, dynamic>.from(validatedQuizData!);
+    _correctOptionIndex = data['correct_option_index'] ?? 0;
     notifyListeners();
-    return validatedQuizData!;
+    return data;
   }
 
   Future<void> saveToDb({
@@ -82,16 +88,17 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier
     _isSaving = true; notifyListeners();
 
     try {
-      final data = {
-        'raw_source_text': validatedQuizData!['raw_source_text'],
+      final currentData = Map<String, dynamic>.from(validatedQuizData!);
+      final data = <String, dynamic>{
+        'raw_source_text': currentData['raw_source_text'],
         'subject': _initialSubject,
         'year': _initialYear,
         'round': _initialRound,
         'question_number': _selectedQuestion,
-        'content_blocks': [{'type': 'text', 'content': questionText}],
-        'explanation_blocks': [{'type': 'text', 'content': explanationText}],
-        'hint_blocks': hintTexts.take(_hintsCount).map((t) => {'type': 'text', 'content': t}).toList(),
-        'options': optionTexts.take(4).map((t) => {'type': 'text', 'content': t}).toList(),
+        'content_blocks': <Map<String, dynamic>>[{'type': 'text', 'content': questionText}],
+        'explanation_blocks': <Map<String, dynamic>>[{'type': 'text', 'content': explanationText}],
+        'hint_blocks': hintTexts.take(_hintsCount).map((t) => <String, dynamic>{'type': 'text', 'content': t}).toList(),
+        'options': optionTexts.take(4).map((t) => <String, dynamic>{'type': 'text', 'content': t}).toList(),
         'correct_option_index': _correctOptionIndex,
         'difficulty': 1,
       };
@@ -103,14 +110,19 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier
 
   // UI Match Wrappers
   Future<void> saveCurrentQuizToDbAction({required String question, required String explanation, required List<String> options, required List<String> hints}) 
-    => saveToDb(questionText: question, explanationText: explanation, optionTexts: options, hintTexts: hints);
+    => saveToDb(questionText: question, explanationText: explanation, optionTexts: List<String>.from(options), hintTexts: List<String>.from(hints));
 
   Future<List<String>> generateOptionsAction(String q, String a) => generateDistractorsAction(q, a);
   Future<void> recommendSimilarAction(String q) => recommendRelatedAction(q);
   Future<List<String>> generateHintsAction(String q, String e) => generateHintsInternal(q, e, _hintsCount);
   Future<Map<String, dynamic>> reviewExplanationAction(String e) => reviewExplanationInternal(e, validatedQuizData);
   
-  Future<void> startBatchExtractionAction({required String fileId, required int singleQuestionNumber, required Function(int current, int total) onProgress, required Function(String message) onMessage}) async {
+  Future<void> startBatchExtractionAction({
+    required String fileId, 
+    required int singleQuestionNumber, 
+    required Function(int current, int total) onProgress, 
+    required Function(String message) onMessage
+  }) async {
     setSelectedFileId(fileId);
     _selectedQuestion = singleQuestionNumber;
     _isLoading = true; _extractionProgress = 0.0;

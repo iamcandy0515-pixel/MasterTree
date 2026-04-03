@@ -12,20 +12,17 @@ abstract class BaseRepository {
   BaseRepository()
       : baseUrl = NodeApi.baseUrl;
 
-  /// Auth Token을 포함한 공통 헤더 생성 (SharedPreferences 직결)
+  /// Auth Token을 포함한 공통 헤더 생성 (SharedPreferences DTC 전용)
   Future<Map<String, String>> getHeaders() async {
     String token = '';
     try {
       final prefs = await SharedPreferences.getInstance();
+      // 🔥 [FTF] Only trust Direct Token Channel (DTC)
       token = prefs.getString('access_token') ?? '';
       
-      // Fallback to Supabase session if prefs empty
-      if (token.isEmpty) {
-        final session = Supabase.instance.client.auth.currentSession;
-        token = session?.accessToken ?? '';
-      }
+      // ⚠️ Removed unstable Supabase.instance.client.auth.currentSession access 🛡️
     } catch (e) {
-      debugPrint('Header error: $e');
+      debugPrint('❌ Header error (Safe-Skip): $e');
     }
 
     return <String, String>{
@@ -37,7 +34,8 @@ abstract class BaseRepository {
   /// 인증 관련 에러 체크 (401, 403 발생 시 자동 로그아웃)
   void checkAuthError(int statusCode) {
     if (statusCode == 401 || statusCode == 403) {
-      Supabase.instance.client.auth.signOut();
+      // Best effort sign out
+      try { Supabase.instance.client.auth.signOut(); } catch (_) {}
       
       // Clear token from prefs on auth error
       SharedPreferences.getInstance().then((prefs) {
@@ -58,10 +56,6 @@ abstract class BaseRepository {
       throw Exception('인증 만료 (서버 오류: $statusCode)');
     }
   }
-
-  /// 이미지 서버 프록시 URL 생성 (인스턴스용)
-  String getProxyUrl(String url, {int? width, int? height}) =>
-      staticProxyUrl(url, baseUrl: baseUrl, width: width, height: height);
 
   /// 이미지 서버 프록시 URL 생성 (정적 유틸리티)
   static String staticProxyUrl(
