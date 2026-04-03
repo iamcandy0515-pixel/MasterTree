@@ -21,9 +21,15 @@ class MasterTreeMediaRepository extends BaseRepository {
     final response = await http.Response.fromStream(streamedResponse);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      if (jsonResponse['success'] == true) {
-        return jsonResponse['data']['publicUrl'];
+      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+      if (decoded is Map) {
+        final jsonResponse = Map<String, dynamic>.from(decoded);
+        if (jsonResponse['success'] == true) {
+          final data = jsonResponse['data'];
+          if (data is Map) {
+            return Map<String, dynamic>.from(data)['publicUrl']?.toString() ?? '';
+          }
+        }
       }
     }
     checkAuthError(response.statusCode);
@@ -45,9 +51,15 @@ class MasterTreeMediaRepository extends BaseRepository {
     final response = await http.Response.fromStream(streamedResponse);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      if (jsonResponse['success'] == true) {
-        return jsonResponse['data']['publicUrl'];
+      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+      if (decoded is Map) {
+        final jsonResponse = Map<String, dynamic>.from(decoded);
+        if (jsonResponse['success'] == true) {
+          final data = jsonResponse['data'];
+          if (data is Map) {
+            return Map<String, dynamic>.from(data)['publicUrl']?.toString() ?? '';
+          }
+        }
       }
     }
     checkAuthError(response.statusCode);
@@ -66,9 +78,12 @@ class MasterTreeMediaRepository extends BaseRepository {
     );
 
     if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      if (jsonResponse['success'] == true) {
-        return jsonResponse['url'];
+      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+      if (decoded is Map) {
+        final jsonResponse = Map<String, dynamic>.from(decoded);
+        if (jsonResponse['success'] == true) {
+          return jsonResponse['url']?.toString();
+        }
       }
       return null;
     }
@@ -87,9 +102,12 @@ class MasterTreeMediaRepository extends BaseRepository {
     );
 
     if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      if (jsonResponse['success'] == true && jsonResponse['image'] != null) {
-        return base64Decode(jsonResponse['image']);
+      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+      if (decoded is Map) {
+        final jsonResponse = Map<String, dynamic>.from(decoded);
+        if (jsonResponse['success'] == true && jsonResponse['image'] != null) {
+          return base64Decode(jsonResponse['image'].toString());
+        }
       }
     }
     checkAuthError(response.statusCode);
@@ -108,9 +126,12 @@ class MasterTreeMediaRepository extends BaseRepository {
     );
 
     if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      if (jsonResponse['success'] == true) {
-        return jsonResponse['url'];
+      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+      if (decoded is Map) {
+        final jsonResponse = Map<String, dynamic>.from(decoded);
+        if (jsonResponse['success'] == true) {
+          return jsonResponse['url']?.toString();
+        }
       }
     }
     checkAuthError(response.statusCode);
@@ -129,9 +150,9 @@ class MasterTreeMediaRepository extends BaseRepository {
     );
 
     if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      if (jsonResponse['success'] == true) {
-        return jsonResponse;
+      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+      if (decoded is Map) {
+        return Map<String, dynamic>.from(decoded);
       }
     }
     checkAuthError(response.statusCode);
@@ -150,8 +171,11 @@ class MasterTreeMediaRepository extends BaseRepository {
     );
 
     if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      return jsonResponse['exists'] == true;
+      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+      if (decoded is Map) {
+        final jsonResponse = Map<String, dynamic>.from(decoded);
+        return jsonResponse['exists'] == true;
+      }
     }
     checkAuthError(response.statusCode);
     return false;

@@ -33,8 +33,13 @@ class MasterTreeDataRepository extends BaseRepository {
     final response = await http.Response.fromStream(streamedResponse);
 
     if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      return jsonResponse['data'];
+      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+      if (decoded is Map) {
+        final jsonResponse = Map<String, dynamic>.from(decoded);
+        final data = jsonResponse['data'];
+        if (data is Map) return Map<String, dynamic>.from(data);
+      }
+      return <String, dynamic>{};
     }
     checkAuthError(response.statusCode);
     throw Exception('수목 데이터 가져오기 실패: ${response.body}');

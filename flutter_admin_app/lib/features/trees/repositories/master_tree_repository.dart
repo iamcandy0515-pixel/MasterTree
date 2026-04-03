@@ -46,20 +46,24 @@ class MasterTreeRepository extends BaseRepository with MasterTreeCacheMixin {
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      if (jsonResponse['success'] == true) {
-        final List<dynamic> data = jsonResponse['data'];
-        final meta = jsonResponse['meta'];
+      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+      if (decoded is Map) {
+        final jsonResponse = Map<String, dynamic>.from(decoded);
+        if (jsonResponse['success'] == true) {
+          final List<dynamic> data = jsonResponse['data'] ?? [];
+          final metaRaw = jsonResponse['meta'];
+          final meta = metaRaw is Map ? Map<String, dynamic>.from(metaRaw) : <String, dynamic>{};
 
-        final result = PaginatedTrees(
-          trees: data.map((e) => Tree.fromJson(e)).toList(),
-          total: meta['total'] ?? 0,
-          page: meta['page'] ?? 1,
-          limit: meta['limit'] ?? 20,
-          totalPages: meta['totalPages'] ?? 1,
-        );
-        setCachedData(cacheKey, result);
-        return result;
+          final result = PaginatedTrees(
+            trees: data.map((e) => Tree.fromJson(e is Map ? Map<String, dynamic>.from(e) : e)).toList(),
+            total: meta['total'] ?? 0,
+            page: meta['page'] ?? 1,
+            limit: meta['limit'] ?? 20,
+            totalPages: meta['totalPages'] ?? 1,
+          );
+          setCachedData(cacheKey, result);
+          return result;
+        }
       }
     }
     throw Exception('수목 목록 로드 실패: ${response.body}');
@@ -96,9 +100,13 @@ class MasterTreeRepository extends BaseRepository with MasterTreeCacheMixin {
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      if (jsonResponse['success'] == true) {
-        return Tree.fromJson(jsonResponse['data']);
+      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+      if (decoded is Map) {
+        final jsonResponse = Map<String, dynamic>.from(decoded);
+        if (jsonResponse['success'] == true) {
+          final data = jsonResponse['data'];
+          if (data is Map) return Tree.fromJson(Map<String, dynamic>.from(data));
+        }
       }
     }
     throw Exception('수목 상세 정보 로드 실패: ${response.body}');
@@ -112,8 +120,12 @@ class MasterTreeRepository extends BaseRepository with MasterTreeCacheMixin {
 
     if (response.statusCode == 200) {
       invalidateTreeCache();
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      return Tree.fromJson(jsonResponse['data']);
+      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+      if (decoded is Map) {
+        final jsonResponse = Map<String, dynamic>.from(decoded);
+        final data = jsonResponse['data'];
+        if (data is Map) return Tree.fromJson(Map<String, dynamic>.from(data));
+      }
     }
     checkAuthError(response.statusCode);
     throw Exception('수목 수정 실패: ${response.body}');
@@ -139,8 +151,12 @@ class MasterTreeRepository extends BaseRepository with MasterTreeCacheMixin {
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       invalidateTreeCache();
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      return Tree.fromJson(jsonResponse['data']);
+      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+      if (decoded is Map) {
+        final jsonResponse = Map<String, dynamic>.from(decoded);
+        final data = jsonResponse['data'];
+        if (data is Map) return Tree.fromJson(Map<String, dynamic>.from(data));
+      }
     }
     checkAuthError(response.statusCode);
     throw Exception('수목 생성 실패: ${response.body}');
