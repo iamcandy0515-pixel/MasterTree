@@ -34,7 +34,6 @@ class LoginViewModel extends ChangeNotifier {
     try {
       debugPrint('🚀 [LoginViewModel] Attempting login via Auth Proxy: $email');
 
-      // Use Node API as a Proxy to bypass CORS
       final url = Uri.parse('${NodeApi.baseUrl}/users/login');
       final response = await http.post(
         url,
@@ -44,29 +43,30 @@ class LoginViewModel extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
-        if (decoded is! Map) {
-          throw '인기 응답 형식이 올바르지 않습니다.';
-        }
-        final data = Map<String, dynamic>.from(decoded);
-        
-        if (data['success'] == true) {
-          final sessionData = data['data'];
-          if (sessionData is! Map) throw '세션 데이터 형식이 올바르지 않습니다.';
-          final session = Map<String, dynamic>.from(sessionData)['session'];
-          if (session != null) {
-            // Manually set the session in the local Supabase client using refresh_token
-            await Supabase.instance.client.auth.setSession(session['refresh_token']);
-            
-            // Save credentials locally
-            try {
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.setString('saved_email', email);
-              await prefs.setString('saved_password', password);
-              debugPrint('✅ [LoginViewModel] Login successful via Proxy & Session set.');
-            } catch (e) {
-              debugPrint('❌ [LoginViewModel] Error saving credentials: $e');
+        if (decoded is Map) {
+          final data = Map<String, dynamic>.from(decoded);
+          if (data['success'] == true) {
+            final rawData = data['data'];
+            if (rawData is Map) {
+              final sessionData = Map<String, dynamic>.from(rawData)['session'];
+              if (sessionData is Map) {
+                final session = Map<String, dynamic>.from(sessionData);
+                final refreshToken = session['refresh_token'];
+                if (refreshToken != null) {
+                  await Supabase.instance.client.auth.setSession(refreshToken.toString());
+                  
+                  try {
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.setString('saved_email', email);
+                    await prefs.setString('saved_password', password);
+                    debugPrint('✅ [LoginViewModel] Login successful via Proxy & Session set.');
+                  } catch (e) {
+                    debugPrint('❌ [LoginViewModel] Error saving credentials: $e');
+                  }
+                  return true;
+                }
+              }
             }
-            return true;
           }
         }
       }
@@ -87,21 +87,12 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      if (email.isEmpty || password.isEmpty) {
-        throw 'Email and password required';
-      }
-
-      debugPrint('🚀 [LoginViewModel] Attempting signup with: $email');
-      await Supabase.instance.client.auth.signUp(
-        email: email,
-        password: password,
-      );
+      if (email.isEmpty || password.isEmpty) throw 'Email and password required';
+      await Supabase.instance.client.auth.signUp(email: email, password: password);
       return true;
     } on AuthException catch (e) {
-      debugPrint('❌ [LoginViewModel] Signup Auth Error: ${e.message}');
       throw e.message;
     } catch (e) {
-      debugPrint('❌ [LoginViewModel] Signup Unexpected Error: $e');
       throw 'Signup failed: $e';
     } finally {
       _isLoading = false;

@@ -38,7 +38,9 @@ class DashboardViewModel extends ChangeNotifier {
 
     try {
       final data = await _statsRepo.getDashboardStats();
-      _stats = data;
+      if (data is Map) {
+        _stats = Map<String, dynamic>.from(data);
+      }
     } catch (e) {
       debugPrint('Dashboard VM Error: $e');
     } finally {
