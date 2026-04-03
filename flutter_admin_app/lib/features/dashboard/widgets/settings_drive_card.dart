@@ -144,7 +144,7 @@ class _SettingsDriveCardState extends State<SettingsDriveCard> {
               ),
             ),
             const SizedBox(width: 12),
-            ElevatedButton(
+            TextButton(
               onPressed: vm.isLoading
                   ? null
                   : () async {
@@ -158,11 +158,10 @@ class _SettingsDriveCardState extends State<SettingsDriveCard> {
                         // Error is handled in the ViewModel
                       }
                     },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFCCFF00),
-                foregroundColor: Colors.black87,
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFFCCFF00),
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                textStyle: const TextStyle(fontWeight: FontWeight.bold),
               ),
               child: const Text('저장'),
             ),

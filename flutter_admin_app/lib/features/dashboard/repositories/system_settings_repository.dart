@@ -39,33 +39,16 @@ class SystemSettingsRepository extends BaseRepository {
     throw Exception('$errorPrefix: ${response.body}');
   }
 
-  // System Restart Commands
-  Future<void> restartAdminServer() async {
-    final url = Uri.parse('$baseUrl/system/restart/admin');
-    final headers = await getHeaders();
-    try {
-      await http.post(url, headers: headers).timeout(const Duration(seconds: 2));
-    } catch (e) {
-      debugPrint('Admin restart triggered (Connection might be lost): $e');
-    }
-  }
-
-  Future<void> restartUserServer() async {
-    final url = Uri.parse('$baseUrl/system/restart/user');
-    final headers = await getHeaders();
-    final response = await http.post(url, headers: headers);
-    if (response.statusCode != 200) {
-      checkAuthError(response.statusCode);
-      throw Exception('Failed to restart user server: ${response.body}');
-    }
-  }
-
   // Settings Management
   Future<String> getEntryCode() => _fetchSetting('/settings/entry-code', defaultValue: '1234', dataKey: 'entryCode');
   Future<String> updateEntryCode(String newCode) => _postSetting('/settings/entry-code', {'entryCode': newCode}, dataKey: 'entryCode', errorPrefix: '입장 코드 업데이트 실패');
 
   Future<String> getUserAppUrl() => _fetchSetting('/settings/user-url', defaultValue: 'https://mastertree-user-app.vercel.app');
   Future<String> updateUserAppUrl(String newUrl) => _postSetting('/settings/user-url', {'url': newUrl}, errorPrefix: '사용자 URL 업데이트 실패');
+
+  // New: User Notification Management
+  Future<String> getUserNotification() => _fetchSetting('/settings/notification', defaultValue: '', dataKey: 'notification');
+  Future<String> updateUserNotification(String message) => _postSetting('/settings/notification', {'notification': message}, dataKey: 'notification', errorPrefix: '알림 정보 업데이트 실패');
 
   Future<String> getGoogleDriveFolderUrl() => _fetchSetting('/settings/drive-url', defaultValue: '');
   Future<String> updateGoogleDriveFolderUrl(String newUrl) => _postSetting('/settings/drive-url', {'url': newUrl}, errorPrefix: '구글 드라이브 URL 업데이트 실패');

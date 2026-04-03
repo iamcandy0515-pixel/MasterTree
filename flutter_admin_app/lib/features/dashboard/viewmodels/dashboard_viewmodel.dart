@@ -36,10 +36,6 @@ class DashboardViewModel extends ChangeNotifier {
 
   Future<void> loadDashboardStats() async {
     _isLoading = true;
-    // Notify not needed here if we only want to show spinner briefly or just update values
-    // But let's notify to show loading state if desired.
-    // However, for stats refresh, often better to show previous data while loading.
-    // We already have _isLoading used for full screen loading in view.
     notifyListeners();
 
     try {
@@ -47,35 +43,6 @@ class DashboardViewModel extends ChangeNotifier {
       _stats = data;
     } catch (e) {
       debugPrint('Dashboard VM Error: $e');
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<void> restartAdminServer() async {
-    _isLoading = true;
-    notifyListeners();
-    try {
-      await _settingsRepo.restartAdminServer();
-    } catch (_) {
-      // Ignore
-    } finally {
-      // Wait for server to come back potentially? Or just stop loading.
-      // Since server is dead, next requests will fail until it's up.
-      await Future.delayed(const Duration(seconds: 3));
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<void> restartUserServer() async {
-    _isLoading = true;
-    notifyListeners();
-    try {
-      await _settingsRepo.restartUserServer();
-    } catch (e) {
-      debugPrint('Restart User Server Error: $e');
     } finally {
       _isLoading = false;
       notifyListeners();

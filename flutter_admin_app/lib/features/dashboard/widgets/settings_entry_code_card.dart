@@ -76,8 +76,8 @@ class _SettingsEntryCodeCardState extends State<SettingsEntryCodeCard> {
                   keyboardType: TextInputType.number,
                 ),
               ),
-              const SizedBox(width: 16),
-              ElevatedButton(
+               const SizedBox(width: 16),
+              TextButton(
                 onPressed: vm.isLoading
                     ? null
                     : () async {
@@ -93,22 +93,19 @@ class _SettingsEntryCodeCardState extends State<SettingsEntryCodeCard> {
                           // Error handled in VM
                         }
                       },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFCCFF00),
-                  foregroundColor: Colors.black87,
+                style: TextButton.styleFrom(
+                  foregroundColor: const Color(0xFFCCFF00),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
                     vertical: 16,
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                  textStyle: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 child: vm.isLoading && vm.entryCode != _controller.text
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black87),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFCCFF00)),
                       )
                     : const Text('변경 저장'),
               ),
