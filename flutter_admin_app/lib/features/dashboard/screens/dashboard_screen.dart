@@ -47,9 +47,8 @@ class _DashboardScreenState extends State<_DashboardContent> {
   }
 
   Future<void> _handleSignOut() async {
-    final vm = context.read<DashboardViewModel>();
-    final success = await vm.signOut();
-    if (success && mounted) {
+    await context.read<DashboardViewModel>().signOut();
+    if (mounted) {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (_) => const LoginScreen()),

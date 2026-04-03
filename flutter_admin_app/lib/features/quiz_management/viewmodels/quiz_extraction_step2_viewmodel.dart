@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../repositories/quiz_repository.dart';
 import 'parts/quiz_file_handler_mixin.dart';
 import 'parts/quiz_ai_assistant_mixin.dart';
@@ -32,16 +34,34 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier
   bool get isExtracting => isExtractingInternal;
   double get extractionProgress => _extractionProgress;
   
-  // UI Compatibility Getters (Hardened with FTF)
+  // UI Compatibility Getters (Hardened with FTF-MEM)
   int get selectedQuestionNumber => _selectedQuestion;
-  List<Map<String, dynamic>> get relatedQuizzes => List<Map<String, dynamic>>.from(relatedQuestions);
+  List<Map<String, dynamic>> get relatedQuizzes => relatedQuestions.map((e) => _forceCast(e)).toList();
   String? get selectedSubject => _initialSubject;
   int? get selectedYear => _initialYear;
   int? get selectedRound => _initialRound;
   String? get extractedSubject => _initialSubject;
   int? get extractedYear => _initialYear;
   int? get extractedRound => _initialRound;
-  Map<String, dynamic>? get extractedBlock => validatedQuizData != null ? Map<String, dynamic>.from(validatedQuizData!) : null;
+  Map<String, dynamic>? get extractedBlock => validatedQuizData != null ? _forceCast(validatedQuizData!) : null;
+
+  /// MEM (Manual Entry Mapping) - Survive minified JS crashes
+  Map<String, dynamic> _forceCast(dynamic data) {
+    if (data is! Map) return <String, dynamic>{};
+    return data.map((k, v) => MapEntry(k.toString(), v));
+  }
+
+  /// DTC (Direct Token Channel) Sign Out - Consistent across viewmodels
+  Future<void> signOut() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('access_token');
+      try { await Supabase.instance.client.auth.signOut(); } catch (_) {}
+      debugPrint('✅ [QuizExtractionStep2VM] Signed out & DTC cleared');
+    } catch (e) {
+      debugPrint('❌ [QuizExtractionStep2VM] SignOut error: $e');
+    }
+  }
 
   void setHintsCount(int count) {
     if (count > 0 && count <= 5) { _hintsCount = count; notifyListeners(); }
@@ -65,12 +85,12 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier
   // Wrapper for parameterless extraction
   Future<Map<String, dynamic>> extractQuiz() async {
     final data = await extractQuizInternal(_selectedQuestion, _hintsCount);
-    return Map<String, dynamic>.from(data);
+    return _forceCast(data);
   }
 
   Map<String, dynamic> populateExtractedQuiz() {
     if (validatedQuizData == null) throw '문제를 먼저 추출해주세요.';
-    final data = Map<String, dynamic>.from(validatedQuizData!);
+    final data = _forceCast(validatedQuizData!);
     _correctOptionIndex = data['correct_option_index'] ?? 0;
     notifyListeners();
     return data;
@@ -88,7 +108,7 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier
     _isSaving = true; notifyListeners();
 
     try {
-      final currentData = Map<String, dynamic>.from(validatedQuizData!);
+      final currentData = _forceCast(validatedQuizData!);
       final data = <String, dynamic>{
         'raw_source_text': currentData['raw_source_text'],
         'subject': _initialSubject,

@@ -9,6 +9,12 @@ class QuizDriveRepository extends BaseRepository with QuizRepositoryMixin {
   // Simple in-memory cache for search results
   final Map<String, List<Map<String, dynamic>>> _searchCache = {};
 
+  /// MEM (Manual Entry Mapping) - Survive minified JS crashes
+  Map<String, dynamic> _forceCast(dynamic data) {
+    if (data is! Map) return <String, dynamic>{};
+    return data.map((k, v) => MapEntry(k.toString(), v));
+  }
+
   Future<List<Map<String, dynamic>>> searchDriveFiles(String keyword) async {
     if (_searchCache.containsKey(keyword)) return _searchCache[keyword]!;
 
@@ -20,15 +26,14 @@ class QuizDriveRepository extends BaseRepository with QuizRepositoryMixin {
       body: jsonEncode(<String, dynamic>{'keyword': keyword}),
     );
 
-    final dynamic decoded = parseJsonResponse(response);
-    if (decoded is! Map) return [];
-    final jsonResponse = Map<String, dynamic>.from(decoded);
+    final dynamic decoded = json.decode(response.body);
+    final Map<String, dynamic> jsonResponse = _forceCast(decoded);
     
     final dynamic rawData = jsonResponse['data'];
     if (rawData is! List) return [];
     
     final List<Map<String, dynamic>> results = (rawData as List)
-        .map((e) => Map<String, dynamic>.from(e as Map))
+        .map((e) => _forceCast(e))
         .toList();
     
     _searchCache[keyword] = results;
@@ -54,19 +59,16 @@ class QuizDriveRepository extends BaseRepository with QuizRepositoryMixin {
       }),
     );
 
-    final dynamic decoded = parseJsonResponse(response);
-    if (decoded is! Map) return <String, dynamic>{};
-    final jsonResponse = Map<String, dynamic>.from(decoded);
+    final dynamic decoded = json.decode(response.body);
+    final Map<String, dynamic> jsonResponse = _forceCast(decoded);
     
-    final dynamic rawData = jsonResponse['data'];
-    if (rawData is! Map) return <String, dynamic>{};
-    return Map<String, dynamic>.from(rawData as Map);
+    return _forceCast(jsonResponse['data']);
   }
 
   Future<Map<String, dynamic>> extractDriveFile(
     String fileId,
     int questionNumber,
-    int optionsCount,
+    int hintsCount,
   ) async {
     final url = Uri.parse('$baseUrl/quiz/extract-drive-file');
     final headers = await getHeaders();
@@ -76,17 +78,14 @@ class QuizDriveRepository extends BaseRepository with QuizRepositoryMixin {
       body: jsonEncode(<String, dynamic>{
         'fileId': fileId,
         'questionNumber': questionNumber,
-        'optionsCount': optionsCount,
+        'hintsCount': hintsCount,
       }),
     );
 
-    final dynamic decoded = parseJsonResponse(response);
-    if (decoded is! Map) return <String, dynamic>{};
-    final jsonResponse = Map<String, dynamic>.from(decoded);
+    final dynamic decoded = json.decode(response.body);
+    final Map<String, dynamic> jsonResponse = _forceCast(decoded);
     
-    final dynamic rawData = jsonResponse['data'];
-    if (rawData is! Map) return <String, dynamic>{};
-    return Map<String, dynamic>.from(rawData as Map);
+    return _forceCast(jsonResponse['data']);
   }
 
   Future<List<dynamic>> extractBatch({
@@ -113,15 +112,14 @@ class QuizDriveRepository extends BaseRepository with QuizRepositoryMixin {
       }),
     );
 
-    final dynamic decoded = parseJsonResponse(resp);
-    if (decoded is! Map) return [];
-    final jsonResponse = Map<String, dynamic>.from(decoded);
+    final dynamic decoded = json.decode(resp.body);
+    final Map<String, dynamic> jsonResponse = _forceCast(decoded);
     
     final dynamic rawData = jsonResponse['data'];
     if (rawData is! Map || rawData['batchData'] is! List) return [];
     
     return (rawData['batchData'] as List)
-        .map((e) => Map<String, dynamic>.from(e as Map))
+        .map((e) => _forceCast(e))
         .toList();
   }
 }

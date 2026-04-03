@@ -25,6 +25,12 @@ class LoginViewModel extends ChangeNotifier {
     }
   }
 
+  /// MEM (Manual Entry Mapping) - Force safe conversion for Minified JS Objects
+  Map<String, dynamic> _forceCast(dynamic data) {
+    if (data is! Map) return <String, dynamic>{};
+    return data.map((k, v) => MapEntry(k.toString(), v));
+  }
+
   Future<bool> signIn(String email, String password) async {
     _isLoading = true;
     notifyListeners();
@@ -41,24 +47,19 @@ class LoginViewModel extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final dynamic decoded = json.decode(response.body);
-        if (decoded is! Map) return false;
         
-        final Map<String, dynamic> data = Map<String, dynamic>.from(decoded);
+        // 🔥 [MEM] Manual entry mapping to survive minified 'mS' vs 'fR' crashes
+        final Map<String, dynamic> data = _forceCast(decoded);
+        
         if (data['success'] == true) {
-          final dynamic rawData = data['data'];
-          if (rawData is! Map) return false;
+          final Map<String, dynamic> rawData = _forceCast(data['data']);
+          final Map<String, dynamic> session = _forceCast(rawData['session']);
           
-          final Map<String, dynamic> sessionContainer = Map<String, dynamic>.from(rawData);
-          final dynamic sessionData = sessionContainer['session'];
-          if (sessionData is! Map) return false;
-          
-          final Map<String, dynamic> session = Map<String, dynamic>.from(sessionData);
           final dynamic accessToken = session['access_token'];
           
           if (accessToken != null) {
             final String tokenStr = accessToken.toString();
             
-            // 🔥 [DTC] Always trust Direct Token Storage over unstable Supabase session
             try {
               final prefs = await SharedPreferences.getInstance();
               await prefs.setString('access_token', tokenStr);
@@ -68,9 +69,6 @@ class LoginViewModel extends ChangeNotifier {
               debugPrint('❌ [LoginViewModel] Prefs error (DTC failure): $e');
               return false;
             }
-
-            // ⚠️ [SUPPRESSED] Removed setSession sync which caused minified JS type crashes! 🛡️
-            // debugPrint('✅ [DTC Override] Bypassing Supabase session sync for release stability.');
             
             return true;
           }
@@ -81,7 +79,7 @@ class LoginViewModel extends ChangeNotifier {
       return false;
     } catch (e) {
       debugPrint('❌ [LoginViewModel] CRASH: $e');
-      throw '인증 서버와의 통신에 실패했습니다: $e';
+      return false; 
     } finally {
       _isLoading = false;
       notifyListeners();

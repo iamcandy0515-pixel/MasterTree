@@ -127,7 +127,7 @@ class PdfExtractionModule extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<int>(
-                  value: vm.selectedQuestion,
+                  value: (vm.selectedQuestion as dynamic).toString().isEmpty ? 1 : int.tryParse(vm.selectedQuestion.toString()) ?? 1,
                   isExpanded: false,
                   dropdownColor: backgroundDark,
                   icon: const Icon(
@@ -145,11 +145,11 @@ class PdfExtractionModule extends StatelessWidget {
                   },
                   items:
                       List.generate(
-                            vm.selectedQuestion > 20 ? vm.selectedQuestion : 20,
+                            (int.tryParse(vm.selectedQuestion.toString()) ?? 1) > 20 ? (int.tryParse(vm.selectedQuestion.toString()) ?? 1) : 20,
                             (index) => index + 1,
                           )
                           .map(
-                            (value) => DropdownMenuItem(
+                            (value) => DropdownMenuItem<int>(
                               value: value,
                               child: Text(
                                 'Q$value',

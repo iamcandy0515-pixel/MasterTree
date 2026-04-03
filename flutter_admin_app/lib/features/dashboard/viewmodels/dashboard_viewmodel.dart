@@ -1,34 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter_admin_app/features/dashboard/repositories/stats_repository.dart';
+import '../repositories/stats_repository.dart';
 
 class DashboardViewModel extends ChangeNotifier {
-  bool _isLoading = false;
-
-  bool get isLoading => _isLoading;
-
   final _statsRepo = StatsRepository();
-  Map<String, dynamic> _stats = <String, dynamic>{
+
+  Map<String, dynamic> _stats = {
     'totalTrees': 0,
+    'publishedTrees': 0,
+    'totalUsers': 0,
+    'activeUsers': 0,
     'totalQuizzes': 0,
     'totalSimilarGroups': 0,
-    'activeUsers': 0,
   };
 
-  Map<String, dynamic> get stats => _stats;
+  bool _isLoading = false;
 
-  Future<bool> signOut() async {
-    _isLoading = true;
-    notifyListeners();
+  Map<String, dynamic> get stats => _stats;
+  bool get isLoading => _isLoading;
+
+  /// MEM (Manual Entry Mapping) - Survive minified JS crashes
+  Map<String, dynamic> _forceCast(dynamic data) {
+    if (data is! Map) return <String, dynamic>{};
+    return data.map((k, v) => MapEntry(k.toString(), v));
+  }
+
+  /// DTC (Direct Token Channel) Sign Out
+  Future<void> signOut() async {
     try {
-      await Supabase.instance.client.auth.signOut();
-      return true;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('access_token');
+      try { await Supabase.instance.client.auth.signOut(); } catch (_) {}
+      debugPrint('✅ [DashboardVM] Signed out & DTC cleared');
     } catch (e) {
-      debugPrint('Sign out error: $e');
-      return false;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+      debugPrint('❌ [DashboardVM] SignOut error: $e');
     }
   }
 
@@ -37,13 +43,11 @@ class DashboardViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final data = await _statsRepo.getDashboardStats();
-      if (data is Map) {
-        _stats = Map<String, dynamic>.from(data);
-        notifyListeners();
-      }
+      final dynamic rawData = await _statsRepo.getDashboardStats();
+      _stats = _forceCast(rawData);
+      debugPrint('✅ [DashboardVM] stats loaded');
     } catch (e) {
-      debugPrint('Dashboard VM Error: $e');
+      debugPrint('❌ [DashboardVM] error: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
