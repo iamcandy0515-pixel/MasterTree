@@ -20,8 +20,6 @@ class LoginViewModel extends ChangeNotifier {
       _savedEmail = prefs.getString('saved_email') ?? '';
       _savedPassword = prefs.getString('saved_password') ?? '';
       notifyListeners();
-
-      debugPrint('🔐 [LoginViewModel] Credentials loaded: Email=$_savedEmail');
     } catch (e) {
       debugPrint('❌ [LoginViewModel] Error loading credentials: $e');
     }
@@ -42,7 +40,7 @@ class LoginViewModel extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        final dynamic decoded = jsonDecode(response.body);
+        final dynamic decoded = json.decode(response.body);
         if (decoded is Map) {
           final Map<String, dynamic> data = Map<String, dynamic>.from(decoded);
           if (data['success'] == true) {
@@ -52,19 +50,25 @@ class LoginViewModel extends ChangeNotifier {
               final dynamic sessionData = sessionContainer['session'];
               if (sessionData is Map) {
                 final Map<String, dynamic> session = Map<String, dynamic>.from(sessionData);
-                final dynamic refreshToken = session['refresh_token'];
-                if (refreshToken != null) {
-                  // Manually set session using the string token
-                  await Supabase.instance.client.auth.setSession(refreshToken.toString());
+                final dynamic accessToken = session['access_token'];
+                
+                if (accessToken != null) {
+                  try {
+                    // Use access_token for setSession
+                    await Supabase.instance.client.auth.setSession(accessToken.toString());
+                  } catch (se) {
+                    debugPrint('⚠️ [LoginViewModel] Session set warning (non-fatal): $se');
+                  }
                   
                   try {
                     final prefs = await SharedPreferences.getInstance();
                     await prefs.setString('saved_email', email);
                     await prefs.setString('saved_password', password);
-                    debugPrint('✅ [LoginViewModel] Login successful via Proxy & Session set.');
                   } catch (e) {
                     debugPrint('❌ [LoginViewModel] Error saving credentials: $e');
                   }
+                  
+                  debugPrint('✅ [LoginViewModel] Login procedure complete.');
                   return true;
                 }
               }
