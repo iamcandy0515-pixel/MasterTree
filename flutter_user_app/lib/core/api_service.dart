@@ -2,8 +2,12 @@ import 'api/tree_service.dart';
 import 'api/quiz_service.dart';
 import 'api/stats_service.dart';
 import 'api/sync_service.dart';
+import 'api/settings_service.dart';
 
 class ApiService {
+  // Settings
+  static Future<String> getUserNotification() => SettingsService.getUserNotification();
+
   // Tree
   static Future<List<Map<String, dynamic>>> getTrees({
     int page = 1,

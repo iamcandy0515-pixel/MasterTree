@@ -84,7 +84,7 @@ class _SettingsContent extends StatelessWidget {
                   const SizedBox(height: 32),
 
                   // Section 4: User Notification
-                  _buildSectionHeader('사용자 알림 정보 관리', Icons.campaign_outlined),
+                  _buildSectionHeader('사용자 알림', Icons.campaign_outlined),
                   const SizedBox(height: 16),
                    SettingsNotificationCard(initialNotification: vm.userNotification),
 

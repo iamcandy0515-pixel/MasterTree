@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/design_system.dart';
 import '../../login_screen.dart';
+import '../../notification_screen.dart';
 
 class DashboardHeader extends StatelessWidget {
   const DashboardHeader({super.key});
@@ -39,8 +40,52 @@ class DashboardHeader extends StatelessWidget {
           ),
         ],
       ),
-      actions: const [
-        SizedBox(width: 12),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16),
+          child: InkWell(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const NotificationScreen()),
+            ),
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.white10),
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  const Icon(
+                    Icons.notifications_outlined,
+                    color: Colors.white70,
+                    size: 20,
+                  ),
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      width: 7,
+                      height: 7,
+                      decoration: BoxDecoration(
+                        color: Colors.redAccent,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppColors.backgroundDark,
+                          width: 1.2,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }

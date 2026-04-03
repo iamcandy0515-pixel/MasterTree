@@ -50,11 +50,10 @@ class _SettingsNotificationCardState extends State<SettingsNotificationCard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                '사용자 알림 정보 관리',
+                '사용자 알림',
                 style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  color: Colors.white70,
+                  fontSize: 13,
                 ),
               ),
               TextButton(
@@ -83,7 +82,7 @@ class _SettingsNotificationCardState extends State<SettingsNotificationCard> {
                         height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFCCFF00)),
                       )
-                    : const Text('정보 저장'),
+                    : const Text('저장'),
               ),
             ],
           ),

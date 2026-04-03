@@ -47,8 +47,8 @@ class _SettingsEntryCodeCardState extends State<SettingsEntryCodeCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '현재 설정된 접속 코드',
-            style: TextStyle(color: Colors.white70, fontSize: 14),
+            '입장 코드',
+            style: TextStyle(color: Colors.white70, fontSize: 13),
           ),
           const SizedBox(height: 12),
           Row(
