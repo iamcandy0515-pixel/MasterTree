@@ -13,7 +13,14 @@ class SystemSettingsRepository extends BaseRepository {
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
         if (jsonResponse['success'] == true) {
-          return (jsonResponse['data'][dataKey] as T?) ?? defaultValue;
+          final data = jsonResponse['data'];
+          if (data is Map && data.containsKey(dataKey)) {
+            final val = data[dataKey];
+            if (val is T) return val;
+            if (T == String) return (val?.toString() ?? defaultValue.toString()) as T;
+          } else if (data is T) {
+            return data;
+          }
         }
       }
       checkAuthError(response.statusCode);
@@ -32,7 +39,16 @@ class SystemSettingsRepository extends BaseRepository {
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
       if (jsonResponse['success'] == true) {
-        return (jsonResponse['data'][dataKey] as T);
+        final data = jsonResponse['data'];
+        if (data is Map && data.containsKey(dataKey)) {
+          final val = data[dataKey];
+          if (val is T) return val;
+          if (T == String) return val?.toString() as T;
+          return val as T;
+        } else if (data is T) {
+          return data;
+        }
+        throw Exception('응답 데이터 형식이 올바르지 않습니다.');
       }
     }
     checkAuthError(response.statusCode);

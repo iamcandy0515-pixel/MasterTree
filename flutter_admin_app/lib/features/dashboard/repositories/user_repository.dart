@@ -33,7 +33,7 @@ class UserRepository {
       if (jsonResponse['success'] == true) {
         final data = jsonResponse['data'];
         final users = data['users'] as List;
-        return users.map((u) => u as Map<String, dynamic>).toList();
+        return users.map((u) => Map<String, dynamic>.from(u as Map)).toList();
       }
     }
     throw Exception('Failed to load users: ${response.body}');

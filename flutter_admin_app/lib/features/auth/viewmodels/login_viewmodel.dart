@@ -43,9 +43,16 @@ class LoginViewModel extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final decoded = jsonDecode(response.body);
+        if (decoded is! Map) {
+          throw '인기 응답 형식이 올바르지 않습니다.';
+        }
+        final data = Map<String, dynamic>.from(decoded);
+        
         if (data['success'] == true) {
-          final session = data['data']['session'];
+          final sessionData = data['data'];
+          if (sessionData is! Map) throw '세션 데이터 형식이 올바르지 않습니다.';
+          final session = Map<String, dynamic>.from(sessionData)['session'];
           if (session != null) {
             // Manually set the session in the local Supabase client using refresh_token
             await Supabase.instance.client.auth.setSession(session['refresh_token']);

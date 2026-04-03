@@ -17,7 +17,9 @@ class QuizRepository extends BaseRepository with QuizRepositoryMixin {
     );
 
     final jsonResponse = parseJsonResponse(response);
-    return jsonResponse['data'];
+    final responseData = jsonResponse['data'];
+    if (responseData == null) return {};
+    return Map<String, dynamic>.from(responseData as Map);
   }
 
   /// Delete a single quiz question by ID

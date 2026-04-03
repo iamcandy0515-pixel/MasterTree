@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_admin_app/features/dashboard/repositories/stats_repository.dart';
-import 'package:flutter_admin_app/features/dashboard/repositories/system_settings_repository.dart';
 
 class DashboardViewModel extends ChangeNotifier {
   bool _isLoading = false;
@@ -9,7 +8,6 @@ class DashboardViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   final _statsRepo = StatsRepository();
-  final _settingsRepo = SystemSettingsRepository();
   Map<String, dynamic> _stats = {
     'totalTrees': 0,
     'totalQuizzes': 0,

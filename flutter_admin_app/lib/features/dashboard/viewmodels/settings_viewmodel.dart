@@ -180,4 +180,33 @@ class SettingsViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  // Support for Server Control Card Actions
+  Future<void> restartAdminServer() async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      await Future.delayed(const Duration(seconds: 2)); // Simulate action
+      _error = null;
+    } catch (e) {
+      _error = "관리자 서버 재시작 요청 실패";
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> restartUserServer() async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      await Future.delayed(const Duration(seconds: 2)); // Simulate action
+      _error = null;
+    } catch (e) {
+      _error = "사용자 서버 재시작 요청 실패";
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 }

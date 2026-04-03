@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_admin_app/core/repositories/base_repository.dart';
 
@@ -13,7 +13,8 @@ class StatsRepository extends BaseRepository {
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
         if (jsonResponse['success'] == true) {
-          return jsonResponse['data'];
+          final data = jsonResponse['data'];
+          if (data != null) return Map<String, dynamic>.from(data as Map);
         }
       }
       checkAuthError(response.statusCode);
@@ -37,7 +38,8 @@ class StatsRepository extends BaseRepository {
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
       if (jsonResponse['success'] == true) {
-        return jsonResponse['data'];
+        final data = jsonResponse['data'];
+        if (data != null) return Map<String, dynamic>.from(data as Map);
       }
     }
     checkAuthError(response.statusCode);
@@ -53,7 +55,8 @@ class StatsRepository extends BaseRepository {
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
       if (jsonResponse['success'] == true) {
-        return jsonResponse['data'];
+        final data = jsonResponse['data'];
+        if (data != null) return Map<String, dynamic>.from(data as Map);
       }
     }
     checkAuthError(response.statusCode);
