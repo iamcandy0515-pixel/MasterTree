@@ -7,21 +7,21 @@
 
 ## 2. 상태 기록 (Plan) - [Rule 2-1 준수]
 
-- [ ] **[Phase 0] 작업 전 전제 조건 (Git & Env)** - [Rule 0-1, 0-2]
-    - [ ] 현재 리팩토링된 소스 코드 `git commit` 수행 (Staging/Backup).
-    - [ ] 터미널 인코딩 확인 (`chcp 65001`).
-- [ ] **[Phase 1] Backend Infrastructure (Jest & Mocking)**
-    - [ ] `nodejs_admin_api/src/tests/setup.ts` 보강: Gemini API Mocking 레이어 확장.
-    - [ ] `QuizFormatter.mergeBlocks`에 대한 단위 테스트 시나리오 작성 (Rule 1-1, 200줄 이내 관리).
-    - [ ] AI 파싱 결과(JSON Schema) 검증 통합 테스트 구현.
-- [ ] **[Phase 2] Frontend Defense (Golden Test)**
-    - [ ] `flutter_user_app/test/` 하위에 골든 테스트 전용 폰트 에셋 확인.
-    - [ ] `QuizView` 위젯에 대해 텍스트/이미지 혼합 시나리오별 Golden Image 생성.
-    - [ ] `flutter test --update-goldens` 실행 및 기준 이미지 검수.
-- [ ] **[Phase 3] 사후 검증 및 품질 관리** - [Rule 0-4, 3-2]
-    - [ ] `flutter analyze` 실행하여 린트 및 경고 제거.
-    - [ ] GitHub 백업본과 수정 소스 간의 `git diff` 최종 분석.
-    - [ ] 수정된 퀴즈 화면의 UI Overflow (Overflow) 여부 최종 확인.
+- [x] **[Phase 0] 작업 전 전제 조건 (Git & Env)** - [Rule 0-1, 0-2]
+    - [x] 현재 리팩토링된 소스 코드 `git commit` 수행 (Staging/Backup).
+    - [x] 터미널 인코딩 확인 (`chcp 65001`).
+- [x] **[Phase 1] Backend Infrastructure (Jest & Mocking)**
+    - [x] `nodejs_admin_api/src/tests/setup.ts` 보강: Gemini API Mocking 레이어 확장.
+    - [x] `QuizFormatter.mergeBlocks`에 대한 단위 테스트 시나리오 작성 (Rule 1-1, 200줄 이내 관리).
+    - [x] AI 파싱 결과(JSON Schema) 검증 통합 테스트 구현.
+- [x] **[Phase 2] Frontend Defense (Golden Test)**
+    - [x] `flutter_user_app/test/` 하위에 골든 테스트 전용 폰트 에셋 확인.
+    - [x] `QuizView` 위젯에 대해 텍스트/이미지 혼합 시나리오별 Golden Image 생성.
+    - [x] `flutter test --update-goldens` 실행 및 기준 이미지 검수.
+- [x] **[Phase 3] 사후 검증 및 품질 관리** - [Rule 0-4, 3-2]
+    - [x] `flutter analyze` 실행하여 린트 및 경고 제거.
+    - [x] GitHub 백업본과 수정 소스 간의 `git diff` 최종 분석.
+    - [x] 수정된 퀴즈 화면의 UI Overflow (Overflow) 여부 최종 확인.
 
 ## 3. 실행 (Execute)
 - *작업 계획 승인 후 각 To-Do를 하나씩 체크하며 정밀 수행 예정.*
