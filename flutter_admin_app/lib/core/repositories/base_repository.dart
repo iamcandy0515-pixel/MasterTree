@@ -15,7 +15,7 @@ abstract class BaseRepository {
   Future<Map<String, String>> getHeaders() async {
     final session = Supabase.instance.client.auth.currentSession;
     final token = session?.accessToken ?? '';
-    return {
+    return <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     };

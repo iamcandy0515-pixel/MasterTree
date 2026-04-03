@@ -37,22 +37,24 @@ class LoginViewModel extends ChangeNotifier {
       final url = Uri.parse('${NodeApi.baseUrl}/users/login');
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': password}),
+        headers: <String, String>{'Content-Type': 'application/json'},
+        body: jsonEncode(<String, String>{'email': email, 'password': password}),
       );
 
       if (response.statusCode == 200) {
-        final decoded = jsonDecode(response.body);
+        final dynamic decoded = jsonDecode(response.body);
         if (decoded is Map) {
-          final data = Map<String, dynamic>.from(decoded);
+          final Map<String, dynamic> data = Map<String, dynamic>.from(decoded);
           if (data['success'] == true) {
-            final rawData = data['data'];
+            final dynamic rawData = data['data'];
             if (rawData is Map) {
-              final sessionData = Map<String, dynamic>.from(rawData)['session'];
+              final Map<String, dynamic> sessionContainer = Map<String, dynamic>.from(rawData);
+              final dynamic sessionData = sessionContainer['session'];
               if (sessionData is Map) {
-                final session = Map<String, dynamic>.from(sessionData);
-                final refreshToken = session['refresh_token'];
+                final Map<String, dynamic> session = Map<String, dynamic>.from(sessionData);
+                final dynamic refreshToken = session['refresh_token'];
                 if (refreshToken != null) {
+                  // Manually set session using the string token
                   await Supabase.instance.client.auth.setSession(refreshToken.toString());
                   
                   try {

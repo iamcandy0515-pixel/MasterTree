@@ -8,7 +8,7 @@ class DashboardViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   final _statsRepo = StatsRepository();
-  Map<String, dynamic> _stats = {
+  Map<String, dynamic> _stats = <String, dynamic>{
     'totalTrees': 0,
     'totalQuizzes': 0,
     'totalSimilarGroups': 0,
@@ -40,6 +40,7 @@ class DashboardViewModel extends ChangeNotifier {
       final data = await _statsRepo.getDashboardStats();
       if (data is Map) {
         _stats = Map<String, dynamic>.from(data);
+        notifyListeners();
       }
     } catch (e) {
       debugPrint('Dashboard VM Error: $e');

@@ -24,7 +24,7 @@ class StatsRepository extends BaseRepository {
     } catch (e) {
       debugPrint('Stats error: $e');
     }
-    return {
+    return <String, dynamic>{
       'totalTrees': 0,
       'publishedTrees': 0,
       'totalUsers': 0,
