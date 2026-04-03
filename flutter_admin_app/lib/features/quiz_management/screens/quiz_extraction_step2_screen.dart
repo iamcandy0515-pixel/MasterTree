@@ -170,10 +170,19 @@ class _QuizExtractionStep2ScreenContentState
     if (block['options'] != null) {
       final options = block['options'] as List;
       final correctIdx = block['correct_option_index'] ?? 0;
+      
+      // 1. Correct Option (always first controller)
+      if (options.length > correctIdx) {
+        _optionControllers[0].text = options[correctIdx]['content'] ?? '';
+      }
+
+      // 2. Incorrect Options (rest of controllers)
       final incorrect = options.where((o) => options.indexOf(o) != correctIdx).toList();
-      _optionControllers[0].text = options.length > correctIdx ? (options[correctIdx]['content'] ?? '') : '';
-      _optionControllers[1].text = incorrect.isNotEmpty ? (incorrect.first['content'] ?? '') : '';
+      for (int i = 0; i < 3; i++) {
+        _optionControllers[i + 1].text = i < incorrect.length ? (incorrect[i]['content'] ?? '') : '';
+      }
     }
+
     final hintBlocks = block['hint_blocks'] as List? ?? [];
     for (int i = 0; i < vm.hintsCount; i++) {
       _hintControllers[i].text = i < hintBlocks.length ? (hintBlocks[i]['content'] ?? '') : '';

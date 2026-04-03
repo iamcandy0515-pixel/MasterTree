@@ -140,12 +140,12 @@ class _GoogleDriveSearchModuleState extends State<GoogleDriveSearchModule> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  vm.driveFiles
-                      .firstWhere(
-                        (f) => f.id == vm.selectedFileId,
-                        orElse: () => vm.driveFiles.first,
-                      )
-                      .name,
+                  vm.driveFiles.isEmpty 
+                      ? '검색된 파일이 없습니다'
+                      : vm.driveFiles.firstWhere(
+                          (f) => f.id == vm.selectedFileId,
+                          orElse: () => vm.driveFiles.first,
+                        ).name,
                   style: const TextStyle(color: Colors.white, fontSize: 13),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
