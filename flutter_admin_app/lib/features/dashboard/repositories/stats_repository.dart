@@ -11,10 +11,13 @@ class StatsRepository extends BaseRepository {
       final headers = await getHeaders();
       final response = await http.get(url, headers: headers);
       if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-        if (jsonResponse['success'] == true) {
-          final data = jsonResponse['data'];
-          if (data != null) return Map<String, dynamic>.from(data as Map);
+        final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+        if (decoded is Map) {
+          final jsonResponse = Map<String, dynamic>.from(decoded);
+          if (jsonResponse['success'] == true) {
+            final data = jsonResponse['data'];
+            if (data is Map) return Map<String, dynamic>.from(data);
+          }
         }
       }
       checkAuthError(response.statusCode);
@@ -36,10 +39,13 @@ class StatsRepository extends BaseRepository {
     final response = await http.get(url, headers: headers);
 
     if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      if (jsonResponse['success'] == true) {
-        final data = jsonResponse['data'];
-        if (data != null) return Map<String, dynamic>.from(data as Map);
+      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+      if (decoded is Map) {
+        final jsonResponse = Map<String, dynamic>.from(decoded);
+        if (jsonResponse['success'] == true) {
+          final data = jsonResponse['data'];
+          if (data is Map) return Map<String, dynamic>.from(data);
+        }
       }
     }
     checkAuthError(response.statusCode);
@@ -53,10 +59,13 @@ class StatsRepository extends BaseRepository {
     final response = await http.get(url, headers: headers);
 
     if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      if (jsonResponse['success'] == true) {
-        final data = jsonResponse['data'];
-        if (data != null) return Map<String, dynamic>.from(data as Map);
+      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+      if (decoded is Map) {
+        final jsonResponse = Map<String, dynamic>.from(decoded);
+        if (jsonResponse['success'] == true) {
+          final data = jsonResponse['data'];
+          if (data is Map) return Map<String, dynamic>.from(data);
+        }
       }
     }
     checkAuthError(response.statusCode);

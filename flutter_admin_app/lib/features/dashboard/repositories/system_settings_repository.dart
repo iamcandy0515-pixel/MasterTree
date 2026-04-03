@@ -11,15 +11,21 @@ class SystemSettingsRepository extends BaseRepository {
     try {
       final response = await http.get(url, headers: headers);
       if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-        if (jsonResponse['success'] == true) {
-          final data = jsonResponse['data'];
-          if (data is Map && data.containsKey(dataKey)) {
-            final val = data[dataKey];
-            if (val is T) return val;
-            if (T == String) return (val?.toString() ?? defaultValue.toString()) as T;
-          } else if (data is T) {
-            return data;
+        final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+        if (decoded is Map) {
+          final jsonResponse = Map<String, dynamic>.from(decoded);
+          if (jsonResponse['success'] == true) {
+            final data = jsonResponse['data'];
+            if (data is Map) {
+              final typedData = Map<String, dynamic>.from(data);
+              if (typedData.containsKey(dataKey)) {
+                final val = typedData[dataKey];
+                if (val is T) return val;
+                if (T == String) return (val?.toString() ?? defaultValue.toString()) as T;
+              }
+            } else if (data is T) {
+              return data;
+            }
           }
         }
       }
@@ -37,18 +43,24 @@ class SystemSettingsRepository extends BaseRepository {
     final response = await http.post(url, headers: headers, body: jsonEncode(body));
 
     if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      if (jsonResponse['success'] == true) {
-        final data = jsonResponse['data'];
-        if (data is Map && data.containsKey(dataKey)) {
-          final val = data[dataKey];
-          if (val is T) return val;
-          if (T == String) return val?.toString() as T;
-          return val as T;
-        } else if (data is T) {
-          return data;
+      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+      if (decoded is Map) {
+        final jsonResponse = Map<String, dynamic>.from(decoded);
+        if (jsonResponse['success'] == true) {
+          final data = jsonResponse['data'];
+          if (data is Map) {
+            final typedData = Map<String, dynamic>.from(data);
+            if (typedData.containsKey(dataKey)) {
+              final val = typedData[dataKey];
+              if (val is T) return val;
+              if (T == String) return (val?.toString() ?? '') as T;
+              return val as T;
+            }
+          } else if (data is T) {
+            return data;
+          }
+          throw Exception('응답 데이터 형식이 올바르지 않습니다.');
         }
-        throw Exception('응답 데이터 형식이 올바르지 않습니다.');
       }
     }
     checkAuthError(response.statusCode);
@@ -85,9 +97,13 @@ class SystemSettingsRepository extends BaseRepository {
       final response = await http.post(url, headers: headers, body: jsonEncode({'url': urlString}));
 
       if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-        if (jsonResponse['success'] == true) {
-          return jsonResponse['data']['isValid'] == true;
+        final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+        if (decoded is Map) {
+          final jsonResponse = Map<String, dynamic>.from(decoded);
+          if (jsonResponse['success'] == true) {
+            final data = jsonResponse['data'];
+            if (data is Map) return Map<String, dynamic>.from(data)['isValid'] == true;
+          }
         }
       }
       return false;
