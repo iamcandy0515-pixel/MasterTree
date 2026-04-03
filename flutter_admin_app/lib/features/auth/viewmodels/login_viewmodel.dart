@@ -53,22 +53,28 @@ class LoginViewModel extends ChangeNotifier {
                 final dynamic accessToken = session['access_token'];
                 
                 if (accessToken != null) {
-                  try {
-                    // Use access_token for setSession
-                    await Supabase.instance.client.auth.setSession(accessToken.toString());
-                  } catch (se) {
-                    debugPrint('⚠️ [LoginViewModel] Session set warning (non-fatal): $se');
-                  }
+                  final String tokenStr = accessToken.toString();
                   
+                  // 🔥 [CRITICAL] Core Homing: Store token directly in SharedPreferences 👑
                   try {
                     final prefs = await SharedPreferences.getInstance();
+                    await prefs.setString('access_token', tokenStr);
                     await prefs.setString('saved_email', email);
                     await prefs.setString('saved_password', password);
                   } catch (e) {
-                    debugPrint('❌ [LoginViewModel] Error saving credentials: $e');
+                    debugPrint('❌ [LoginViewModel] Error saving to prefs: $e');
+                  }
+
+                  // [Supabase Sync Plan] Best effort sync, but proceed if successful proxy.
+                  try {
+                    // Try setting as refresh token if access fails in setSession? 
+                    // Actually setSession in supabase_flutter can be token or session. 
+                    await Supabase.instance.client.auth.setSession(tokenStr);
+                  } catch (se) {
+                    debugPrint('⚠️ [LoginViewModel] Supabase session sync warning (proceed anyway): $se');
                   }
                   
-                  debugPrint('✅ [LoginViewModel] Login procedure complete.');
+                  debugPrint('✅ [LoginViewModel] Login procedure complete via Direct Token Storage.');
                   return true;
                 }
               }

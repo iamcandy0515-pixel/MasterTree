@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../viewmodels/quiz_extraction_step2_viewmodel.dart';
+import '../../../models/drive_file.dart';
 import 'package:flutter_admin_app/core/utils/snackbar_util.dart';
 
 class GoogleDriveSearchModule extends StatefulWidget {
@@ -29,132 +30,154 @@ class _GoogleDriveSearchModuleState extends State<GoogleDriveSearchModule> {
       SnackBarUtil.showFloating(context, '검색할 키워드를 입력해주세요.', isError: true);
       return;
     }
+    
     final vm = context.read<QuizExtractionStep2ViewModel>();
     try {
       await vm.searchFiles(keyword);
       _keywordController.clear();
     } catch (e) {
       if (mounted) {
-        SnackBarUtil.showFloating(context, e.toString(), isError: true);
+        SnackBarUtil.showFloating(context, '드라이브 검색 오류: $e', isError: true);
       }
+    }
+  }
+
+  String _getSelectedFileName(List<DriveFile> files, String? selectedId) {
+    if (files.isEmpty) return '파일이 없습니다.';
+    
+    try {
+      // Safely find selected file or fallback to first
+      final DriveFile selected;
+      if (selectedId != null) {
+        selected = files.firstWhere(
+          (f) => f.id == selectedId,
+          orElse: () => files.first,
+        );
+      } else {
+        selected = files.first;
+      }
+      return selected.name;
+    } catch (e) {
+      return files.first.name;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<QuizExtractionStep2ViewModel>();
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 8,
-            runSpacing: 8,
+    return Consumer<QuizExtractionStep2ViewModel>(
+      builder: (context, vm, _) {
+        final List<DriveFile> files = List<DriveFile>.from(vm.driveFiles);
+        final String? selectedId = vm.selectedFileId;
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.cloud, color: Colors.blueAccent, size: 20),
-              const Text(
-                '구글 드라이브 연동',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(width: 8),
-              TextButton(
-                onPressed: vm.isSearching ? null : _searchFiles,
-                style: TextButton.styleFrom(
-                  foregroundColor: primaryColor,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  const Icon(Icons.cloud, color: Colors.blueAccent, size: 20),
+                  const Text(
+                    '구글 드라이브 연동',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                child: vm.isSearching
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          color: primaryColor,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: const [
-                          Icon(Icons.search, size: 16),
-                          SizedBox(width: 4),
-                          Text(
-                            '드라이브 검색',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ],
-                      ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 400),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _keywordController,
-                    onSubmitted: (_) => _searchFiles(),
-                    style: const TextStyle(color: Colors.white, fontSize: 13),
-                    decoration: InputDecoration(
-                      hintText: '파일명 키워드 검색 (예: 산림기사_2013)',
-                      hintStyle: TextStyle(color: Colors.grey[600]),
-                      filled: true,
-                      fillColor: backgroundDark,
-                      contentPadding: const EdgeInsets.symmetric(
+                  const SizedBox(width: 8),
+                  TextButton(
+                    onPressed: vm.isSearching ? null : _searchFiles,
+                    style: TextButton.styleFrom(
+                      foregroundColor: primaryColor,
+                      padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 12,
                       ),
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
+                    ),
+                    child: vm.isSearching
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              color: primaryColor,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: const [
+                              Icon(Icons.search, size: 16),
+                              SizedBox(width: 4),
+                              Text(
+                                '드라이브 검색',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
+                          ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 400),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _keywordController,
+                        onSubmitted: (_) => _searchFiles(),
+                        style: const TextStyle(color: Colors.white, fontSize: 13),
+                        decoration: InputDecoration(
+                          hintText: '파일명 키워드 검색 (예: 산림기사_2013)',
+                          hintStyle: TextStyle(color: Colors.grey[600]),
+                          filled: true,
+                          fillColor: backgroundDark,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (files.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 400),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: backgroundDark,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      _getSelectedFileName(files, selectedId),
+                      style: const TextStyle(color: Colors.white, fontSize: 13),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
                     ),
                   ),
                 ),
               ],
-            ),
+            ],
           ),
-          if (vm.driveFiles.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 400),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: backgroundDark,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  vm.driveFiles.isEmpty 
-                      ? '검색된 파일이 없습니다'
-                      : vm.driveFiles.firstWhere(
-                          (f) => f.id == vm.selectedFileId,
-                          orElse: () => vm.driveFiles.first,
-                        ).name,
-                  style: const TextStyle(color: Colors.white, fontSize: 13),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
+        );
+      },
     );
   }
 }

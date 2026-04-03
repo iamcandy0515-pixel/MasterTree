@@ -17,15 +17,18 @@ class DriveFile {
     this.iconLink,
   });
 
-  factory DriveFile.fromJson(Map<String, dynamic> json) {
+  factory DriveFile.fromJson(dynamic json) {
+    // 🔥 [FTF] Force cast incoming dynamic (JS Map) to Map<String, dynamic>
+    final Map<String, dynamic> data = Map<String, dynamic>.from(json as Map);
+    
     return DriveFile(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      mimeType: json['mimeType'] ?? '',
-      webContentLink: json['webContentLink'],
-      createdTime: json['createdTime'],
-      size: json['size'],
-      iconLink: json['iconLink'],
+      id: data['id']?.toString() ?? '',
+      name: data['name']?.toString() ?? '',
+      mimeType: data['mimeType']?.toString() ?? '',
+      webContentLink: data['webContentLink']?.toString(),
+      createdTime: data['createdTime']?.toString(),
+      size: data['size']?.toString(),
+      iconLink: data['iconLink']?.toString(),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_admin_app/core/globals.dart';
 import 'package:flutter_admin_app/features/auth/screens/login_screen.dart';
 import 'package:flutter_admin_app/core/api/node_api.dart';
@@ -11,10 +12,22 @@ abstract class BaseRepository {
   BaseRepository()
       : baseUrl = NodeApi.baseUrl;
 
-  /// Auth Token을 포함한 공통 헤더 생성
+  /// Auth Token을 포함한 공통 헤더 생성 (SharedPreferences 직결)
   Future<Map<String, String>> getHeaders() async {
-    final session = Supabase.instance.client.auth.currentSession;
-    final token = session?.accessToken ?? '';
+    String token = '';
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      token = prefs.getString('access_token') ?? '';
+      
+      // Fallback to Supabase session if prefs empty
+      if (token.isEmpty) {
+        final session = Supabase.instance.client.auth.currentSession;
+        token = session?.accessToken ?? '';
+      }
+    } catch (e) {
+      debugPrint('Header error: $e');
+    }
+
     return <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
@@ -25,6 +38,12 @@ abstract class BaseRepository {
   void checkAuthError(int statusCode) {
     if (statusCode == 401 || statusCode == 403) {
       Supabase.instance.client.auth.signOut();
+      
+      // Clear token from prefs on auth error
+      SharedPreferences.getInstance().then((prefs) {
+        prefs.remove('access_token');
+      });
+
       final context = globalNavigatorKey.currentContext;
       if (context != null) {
         ScaffoldMessenger.of(context).showSnackBar(
