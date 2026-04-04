@@ -1,181 +1,134 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import '../repositories/quiz_drive_repository.dart';
 import '../repositories/quiz_repository.dart';
-import '../repositories/quiz_media_repository.dart';
-import '../models/drive_file.dart';
-import 'package:flutter_admin_app/features/quiz_management/viewmodels/parts/quiz_file_handler_mixin.dart';
-import 'package:flutter_admin_app/features/quiz_management/viewmodels/parts/quiz_ai_assistant_mixin.dart';
-import 'package:flutter_admin_app/features/quiz_management/viewmodels/parts/quiz_image_handler_mixin.dart';
+import 'parts/quiz_file_handler_mixin.dart';
+import 'parts/quiz_ai_assistant_mixin.dart';
+import 'parts/quiz_image_handler_mixin.dart';
 
-class QuizExtractionStep2ViewModel extends ChangeNotifier 
+class QuizExtractionStep2ViewModel extends ChangeNotifier
     with QuizFileHandlerMixin, QuizAiAssistantMixin, QuizImageHandlerMixin {
   
-  final _quizRepo = QuizRepository();
-  final _driveRepo = QuizDriveRepository();
-  final _mediaRepo = QuizMediaRepository();
+  final QuizRepository _mainRepo = QuizRepository();
 
-  // --- Core State (Step 2 Specific) ---
-  String? _selectedSubject;
-  String? _selectedYear;
-  String? _selectedRound;
-  int _selectedQuestionNumber = 1;
-  int _hintsCount = 4;
-  bool _isLoading = false;
+  int _hintsCount = 2;
+  int _selectedQuestion = 1;
+  int _correctOptionIndex = 0;
+  String? _initialSubject;
+  int? _initialYear, _initialRound;
+  bool _isLoading = false, _isSaving = false;
+  double _extractionProgress = 0.0;
 
-  // --- Getters (For UI & Lints) ---
-  bool get isLoading => _isLoading;
-  String? get selectedSubject => _selectedSubject;
-  String? get selectedYear => _selectedYear;
-  String? get selectedRound => _selectedRound;
-  
-  // 🔥 [Dual Name Support] Satisfy varying UI component naming
-  int get selectedQuestion => _selectedQuestionNumber;
-  int get selectedQuestionNumber => _selectedQuestionNumber;
-  
+  // Getters
   int get hintsCount => _hintsCount;
-
-  String? get initialSubject => _selectedSubject;
-  String? get initialYear => _selectedYear;
-  String? get initialRound => _selectedRound;
-
-  bool get isStep1Validating => isValidating;
-  bool get isStep2Extracting => isExtractingInternal;
-  bool get isStep1Done => extractedFilterRawString != null;
+  int get selectedQuestion => _selectedQuestion;
+  int get correctOptionIndex => _correctOptionIndex;
+  String? get initialSubject => _initialSubject;
+  int? get initialYear => _initialYear;
+  int? get initialRound => _initialRound;
+  
+  bool get isLoading => _isLoading || isSearching || isValidating || isExtractingInternal || isRecommending || isReviewing || isImageLoading;
+  bool get isSaving => _isSaving;
+  bool get isExtracting => isExtractingInternal;
+  double get extractionProgress => _extractionProgress;
+  
+  // UI Compatibility Getters
+  int get selectedQuestionNumber => _selectedQuestion;
+  List<Map<String, dynamic>> get relatedQuizzes => relatedQuestions;
+  String? get selectedSubject => _initialSubject;
+  int? get selectedYear => _initialYear;
+  int? get selectedRound => _initialRound;
+  String? get extractedSubject => _initialSubject;
+  int? get extractedYear => _initialYear;
+  int? get extractedRound => _initialRound;
   Map<String, dynamic>? get extractedBlock => validatedQuizData;
 
-  Map<String, dynamic> _forceCast(dynamic data) {
-    if (data is! Map) return <String, dynamic>{};
-    return data.map((k, v) => MapEntry(k.toString(), v));
-  }
-
-  void init({String? subject, int? year, int? round}) {
-    _selectedSubject = subject;
-    _selectedYear = year?.toString();
-    _selectedRound = round?.toString();
-    notifyListeners();
-  }
-
-  void updateFilters({String? subject, String? year, String? round, int? questionNum}) {
-    if (subject != null) _selectedSubject = subject;
-    if (year != null) _selectedYear = year;
-    if (round != null) _selectedRound = round;
-    if (questionNum != null) _selectedQuestionNumber = questionNum;
-    notifyListeners();
-  }
-
   void setHintsCount(int count) {
-    _hintsCount = count;
+    if (count > 0 && count <= 5) { _hintsCount = count; notifyListeners(); }
+  }
+
+  void setInitialFilter(String? subject, int? year, int? round) {
+    _initialSubject = subject; _initialYear = year; _initialRound = round;
+  }
+
+  void setSelectedQuestion(int question) { _selectedQuestion = question; notifyListeners(); }
+
+  void updateFilters({String? subject, int? year, int? round, int? questionNumber}) {
+    if (subject != null) _initialSubject = subject;
+    if (year != null) _initialYear = year;
+    if (round != null) _initialRound = round;
+    if (questionNumber != null) _selectedQuestion = questionNumber;
     notifyListeners();
   }
 
-  void setSelectedQuestion(int q) {
-    _selectedQuestionNumber = q;
+  // Wrapper for parameterless extraction
+  Future<Map<String, dynamic>> extractQuiz() => extractQuizInternal(_selectedQuestion, _hintsCount);
+
+  Map<String, dynamic> populateExtractedQuiz() {
+    if (validatedQuizData == null) throw '문제를 먼저 추출해주세요.';
+    _correctOptionIndex = validatedQuizData!['correct_option_index'] ?? 0;
     notifyListeners();
+    return validatedQuizData!;
   }
 
-  Future<void> performValidation() async {
-    await validateFile(
-      selectedFileId,
-      subject: _selectedSubject,
-      year: _selectedYear != null ? int.tryParse(_selectedYear!) : null,
-      round: _selectedRound != null ? int.tryParse(_selectedRound!) : null,
-    );
-    notifyListeners();
-  }
-
-  Future<void> extractQuiz() async {
-    await extractQuizInternal(_selectedQuestionNumber, _hintsCount);
-    notifyListeners();
-  }
-
-  Future<List<String>> generateHintsAction(String questionText, String explanation) async {
-    return await generateHintsInternal(questionText, explanation, _hintsCount);
-  }
-
-  Future<Map<String, dynamic>> reviewExplanationAction(String explanationText) async {
-    final rawReview = await reviewExplanationInternal(explanationText, extractedBlock);
-    return _forceCast(rawReview);
-  }
-
-  /// --- Image Support (Satisfies SingleImageManagerDialog) ---
-  
-  Future<String?> uploadImageAction(XFile file) async {
-    try {
-      final Uint8List bytes = await file.readAsBytes();
-      return await _mediaRepo.uploadQuizImage(bytes, file.name);
-    } catch (e) {
-      debugPrint('❌ [Step2VM] uploadImageAction error: $e');
-      return null;
-    }
-  }
-
-  Future<bool> addImageToQuiz(XFile file, String field) async {
-    _isLoading = true;
-    notifyListeners();
-    try {
-      final String? url = await uploadImageAction(file);
-      if (url == null || extractedBlock == null) return false;
-      
-      // Update via Image Handler Mixin
-      // (Wait, the Mixin has addImageToQuizInternal, let's use it properly)
-      // But we already have the URL, so we can just update the block.
-      // Re-cast for safety
-      final Map<String, dynamic> currentBlock = _forceCast(extractedBlock);
-      final key = (field == 'question') ? 'content_blocks' : 'explanation_blocks';
-      List blocks = List.from(currentBlock[key] ?? []);
-      blocks.add({'type': 'image', 'content': url});
-      currentBlock[key] = blocks;
-      
-      notifyListeners();
-      return true;
-    } catch (e) {
-      debugPrint('❌ [Step2VM] addImage error: $e');
-      return false;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<bool> saveToDb({
-    String? questionText,
-    String? explanationText,
-    List<String>? hintTexts,
-    List<String>? optionTexts,
+  Future<void> saveToDb({
+    required String questionText,
+    required String explanationText,
+    required List<String> hintTexts,
+    required List<String> optionTexts,
   }) async {
-    if (extractedBlock == null) return false;
-    _isLoading = true;
-    notifyListeners();
-    try {
-      final Map<String, dynamic> dataToSave = _forceCast(extractedBlock);
-      
-      // Merge UI provided text if available
-      if (questionText != null) {
-        final contentBlocks = List.from(dataToSave['content_blocks'] ?? []);
-        // Update first text block or add new? 
-        // Simplification for now: assuming block structure is handled in extraction
-        dataToSave['question_text'] = questionText; // Backend might need this field
-      }
-      
-      dataToSave['subject'] = _selectedSubject;
-      dataToSave['year'] = _selectedYear;
-      dataToSave['round'] = _selectedRound;
-      dataToSave['question_number'] = _selectedQuestionNumber;
+    if (validatedQuizData == null) throw '추출된 데이터가 없습니다.';
+    if (_initialSubject == null || _initialYear == null || _initialRound == null) throw '필수 정보가 누락되었습니다.';
 
-      await _quizRepo.upsertQuizQuestion(dataToSave);
-      return true;
-    } catch (e) {
-      debugPrint('❌ [Step2VM] Save error: $e');
-      rethrow;
+    _isSaving = true; notifyListeners();
+
+    try {
+      final data = {
+        'raw_source_text': validatedQuizData!['raw_source_text'],
+        'subject': _initialSubject,
+        'year': _initialYear,
+        'round': _initialRound,
+        'question_number': _selectedQuestion,
+        'content_blocks': [{'type': 'text', 'content': questionText}],
+        'explanation_blocks': [{'type': 'text', 'content': explanationText}],
+        'hint_blocks': hintTexts.take(_hintsCount).map((t) => {'type': 'text', 'content': t}).toList(),
+        'options': optionTexts.take(4).map((t) => {'type': 'text', 'content': t}).toList(),
+        'correct_option_index': _correctOptionIndex,
+        'difficulty': 1,
+      };
+      await _mainRepo.upsertQuizQuestion(data);
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      _isSaving = false; notifyListeners();
     }
   }
 
-  Future<void> startBatchExtractionAction(dynamic progress, dynamic message) async {
-    debugPrint('🔔 [Step2VM] Batch redirection logic here.');
+  // UI Match Wrappers
+  Future<void> saveCurrentQuizToDbAction({required String question, required String explanation, required List<String> options, required List<String> hints}) 
+    => saveToDb(questionText: question, explanationText: explanation, optionTexts: options, hintTexts: hints);
+
+  Future<List<String>> generateOptionsAction(String q, String a) => generateDistractorsAction(q, a);
+  Future<void> recommendSimilarAction(String q) => recommendRelatedAction(q);
+  Future<List<String>> generateHintsAction(String q, String e) => generateHintsInternal(q, e, _hintsCount);
+  Future<Map<String, dynamic>> reviewExplanationAction(String e) => reviewExplanationInternal(e, validatedQuizData);
+  
+  Future<void> startBatchExtractionAction({required String fileId, required int singleQuestionNumber, required Function(int current, int total) onProgress, required Function(String message) onMessage}) async {
+    setSelectedFileId(fileId);
+    _selectedQuestion = singleQuestionNumber;
+    _isLoading = true; _extractionProgress = 0.0;
+    notifyListeners();
+    try {
+      await extractQuiz();
+      populateExtractedQuiz();
+      onProgress(1, 1);
+      _extractionProgress = 1.0;
+    } catch (e) {
+      onMessage(e.toString()); rethrow;
+    } finally {
+      _isLoading = false; notifyListeners();
+    }
   }
+
+  // Image Wrappers matching original names
+  Future<void> addImageToQuiz(String field, Uint8List bytes, String name) => addImageToQuizInternal(field, bytes, name, validatedQuizData);
+  bool hasImage(String field) => hasImageInternal(field, validatedQuizData);
+  void removeImage(String field, int index) => removeImageInternal(field, index, validatedQuizData);
 }

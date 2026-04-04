@@ -44,13 +44,13 @@ class _DbRegistrationModuleState extends State<DbRegistrationModule> {
     }
 
     try {
-      final success = await vm.saveToDb(
+      await vm.saveToDb(
         questionText: widget.questionController.text,
         explanationText: widget.explanationController.text,
         hintTexts: widget.hintControllers.map((c) => c.text).toList(),
         optionTexts: widget.optionControllers.map((c) => c.text).toList(),
       );
-      if (mounted && success) {
+      if (mounted) {
         SnackBarUtil.showFloating(context, '기출문제가 성공적으로 저장되었습니다.');
       }
     } catch (e) {

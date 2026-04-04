@@ -1,8 +1,8 @@
 import { quizAIService } from "./ai/quiz-ai.service";
 import { quizRepository } from "./quiz.repository";
+import { quizQueryRepository } from "./quiz_query.repository";
 import { quizExtractionService } from "./quiz-extraction.service";
 import { quizDataService } from "./services/quiz_data.service";
-import { QuizItem, ExamFilter, QuizRecommendation } from "./types/quiz.types";
 
 /**
  * Quiz Service (Orchestrator)
@@ -45,33 +45,18 @@ export class QuizService {
     }
 
     /**
-     * Persistence & Business Logic
+     * Persistence & Business Logic (Delegated)
      */
-    async upsertQuizQuestion(data: QuizItem) {
-        try {
-            return await quizDataService.upsertQuizQuestion(data);
-        } catch (error) {
-            console.error("[QuizService] Upsert failed:", error);
-            throw error;
-        }
+    async upsertQuizQuestion(data: any) {
+        return await quizDataService.upsertQuizQuestion(data);
     }
 
-    async upsertQuizBatch(quizItems: QuizItem[], examFilter: ExamFilter) {
-        try {
-            return await quizDataService.upsertQuizBatch(quizItems, examFilter);
-        } catch (error) {
-            console.error("[QuizService] Batch upsert failed:", error);
-            throw error;
-        }
+    async upsertQuizBatch(quizItems: any[], examFilter: any) {
+        return await quizDataService.upsertQuizBatch(quizItems, examFilter);
     }
 
     async deleteQuiz(id: number) {
-        try {
-            return await quizDataService.deleteQuiz(id);
-        } catch (error) {
-            console.error(`[QuizService] Delete failed (ID: ${id}):`, error);
-            throw error;
-        }
+        return await quizDataService.deleteQuiz(id);
     }
 
     async upsertRelatedBulk(relatedMap: Record<string, number[]>) {
@@ -91,19 +76,30 @@ export class QuizService {
 
     /**
      * AI Recommendation & Vector Search
-     * [Refactored] Implementation logic moved to QuizDataService to keep this orchestrator lean.
      */
-    async recommendRelated(questionText: string, limitCount: number = 3): Promise<QuizRecommendation[]> {
-        try {
-            const queryEmbedding = await quizAIService.generateEmbedding(questionText);
-            if (!queryEmbedding || queryEmbedding.length === 0) return [];
+    async recommendRelated(questionText: string, limitCount: number = 3) {
+        const queryEmbedding = await quizAIService.generateEmbedding(questionText);
+        let questions: any[] = [];
 
-            const candidates = await quizDataService.getFormattedCandidates(queryEmbedding);
-            return await quizAIService.recommendRelated(questionText, candidates, limitCount);
-        } catch (error) {
-            console.error("[QuizService] Recommendation failed:", error);
-            return [];
+        if (queryEmbedding && queryEmbedding.length > 0) {
+            const { data, error } = await quizQueryRepository.matchQuestions(queryEmbedding, 0.5, 50);
+            if (!error && data && (data as any[]).length > 0) {
+                const { data: fullData } = await quizQueryRepository.findQuizzesByIds((data as any[]).map((d: any) => d.id));
+                questions = fullData || [];
+            }
         }
+        if (questions.length === 0) {
+            const { data } = await quizQueryRepository.findRecentQuizzes(50);
+            questions = data || [];
+        }
+
+        const candidates = questions.map((q: any) => {
+            const text = (q.content_blocks as any[]).filter(b => b.type === "text").map(b => b.content || "").join(" ").substring(0, 150);
+            const examStr = q.quiz_exams ? `${q.quiz_exams.year}년 ${q.quiz_exams.round}회 (${q.quiz_exams.title})` : "Unknown";
+            return `ID: ${q.id} | [${examStr} | ${q.question_number}번] ${text}`;
+        }).join("\n");
+
+        return await quizAIService.recommendRelated(questionText, candidates, limitCount);
     }
 }
 

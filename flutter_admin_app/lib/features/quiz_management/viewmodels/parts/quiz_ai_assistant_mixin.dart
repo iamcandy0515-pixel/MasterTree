@@ -19,18 +19,10 @@ mixin QuizAiAssistantMixin on ChangeNotifier {
     notifyListeners();
 
     try {
-      final dynamic rawRelated = await _repository.recommendRelated(questionText: questionText, limit: 10);
-      if (rawRelated is List) {
-        // 🔥 [Recursive FTF] Deep cast every element to survive minified JS runtime
-        _relatedQuestions = (rawRelated as List)
-            .map((e) => Map<String, dynamic>.from(e as Map))
-            .toList();
-      } else {
-        _relatedQuestions = [];
-      }
+      final related = await _repository.recommendRelated(questionText: questionText, limit: 10);
+      _relatedQuestions = List<Map<String, dynamic>>.from(related);
     } catch (e) {
-      debugPrint('❌ [QuizAiAssistantMixin] Recommend error: $e');
-      _relatedQuestions = [];
+      throw e.toString();
     } finally {
       _isRecommending = false;
       notifyListeners();
@@ -38,24 +30,20 @@ mixin QuizAiAssistantMixin on ChangeNotifier {
   }
 
   Future<List<String>> generateDistractorsAction(String questionText, String correctAnswer) async {
-    if (questionText.isEmpty || correctAnswer.isEmpty) throw '문제와 정답 내용을 확인해주세요.';
+    if (questionText.isEmpty || correctAnswer.isEmpty) throw '문제와 현재 지정된 정답 내용을 확인해주세요.';
     try {
-      final List<dynamic> rawDistractors = await _repository.generateDistractors(questionText, correctAnswer);
-      return rawDistractors.map((e) => e.toString()).toList();
+      return await _repository.generateDistractors(questionText, correctAnswer);
     } catch (e) {
-      debugPrint('❌ [QuizAiAssistantMixin] GenerateDistractors error: $e');
-      return [];
+      throw e.toString();
     }
   }
 
   Future<List<String>> generateHintsInternal(String questionText, String explanation, int hintsCount) async {
-    if (questionText.isEmpty || explanation.isEmpty) throw '문제와 해설 내용을 확인해주세요.';
+    if (questionText.isEmpty || explanation.isEmpty) throw '문제와 해설 내용을 먼저 확인해주세요.';
     try {
-      final List<dynamic> rawHints = await _repository.generateHints(questionText, explanation, hintsCount);
-      return rawHints.map((e) => e.toString()).toList();
+      return await _repository.generateHints(questionText, explanation, hintsCount);
     } catch (e) {
-      debugPrint('❌ [QuizAiAssistantMixin] GenerateHints error: $e');
-      return [];
+      throw e.toString();
     }
   }
 
@@ -67,13 +55,10 @@ mixin QuizAiAssistantMixin on ChangeNotifier {
     notifyListeners();
 
     try {
-      final dynamic rawReview = await _repository.reviewQuizAlignment(rawText, [{'type': 'text', 'content': explanationText}]);
-      if (rawReview is! Map) return <String, dynamic>{'error': '잘못된 리뷰 데이터 형식'};
-      
-      return Map<String, dynamic>.from(rawReview as Map);
+      final reviewData = await _repository.reviewQuizAlignment(rawText, [{'type': 'text', 'content': explanationText}]);
+      return reviewData;
     } catch (e) {
-      debugPrint('❌ [QuizAiAssistantMixin] Review error: $e');
-      return <String, dynamic>{'error': e.toString()};
+      throw e.toString();
     } finally {
       _isReviewing = false;
       notifyListeners();

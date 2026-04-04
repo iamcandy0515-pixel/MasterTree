@@ -34,8 +34,7 @@ class TreeRegistrationRepository {
     );
 
     if (response.statusCode != 201) {
-      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
-      final error = decoded is Map ? Map<String, dynamic>.from(decoded) : <String, dynamic>{};
+      final error = jsonDecode(utf8.decode(response.bodyBytes));
       throw Exception(error['message'] ?? '수목 등록에 실패했습니다.');
     }
   }
@@ -60,13 +59,9 @@ class TreeRegistrationRepository {
     final response = await http.Response.fromStream(streamedResponse);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
-      if (decoded is Map) {
-        final jsonResponse = Map<String, dynamic>.from(decoded);
-        if (jsonResponse['success'] == true) {
-          final data = jsonResponse['data'];
-          if (data is Map) return Map<String, dynamic>.from(data)['publicUrl']?.toString() ?? '';
-        }
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsonResponse['success'] == true) {
+        return jsonResponse['data']['publicUrl'];
       }
     }
     throw Exception('이미지 업로드에 실패했습니다: ${response.body}');
@@ -89,13 +84,9 @@ class TreeRegistrationRepository {
     final response = await http.Response.fromStream(streamedResponse);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
-      if (decoded is Map) {
-        final jsonResponse = Map<String, dynamic>.from(decoded);
-        if (jsonResponse['success'] == true) {
-          final data = jsonResponse['data'];
-          if (data is Map) return Map<String, dynamic>.from(data)['publicUrl']?.toString() ?? '';
-        }
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsonResponse['success'] == true) {
+        return jsonResponse['data']['publicUrl'];
       }
     }
     throw Exception('이미지 업로드에 실패했습니다: ${response.body}');
@@ -124,13 +115,9 @@ class TreeRegistrationRepository {
     final response = await http.Response.fromStream(streamedResponse);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
-      if (decoded is Map) {
-        final jsonResponse = Map<String, dynamic>.from(decoded);
-        if (jsonResponse['success'] == true) {
-          final data = jsonResponse['data'];
-          if (data is Map) return Map<String, dynamic>.from(data)['url']?.toString() ?? '';
-        }
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsonResponse['success'] == true) {
+        return jsonResponse['data']['url'];
       }
     }
     throw Exception('구글 드라이브 업로드 실패: ${response.body}');
@@ -151,12 +138,9 @@ class TreeRegistrationRepository {
     );
 
     if (response.statusCode == 200) {
-      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
-      if (decoded is Map) {
-        final jsonResponse = Map<String, dynamic>.from(decoded);
-        if (jsonResponse['success'] == true) {
-          return jsonResponse['url']?.toString();
-        }
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsonResponse['success'] == true) {
+        return jsonResponse['url'];
       }
     }
     return null;

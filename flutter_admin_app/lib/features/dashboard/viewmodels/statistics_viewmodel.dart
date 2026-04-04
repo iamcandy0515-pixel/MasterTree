@@ -14,14 +14,10 @@ class StatisticsViewModel extends ChangeNotifier {
   List<dynamic> get users => _users; // 전체 리스트 (필요시)
 
   // 활동 유저와 비활동 유저 필터링 리스트
-  List<dynamic> get activeUsersList => _users.where((u) {
-        if (u is Map) return Map<String, dynamic>.from(u)['is_active_tab'] == true;
-        return false;
-      }).toList();
-  List<dynamic> get inactiveUsersList => _users.where((u) {
-        if (u is Map) return Map<String, dynamic>.from(u)['is_active_tab'] == false;
-        return false;
-      }).toList();
+  List<dynamic> get activeUsersList =>
+      _users.where((u) => u['is_active_tab'] == true).toList();
+  List<dynamic> get inactiveUsersList =>
+      _users.where((u) => u['is_active_tab'] == false).toList();
 
   Future<void> loadStats() async {
     _isLoading = true;

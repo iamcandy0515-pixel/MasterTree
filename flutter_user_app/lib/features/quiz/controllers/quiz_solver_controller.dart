@@ -33,9 +33,9 @@ class QuizSolverController {
       final List<dynamic> rawQs = data['questions'] ?? [];
 
       questions = rawQs.map((q) {
-        // UI가 블록 기반 렌더링(QuizContentRenderer)을 수행하므로 원본 리스트 보존
-        dynamic content = q['content_blocks'] ?? [];
-        dynamic explanation = q['explanation_blocks'] ?? [];
+        // 현재 UI 구조가 단일 String을 기대하므로 블록들을 문자열로 병합
+        String content = _flattenBlocks(q['content_blocks']);
+        String explanation = _flattenBlocks(q['explanation_blocks']);
         List<String> options = (q['options'] as List).map((o) => _flattenBlocks([o])).toList();
 
         return {

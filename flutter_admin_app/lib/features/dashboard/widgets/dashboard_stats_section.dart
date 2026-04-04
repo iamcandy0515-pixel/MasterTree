@@ -9,12 +9,7 @@ class DashboardStatsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DashboardViewModel>(
       builder: (context, vm, child) {
-        // 🔥 [MEM-Safe] Avoid Map.from() in release mode for minified JS
-        final dynamic raw = vm.stats;
-        final Map<String, dynamic> stats = (raw is Map) 
-          ? raw.map((k, v) => MapEntry(k.toString(), v)) 
-          : <String, dynamic>{};
-        
+        final stats = vm.stats;
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Container(
@@ -46,7 +41,7 @@ class DashboardStatsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildTextStatItem(String label, dynamic count, String unit) {
+  Widget _buildTextStatItem(String label, int count, String unit) {
     return RepaintBoundary(
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -87,3 +82,4 @@ class DashboardStatsSection extends StatelessWidget {
     );
   }
 }
+

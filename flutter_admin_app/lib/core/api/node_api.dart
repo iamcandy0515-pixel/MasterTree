@@ -53,15 +53,8 @@ class NodeApi {
     final resp = await http.get(Uri.parse('$baseUrl/trees'), headers: headers);
 
     if (resp.statusCode == 200) {
-      final decoded = jsonDecode(resp.body);
-      if (decoded is Map) {
-        final json = Map<String, dynamic>.from(decoded);
-        final data = json['data'];
-        if (data is List) {
-          return data.map((e) => e is Map ? Map<String, dynamic>.from(e) : e).toList();
-        }
-      }
-      return [];
+      final json = jsonDecode(resp.body);
+      return json['data'] ?? []; // Extract data from standard response format
     } else {
       _checkAuthError(resp.statusCode);
       throw Exception('Failed to fetch trees: ${resp.body}');
@@ -82,12 +75,9 @@ class NodeApi {
     );
 
     if (resp.statusCode == 200) {
-      final decoded = jsonDecode(resp.body);
-      if (decoded is Map) {
-        final json = Map<String, dynamic>.from(decoded);
-        if (json['success'] == true) {
-          return json['url']?.toString();
-        }
+      final json = jsonDecode(resp.body);
+      if (json['success'] == true) {
+        return json['url'];
       }
       return null;
     } else {
@@ -110,12 +100,9 @@ class NodeApi {
     );
 
     if (resp.statusCode == 200) {
-      final decoded = jsonDecode(resp.body);
-      if (decoded is Map) {
-        final json = Map<String, dynamic>.from(decoded);
-        if (json['success'] == true && json['image'] != null) {
-          return base64Decode(json['image'].toString());
-        }
+      final json = jsonDecode(resp.body);
+      if (json['success'] == true && json['image'] != null) {
+        return base64Decode(json['image']);
       }
       return null;
     } else {

@@ -11,22 +11,9 @@ class SystemSettingsRepository extends BaseRepository {
     try {
       final response = await http.get(url, headers: headers);
       if (response.statusCode == 200) {
-        final decoded = jsonDecode(utf8.decode(response.bodyBytes));
-        if (decoded is Map) {
-          final jsonResponse = Map<String, dynamic>.from(decoded);
-          if (jsonResponse['success'] == true) {
-            final data = jsonResponse['data'];
-            if (data is Map) {
-              final typedData = Map<String, dynamic>.from(data);
-              if (typedData.containsKey(dataKey)) {
-                final val = typedData[dataKey];
-                if (val is T) return val;
-                if (T == String) return (val?.toString() ?? defaultValue.toString()) as T;
-              }
-            } else if (data is T) {
-              return data;
-            }
-          }
+        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+        if (jsonResponse['success'] == true) {
+          return (jsonResponse['data'][dataKey] as T?) ?? defaultValue;
         }
       }
       checkAuthError(response.statusCode);
@@ -43,28 +30,34 @@ class SystemSettingsRepository extends BaseRepository {
     final response = await http.post(url, headers: headers, body: jsonEncode(body));
 
     if (response.statusCode == 200) {
-      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
-      if (decoded is Map) {
-        final jsonResponse = Map<String, dynamic>.from(decoded);
-        if (jsonResponse['success'] == true) {
-          final data = jsonResponse['data'];
-          if (data is Map) {
-            final typedData = Map<String, dynamic>.from(data);
-            if (typedData.containsKey(dataKey)) {
-              final val = typedData[dataKey];
-              if (val is T) return val;
-              if (T == String) return (val?.toString() ?? '') as T;
-              return val as T;
-            }
-          } else if (data is T) {
-            return data;
-          }
-          throw Exception('응답 데이터 형식이 올바르지 않습니다.');
-        }
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsonResponse['success'] == true) {
+        return (jsonResponse['data'][dataKey] as T);
       }
     }
     checkAuthError(response.statusCode);
     throw Exception('$errorPrefix: ${response.body}');
+  }
+
+  // System Restart Commands
+  Future<void> restartAdminServer() async {
+    final url = Uri.parse('$baseUrl/system/restart/admin');
+    final headers = await getHeaders();
+    try {
+      await http.post(url, headers: headers).timeout(const Duration(seconds: 2));
+    } catch (e) {
+      debugPrint('Admin restart triggered (Connection might be lost): $e');
+    }
+  }
+
+  Future<void> restartUserServer() async {
+    final url = Uri.parse('$baseUrl/system/restart/user');
+    final headers = await getHeaders();
+    final response = await http.post(url, headers: headers);
+    if (response.statusCode != 200) {
+      checkAuthError(response.statusCode);
+      throw Exception('Failed to restart user server: ${response.body}');
+    }
   }
 
   // Settings Management
@@ -73,10 +66,6 @@ class SystemSettingsRepository extends BaseRepository {
 
   Future<String> getUserAppUrl() => _fetchSetting('/settings/user-url', defaultValue: 'https://mastertree-user-app.vercel.app');
   Future<String> updateUserAppUrl(String newUrl) => _postSetting('/settings/user-url', {'url': newUrl}, errorPrefix: '사용자 URL 업데이트 실패');
-
-  // New: User Notification Management
-  Future<String> getUserNotification() => _fetchSetting('/settings/notification', defaultValue: '', dataKey: 'value');
-  Future<String> updateUserNotification(String message) => _postSetting('/settings/notification', {'notification': message}, dataKey: 'value', errorPrefix: '알림 정보 업데이트 실패');
 
   Future<String> getGoogleDriveFolderUrl() => _fetchSetting('/settings/drive-url', defaultValue: '');
   Future<String> updateGoogleDriveFolderUrl(String newUrl) => _postSetting('/settings/drive-url', {'url': newUrl}, errorPrefix: '구글 드라이브 URL 업데이트 실패');
@@ -97,13 +86,9 @@ class SystemSettingsRepository extends BaseRepository {
       final response = await http.post(url, headers: headers, body: jsonEncode({'url': urlString}));
 
       if (response.statusCode == 200) {
-        final decoded = jsonDecode(utf8.decode(response.bodyBytes));
-        if (decoded is Map) {
-          final jsonResponse = Map<String, dynamic>.from(decoded);
-          if (jsonResponse['success'] == true) {
-            final data = jsonResponse['data'];
-            if (data is Map) return Map<String, dynamic>.from(data)['isValid'] == true;
-          }
+        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+        if (jsonResponse['success'] == true) {
+          return jsonResponse['data']['isValid'] == true;
         }
       }
       return false;

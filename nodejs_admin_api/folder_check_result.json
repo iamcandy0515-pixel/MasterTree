@@ -1,0 +1,16 @@
+{
+  "totalStandardDbTrees": 78,
+  "totalUniqueDriveTrees": 72,
+  "missingInDrive": [
+    "들메나무",
+    "신갈나무",
+    "오동나무",
+    "오리나무",
+    "옻나무",
+    "회화나무",
+    "후박나무"
+  ],
+  "extraInDrive": [
+    "말채나무"
+  ]
+}

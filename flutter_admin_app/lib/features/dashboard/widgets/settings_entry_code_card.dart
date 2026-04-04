@@ -47,8 +47,8 @@ class _SettingsEntryCodeCardState extends State<SettingsEntryCodeCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '입장 코드',
-            style: TextStyle(color: Colors.white70, fontSize: 13),
+            '현재 설정된 접속 코드',
+            style: TextStyle(color: Colors.white70, fontSize: 14),
           ),
           const SizedBox(height: 12),
           Row(
@@ -76,8 +76,8 @@ class _SettingsEntryCodeCardState extends State<SettingsEntryCodeCard> {
                   keyboardType: TextInputType.number,
                 ),
               ),
-               const SizedBox(width: 16),
-              TextButton(
+              const SizedBox(width: 16),
+              ElevatedButton(
                 onPressed: vm.isLoading
                     ? null
                     : () async {
@@ -93,19 +93,22 @@ class _SettingsEntryCodeCardState extends State<SettingsEntryCodeCard> {
                           // Error handled in VM
                         }
                       },
-                style: TextButton.styleFrom(
-                  foregroundColor: const Color(0xFFCCFF00),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFCCFF00),
+                  foregroundColor: Colors.black87,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
                     vertical: 16,
                   ),
-                  textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
                 child: vm.isLoading && vm.entryCode != _controller.text
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFCCFF00)),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black87),
                       )
                     : const Text('변경 저장'),
               ),

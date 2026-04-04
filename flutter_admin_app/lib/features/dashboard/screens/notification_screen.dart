@@ -45,30 +45,26 @@ class _NotificationContent extends StatelessWidget {
           const SizedBox(width: 8),
         ],
       ),
-      body: viewModel.isLoading
+      body: viewModel.notifications.isEmpty
           ? const Center(
-              child: CircularProgressIndicator(color: primaryColor),
+              child: Text(
+                '새로운 알림이 없습니다.',
+                style: TextStyle(color: Colors.grey),
+              ),
             )
-          : viewModel.notifications.isEmpty
-              ? const Center(
-                  child: Text(
-                    '새로운 알림이 없습니다.',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                )
-              : ListView.separated(
-                  itemCount: viewModel.notifications.length,
-                  separatorBuilder: (context, index) =>
-                      Divider(color: Colors.white.withOpacity(0.05), height: 1),
-                  itemBuilder: (context, index) {
-                    final notification = viewModel.notifications[index];
-                    return _buildNotificationItem(
-                      context,
-                      notification,
-                      primaryColor,
-                    );
-                  },
-                ),
+          : ListView.separated(
+              itemCount: viewModel.notifications.length,
+              separatorBuilder: (context, index) =>
+                  Divider(color: Colors.white.withOpacity(0.05), height: 1),
+              itemBuilder: (context, index) {
+                final notification = viewModel.notifications[index];
+                return _buildNotificationItem(
+                  context,
+                  notification,
+                  primaryColor,
+                );
+              },
+            ),
     );
   }
 
@@ -101,7 +97,9 @@ class _NotificationContent extends StatelessWidget {
       },
       child: Container(
         padding: const EdgeInsets.all(20),
-        color: Colors.white.withOpacity(0.03),
+        color: notification.isRead
+            ? Colors.transparent
+            : Colors.white.withOpacity(0.03),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -123,10 +121,14 @@ class _NotificationContent extends StatelessWidget {
                     children: [
                       Text(
                         notification.title,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: notification.isRead
+                              ? Colors.grey[400]
+                              : Colors.white,
                           fontSize: 15,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: notification.isRead
+                              ? FontWeight.normal
+                              : FontWeight.bold,
                         ),
                       ),
                       Text(
@@ -138,8 +140,8 @@ class _NotificationContent extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     notification.message,
-                    style: const TextStyle(
-                      color: Colors.white70,
+                    style: TextStyle(
+                      color: Colors.grey[500],
                       fontSize: 13,
                       height: 1.4,
                     ),

@@ -20,15 +20,11 @@ class LoginViewModel extends ChangeNotifier {
       _savedEmail = prefs.getString('saved_email') ?? '';
       _savedPassword = prefs.getString('saved_password') ?? '';
       notifyListeners();
+
+      debugPrint('🔐 [LoginViewModel] Credentials loaded: Email=$_savedEmail');
     } catch (e) {
       debugPrint('❌ [LoginViewModel] Error loading credentials: $e');
     }
-  }
-
-  /// MEM (Manual Entry Mapping) - Force safe conversion for Minified JS Objects
-  Map<String, dynamic> _forceCast(dynamic data) {
-    if (data is! Map) return <String, dynamic>{};
-    return data.map((k, v) => MapEntry(k.toString(), v));
   }
 
   Future<bool> signIn(String email, String password) async {
@@ -38,48 +34,41 @@ class LoginViewModel extends ChangeNotifier {
     try {
       debugPrint('🚀 [LoginViewModel] Attempting login via Auth Proxy: $email');
 
+      // Use Node API as a Proxy to bypass CORS
       final url = Uri.parse('${NodeApi.baseUrl}/users/login');
       final response = await http.post(
         url,
-        headers: <String, String>{'Content-Type': 'application/json'},
-        body: jsonEncode(<String, dynamic>{'email': email, 'password': password}),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email, 'password': password}),
       );
 
       if (response.statusCode == 200) {
-        final dynamic decoded = json.decode(response.body);
-        
-        // 🔥 [MEM] Manual entry mapping to survive minified 'mS' vs 'fR' crashes
-        final Map<String, dynamic> data = _forceCast(decoded);
-        
+        final data = jsonDecode(response.body);
         if (data['success'] == true) {
-          final Map<String, dynamic> rawData = _forceCast(data['data']);
-          final Map<String, dynamic> session = _forceCast(rawData['session']);
-          
-          final dynamic accessToken = session['access_token'];
-          
-          if (accessToken != null) {
-            final String tokenStr = accessToken.toString();
+          final session = data['data']['session'];
+          if (session != null) {
+            // Manually set the session in the local Supabase client using refresh_token
+            await Supabase.instance.client.auth.setSession(session['refresh_token']);
             
+            // Save credentials locally
             try {
               final prefs = await SharedPreferences.getInstance();
-              await prefs.setString('access_token', tokenStr);
               await prefs.setString('saved_email', email);
               await prefs.setString('saved_password', password);
+              debugPrint('✅ [LoginViewModel] Login successful via Proxy & Session set.');
             } catch (e) {
-              debugPrint('❌ [LoginViewModel] Prefs error (DTC failure): $e');
-              return false;
+              debugPrint('❌ [LoginViewModel] Error saving credentials: $e');
             }
-            
             return true;
           }
         }
       }
       
-      debugPrint('❌ [LoginViewModel] Login failed: ${response.statusCode}');
+      debugPrint('❌ [LoginViewModel] Login failed: ${response.body}');
       return false;
     } catch (e) {
-      debugPrint('❌ [LoginViewModel] CRASH: $e');
-      return false; 
+      debugPrint('❌ [LoginViewModel] Unexpected Error: $e');
+      throw '인증 서버와의 통신에 실패했습니다: $e';
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -91,12 +80,21 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      if (email.isEmpty || password.isEmpty) throw 'Email and password required';
-      await Supabase.instance.client.auth.signUp(email: email, password: password);
+      if (email.isEmpty || password.isEmpty) {
+        throw 'Email and password required';
+      }
+
+      debugPrint('🚀 [LoginViewModel] Attempting signup with: $email');
+      await Supabase.instance.client.auth.signUp(
+        email: email,
+        password: password,
+      );
       return true;
     } on AuthException catch (e) {
+      debugPrint('❌ [LoginViewModel] Signup Auth Error: ${e.message}');
       throw e.message;
     } catch (e) {
+      debugPrint('❌ [LoginViewModel] Signup Unexpected Error: $e');
       throw 'Signup failed: $e';
     } finally {
       _isLoading = false;

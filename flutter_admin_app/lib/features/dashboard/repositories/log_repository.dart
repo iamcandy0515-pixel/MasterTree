@@ -1,18 +1,17 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_admin_app/core/api/node_api.dart';
 
 class LogRepository {
   final String _baseUrl;
 
   LogRepository()
-    : _baseUrl = NodeApi.baseUrl;
+    : _baseUrl = dotenv.env['API_URL'] ?? 'http://localhost:3000/api';
 
   Future<List<Map<String, dynamic>>> getLogs() async {
-    final url = Uri.parse('/system/logs');
+    final url = Uri.parse('$_baseUrl/system/logs');
     final session = Supabase.instance.client.auth.currentSession;
     final token = session?.accessToken ?? '';
 
@@ -20,7 +19,7 @@ class LogRepository {
       url,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ',
+        'Authorization': 'Bearer $token',
       },
     );
 
@@ -30,15 +29,12 @@ class LogRepository {
         final logs = jsonResponse['data'] as List;
         return logs
             .map(
-              (l) {
-                final entry = Map<String, dynamic>.from(l as Map);
-                return {
-                  'time': entry['time']?.toString() ?? '',
-                  'type': entry['type']?.toString() ?? '',
-                  'msg': entry['msg']?.toString() ?? '',
-                  'color': _parseHexColor(entry['color']?.toString() ?? '#FFFFFF'),
-                };
-              }
+              (l) => {
+                'time': l['time'],
+                'type': l['type'],
+                'msg': l['msg'],
+                'color': _parseHexColor(l['color']),
+              },
             )
             .toList();
       }
@@ -47,7 +43,7 @@ class LogRepository {
   }
 
   Future<void> clearLogs() async {
-    final url = Uri.parse('/system/logs');
+    final url = Uri.parse('$_baseUrl/system/logs');
     final session = Supabase.instance.client.auth.currentSession;
     final token = session?.accessToken ?? '';
 
@@ -55,7 +51,7 @@ class LogRepository {
       url,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ',
+        'Authorization': 'Bearer $token',
       },
     );
   }
@@ -63,7 +59,7 @@ class LogRepository {
   Color _parseHexColor(String hexStr) {
     hexStr = hexStr.replaceAll('#', '');
     if (hexStr.length == 6) {
-      hexStr = 'FF';
+      hexStr = 'FF$hexStr';
     } else if (hexStr.toLowerCase().startsWith('0x')) {
       return Color(int.parse(hexStr));
     }

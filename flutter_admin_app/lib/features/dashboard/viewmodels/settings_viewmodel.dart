@@ -19,9 +19,6 @@ class SettingsViewModel extends ChangeNotifier {
   String _userAppUrl = "https://mastertree-user-app.vercel.app";
   String get userAppUrl => _userAppUrl;
 
-  String _userNotification = "";
-  String get userNotification => _userNotification;
-
   String _googleDriveUrl = "";
   String get googleDriveUrl => _googleDriveUrl;
 
@@ -46,19 +43,18 @@ class SettingsViewModel extends ChangeNotifier {
       final results = await Future.wait([
         _repository.getEntryCode(),
         _repository.getUserAppUrl(),
-        _repository.getUserNotification(), // 사용자 알림 추가
         _repository.getGoogleDriveFolderUrl(),
         _repository.getThumbnailDriveUrl(),
         _repository.getExamDriveUrl(),
       ]);
       _entryCode = results[0];
       _userAppUrl = results[1];
-      _userNotification = results[2];
-      _googleDriveUrl = results[3];
-      _thumbnailDriveUrl = results[4];
-      _examDriveUrl = results[5];
+      _googleDriveUrl = results[2];
+      _thumbnailDriveUrl = results[3];
+      _examDriveUrl = results[4];
       _error = null;
 
+      // Initial status check
       checkAllUrls();
     } catch (e) {
       _error = "설정 정보를 불러오는데 실패했습니다.";
@@ -87,9 +83,25 @@ class SettingsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> loadEntryCode() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _entryCode = await _repository.getEntryCode();
+      _error = null;
+    } catch (e) {
+      _error = "입장 코드를 불러오는데 실패했습니다.";
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> updateEntryCode(String newCode) async {
     _isLoading = true;
     notifyListeners();
+
     try {
       _entryCode = await _repository.updateEntryCode(newCode);
       _error = null;
@@ -105,6 +117,7 @@ class SettingsViewModel extends ChangeNotifier {
   Future<void> updateUserAppUrl(String newUrl) async {
     _isLoading = true;
     notifyListeners();
+
     try {
       _userAppUrl = await _repository.updateUserAppUrl(newUrl);
       _error = null;
@@ -118,24 +131,10 @@ class SettingsViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> updateUserNotification(String message) async {
-    _isLoading = true;
-    notifyListeners();
-    try {
-      _userNotification = await _repository.updateUserNotification(message);
-      _error = null;
-    } catch (e) {
-      _error = "알림 정보 수정에 실패했습니다: $e";
-      rethrow;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
   Future<void> updateGoogleDriveFolderUrl(String newUrl) async {
     _isLoading = true;
     notifyListeners();
+
     try {
       _googleDriveUrl = await _repository.updateGoogleDriveFolderUrl(newUrl);
       _error = null;
@@ -152,6 +151,7 @@ class SettingsViewModel extends ChangeNotifier {
   Future<void> updateThumbnailDriveUrl(String newUrl) async {
     _isLoading = true;
     notifyListeners();
+
     try {
       _thumbnailDriveUrl = await _repository.updateThumbnailDriveUrl(newUrl);
       _error = null;
@@ -168,6 +168,7 @@ class SettingsViewModel extends ChangeNotifier {
   Future<void> updateExamDriveUrl(String newUrl) async {
     _isLoading = true;
     notifyListeners();
+
     try {
       _examDriveUrl = await _repository.updateExamDriveUrl(newUrl);
       _error = null;
@@ -181,16 +182,14 @@ class SettingsViewModel extends ChangeNotifier {
     }
   }
 
-  // Support for Server Control Card Actions
   Future<void> restartAdminServer() async {
     _isLoading = true;
     notifyListeners();
     try {
-      await Future.delayed(const Duration(seconds: 2)); // Simulate action
-      _error = null;
-    } catch (e) {
-      _error = "관리자 서버 재시작 요청 실패";
+      await _repository.restartAdminServer();
+    } catch (_) {
     } finally {
+      await Future.delayed(const Duration(seconds: 3));
       _isLoading = false;
       notifyListeners();
     }
@@ -200,10 +199,9 @@ class SettingsViewModel extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-      await Future.delayed(const Duration(seconds: 2)); // Simulate action
-      _error = null;
+      await _repository.restartUserServer();
     } catch (e) {
-      _error = "사용자 서버 재시작 요청 실패";
+      debugPrint('Restart User Server Error: $e');
     } finally {
       _isLoading = false;
       notifyListeners();

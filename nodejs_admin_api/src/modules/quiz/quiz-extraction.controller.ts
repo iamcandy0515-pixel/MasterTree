@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { quizService } from "./quiz.service";
 import { successResponse, errorResponse } from "../../utils/response";
 import { GoogleDriveService } from "../external/google_drive.service";
-import { settingsDriveService } from "../settings/settings_drive.service";
+import { settingsService } from "../settings/settings.service";
 import { extractDriveFolderId } from "../../utils/drive-helper";
 
 /**
@@ -88,7 +88,7 @@ export class QuizExtractionController {
     private async _resolveFileId(fileId: string, driveService: GoogleDriveService): Promise<string> {
         if (/^[a-zA-Z0-9_-]{25,45}$/.test(fileId.trim())) return fileId;
 
-        const folderUrl = (await settingsDriveService.getExamDriveUrl()) || (await settingsDriveService.getGoogleDriveFolderUrl());
+        const folderUrl = (await settingsService.getExamDriveUrl()) || (await settingsService.getGoogleDriveFolderUrl());
         if (!folderUrl) throw new Error("구글 드라이브 폴더가 설정되지 않았습니다.");
 
         const folderId = extractDriveFolderId(folderUrl);

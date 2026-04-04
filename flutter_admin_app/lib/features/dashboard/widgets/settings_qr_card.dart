@@ -131,7 +131,7 @@ class _SettingsQrCardState extends State<SettingsQrCard> {
                     const SizedBox(height: 12),
                     SizedBox(
                       width: double.infinity,
-                      child: TextButton.icon(
+                      child: ElevatedButton.icon(
                         onPressed: vm.isLoading
                             ? null
                             : () async {
@@ -148,13 +148,16 @@ class _SettingsQrCardState extends State<SettingsQrCard> {
                                 }
                               },
                         icon: vm.isLoading
-                            ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFCCFF00)))
+                            ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
                             : const Icon(Icons.save, size: 16),
                         label: const Text('URL 저장'),
-                        style: TextButton.styleFrom(
-                          foregroundColor: const Color(0xFFCCFF00),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white10,
+                          foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 12),
-                          textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
                       ),
                     ),

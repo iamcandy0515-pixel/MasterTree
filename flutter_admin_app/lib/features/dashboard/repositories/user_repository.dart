@@ -29,18 +29,11 @@ class UserRepository {
     );
 
     if (response.statusCode == 200) {
-      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
-      if (decoded is Map) {
-        final jsonResponse = Map<String, dynamic>.from(decoded);
-        if (jsonResponse['success'] == true) {
-          final data = jsonResponse['data'];
-          if (data is Map) {
-            final users = Map<String, dynamic>.from(data)['users'];
-            if (users is List) {
-              return users.map((u) => u is Map ? Map<String, dynamic>.from(u) : <String, dynamic>{}).toList();
-            }
-          }
-        }
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsonResponse['success'] == true) {
+        final data = jsonResponse['data'];
+        final users = data['users'] as List;
+        return users.map((u) => u as Map<String, dynamic>).toList();
       }
     }
     throw Exception('Failed to load users: ${response.body}');

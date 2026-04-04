@@ -20,17 +20,14 @@ class TreeGroupRepository extends BaseRepository {
     final response = await http.get(url, headers: headers);
 
     if (response.statusCode == 200) {
-      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
-      if (decoded is Map) {
-        final jsonResponse = Map<String, dynamic>.from(decoded);
-        if (jsonResponse['success'] == true) {
-          final List<dynamic> data = jsonResponse['data'] ?? [];
-          final meta = jsonResponse['meta'];
-          return {
-            'groups': data.map((e) => TreeGroup.fromJson(e is Map ? Map<String, dynamic>.from(e) : e)).toList(),
-            'meta': meta is Map ? Map<String, dynamic>.from(meta) : <String, dynamic>{},
-          };
-        }
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsonResponse['success'] == true) {
+        return {
+          'groups': (jsonResponse['data'] as List)
+              .map((e) => TreeGroup.fromJson(e))
+              .toList(),
+          'meta': jsonResponse['meta'],
+        };
       }
     }
     checkAuthError(response.statusCode);
@@ -44,13 +41,9 @@ class TreeGroupRepository extends BaseRepository {
     final response = await http.get(url, headers: headers);
 
     if (response.statusCode == 200) {
-      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
-      if (decoded is Map) {
-        final jsonResponse = Map<String, dynamic>.from(decoded);
-        if (jsonResponse['success'] == true) {
-          final data = jsonResponse['data'];
-          if (data is Map) return TreeGroup.fromJson(Map<String, dynamic>.from(data));
-        }
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsonResponse['success'] == true) {
+        return TreeGroup.fromJson(jsonResponse['data']);
       }
     }
     checkAuthError(response.statusCode);
@@ -68,13 +61,9 @@ class TreeGroupRepository extends BaseRepository {
     );
 
     if (response.statusCode == 201 || response.statusCode == 200) {
-      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
-      if (decoded is Map) {
-        final jsonResponse = Map<String, dynamic>.from(decoded);
-        if (jsonResponse['success'] == true) {
-          final data = jsonResponse['data'];
-          if (data is Map) return TreeGroup.fromJson(Map<String, dynamic>.from(data));
-        }
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsonResponse['success'] == true) {
+        return TreeGroup.fromJson(jsonResponse['data']);
       }
     }
     checkAuthError(response.statusCode);
@@ -95,13 +84,9 @@ class TreeGroupRepository extends BaseRepository {
     );
 
     if (response.statusCode == 200) {
-      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
-      if (decoded is Map) {
-        final jsonResponse = Map<String, dynamic>.from(decoded);
-        if (jsonResponse['success'] == true) {
-          final data = jsonResponse['data'];
-          if (data is Map) return TreeGroup.fromJson(Map<String, dynamic>.from(data));
-        }
+      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsonResponse['success'] == true) {
+        return TreeGroup.fromJson(jsonResponse['data']);
       }
     }
     checkAuthError(response.statusCode);

@@ -2,10 +2,6 @@ import { supabase } from "../../config/supabaseClient";
 import { logger } from "../../utils/logger";
 
 export class SettingsService {
-    // -------------------------------------------------------------------------
-    // 기초 설정 (Entry Code, User App URL)
-    // -------------------------------------------------------------------------
-
     // Get entry code
     async getEntryCode() {
         // Fetch from 'app_settings' table where key = 'entry_code'
@@ -16,17 +12,21 @@ export class SettingsService {
             .single();
 
         if (error) {
+            // If doesn't exist, return default or create one?
             if (error.code === "PGRST116") {
+                // Not found, return null or default
                 logger.warn("Entry code not found, returning default '1234'");
                 return "1234";
             }
             throw error;
         }
+
         return data.value;
     }
 
     // Update entry code
     async updateEntryCode(code: string) {
+        // Upsert entry code
         const { data, error } = await supabase
             .from("app_settings")
             .upsert(
@@ -35,6 +35,7 @@ export class SettingsService {
                     value: code,
                     description: "앱 입장 코드",
                     updated_at: new Date().toISOString(),
+
                 },
                 { onConflict: "key" },
             )
@@ -45,9 +46,9 @@ export class SettingsService {
             logger.error("Failed to update entry code", error);
             throw error;
         }
+
         return data.value;
     }
-
     // Get user app url
     async getUserAppUrl() {
         const { data, error } = await supabase
@@ -57,9 +58,13 @@ export class SettingsService {
             .single();
 
         if (error) {
-            if (error.code === "PGRST116") return "http://localhost:8080";
+            if (error.code === "PGRST116") {
+                // Not found, return default dev url
+                return "http://localhost:8080";
+            }
             throw error;
         }
+
         return data.value;
     }
 
@@ -73,6 +78,7 @@ export class SettingsService {
                     value: url,
                     description: "사용자 앱 URL (QR생성용)",
                     updated_at: new Date().toISOString(),
+
                 },
                 { onConflict: "key" },
             )
@@ -83,29 +89,27 @@ export class SettingsService {
             logger.error("Failed to update user app url", error);
             throw error;
         }
+
         return data.value;
     }
 
-    // -------------------------------------------------------------------------
-    // 구글 드라이브 및 외부 저장소 URL (Drive, Thumbnails, Exams)
-    // -------------------------------------------------------------------------
-
-    // Get google drive folder url
+    // Get Google Drive folder URL (Original Images)
     async getGoogleDriveFolderUrl() {
         const { data, error } = await supabase
             .from("app_settings")
             .select("value")
-            .eq("key", "google_drive_folder_url")
-            .single();
+            .in("key", ["google_drive_folder_url", "tree_image_drive_url"]) // Fallback keys
+            .order('updated_at', { ascending: false }) // 최신 것 우선
+            .limit(1);
 
-        if (error) {
-            if (error.code === "PGRST116") return "";
-            throw error;
+        if (error || !data || data.length === 0) {
+            return "";
         }
-        return data.value;
+
+        return data[0].value;
     }
 
-    // Update google drive folder url
+    // Update Google Drive folder URL
     async updateGoogleDriveFolderUrl(url: string) {
         const { data, error } = await supabase
             .from("app_settings")
@@ -113,8 +117,9 @@ export class SettingsService {
                 {
                     key: "google_drive_folder_url",
                     value: url,
-                    description: "구글 드라이브 원본 폴더 URL",
+                    description: "구글 드라이브 폴더 URL (문제 추출용)",
                     updated_at: new Date().toISOString(),
+
                 },
                 { onConflict: "key" },
             )
@@ -125,25 +130,27 @@ export class SettingsService {
             logger.error("Failed to update google drive folder url", error);
             throw error;
         }
+
         return data.value;
     }
 
-    // Get thumbnail drive url
+    // Get Thumbnail Drive URL
     async getThumbnailDriveUrl() {
         const { data, error } = await supabase
             .from("app_settings")
             .select("value")
-            .eq("key", "thumbnail_drive_url")
-            .single();
+            .in("key", ["thumbnail_drive_url", "tree_thumbnail_drive_url"]) // Fallback keys
+            .order('updated_at', { ascending: false })
+            .limit(1);
 
-        if (error) {
-            if (error.code === "PGRST116") return "";
-            throw error;
+        if (error || !data || data.length === 0) {
+            return "";
         }
-        return data.value;
+
+        return data[0].value;
     }
 
-    // Update thumbnail drive url
+    // Update Thumbnail Drive URL
     async updateThumbnailDriveUrl(url: string) {
         const { data, error } = await supabase
             .from("app_settings")
@@ -153,6 +160,7 @@ export class SettingsService {
                     value: url,
                     description: "구글 드라이브 썸네일 폴더 URL",
                     updated_at: new Date().toISOString(),
+
                 },
                 { onConflict: "key" },
             )
@@ -163,10 +171,10 @@ export class SettingsService {
             logger.error("Failed to update thumbnail drive url", error);
             throw error;
         }
+
         return data.value;
     }
-
-    // Get exam drive url
+    // Get Exam Drive URL
     async getExamDriveUrl() {
         const { data, error } = await supabase
             .from("app_settings")
@@ -175,43 +183,26 @@ export class SettingsService {
             .single();
 
         if (error) {
-            if (error.code === "PGRST116") return "";
-            throw error;
-        }
-        return data.value;
-    }
-
-    // -------------------------------------------------------------------------
-    // 사용자 알림 정보 (Notification)
-    // -------------------------------------------------------------------------
-
-    // Get notification message
-    async getUserNotification() {
-        const { data, error } = await supabase
-            .from("app_settings")
-            .select("value")
-            .eq("key", "user_notification")
-            .single();
-
-        if (error) {
             if (error.code === "PGRST116") {
-                return ""; // 없을 시 기본값 empty string
+                return "";
             }
             throw error;
         }
+
         return data.value;
     }
 
-    // Update notification message
-    async updateUserNotification(message: string) {
+    // Update Exam Drive URL
+    async updateExamDriveUrl(url: string) {
         const { data, error } = await supabase
             .from("app_settings")
             .upsert(
                 {
-                    key: "user_notification",
-                    value: message,
-                    description: "사용자 앱 공지/알림 정보",
+                    key: "exam_drive_url",
+                    value: url,
+                    description: "구글 드라이브 기출문제 폴더 URL",
                     updated_at: new Date().toISOString(),
+
                 },
                 { onConflict: "key" },
             )
@@ -219,9 +210,10 @@ export class SettingsService {
             .single();
 
         if (error) {
-            logger.error("Failed to update user notification", error);
+            logger.error("Failed to update exam drive url", error);
             throw error;
         }
+
         return data.value;
     }
 }

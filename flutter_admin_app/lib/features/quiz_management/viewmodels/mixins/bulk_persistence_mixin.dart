@@ -35,17 +35,11 @@ mixin BulkPersistenceMixin on ChangeNotifier {
       final json = prefs.getString('bulk_extraction_backup');
       if (json != null) {
         final Map<int, Map<String, dynamic>> extractedQuizzes = {};
-        final decoded = jsonDecode(json);
-        if (decoded is Map) {
-          final data = Map<String, dynamic>.from(decoded);
-          data.forEach((k, v) {
-            if (v is Map) {
-              final quizMap = Map<String, dynamic>.from(v);
-              extractedQuizzes[int.parse(k)] = quizMap;
-            }
-          });
-          return extractedQuizzes;
-        }
+        final data = jsonDecode(json) as Map<String, dynamic>;
+        data.forEach((k, v) {
+          extractedQuizzes[int.parse(k)] = Map<String, dynamic>.from(v);
+        });
+        return extractedQuizzes;
       }
     } catch (e) {
       debugPrint('Error loading backup: $e');
