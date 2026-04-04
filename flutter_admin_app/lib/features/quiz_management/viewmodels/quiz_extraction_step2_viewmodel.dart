@@ -1,7 +1,9 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../repositories/quiz_drive_repository.dart';
 import '../repositories/quiz_repository.dart';
+import '../repositories/quiz_media_repository.dart';
 import '../models/drive_file.dart';
 import 'package:flutter_admin_app/features/quiz_management/viewmodels/parts/quiz_file_handler_mixin.dart';
 import 'package:flutter_admin_app/features/quiz_management/viewmodels/parts/quiz_ai_assistant_mixin.dart';
@@ -12,6 +14,7 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier
   
   final _quizRepo = QuizRepository();
   final _driveRepo = QuizDriveRepository();
+  final _mediaRepo = QuizMediaRepository();
 
   // --- Core State (Step 2 Specific) ---
   String? _selectedSubject;
@@ -26,7 +29,11 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier
   String? get selectedSubject => _selectedSubject;
   String? get selectedYear => _selectedYear;
   String? get selectedRound => _selectedRound;
+  
+  // 🔥 [Dual Name Support] Satisfy varying UI component naming
+  int get selectedQuestion => _selectedQuestionNumber;
   int get selectedQuestionNumber => _selectedQuestionNumber;
+  
   int get hintsCount => _hintsCount;
 
   String? get initialSubject => _selectedSubject;
@@ -45,8 +52,8 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier
 
   void init({String? subject, int? year, int? round}) {
     _selectedSubject = subject;
-    _selectedYear = year;
-    _selectedRound = round;
+    _selectedYear = year?.toString();
+    _selectedRound = round?.toString();
     notifyListeners();
   }
 
@@ -60,6 +67,11 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier
 
   void setHintsCount(int count) {
     _hintsCount = count;
+    notifyListeners();
+  }
+
+  void setSelectedQuestion(int q) {
+    _selectedQuestionNumber = q;
     notifyListeners();
   }
 
@@ -88,6 +100,17 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier
   }
 
   /// --- Image Support (Satisfies SingleImageManagerDialog) ---
+  
+  Future<String?> uploadImageAction(XFile file) async {
+    try {
+      final Uint8List bytes = await file.readAsBytes();
+      return await _mediaRepo.uploadQuizImage(bytes, file.name);
+    } catch (e) {
+      debugPrint('❌ [Step2VM] uploadImageAction error: $e');
+      return null;
+    }
+  }
+
   Future<bool> addImageToQuiz(XFile file, String field) async {
     _isLoading = true;
     notifyListeners();
@@ -95,17 +118,16 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier
       final String? url = await uploadImageAction(file);
       if (url == null || extractedBlock == null) return false;
       
-      // Update the extracted block locally
+      // Update via Image Handler Mixin
+      // (Wait, the Mixin has addImageToQuizInternal, let's use it properly)
+      // But we already have the URL, so we can just update the block.
+      // Re-cast for safety
       final Map<String, dynamic> currentBlock = _forceCast(extractedBlock);
-      final List<dynamic> blocks = List.from(currentBlock[field] ?? []);
+      final key = (field == 'question') ? 'content_blocks' : 'explanation_blocks';
+      List blocks = List.from(currentBlock[key] ?? []);
       blocks.add({'type': 'image', 'content': url});
-      currentBlock[field] = blocks;
+      currentBlock[key] = blocks;
       
-      // The Mixin managed state might need to be updated if it's used directly
-      // validatedQuizData is a getter for a private field in the Mixin? 
-      // Actually validatedQuizData is a getter for _validatedQuizData in QuizFileHandlerMixin.
-      // But _validatedQuizData is private to the Mixin.
-      // We might need a setter or just use the local block if the UI watches this.
       notifyListeners();
       return true;
     } catch (e) {
@@ -117,12 +139,26 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier
     }
   }
 
-  Future<bool> saveToDb() async {
+  Future<bool> saveToDb({
+    String? questionText,
+    String? explanationText,
+    List<String>? hintTexts,
+    List<String>? optionTexts,
+  }) async {
     if (extractedBlock == null) return false;
     _isLoading = true;
     notifyListeners();
     try {
       final Map<String, dynamic> dataToSave = _forceCast(extractedBlock);
+      
+      // Merge UI provided text if available
+      if (questionText != null) {
+        final contentBlocks = List.from(dataToSave['content_blocks'] ?? []);
+        // Update first text block or add new? 
+        // Simplification for now: assuming block structure is handled in extraction
+        dataToSave['question_text'] = questionText; // Backend might need this field
+      }
+      
       dataToSave['subject'] = _selectedSubject;
       dataToSave['year'] = _selectedYear;
       dataToSave['round'] = _selectedRound;

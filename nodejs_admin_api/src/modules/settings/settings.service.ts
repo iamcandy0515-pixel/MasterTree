@@ -87,6 +87,101 @@ export class SettingsService {
     }
 
     // -------------------------------------------------------------------------
+    // 구글 드라이브 및 외부 저장소 URL (Drive, Thumbnails, Exams)
+    // -------------------------------------------------------------------------
+
+    // Get google drive folder url
+    async getGoogleDriveFolderUrl() {
+        const { data, error } = await supabase
+            .from("app_settings")
+            .select("value")
+            .eq("key", "google_drive_folder_url")
+            .single();
+
+        if (error) {
+            if (error.code === "PGRST116") return "";
+            throw error;
+        }
+        return data.value;
+    }
+
+    // Update google drive folder url
+    async updateGoogleDriveFolderUrl(url: string) {
+        const { data, error } = await supabase
+            .from("app_settings")
+            .upsert(
+                {
+                    key: "google_drive_folder_url",
+                    value: url,
+                    description: "구글 드라이브 원본 폴더 URL",
+                    updated_at: new Date().toISOString(),
+                },
+                { onConflict: "key" },
+            )
+            .select()
+            .single();
+
+        if (error) {
+            logger.error("Failed to update google drive folder url", error);
+            throw error;
+        }
+        return data.value;
+    }
+
+    // Get thumbnail drive url
+    async getThumbnailDriveUrl() {
+        const { data, error } = await supabase
+            .from("app_settings")
+            .select("value")
+            .eq("key", "thumbnail_drive_url")
+            .single();
+
+        if (error) {
+            if (error.code === "PGRST116") return "";
+            throw error;
+        }
+        return data.value;
+    }
+
+    // Update thumbnail drive url
+    async updateThumbnailDriveUrl(url: string) {
+        const { data, error } = await supabase
+            .from("app_settings")
+            .upsert(
+                {
+                    key: "thumbnail_drive_url",
+                    value: url,
+                    description: "구글 드라이브 썸네일 폴더 URL",
+                    updated_at: new Date().toISOString(),
+                },
+                { onConflict: "key" },
+            )
+            .select()
+            .single();
+
+        if (error) {
+            logger.error("Failed to update thumbnail drive url", error);
+            throw error;
+        }
+        return data.value;
+    }
+
+    // Get exam drive url
+    async getExamDriveUrl() {
+        const { data, error } = await supabase
+            .from("app_settings")
+            .select("value")
+            .eq("key", "exam_drive_url")
+            .single();
+
+        if (error) {
+            if (error.code === "PGRST116") return "";
+            throw error;
+        }
+        return data.value;
+    }
+
+    // -------------------------------------------------------------------------
     // 사용자 알림 정보 (Notification)
     // -------------------------------------------------------------------------
 

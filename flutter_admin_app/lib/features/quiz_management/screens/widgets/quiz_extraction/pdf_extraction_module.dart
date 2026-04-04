@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../viewmodels/quiz_extraction_step2_viewmodel.dart';
 
 class PdfExtractionModule extends StatelessWidget {
@@ -71,14 +72,17 @@ class PdfExtractionModule extends StatelessWidget {
               value: _safeInt(vm.selectedQuestion),
               isExpanded: false,
               dropdownColor: backgroundDark,
-              icon: const Icon(Icons.expand_more, color: primaryColor, size: 16),
+              icon: Icon(Icons.expand_more, color: primaryColor, size: 16),
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),
-              onChanged: (int? newValue) {
-                if (newValue != null) vm.setSelectedQuestion(newValue);
+              onChanged: (int? newValue) async {
+                if (newValue != null) {
+                  vm.setSelectedQuestion(newValue);
+                  await vm.saveToDb();
+                }
               },
               items: List.generate(
                 _safeInt(vm.selectedQuestion) > 20 ? _safeInt(vm.selectedQuestion) : 20,
