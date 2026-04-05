@@ -50,6 +50,11 @@ export type AuthTables = {
       phone: string
       role: string | null
       status: string | null
+      last_session_id: string | null
+      last_device_id: string | null
+      last_device_model: string | null
+      last_os_version: string | null
+      last_login: string | null
     }
     Insert: {
       auth_id?: string | null
@@ -61,6 +66,11 @@ export type AuthTables = {
       phone: string
       role?: string | null
       status?: string | null
+      last_session_id?: string | null
+      last_device_id?: string | null
+      last_device_model?: string | null
+      last_os_version?: string | null
+      last_login?: string | null
     }
     Update: {
       auth_id?: string | null
@@ -72,7 +82,13 @@ export type AuthTables = {
       phone?: string
       role?: string | null
       status?: string | null
+      last_session_id?: string | null
+      last_device_id?: string | null
+      last_device_model?: string | null
+      last_os_version?: string | null
+      last_login?: string | null
     }
     Relationships: []
   }
 }
+

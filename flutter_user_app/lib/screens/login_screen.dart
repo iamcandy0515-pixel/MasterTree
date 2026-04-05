@@ -66,6 +66,10 @@ class _LoginContentState extends State<_LoginContent> {
     } else if (message == 'status_expired') {
       title = '기간 만료';
       content = '사용 기간이 만료되었습니다.\n관리자에게 문의해 주세요.';
+    } else if (message.startsWith('ALREADY_LOGGED_IN:')) {
+      final deviceModel = message.split(':')[1];
+      _showConflictDialog(deviceModel, vm);
+      return;
     }
 
     showDialog(
@@ -109,6 +113,53 @@ class _LoginContentState extends State<_LoginContent> {
               onPressed: () => Navigator.pop(context),
               child: const Text('확인', style: TextStyle(color: AppColors.primary)),
             ),
+        ],
+      ),
+    );
+  }
+
+  void _showConflictDialog(String deviceModel, AuthViewModel vm) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.surfaceDark,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: const [
+            Icon(Icons.warning_amber_rounded, color: Colors.orange),
+            SizedBox(width: 10),
+            Text('중복 로그인 감지', style: TextStyle(color: AppColors.textLight)),
+          ],
+        ),
+        content: Text(
+          '이미 [$deviceModel] 에서 로그인되어 있습니다.\n\n해당 기기를 로그아웃하고 이 기기에서 로그인하시겠습니까?',
+          style: const TextStyle(color: Colors.white70, height: 1.5),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('취소', style: TextStyle(color: Colors.white60)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              vm.handleLogin(
+                formKey: _formKey,
+                onSuccess: () => Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const DashboardScreen()),
+                ),
+                onError: (msg) => _showErrorDialog(msg, vm),
+                forceLogout: true,
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            child: const Text('기존 기기 로그아웃'),
+          ),
         ],
       ),
     );

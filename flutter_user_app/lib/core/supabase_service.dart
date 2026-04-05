@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -10,23 +12,79 @@ class SupabaseService {
   static const String systemFixedPassword = 'admin1234';
 
   /// Performs email login (Permanent Account)
-  static Future<AuthResponse> signInPermanent(String phone) async {
+  static Future<AuthResponse> signInPermanent(
+    String phone, {
+    String? deviceId,
+    String? deviceModel,
+    String? osVersion,
+    bool forceLogout = false,
+  }) async {
     final cleanPhone = phone.replaceAll('-', '');
     
     // 1. Check if user already has a specific email in public.users
     final existingUser = await client
         .from('users')
-        .select('email')
+        .select('id, email, last_device_id, last_device_model')
         .eq('phone', cleanPhone)
         .maybeSingle();
+
+    if (existingUser != null && deviceId != null && !forceLogout) {
+      final lastDeviceId = existingUser['last_device_id'];
+      if (lastDeviceId != null && lastDeviceId != deviceId) {
+        throw 'ALREADY_LOGGED_IN:${existingUser['last_device_model'] ?? '다른 기기'}';
+      }
+    }
 
     // 2. Priority: Registered Email -> Fallback: Virtual Email
     final targetEmail = existingUser?['email'] ?? 'u$cleanPhone@mastertree.app';
 
-    return await client.auth.signInWithPassword(
+    final response = await client.auth.signInWithPassword(
       email: targetEmail,
       password: systemFixedPassword,
     );
+
+    // 3. Register/Update Session in DB
+    if (response.user != null && deviceId != null) {
+      await client.from('users').update({
+        'last_session_id': response.session?.accessToken.substring(0, 50),
+        'last_device_id': deviceId,
+        'last_device_model': deviceModel,
+        'last_os_version': osVersion,
+        'last_login': DateTime.now().toIso8601String(),
+      }).eq('auth_id', response.user!.id);
+    }
+
+    return response;
+  }
+
+  /// Get simplified device info
+  static Future<Map<String, String>> getDeviceInfo() async {
+    final deviceInfo = DeviceInfoPlugin();
+    String model = "Unknown Device";
+    String os = "Unknown OS";
+    String uuid = "Unknown UUID";
+
+    try {
+      if (Platform.isAndroid) {
+        final android = await deviceInfo.androidInfo;
+        model = android.model;
+        os = 'Android ${android.version.release}';
+        uuid = android.id; // Consistent UUID for same hardware
+      } else if (Platform.isIOS) {
+        final ios = await deviceInfo.iosInfo;
+        model = ios.name ?? ios.model;
+        os = 'iOS ${ios.systemVersion}';
+        uuid = ios.identifierForVendor ?? 'Unknown-iOS-ID';
+      }
+    } catch (e) {
+      debugPrint('Device info error: $e');
+    }
+
+    return {
+      'model': model,
+      'os': os,
+      'uuid': uuid,
+    };
   }
 
   /// Performs sign up (Permanent Account)

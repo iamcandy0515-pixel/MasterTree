@@ -27,9 +27,23 @@ mixin AuthLogicHandler {
     return errorMessage;
   }
 
-  Future<void> syncAuthAndUser(Map<String, dynamic> user, String name, String phone) async {
+  Future<void> syncAuthAndUser(
+    Map<String, dynamic> user,
+    String name,
+    String phone, {
+    String? deviceId,
+    String? deviceModel,
+    String? osVersion,
+    bool forceLogout = false,
+  }) async {
     try {
-      await SupabaseService.signInPermanent(phone);
+      await SupabaseService.signInPermanent(
+        phone,
+        deviceId: deviceId,
+        deviceModel: deviceModel,
+        osVersion: osVersion,
+        forceLogout: forceLogout,
+      );
     } on AuthException catch (e) {
       final errStr = e.toString().toLowerCase();
       if (errStr.contains('invalid_credentials') || errStr.contains('400')) {
@@ -41,6 +55,13 @@ mixin AuthLogicHandler {
           );
           if (authResponse.user != null) {
             await SupabaseService.updateUserAuthId(user['id'], authResponse.user!.id);
+            // After sign up, sync session as well
+            await SupabaseService.signInPermanent(
+              phone,
+              deviceId: deviceId,
+              deviceModel: deviceModel,
+              osVersion: osVersion,
+            );
           }
         } on AuthException catch (signUpErr) {
           if (signUpErr.message.toLowerCase().contains('already registered') || signUpErr.message.toLowerCase().contains('user_already_exists')) {
@@ -51,17 +72,32 @@ mixin AuthLogicHandler {
       } else {
         rethrow;
       }
+    } catch (e) {
+      // Re-throw custom error string from SupabaseService
+      rethrow;
     }
   }
 
-  Future<AuthResponse> signUpOrSignIn(String phone, String name, String email) async {
+  Future<AuthResponse> signUpOrSignIn(
+    String phone,
+    String name,
+    String email, {
+    String? deviceId,
+    String? deviceModel,
+    String? osVersion,
+  }) async {
     try {
       return await SupabaseService.signUpPermanent(phone, name: name, email: email);
     } on AuthException catch (e) {
       final errStr = e.toString().toLowerCase();
       if (errStr.contains('already registered') || errStr.contains('user_already_exists')) {
         try {
-          return await SupabaseService.signInPermanent(phone);
+          return await SupabaseService.signInPermanent(
+            phone,
+            deviceId: deviceId,
+            deviceModel: deviceModel,
+            osVersion: osVersion,
+          );
         } on AuthException catch (signInErr) {
           final sErrStr = signInErr.toString().toLowerCase();
           if (sErrStr.contains('invalid_credentials') || sErrStr.contains('400')) {

@@ -85,7 +85,12 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler {
   String? validateEmail(String? v) => (!showEmailField) ? null : ((v == null || v.isEmpty) ? '이메일을 입력해주세요.' : (RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(v) ? null : '유효한 이메일 형식이 아닙니다.'));
   String? validateEntryCode(String? v) => (v == null || v.isEmpty) ? '입장코드를 입력해주세요.' : null;
 
-  Future<void> handleLogin({required GlobalKey<FormState> formKey, required VoidCallback onSuccess, required Function(String) onError}) async {
+  Future<void> handleLogin({
+    required GlobalKey<FormState> formKey,
+    required VoidCallback onSuccess,
+    required Function(String) onError,
+    bool forceLogout = false,
+  }) async {
     if (!formKey.currentState!.validate()) return;
     _isLoading = true;
     notifyListeners();
@@ -94,6 +99,12 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler {
       final phone = phoneController.text.trim();
       final email = emailController.text.trim();
       final entryCode = entryCodeController.text.trim();
+
+      // Get Device Info
+      final deviceInfo = await SupabaseService.getDeviceInfo();
+      final deviceId = deviceInfo['uuid'];
+      final deviceModel = deviceInfo['model'];
+      final osVersion = deviceInfo['os'];
 
       Map<String, dynamic>? user = await checkExistingUser(name, phone);
       _isExistingUser = (user != null);
@@ -105,15 +116,39 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler {
         if (isLinkExpired(user)) throw 'status_expired';
 
         if (!await SupabaseService.isValidEntryCode(entryCode, user: user)) throw '입장코드가 올바르지 않습니다.';
-        await syncAuthAndUser(user!, name, phone);
+        
+        await syncAuthAndUser(
+          user!, 
+          name, 
+          phone,
+          deviceId: deviceId,
+          deviceModel: deviceModel,
+          osVersion: osVersion,
+          forceLogout: forceLogout,
+        );
       } else {
         if (!await SupabaseService.isValidEntryCode(entryCode)) throw '입장코드가 올바르지 않습니다.';
-        final authRes = await signUpOrSignIn(phone, name, email);
+        
+        final authRes = await signUpOrSignIn(
+          phone, 
+          name, 
+          email,
+          deviceId: deviceId,
+          deviceModel: deviceModel,
+          osVersion: osVersion,
+        );
+        
         if (authRes.user == null) throw '인증 계정 생성 또는 로그인에 실패했습니다.';
 
         final checkAgain = await checkExistingUser(name, phone);
         if (checkAgain == null) {
-          await SupabaseService.registerUser(name: name, phone: phone, email: email, entryCode: entryCode, authId: authRes.user!.id);
+          await SupabaseService.registerUser(
+            name: name, 
+            phone: phone, 
+            email: email, 
+            entryCode: entryCode, 
+            authId: authRes.user!.id,
+          );
           throw 'status_pending';
         }
       }
@@ -122,6 +157,9 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler {
     } catch (e) {
       final msg = e.toString();
       if (['status_denied', 'status_pending', 'status_expired'].contains(msg)) { onError(msg); }
+      else if (msg.startsWith('ALREADY_LOGGED_IN:')) {
+        onError(msg); // Will be handled by the screen to show modal
+      }
       else { onError(getErrorMessage(e)); }
     } finally {
       _isLoading = false;

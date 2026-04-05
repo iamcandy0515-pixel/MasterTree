@@ -5,16 +5,17 @@ import { logger } from "../../utils/logger";
 export class UsersService {
     /**
      * Admin Login
-     * @param loginDto email and password
+     * @param loginDto login credentials and device info
      * @returns session data including access_token
      */
     async login(loginDto: LoginDto) {
-        const { email, password } = loginDto;
+        const { email, password, deviceId, deviceModel, osVersion, forceLogout } = loginDto;
 
         if (!email || !password) {
             throw new Error("Email and password are required");
         }
 
+        // 1. Authenticate with Supabase
         const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password,
@@ -23,6 +24,42 @@ export class UsersService {
         if (error) {
             logger.error("Login failed", error);
             throw new Error(error.message);
+        }
+
+        const user = data.user;
+        const session = data.session;
+
+        // 2. Check for active session conflict (Single Session Logic)
+        if (user && deviceId) {
+            const { data: dbUser } = await supabase
+                .from('users')
+                .select('last_session_id, last_device_id, last_device_model')
+                .eq('auth_id', user.id)
+                .maybeSingle();
+
+            if (dbUser && dbUser.last_session_id && dbUser.last_device_id !== deviceId && !forceLogout) {
+                // Return a specific error with current device info
+                const conflictError: any = new Error("이미 다른 기기에서 로그인이 되어있습니다.");
+                conflictError.code = "SESSION_ALREADY_EXISTS";
+                conflictError.deviceModel = dbUser.last_device_model || "다른 기기";
+                throw conflictError;
+            }
+
+            // 3. Update/Overwrite session info in DB
+            try {
+                await supabase
+                    .from('users')
+                    .update({
+                        last_session_id: session?.access_token.substring(0, 50), // Store partial for ID
+                        last_device_id: deviceId,
+                        last_device_model: deviceModel || "Unknown",
+                        last_os_version: osVersion || "Unknown",
+                        last_login: new Date().toISOString()
+                    })
+                    .eq('auth_id', user.id);
+            } catch (updateErr: any) {
+                logger.warn(`Failed to update session info for ${user.id} (ignore if columns missing): ${updateErr.message}`);
+            }
         }
 
         return {
