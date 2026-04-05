@@ -24,8 +24,8 @@ class UserCardItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final name = user['name'] ?? '사용자';
-    final initial = name.replaceAll(RegExp(r'\[.*?\]\s*'), '').isNotEmpty
+    final String name = (user['name'] as String?) ?? '사용자';
+    final String initial = name.replaceAll(RegExp(r'\[.*?\]\s*'), '').isNotEmpty
         ? name.replaceAll(RegExp(r'\[.*?\]\s*'), '')[0]
         : '?';
 
@@ -88,7 +88,7 @@ class UserCardItem extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '${user['email'] ?? ''}${user['phone'] != null ? ' | ${FormatUtils.formatPhone(user['phone'])}' : ''}',
+                      '${user['email'] as String? ?? ''}${user['phone'] != null ? ' | ${FormatUtils.formatPhone(user['phone'] as String)}' : ''}',
                       style: TextStyle(
                         color: Colors.grey[500],
                         fontSize: 11,
@@ -97,7 +97,7 @@ class UserCardItem extends StatelessWidget {
                   ],
                 ),
               ),
-              _buildStatusBadge(user['role'] ?? 'User', primaryColor),
+              _buildStatusBadge(user['role'] as String? ?? 'User', primaryColor),
               if (user['isDuplicate'] == true) ...[
                 const SizedBox(width: 8),
                 Container(
@@ -127,7 +127,7 @@ class UserCardItem extends StatelessWidget {
                   color: Colors.white24,
                   size: 18,
                 ),
-                onPressed: () => onDelete(user['id']!, name),
+                onPressed: () => onDelete(user['id'] as String, name),
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
               ),
@@ -139,16 +139,16 @@ class UserCardItem extends StatelessWidget {
             children: [
               Flexible(
                 child: Text(
-                   '최근 활동: ${user['lastLogin']}',
+                   '최근 활동: ${user['lastLogin'] as String? ?? '정보 없음'}',
                   style: TextStyle(color: Colors.grey[600], fontSize: 10),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               UserActionButtons(
                 status: currentStatus,
-                onApprove: () => onApprove(user['id']!),
-                onReject: () => onReject(user['id']!),
-                onPending: () => onPending(user['id']!),
+                onApprove: () => onApprove(user['id'] as String),
+                onReject: () => onReject(user['id'] as String),
+                onPending: () => onPending(user['id'] as String),
                 primaryColor: primaryColor,
               ),
             ],
@@ -176,4 +176,3 @@ class UserCardItem extends StatelessWidget {
     );
   }
 }
-

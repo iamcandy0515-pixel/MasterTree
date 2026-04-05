@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
 import 'package:flutter_admin_app/features/trees/repositories/master_tree_repository.dart';
 import 'package:flutter_admin_app/features/trees/repositories/master_tree_data_repository.dart';
@@ -7,7 +7,7 @@ class TreeListViewModel extends ChangeNotifier {
   final MasterTreeRepository _repo = MasterTreeRepository();
   final MasterTreeDataRepository _dataRepo = MasterTreeDataRepository();
 
-  List<Tree> _paginatedTrees = [];
+  List<Tree> _paginatedTrees = <Tree>[];
   bool _isLoading = false;
 
   // Stats
@@ -38,7 +38,7 @@ class TreeListViewModel extends ChangeNotifier {
   int get totalPages => _totalPages;
   int get filteredTotalCount => _totalTrees; // Total matching filter
 
-  static const List<String> categories = ['전체', '침엽수', '활엽수'];
+  static const List<String> categories = <String>['전체', '침엽수', '활엽수'];
 
   Future<void> fetchTrees({int? page}) async {
     if (page != null) _currentPage = page;
@@ -48,7 +48,7 @@ class TreeListViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final result = await _repo.getTrees(
+      final PaginatedTrees result = await _repo.getTrees(
         page: _currentPage,
         limit: _itemsPerPage,
         search: _searchQuery,
@@ -111,7 +111,7 @@ class TreeListViewModel extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-      final csvData = await _dataRepo.exportTrees();
+      final String? csvData = await _dataRepo.exportTrees();
       return csvData;
     } catch (e) {
       _errorMessage = '내보내기 실패: $e';
@@ -130,7 +130,7 @@ class TreeListViewModel extends ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
     try {
-      final results = await _dataRepo.importTrees(bytes, fileName);
+      final Map<String, dynamic>? results = await _dataRepo.importTrees(bytes, fileName);
       // Refresh list
       _currentPage = 1;
       await fetchTrees();

@@ -1,4 +1,4 @@
-import 'package:flutter_admin_app/core/api/node_api.dart';
+﻿import 'package:flutter_admin_app/core/api/node_api.dart';
 
 class TreeImage {
   final int? id;
@@ -19,7 +19,7 @@ class TreeImage {
     this.isQuizEnabled = true,
   });
 
-  static const Map<String, String> _typeMapping = {
+  static const Map<String, String> _typeMapping = <String, String>{
     '대표': 'main',
     '전체': 'main',
     'main': 'main',
@@ -46,20 +46,20 @@ class TreeImage {
   };
 
   factory TreeImage.fromJson(Map<String, dynamic> json) {
-    final rawUrl = json['image_url'] ?? '';
-    final thumbUrl = json['thumbnail_url'];
+    final String rawUrl = (json['image_url'] ?? '').toString();
+    final dynamic thumbUrl = json['thumbnail_url'];
 
     return TreeImage(
       id: json['id'] != null ? int.tryParse(json['id'].toString()) : null,
-      imageType: () {
-        final rawType = (json['image_type'] ?? '').toString().toLowerCase().trim();
+      imageType: (() {
+        final String rawType = (json['image_type'] ?? '').toString().toLowerCase().trim();
         return _typeMapping[rawType] ?? rawType;
-      }(),
+      })(),
       imageUrl: NodeApi.getProxyImageUrl(rawUrl),
       originUrl: rawUrl,
-      thumbnailUrl: thumbUrl != null ? NodeApi.getProxyImageUrl(thumbUrl) : null,
-      hint: json['hint'],
-      isQuizEnabled: json['is_quiz_enabled'] ?? true,
+      thumbnailUrl: thumbUrl != null ? NodeApi.getProxyImageUrl(thumbUrl as String) : null,
+      hint: json['hint'] as String?,
+      isQuizEnabled: (json['is_quiz_enabled'] as bool?) ?? true,
     );
   }
 
@@ -83,7 +83,7 @@ class TreeImage {
     );
   }
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => <String, dynamic>{
     'image_type': imageType,
     'image_url': (originUrl != null && originUrl!.isNotEmpty) 
         ? originUrl 
@@ -115,13 +115,13 @@ class Tree {
     this.description,
     this.category,
     this.difficulty = 1,
-    this.images = const [],
-    this.quizDistractors = const [],
+    this.images = const <TreeImage>[],
+    this.quizDistractors = const <String>[],
     this.isAutoQuizEnabled = true,
   });
 
   String? get imageUrl => images.isNotEmpty ? images.first.imageUrl : null;
-  List<String> get imageUrls => images.map((e) => e.imageUrl).whereType<String>().toList();
+  List<String> get imageUrls => images.map((TreeImage e) => e.imageUrl).toList();
 
   Tree copyWith({
     int? id,
@@ -152,24 +152,23 @@ class Tree {
   factory Tree.fromJson(Map<String, dynamic> json) {
     return Tree(
       id: int.parse(json['id'].toString()),
-      nameKr: json['name_kr'],
-      nameEn: json['name_en'],
-      scientificName: json['scientific_name'],
-      description: json['description'],
-      category: json['category'],
-      difficulty: json['difficulty'] ?? 1,
+      nameKr: (json['name_kr'] ?? '').toString(),
+      nameEn: json['name_en'] as String?,
+      scientificName: json['scientific_name'] as String?,
+      description: json['description'] as String?,
+      category: json['category'] as String?,
+      difficulty: (json['difficulty'] as int?) ?? 1,
       images:
           (json['tree_images'] as List<dynamic>?)
-              ?.map((e) => TreeImage.fromJson(e))
+              ?.map((dynamic e) => TreeImage.fromJson(e as Map<String, dynamic>))
               .toList() ??
-          [],
+          <TreeImage>[],
       quizDistractors:
           (json['quiz_distractors'] as List<dynamic>?)
-              ?.map((e) => e.toString())
+              ?.map((dynamic e) => e.toString())
               .toList() ??
-          [],
-      isAutoQuizEnabled: json['is_auto_quiz_enabled'] ?? true,
+          <String>[],
+      isAutoQuizEnabled: (json['is_auto_quiz_enabled'] as bool?) ?? true,
     );
   }
 }
-

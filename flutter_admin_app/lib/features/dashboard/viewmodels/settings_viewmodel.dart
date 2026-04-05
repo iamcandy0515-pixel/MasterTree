@@ -28,6 +28,9 @@ class SettingsViewModel extends ChangeNotifier {
   String _examDriveUrl = "";
   String get examDriveUrl => _examDriveUrl;
 
+  String _userNotice = "";
+  String get userNotice => _userNotice;
+
   // URL Status Maps (null: not checked, true: OK, false: Error)
   final Map<String, bool?> _urlStatuses = {};
   bool? getUrlStatus(String key) => _urlStatuses[key];
@@ -46,12 +49,14 @@ class SettingsViewModel extends ChangeNotifier {
         _repository.getGoogleDriveFolderUrl(),
         _repository.getThumbnailDriveUrl(),
         _repository.getExamDriveUrl(),
+        _repository.getNotice(),
       ]);
       _entryCode = results[0];
       _userAppUrl = results[1];
       _googleDriveUrl = results[2];
       _thumbnailDriveUrl = results[3];
       _examDriveUrl = results[4];
+      _userNotice = results[5];
       _error = null;
 
       // Initial status check
@@ -175,6 +180,22 @@ class SettingsViewModel extends ChangeNotifier {
       checkUrl('examDrive', _examDriveUrl);
     } catch (e) {
       _error = "기출문제 URL 수정에 실패했습니다: $e";
+      rethrow;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateUserNotice(String notice) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _userNotice = await _repository.updateNotice(notice);
+      _error = null;
+    } catch (e) {
+      _error = "공지사항 업데이트 실패: $e";
       rethrow;
     } finally {
       _isLoading = false;

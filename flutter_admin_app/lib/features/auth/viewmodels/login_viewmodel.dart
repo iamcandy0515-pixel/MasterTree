@@ -38,8 +38,8 @@ class LoginViewModel extends ChangeNotifier {
       final url = Uri.parse('${NodeApi.baseUrl}/users/login');
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': password}),
+        headers: <String, String>{'Content-Type': 'application/json'},
+        body: jsonEncode(<String, dynamic>{'email': email, 'password': password}),
       );
 
       if (response.statusCode == 200) {

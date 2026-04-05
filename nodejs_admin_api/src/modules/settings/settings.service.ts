@@ -216,6 +216,45 @@ export class SettingsService {
 
         return data.value;
     }
+    // Get User App Notice
+    async getNotice() {
+        const { data, error } = await supabase
+            .from("app_settings")
+            .select("value")
+            .eq("key", "user_notice")
+            .single();
+
+        if (error) {
+            if (error.code === "PGRST116") return "";
+            throw error;
+        }
+
+        return data.value;
+    }
+
+    // Update User App Notice
+    async updateNotice(notice: string) {
+        const { data, error } = await supabase
+            .from("app_settings")
+            .upsert(
+                {
+                    key: "user_notice",
+                    value: notice,
+                    description: "사용자 앱 공지사항 안내문",
+                    updated_at: new Date().toISOString(),
+                },
+                { onConflict: "key" },
+            )
+            .select()
+            .single();
+
+        if (error) {
+            logger.error("Failed to update user notice", error);
+            throw error;
+        }
+
+        return data.value;
+    }
 }
 
 export const settingsService = new SettingsService();

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/design_system.dart';
 import '../../login_screen.dart';
+import '../../notification_screen.dart';
 
 class DashboardHeader extends StatelessWidget {
   const DashboardHeader({super.key});
@@ -39,8 +40,19 @@ class DashboardHeader extends StatelessWidget {
           ),
         ],
       ),
-      actions: const [
-        SizedBox(width: 12),
+      actions: [
+        IconButton(
+          onPressed: () => Navigator.push<void>(
+            context,
+            MaterialPageRoute<void>(builder: (context) => const NotificationScreen()),
+          ),
+          icon: const Icon(
+            Icons.notifications_none_rounded,
+            color: AppColors.textLight,
+            size: 24,
+          ),
+        ),
+        const SizedBox(width: 8),
       ],
     );
   }

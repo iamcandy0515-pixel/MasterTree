@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
 import 'package:flutter_admin_app/features/trees/models/create_tree_request.dart';
 import 'package:flutter_admin_app/features/trees/repositories/master_tree_repository.dart';
@@ -14,7 +14,7 @@ class TreeDetailViewModel extends ChangeNotifier {
   bool get isSaving => _isSaving;
 
   final TextEditingController descController = TextEditingController();
-  final Map<String, TextEditingController> hintControllers = {
+  final Map<String, TextEditingController> hintControllers = <String, TextEditingController>{
     'main': TextEditingController(),
     'bark': TextEditingController(),
     'leaf': TextEditingController(),
@@ -31,11 +31,11 @@ class TreeDetailViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final detailedTree = await _repository.getTreeById(tree.id);
+      final Tree detailedTree = await _repository.getTreeById(tree.id);
       tree = detailedTree;
       _initControllers();
     } catch (e) {
-      debugPrint('[TreeDetailViewModel] fetchDetails failed: $e');
+      debugPrint('[TreeDetailViewModel] fetchDetails failed: ');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -45,15 +45,15 @@ class TreeDetailViewModel extends ChangeNotifier {
   void _initControllers() {
     descController.text = tree.description ?? '';
     // Clear first to avoid duplication
-    hintControllers.forEach((_, c) => c.text = '');
+    hintControllers.forEach((String _, TextEditingController c) => c.text = '');
     
     // Sort to prioritize records with actual hints
-    final sortedImages = List<TreeImage>.from(tree.images)
-      ..sort((a, b) => (b.hint?.length ?? 0).compareTo(a.hint?.length ?? 0));
+    final List<TreeImage> sortedImages = List<TreeImage>.from(tree.images)
+      ..sort((TreeImage a, TreeImage b) => (b.hint?.length ?? 0).compareTo(a.hint?.length ?? 0));
 
-    for (var img in sortedImages) {
+    for (final TreeImage img in sortedImages) {
       if (hintControllers.containsKey(img.imageType)) {
-        if (img.hint != null && img.hint!.isNotEmpty && hintControllers[img.imageType]!.text.isEmpty) {
+        if (img.hint != null && img.hint!.isNotEmpty && (hintControllers[img.imageType]?.text.isEmpty ?? true)) {
           hintControllers[img.imageType]!.text = img.hint!;
         }
       }
@@ -63,7 +63,7 @@ class TreeDetailViewModel extends ChangeNotifier {
   @override
   void dispose() {
     descController.dispose();
-    for (var c in hintControllers.values) {
+    for (final TextEditingController c in hintControllers.values) {
       c.dispose();
     }
     super.dispose();
@@ -74,16 +74,16 @@ class TreeDetailViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final List<TreeImage> finalImages = [];
-      final List<String> categories = ['main', 'leaf', 'bark', 'flower', 'fruit'];
+      final List<TreeImage> finalImages = <TreeImage>[];
+      final List<String> categories = <String>['main', 'leaf', 'bark', 'flower', 'fruit'];
       
-      for (var cat in categories) {
-        final hint = hintControllers[cat]?.text ?? '';
-        final existing = tree.images.where((i) => i.imageType == cat).toList();
+      for (final String cat in categories) {
+        final String hint = hintControllers[cat]?.text ?? '';
+        final List<TreeImage> existing = tree.images.where((TreeImage i) => i.imageType == cat).toList();
         
         if (existing.isNotEmpty) {
           // Update all existing images of this type with the same hint
-          finalImages.addAll(existing.map((i) => i.copyWith(hint: hint)));
+          finalImages.addAll(existing.map((TreeImage i) => i.copyWith(hint: hint)));
         } else if (hint.isNotEmpty) {
           // Create a new "hint-only" record with null imageUrl
           finalImages.add(TreeImage(
@@ -96,12 +96,12 @@ class TreeDetailViewModel extends ChangeNotifier {
       }
       
       // Preserve images from other categories
-      finalOtherImages() {
-        return tree.images.where((i) => !categories.contains(i.imageType));
+      Iterable<TreeImage> finalOtherImages() {
+        return tree.images.where((TreeImage i) => !categories.contains(i.imageType));
       }
       finalImages.addAll(finalOtherImages());
 
-      final request = CreateTreeRequest(
+      final CreateTreeRequest request = CreateTreeRequest(
         nameKr: tree.nameKr,
         nameEn: tree.nameEn,
         scientificName: tree.scientificName,
@@ -113,7 +113,7 @@ class TreeDetailViewModel extends ChangeNotifier {
         images: finalImages,
       );
 
-      final updated = await _repository.updateTree(tree.id, request);
+      final Tree updated = await _repository.updateTree(tree.id, request);
       
       // Sync local state
       tree = updated;
@@ -130,7 +130,7 @@ class TreeDetailViewModel extends ChangeNotifier {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('저장 실패: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text('저장 실패: '), backgroundColor: Colors.red),
         );
       }
     } finally {

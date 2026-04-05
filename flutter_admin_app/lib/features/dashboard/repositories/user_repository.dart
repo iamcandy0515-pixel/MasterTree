@@ -14,65 +14,66 @@ class UserRepository {
     int limit = 50,
     String? status,
   }) async {
-    final queryParams =
-        'page=$page&limit=$limit${status != null ? '&status=$status' : ''}';
-    final url = Uri.parse('$_baseUrl/users?$queryParams');
+    final String params = 'page=$page&limit=$limit${status != null ? '&status=$status' : ''}';
+    final Uri url = Uri.parse('$_baseUrl/users?$params');
+    
     final session = Supabase.instance.client.auth.currentSession;
-    final token = session?.accessToken ?? '';
+    final String token = session?.accessToken ?? '';
 
-    final response = await http.get(
+    final http.Response response = await http.get(
       url,
-      headers: {
+      headers: <String, String>{
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
     );
 
     if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      final Map<String, dynamic> jsonResponse = 
+          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
       if (jsonResponse['success'] == true) {
-        final data = jsonResponse['data'];
-        final users = data['users'] as List;
-        return users.map((u) => u as Map<String, dynamic>).toList();
+        final Map<String, dynamic> data = (jsonResponse['data'] as Map<String, dynamic>?) ?? <String, dynamic>{};
+        final List<dynamic> users = (data['users'] as List<dynamic>?) ?? <dynamic>[];
+        return users.map((dynamic u) => u as Map<String, dynamic>).toList();
       }
     }
-    throw Exception('Failed to load users: ${response.body}');
+    throw Exception('Failed to load users: ${response.statusCode}');
   }
 
   Future<void> updateUserStatus(String id, String status) async {
-    final url = Uri.parse('$_baseUrl/users/$id/status');
+    final Uri url = Uri.parse('$_baseUrl/users/$id/status');
     final session = Supabase.instance.client.auth.currentSession;
-    final token = session?.accessToken ?? '';
+    final String token = session?.accessToken ?? '';
 
-    final response = await http.patch(
+    final http.Response response = await http.patch(
       url,
-      headers: {
+      headers: <String, String>{
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
-      body: jsonEncode({'status': status}),
+      body: jsonEncode(<String, dynamic>{'status': status}),
     );
 
     if (response.statusCode != 200) {
-      throw Exception('Failed to update user status: ${response.body}');
+      throw Exception('Failed to update user status: ${response.statusCode}');
     }
   }
 
   Future<void> deleteUser(String id) async {
-    final url = Uri.parse('$_baseUrl/users/$id');
+    final Uri url = Uri.parse('$_baseUrl/users/$id');
     final session = Supabase.instance.client.auth.currentSession;
-    final token = session?.accessToken ?? '';
+    final String token = session?.accessToken ?? '';
 
-    final response = await http.delete(
+    final http.Response response = await http.delete(
       url,
-      headers: {
+      headers: <String, String>{
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
     );
 
     if (response.statusCode != 200) {
-      throw Exception('Failed to delete user: ${response.body}');
+      throw Exception('Failed to delete user: ${response.statusCode}');
     }
   }
 }

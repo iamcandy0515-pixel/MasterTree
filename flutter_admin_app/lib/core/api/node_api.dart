@@ -22,7 +22,7 @@ class NodeApi {
   static Future<Map<String, String>> _getHeaders() async {
     final session = Supabase.instance.client.auth.currentSession;
     final token = session?.accessToken ?? '';
-    return {
+    return <String, String>{
       'Authorization': 'Bearer $token',
       'Content-Type': 'application/json',
     };
@@ -38,9 +38,9 @@ class NodeApi {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('로그인이 만료되었습니다. 다시 로그인 해주세요.')),
         );
-        Navigator.pushAndRemoveUntil(
+        Navigator.pushAndRemoveUntil<void>(
           context,
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          MaterialPageRoute<void>(builder: (_) => const LoginScreen()),
           (Route<dynamic> route) => false,
         );
       }
@@ -53,8 +53,8 @@ class NodeApi {
     final resp = await http.get(Uri.parse('$baseUrl/trees'), headers: headers);
 
     if (resp.statusCode == 200) {
-      final json = jsonDecode(resp.body);
-      return json['data'] ?? []; // Extract data from standard response format
+      final Map<String, dynamic> json = jsonDecode(resp.body) as Map<String, dynamic>;
+      return (json['data'] as List<dynamic>?) ?? <dynamic>[]; 
     } else {
       _checkAuthError(resp.statusCode);
       throw Exception('Failed to fetch trees: ${resp.body}');
@@ -71,13 +71,13 @@ class NodeApi {
     final resp = await http.post(
       uri,
       headers: headers,
-      body: jsonEncode({'treeName': treeName, 'imageType': imageType}),
+      body: jsonEncode(<String, dynamic>{'treeName': treeName, 'imageType': imageType}),
     );
 
     if (resp.statusCode == 200) {
-      final json = jsonDecode(resp.body);
+      final Map<String, dynamic> json = jsonDecode(resp.body) as Map<String, dynamic>;
       if (json['success'] == true) {
-        return json['url'];
+        return json['url'] as String?;
       }
       return null;
     } else {
@@ -96,13 +96,13 @@ class NodeApi {
     final resp = await http.post(
       uri,
       headers: headers,
-      body: jsonEncode({'treeName': treeName, 'imageType': imageType}),
+      body: jsonEncode(<String, dynamic>{'treeName': treeName, 'imageType': imageType}),
     );
 
     if (resp.statusCode == 200) {
-      final json = jsonDecode(resp.body);
+      final Map<String, dynamic> json = jsonDecode(resp.body) as Map<String, dynamic>;
       if (json['success'] == true && json['image'] != null) {
-        return base64Decode(json['image']);
+        return base64Decode(json['image'] as String);
       }
       return null;
     } else {
@@ -111,17 +111,14 @@ class NodeApi {
     }
   }
 
-  /// [Added] Get Proxy URL for optimizing image performance (Resizing + WebP)
   static String getProxyImageUrl(String? url, {int? width, int? height}) {
     if (url == null || url.isEmpty) return '';
 
-    // [1] 이미 프록시 처리되었거나 기타 이미지 서버 URL
     if (url.contains('/uploads/proxy')) {
-      // ⚠️ 포트가 다르거나 도메인이 다를 경우 현재 baseUrl로 교체 (DB에 옛날 포트로 저장된 경우 대응)
       if (!url.startsWith(baseUrl)) {
         final proxyPathIndex = url.indexOf('/api/uploads/proxy');
         if (proxyPathIndex != -1) {
-          url = baseUrl + url.substring(proxyPathIndex + 4); // "/api" 제외 후 baseUrl 결합
+          url = baseUrl + url.substring(proxyPathIndex + 4); 
         }
       }
       
@@ -129,7 +126,6 @@ class NodeApi {
       return url;
     }
 
-    // [2] Supabase Storage 리사이징 활용 (가장 가벼움)
     if (url.contains('supabase.co/storage/v1/object/public/')) {
       if (width != null) {
         final separator = url.contains('?') ? '&' : '?';
@@ -138,7 +134,6 @@ class NodeApi {
       return url;
     }
 
-    // [3] 구글 드라이브 또는 외부 URL 프록시 리사이징
     if (url.contains('drive.google.com') ||
         url.contains('googleusercontent.com')) {
       String proxyUrl =

@@ -62,7 +62,7 @@ class MasterTreeMediaRepository extends BaseRepository {
     final response = await http.post(
       url,
       headers: headers,
-      body: jsonEncode({'treeName': treeName, 'imageType': imageType}),
+      body: jsonEncode(<String, dynamic>{'treeName': treeName, 'imageType': imageType}),
     );
 
     if (response.statusCode == 200) {
@@ -83,7 +83,7 @@ class MasterTreeMediaRepository extends BaseRepository {
     final response = await http.post(
       url,
       headers: headers,
-      body: jsonEncode({'treeName': treeName, 'imageType': imageType}),
+      body: jsonEncode(<String, dynamic>{'treeName': treeName, 'imageType': imageType}),
     );
 
     if (response.statusCode == 200) {
@@ -104,7 +104,7 @@ class MasterTreeMediaRepository extends BaseRepository {
     final response = await http.post(
       url,
       headers: headers,
-      body: jsonEncode({'treeName': treeName, 'imageType': imageType}),
+      body: jsonEncode(<String, dynamic>{'treeName': treeName, 'imageType': imageType}),
     );
 
     if (response.statusCode == 200) {
@@ -125,7 +125,7 @@ class MasterTreeMediaRepository extends BaseRepository {
     final response = await http.post(
       url,
       headers: headers,
-      body: jsonEncode({'treeName': treeName}),
+      body: jsonEncode(<String, dynamic>{'treeName': treeName}),
     );
 
     if (response.statusCode == 200) {
@@ -135,7 +135,7 @@ class MasterTreeMediaRepository extends BaseRepository {
       }
     }
     checkAuthError(response.statusCode);
-    return {'success': false};
+    return <String, dynamic>{'success': false};
   }
 
   // Check File Existence in Drive
@@ -146,7 +146,7 @@ class MasterTreeMediaRepository extends BaseRepository {
     final response = await http.post(
       url,
       headers: headers,
-      body: jsonEncode({'url': driveUrl}),
+      body: jsonEncode(<String, dynamic>{'url': driveUrl}),
     );
 
     if (response.statusCode == 200) {

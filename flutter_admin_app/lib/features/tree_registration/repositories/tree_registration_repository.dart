@@ -15,8 +15,8 @@ class TreeRegistrationRepository {
   // Helper to get headers with Auth Token
   Future<Map<String, String>> _getHeaders() async {
     final session = Supabase.instance.client.auth.currentSession;
-    final token = session?.accessToken ?? '';
-    return {
+    final String token = session?.accessToken ?? '';
+    return <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     };
@@ -24,72 +24,77 @@ class TreeRegistrationRepository {
 
   /// 신규 수목 등록
   Future<void> registerTree(TreeRegistrationRequest request) async {
-    final url = Uri.parse('$_baseUrl/tree-registration');
-    final headers = await _getHeaders();
+    final Uri url = Uri.parse('$_baseUrl/tree-registration');
+    final Map<String, String> headers = await _getHeaders();
 
-    final response = await http.post(
+    final http.Response response = await http.post(
       url,
       headers: headers,
       body: jsonEncode(request.toJson()),
     );
 
     if (response.statusCode != 201) {
-      final error = jsonDecode(utf8.decode(response.bodyBytes));
-      throw Exception(error['message'] ?? '수목 등록에 실패했습니다.');
+      final Map<String, dynamic> error = 
+          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+      throw Exception(error['message']?.toString() ?? '수목 등록에 실패했습니다 (${response.statusCode})');
     }
   }
 
   /// 이미지 업로드
   Future<String> uploadImage(XFile imageFile) async {
-    final url = Uri.parse('$_baseUrl/uploads/image');
-    final request = http.MultipartRequest('POST', url);
+    final Uri url = Uri.parse('$_baseUrl/uploads/image');
+    final http.MultipartRequest request = http.MultipartRequest('POST', url);
 
     // Auth Header
     final session = Supabase.instance.client.auth.currentSession;
-    final token = session?.accessToken ?? '';
+    final String token = session?.accessToken ?? '';
     request.headers['Authorization'] = 'Bearer $token';
 
     // Attach File
-    final bytes = await imageFile.readAsBytes();
+    final Uint8List bytes = await imageFile.readAsBytes();
     request.files.add(
       http.MultipartFile.fromBytes('file', bytes, filename: imageFile.name),
     );
 
-    final streamedResponse = await request.send();
-    final response = await http.Response.fromStream(streamedResponse);
+    final http.StreamedResponse streamedResponse = await request.send();
+    final http.Response response = await http.Response.fromStream(streamedResponse);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      final Map<String, dynamic> jsonResponse = 
+          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
       if (jsonResponse['success'] == true) {
-        return jsonResponse['data']['publicUrl'];
+        final Map<String, dynamic> data = (jsonResponse['data'] as Map<String, dynamic>?) ?? <String, dynamic>{};
+        return data['publicUrl']?.toString() ?? '';
       }
     }
-    throw Exception('이미지 업로드에 실패했습니다: ${response.body}');
+    throw Exception('이미지 업로드에 실패했습니다: ${response.statusCode}');
   }
 
   /// 이미지 업로드 (Bytes)
   Future<String> uploadImageByBytes(Uint8List bytes, String fileName) async {
-    final url = Uri.parse('$_baseUrl/uploads/image');
-    final request = http.MultipartRequest('POST', url);
+    final Uri url = Uri.parse('$_baseUrl/uploads/image');
+    final http.MultipartRequest request = http.MultipartRequest('POST', url);
 
     final session = Supabase.instance.client.auth.currentSession;
-    final token = session?.accessToken ?? '';
+    final String token = session?.accessToken ?? '';
     request.headers['Authorization'] = 'Bearer $token';
 
     request.files.add(
       http.MultipartFile.fromBytes('file', bytes, filename: fileName),
     );
 
-    final streamedResponse = await request.send();
-    final response = await http.Response.fromStream(streamedResponse);
+    final http.StreamedResponse streamedResponse = await request.send();
+    final http.Response response = await http.Response.fromStream(streamedResponse);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      final Map<String, dynamic> jsonResponse = 
+          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
       if (jsonResponse['success'] == true) {
-        return jsonResponse['data']['publicUrl'];
+        final Map<String, dynamic> data = (jsonResponse['data'] as Map<String, dynamic>?) ?? <String, dynamic>{};
+        return data['publicUrl']?.toString() ?? '';
       }
     }
-    throw Exception('이미지 업로드에 실패했습니다: ${response.body}');
+    throw Exception('이미지 업로드에 실패했습니다: ${response.statusCode}');
   }
 
   /// 구글 드라이브 업로드 (주로 붙여넣기 이미지)
@@ -97,30 +102,32 @@ class TreeRegistrationRepository {
     XFile imageFile, {
     String? fileName,
   }) async {
-    final url = Uri.parse('$_baseUrl/uploads/google-drive');
-    final request = http.MultipartRequest('POST', url);
+    final Uri url = Uri.parse('$_baseUrl/uploads/google-drive');
+    final http.MultipartRequest request = http.MultipartRequest('POST', url);
 
     final session = Supabase.instance.client.auth.currentSession;
-    final token = session?.accessToken ?? '';
+    final String token = session?.accessToken ?? '';
     request.headers['Authorization'] = 'Bearer $token';
 
     if (fileName != null) request.fields['fileName'] = fileName;
 
-    final bytes = await imageFile.readAsBytes();
+    final Uint8List bytes = await imageFile.readAsBytes();
     request.files.add(
       http.MultipartFile.fromBytes('file', bytes, filename: imageFile.name),
     );
 
-    final streamedResponse = await request.send();
-    final response = await http.Response.fromStream(streamedResponse);
+    final http.StreamedResponse streamedResponse = await request.send();
+    final http.Response response = await http.Response.fromStream(streamedResponse);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      final Map<String, dynamic> jsonResponse = 
+          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
       if (jsonResponse['success'] == true) {
-        return jsonResponse['data']['url'];
+        final Map<String, dynamic> data = (jsonResponse['data'] as Map<String, dynamic>?) ?? <String, dynamic>{};
+        return data['url']?.toString() ?? '';
       }
     }
-    throw Exception('구글 드라이브 업로드 실패: ${response.body}');
+    throw Exception('구글 드라이브 업로드 실패: ${response.statusCode}');
   }
 
   /// 구글 이미지 검색 및 스토리지 연결 (B 방식)
@@ -128,19 +135,20 @@ class TreeRegistrationRepository {
     String treeName,
     String imageType,
   ) async {
-    final url = Uri.parse('$_baseUrl/external/google-images/attach');
-    final headers = await _getHeaders();
+    final Uri url = Uri.parse('$_baseUrl/external/google-images/attach');
+    final Map<String, String> headers = await _getHeaders();
 
-    final response = await http.post(
+    final http.Response response = await http.post(
       url,
       headers: headers,
-      body: jsonEncode({'treeName': treeName, 'imageType': imageType}),
+      body: jsonEncode(<String, dynamic>{'treeName': treeName, 'imageType': imageType}),
     );
 
     if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      final Map<String, dynamic> jsonResponse = 
+          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
       if (jsonResponse['success'] == true) {
-        return jsonResponse['url'];
+        return jsonResponse['url']?.toString();
       }
     }
     return null;

@@ -2,6 +2,7 @@ import 'api/tree_service.dart';
 import 'api/quiz_service.dart';
 import 'api/stats_service.dart';
 import 'api/sync_service.dart';
+import 'api/settings_service.dart';
 
 class ApiService {
   // Tree
@@ -66,5 +67,5 @@ class ApiService {
   }) => QuizService.generateQuizSession(mode: mode, limit: limit);
 
   // System Settings / Notification
-  static Future<String> getUserNotification() async => '';
+  static Future<String> getUserNotification() => SettingsService.getUserNotification();
 }

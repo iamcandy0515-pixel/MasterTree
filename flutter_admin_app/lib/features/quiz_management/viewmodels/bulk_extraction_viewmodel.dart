@@ -176,11 +176,11 @@ class BulkExtractionViewModel extends ChangeNotifier
     void Function(int current, int total)? onProgress,
     void Function(String message)? onMessage,
   }) async {
-    if (_extractedQuizzes.isEmpty) return {'total': 0, 'success': 0, 'failed': 0};
+    if (_extractedQuizzes.isEmpty) return <String, int>{'total': 0, 'success': 0, 'failed': 0};
     
     if (subject == null || year == null || round == null) {
       onMessage?.call('⚠️ 과목, 년도, 회차 정보를 모두 선택해주세요.');
-      return {'total': 0, 'success': 0, 'failed': 0};
+      return <String, int>{'total': 0, 'success': 0, 'failed': 0};
     }
 
     _isLoading = true;
@@ -202,7 +202,7 @@ class BulkExtractionViewModel extends ChangeNotifier
       }
 
       onMessage?.call(success ? '✅ 모든 문항이 성공적으로 등록되었습니다.' : '❌ 등록 중 오류가 발생했습니다.');
-      return {'total': entries.length, 'success': success ? entries.length : 0, 'failed': success ? 0 : entries.length};
+      return <String, int>{'total': entries.length, 'success': success ? entries.length : 0, 'failed': success ? 0 : entries.length};
     } finally {
       _isLoading = false;
       notifyListeners();

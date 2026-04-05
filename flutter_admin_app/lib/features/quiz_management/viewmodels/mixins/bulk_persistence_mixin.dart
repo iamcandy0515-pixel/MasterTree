@@ -44,7 +44,7 @@ mixin BulkPersistenceMixin on ChangeNotifier {
     } catch (e) {
       debugPrint('Error loading backup: $e');
     }
-    return {};
+    return <int, Map<String, dynamic>>{};
   }
 
   /// Remove backup data

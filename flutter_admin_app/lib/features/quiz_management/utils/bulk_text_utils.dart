@@ -19,7 +19,7 @@ class BulkTextUtils {
   /// 탭이 선택되었을 때 에디터 필드에 채울 데이터 매핑.
   static Map<String, String> mapToEditorFields(Map<String, dynamic>? data) {
     if (data == null) {
-      return {
+      return <String, String>{
         'question': '',
         'answer': '',
         'hint': '',
@@ -27,7 +27,7 @@ class BulkTextUtils {
       };
     }
 
-    return {
+    return <String, String>{
       'question': getTextFromBlocks(data['question']),
       'answer': getTextFromBlocks(data['explanation']),
       'hint': getTextFromBlocks(data['hint']),

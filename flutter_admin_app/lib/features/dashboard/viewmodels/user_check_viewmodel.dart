@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_admin_app/features/dashboard/repositories/user_repository.dart';
 
 class UserCheckViewModel extends ChangeNotifier {
-  final _repo = UserRepository();
+  final UserRepository _repo = UserRepository();
 
-  List<Map<String, dynamic>> _allUsers = [];
-  List<Map<String, dynamic>> _filteredUsers = [];
+  List<Map<String, dynamic>> _allUsers = <Map<String, dynamic>>[];
+  List<Map<String, dynamic>> _filteredUsers = <Map<String, dynamic>>[];
   bool _isLoading = false;
   String _currentStatus = 'pending';
 
@@ -22,37 +22,39 @@ class UserCheckViewModel extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-      final usersData = await _repo.getUsers(status: status);
+      final List<Map<String, dynamic>> usersData = await _repo.getUsers(status: status);
       _allUsers = usersData.map((u) {
-        final role = u['role']?.toString() ?? 'User';
-        final name = u['name']?.toString() ?? '사용자';
-        final prefix = role == 'Master' || role == 'Admin' ? '[관] ' : '[사] ';
+        final String role = (u['role'] ?? 'User').toString();
+        final String rawName = (u['name'] ?? '사용자').toString();
+        final String prefix = (role == 'Master' || role == 'Admin') ? '[관] ' : '[사] ';
+        final String name = '$prefix$rawName';
 
-        return {
-          'id': u['id']?.toString() ?? '',
-          'name': '$prefix$name',
-          'email': u['email']?.toString() ?? '',
+        return <String, dynamic>{
+          'id': (u['id'] ?? '').toString(),
+          'name': name,
+          'email': (u['email'] ?? '').toString(),
           'phone': u['phone']?.toString(),
           'role': role,
-          'status': u['status']?.toString() ?? 'pending',
+          'status': (u['status'] ?? 'pending').toString(),
           'lastLogin': _formatDate(u['lastLogin']?.toString()),
         };
       }).toList();
-      _filteredUsers = List.from(_allUsers);
+      _filteredUsers = List<Map<String, dynamic>>.from(_allUsers);
     } catch (e) {
-      debugPrint('Error loading users: $e');
+      debugPrint('Error loading users: ');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
-    _isLoading = false;
-    notifyListeners();
   }
 
   Future<void> updateStatus(String userId, String newStatus) async {
     try {
       await _repo.updateUserStatus(userId, newStatus);
       // Remove from current list and refresh
-      loadUsers(_currentStatus);
+      await loadUsers(_currentStatus);
     } catch (e) {
-      debugPrint('Error updating status: $e');
+      debugPrint('Error updating status: ');
     }
   }
 
@@ -63,9 +65,9 @@ class UserCheckViewModel extends ChangeNotifier {
   Future<void> deleteUser(String userId) async {
     try {
       await _repo.deleteUser(userId);
-      loadUsers(_currentStatus);
+      await loadUsers(_currentStatus);
     } catch (e) {
-      debugPrint('Error deleting user: $e');
+      debugPrint('Error deleting user: ');
       rethrow;
     }
   }
@@ -73,13 +75,13 @@ class UserCheckViewModel extends ChangeNotifier {
   String _formatDate(String? dateStr) {
     if (dateStr == null) return '기록 없음';
     try {
-      final date = DateTime.parse(dateStr).toLocal();
-      final now = DateTime.now();
-      final diff = now.difference(date);
+      final DateTime date = DateTime.parse(dateStr).toLocal();
+      final DateTime now = DateTime.now();
+      final Duration diff = now.difference(date);
       if (diff.inMinutes < 1) return '방금 전';
-      if (diff.inMinutes < 60) return '${diff.inMinutes}분 전';
-      if (diff.inHours < 24) return '${diff.inHours}시간 전';
-      return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+      if (diff.inMinutes < 60) return '분 전';
+      if (diff.inHours < 24) return '시간 전';
+      return '--';
     } catch (e) {
       return dateStr;
     }
@@ -87,15 +89,14 @@ class UserCheckViewModel extends ChangeNotifier {
 
   void searchUsers(String query) {
     if (query.isEmpty) {
-      _filteredUsers = List.from(_allUsers);
+      _filteredUsers = List<Map<String, dynamic>>.from(_allUsers);
     } else {
+      final String lowerQuery = query.toLowerCase();
       _filteredUsers = _allUsers
           .where(
-            (user) =>
-                (user['name']?.toLowerCase().contains(query.toLowerCase()) ??
-                    false) ||
-                (user['email']?.toLowerCase().contains(query.toLowerCase()) ??
-                    false),
+            (Map<String, dynamic> user) =>
+                ((user['name'] as String?)?.toLowerCase().contains(lowerQuery) ?? false) ||
+                ((user['email'] as String?)?.toLowerCase().contains(lowerQuery) ?? false),
           )
           .toList();
     }

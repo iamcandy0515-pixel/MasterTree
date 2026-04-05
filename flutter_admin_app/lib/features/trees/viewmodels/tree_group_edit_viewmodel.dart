@@ -92,7 +92,7 @@ class TreeGroupEditViewModel extends ChangeNotifier {
 
     try {
       final membersData = _members.map((m) {
-        return {
+        return <String, dynamic>{
           'treeId': int.tryParse(m.treeId) ?? 0,
           'keyCharacteristics': m.keyCharacteristics,
           // sort_order is handled by array index in backend service

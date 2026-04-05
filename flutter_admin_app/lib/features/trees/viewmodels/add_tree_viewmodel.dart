@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
 import 'package:flutter_admin_app/features/trees/models/create_tree_request.dart';
 import 'package:flutter_admin_app/features/trees/repositories/master_tree_repository.dart';
@@ -30,7 +30,7 @@ class AddTreeViewModel extends ChangeNotifier with TreeMediaMixin, TreeQuizMixin
 
   /// T-2: 수목명으로 기존 정보 조회
   Future<void> searchTreeByName() async {
-    final name = nameKrController.text.trim();
+    final String name = nameKrController.text.trim();
     if (name.isEmpty) {
       _errorMessage = "조회를 위한 수목명을 입력해주세요.";
       notifyListeners();
@@ -43,11 +43,11 @@ class AddTreeViewModel extends ChangeNotifier with TreeMediaMixin, TreeQuizMixin
 
     try {
       // minimal: false를 통해 전체 상세 정보를 가져옴
-      final result = await _repo.getTrees(search: name, minimal: false);
+      final PaginatedTrees result = await _repo.getTrees(search: name, minimal: false);
       
       if (result.trees.isNotEmpty) {
         // 가장 유사한 첫 번째 결과 사용 (승인된 답변 2번: 즉시 덮어쓰기)
-        final tree = result.trees.first;
+        final Tree tree = result.trees.first;
         scientificNameController.text = tree.scientificName ?? '';
         descriptionController.text = tree.description ?? '';
         _selectedCategory = tree.category;
@@ -57,12 +57,12 @@ class AddTreeViewModel extends ChangeNotifier with TreeMediaMixin, TreeQuizMixin
         initializeImages(tree.images);
         initializeQuiz(tree.quizDistractors, tree.isAutoQuizEnabled);
         
-        _errorMessage = "기존 등록된 '${tree.nameKr}' 정보를 불러왔습니다.";
+        _errorMessage = "기존 등록된 '' 정보를 불러왔습니다.";
       } else {
-        _errorMessage = "'$name'으로 등록된 수목 정보가 없습니다.";
+        _errorMessage = "''으로 등록된 수목 정보가 없습니다.";
       }
     } catch (e) {
-      _errorMessage = "조회 실패: ${e.toString()}";
+      _errorMessage = "조회 실패: ";
     } finally {
       _isSearching = false;
       notifyListeners();
@@ -113,7 +113,7 @@ class AddTreeViewModel extends ChangeNotifier with TreeMediaMixin, TreeQuizMixin
     notifyListeners();
 
     try {
-      final request = CreateTreeRequest(
+      final CreateTreeRequest request = CreateTreeRequest(
         nameKr: nameKrController.text.trim(),
         scientificName: scientificNameController.text.trim(),
         description: descriptionController.text.trim(),
@@ -121,8 +121,8 @@ class AddTreeViewModel extends ChangeNotifier with TreeMediaMixin, TreeQuizMixin
         difficulty: _difficulty,
         images: uploadedImages,
         quizDistractors: distractorControllers
-            .map((c) => c.text.trim())
-            .where((text) => text.isNotEmpty)
+            .map((TextEditingController c) => c.text.trim())
+            .where((String text) => text.isNotEmpty)
             .toList(),
         isAutoQuizEnabled: isAutoQuizEnabled,
       );

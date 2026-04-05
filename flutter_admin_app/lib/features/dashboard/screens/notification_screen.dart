@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../viewmodels/notification_viewmodel.dart';
+import '../viewmodels/settings_viewmodel.dart';
 
 class NotificationScreen extends StatelessWidget {
   const NotificationScreen({super.key});
@@ -8,7 +8,7 @@ class NotificationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => NotificationViewModel(),
+      create: (_) => SettingsViewModel()..loadSettings(),
       child: const _NotificationContent(),
     );
   }
@@ -19,7 +19,7 @@ class _NotificationContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<NotificationViewModel>();
+    final vm = context.watch<SettingsViewModel>();
     const Color primaryColor = Color(0xFFC6FF00); // Acid Lime
 
     return Scaffold(
@@ -36,136 +36,108 @@ class _NotificationContent extends StatelessWidget {
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () {
-              context.read<NotificationViewModel>().markAllAsRead();
-            },
-            child: const Text('모두 읽음', style: TextStyle(color: primaryColor)),
+          IconButton(
+            icon: const Icon(Icons.refresh, color: primaryColor),
+            onPressed: vm.isLoading ? null : () => vm.loadSettings(),
           ),
           const SizedBox(width: 8),
         ],
       ),
-      body: viewModel.notifications.isEmpty
+      body: vm.isInitialLoading
           ? const Center(
-              child: Text(
-                '새로운 알림이 없습니다.',
-                style: TextStyle(color: Colors.grey),
-              ),
+              child: CircularProgressIndicator(color: primaryColor),
             )
-          : ListView.separated(
-              itemCount: viewModel.notifications.length,
-              separatorBuilder: (context, index) =>
-                  Divider(color: Colors.white.withOpacity(0.05), height: 1),
-              itemBuilder: (context, index) {
-                final notification = viewModel.notifications[index];
-                return _buildNotificationItem(
-                  context,
-                  notification,
-                  primaryColor,
-                );
-              },
-            ),
-    );
-  }
-
-  Widget _buildNotificationItem(
-    BuildContext context,
-    AdminNotification notification,
-    Color primaryColor,
-  ) {
-    IconData icon;
-    Color iconColor;
-
-    switch (notification.type) {
-      case NotificationType.entranceCode:
-        icon = Icons.key_off;
-        iconColor = Colors.orangeAccent;
-        break;
-      case NotificationType.security:
-        icon = Icons.gpp_maybe;
-        iconColor = Colors.redAccent;
-        break;
-      case NotificationType.system:
-        icon = Icons.info_outline;
-        iconColor = primaryColor;
-        break;
-    }
-
-    return InkWell(
-      onTap: () {
-        context.read<NotificationViewModel>().markAsRead(notification.id);
-      },
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        color: notification.isRead
-            ? Colors.transparent
-            : Colors.white.withOpacity(0.03),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: iconColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: iconColor, size: 22),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        notification.title,
-                        style: TextStyle(
-                          color: notification.isRead
-                              ? Colors.grey[400]
-                              : Colors.white,
-                          fontSize: 15,
-                          fontWeight: notification.isRead
-                              ? FontWeight.normal
-                              : FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        _formatTimestamp(notification.timestamp),
-                        style: TextStyle(color: Colors.grey[600], fontSize: 11),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    notification.message,
+                  const Text(
+                    '현재 사용자 앱 공지/안내',
                     style: TextStyle(
-                      color: Colors.grey[500],
-                      fontSize: 13,
-                      height: 1.4,
+                      color: Colors.white70,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1A1A1A),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.white10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: primaryColor.withOpacity(0.05),
+                          blurRadius: 20,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.notifications_active, color: primaryColor, size: 20),
+                            const SizedBox(width: 10),
+                            Text(
+                              'LIVE NOTICE',
+                              style: TextStyle(
+                                color: primaryColor.withOpacity(0.8),
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          vm.userNotice.isEmpty ? '등록된 공지사항이 없습니다.' : vm.userNotice,
+                          style: TextStyle(
+                            color: vm.userNotice.isEmpty ? Colors.white24 : Colors.white,
+                            fontSize: 17,
+                            height: 1.6,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        const Divider(color: Colors.white10),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              '전달 상태',
+                              style: TextStyle(color: Colors.white30, fontSize: 12),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: primaryColor.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: const Text(
+                                '정상 송출 중',
+                                style: TextStyle(color: primaryColor, fontSize: 11, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  const Text(
+                    '* 위 내용은 설정의 [사용자 앱 공지사항 설정]에서 변경할 수 있습니다.',
+                    style: TextStyle(color: Colors.white24, fontSize: 12),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
-
-  String _formatTimestamp(DateTime timestamp) {
-    final now = DateTime.now();
-    final difference = now.difference(timestamp);
-
-    if (difference.inMinutes < 60) {
-      return '${difference.inMinutes}분 전';
-    } else if (difference.inHours < 24) {
-      return '${difference.inHours}시간 전';
-    } else {
-      return '${timestamp.month}월 ${timestamp.day}일';
-    }
-  }
 }
-

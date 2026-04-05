@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_admin_app/core/repositories/base_repository.dart';
 
 class SystemSettingsRepository extends BaseRepository {
-  // Generic Fetch Helper (Rule 3-1: DRY)
+  // Generic Fetch Helper
   Future<T> _fetchSetting<T>(String endpoint, {required T defaultValue, String dataKey = 'url'}) async {
     final url = Uri.parse('$baseUrl$endpoint');
     final headers = await getHeaders();
@@ -23,7 +23,7 @@ class SystemSettingsRepository extends BaseRepository {
     return defaultValue;
   }
 
-  // Generic Update Helper (Rule 3-1: DRY)
+  // Generic Update Helper
   Future<T> _postSetting<T>(String endpoint, Map<String, dynamic> body, {String dataKey = 'url', String errorPrefix = '업데이트 실패'}) async {
     final url = Uri.parse('$baseUrl$endpoint');
     final headers = await getHeaders();
@@ -46,7 +46,7 @@ class SystemSettingsRepository extends BaseRepository {
     try {
       await http.post(url, headers: headers).timeout(const Duration(seconds: 2));
     } catch (e) {
-      debugPrint('Admin restart triggered (Connection might be lost): $e');
+      debugPrint('Admin restart triggered: $e');
     }
   }
 
@@ -62,28 +62,32 @@ class SystemSettingsRepository extends BaseRepository {
 
   // Settings Management
   Future<String> getEntryCode() => _fetchSetting('/settings/entry-code', defaultValue: '1234', dataKey: 'entryCode');
-  Future<String> updateEntryCode(String newCode) => _postSetting('/settings/entry-code', {'entryCode': newCode}, dataKey: 'entryCode', errorPrefix: '입장 코드 업데이트 실패');
+  Future<String> updateEntryCode(String newCode) => _postSetting('/settings/entry-code', <String, dynamic>{'entryCode': newCode}, dataKey: 'entryCode', errorPrefix: '입장 코드 업데이트 실패');
 
   Future<String> getUserAppUrl() => _fetchSetting('/settings/user-url', defaultValue: 'https://mastertree-user-app.vercel.app');
-  Future<String> updateUserAppUrl(String newUrl) => _postSetting('/settings/user-url', {'url': newUrl}, errorPrefix: '사용자 URL 업데이트 실패');
+  Future<String> updateUserAppUrl(String newUrl) => _postSetting('/settings/user-url', <String, dynamic>{'url': newUrl}, errorPrefix: '사용자 URL 업데이트 실패');
 
   Future<String> getGoogleDriveFolderUrl() => _fetchSetting('/settings/drive-url', defaultValue: '');
-  Future<String> updateGoogleDriveFolderUrl(String newUrl) => _postSetting('/settings/drive-url', {'url': newUrl}, errorPrefix: '구글 드라이브 URL 업데이트 실패');
+  Future<String> updateGoogleDriveFolderUrl(String newUrl) => _postSetting('/settings/drive-url', <String, dynamic>{'url': newUrl}, errorPrefix: '구글 드라이브 URL 업데이트 실패');
 
   Future<String> getThumbnailDriveUrl() => _fetchSetting('/settings/thumbnail-drive-url', defaultValue: '');
-  Future<String> updateThumbnailDriveUrl(String newUrl) => _postSetting('/settings/thumbnail-drive-url', {'url': newUrl}, errorPrefix: '구글 썸네일 URL 업데이트 실패');
+  Future<String> updateThumbnailDriveUrl(String newUrl) => _postSetting('/settings/thumbnail-drive-url', <String, dynamic>{'url': newUrl}, errorPrefix: '구글 썸네일 URL 업데이트 실패');
 
   Future<String> getExamDriveUrl() => _fetchSetting('/settings/exam-drive-url', defaultValue: '');
-  Future<String> updateExamDriveUrl(String newUrl) => _postSetting('/settings/exam-drive-url', {'url': newUrl}, errorPrefix: '기출문제 폴더 URL 업데이트 실패');
+  Future<String> updateExamDriveUrl(String newUrl) => _postSetting('/settings/exam-drive-url', <String, dynamic>{'url': newUrl}, errorPrefix: '기출문제 폴더 URL 업데이트 실패');
 
-  // URL Validation (Specific Logic)
+  // User App Notice
+  Future<String> getNotice() => _fetchSetting('/settings/notice', defaultValue: '', dataKey: 'notice');
+  Future<String> updateNotice(String notice) => _postSetting('/settings/notice', <String, dynamic>{'notice': notice}, dataKey: 'notice', errorPrefix: '공지사항 업데이트 실패');
+
+  // URL Validation
   Future<bool> checkUrlStatus(String urlString) async {
     if (urlString.isEmpty || (!urlString.startsWith('http://') && !urlString.startsWith('https://'))) return false;
 
     try {
       final url = Uri.parse('$baseUrl/settings/validate-url');
       final headers = await getHeaders();
-      final response = await http.post(url, headers: headers, body: jsonEncode({'url': urlString}));
+      final response = await http.post(url, headers: headers, body: jsonEncode(<String, dynamic>{'url': urlString}));
 
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));

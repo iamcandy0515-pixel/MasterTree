@@ -30,11 +30,11 @@ class MasterTreeRepository extends BaseRepository with MasterTreeCacheMixin {
     String? category,
     bool minimal = true,
   }) async {
-    final cacheKey = '${generateCacheKey(page, limit, search, category)}&minimal=$minimal';
-    final cached = getCachedData<PaginatedTrees>(cacheKey);
+    final String cacheKey = 'trees_p${page}_l${limit}_s${search}_c${category}_m$minimal';
+    final PaginatedTrees? cached = getCachedData<PaginatedTrees>(cacheKey);
     if (cached != null) return cached;
 
-    final queryParams = {
+    final Map<String, String> queryParams = <String, String>{
       'page': page.toString(),
       'limit': limit.toString(),
       'minimal': minimal.toString(),
@@ -42,27 +42,28 @@ class MasterTreeRepository extends BaseRepository with MasterTreeCacheMixin {
       if (category != null && category != '전체') 'category': category,
     };
 
-    final url = Uri.parse('$baseUrl/trees').replace(queryParameters: queryParams);
-    final response = await http.get(url);
+    final Uri url = Uri.parse('$baseUrl/trees').replace(queryParameters: queryParams);
+    final http.Response response = await http.get(url);
 
     if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      final Map<String, dynamic> jsonResponse = 
+          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
       if (jsonResponse['success'] == true) {
-        final List<dynamic> data = jsonResponse['data'];
-        final meta = jsonResponse['meta'];
+        final List<dynamic> data = (jsonResponse['data'] as List<dynamic>?) ?? <dynamic>[];
+        final Map<String, dynamic> meta = (jsonResponse['meta'] as Map<String, dynamic>?) ?? <String, dynamic>{};
 
-        final result = PaginatedTrees(
-          trees: data.map((e) => Tree.fromJson(e)).toList(),
-          total: meta['total'] ?? 0,
-          page: meta['page'] ?? 1,
-          limit: meta['limit'] ?? 20,
-          totalPages: meta['totalPages'] ?? 1,
+        final PaginatedTrees result = PaginatedTrees(
+          trees: data.map((dynamic e) => Tree.fromJson(e as Map<String, dynamic>)).toList(),
+          total: (meta['total'] as int?) ?? 0,
+          page: (meta['page'] as int?) ?? 1,
+          limit: (meta['limit'] as int?) ?? 20,
+          totalPages: (meta['totalPages'] as int?) ?? 1,
         );
         setCachedData(cacheKey, result);
         return result;
       }
     }
-    throw Exception('수목 목록 로드 실패: ${response.body}');
+    throw Exception('수목 목록 로드 실패: ${response.statusCode}');
   }
 
   // GET /api/trees/random
@@ -71,78 +72,82 @@ class MasterTreeRepository extends BaseRepository with MasterTreeCacheMixin {
     String? category,
     String? excludeName,
   }) async {
-    final queryParams = {
+    final Map<String, String> queryParams = <String, String>{
       'count': count.toString(),
       if (category != null) 'category': category,
       if (excludeName != null) 'excludeName': excludeName,
     };
 
-    final url = Uri.parse('$baseUrl/trees/random').replace(queryParameters: queryParams);
-    final response = await http.get(url);
+    final Uri url = Uri.parse('$baseUrl/trees/random').replace(queryParameters: queryParams);
+    final http.Response response = await http.get(url);
 
     if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      final Map<String, dynamic> jsonResponse = 
+          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
       if (jsonResponse['success'] == true) {
-        final List<dynamic> data = jsonResponse['data'];
-        return data.map((e) => e.toString()).toList();
+        final List<dynamic> data = (jsonResponse['data'] as List<dynamic>?) ?? <dynamic>[];
+        return data.map((dynamic e) => e.toString()).toList();
       }
     }
-    return [];
+    return <String>[];
   }
 
   // GET /api/trees/:id
   Future<Tree> getTreeById(int id) async {
-    final url = Uri.parse('$baseUrl/trees/$id');
-    final response = await http.get(url);
+    final Uri url = Uri.parse('$baseUrl/trees/$id');
+    final http.Response response = await http.get(url);
 
     if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      final Map<String, dynamic> jsonResponse = 
+          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
       if (jsonResponse['success'] == true) {
-        return Tree.fromJson(jsonResponse['data']);
+        return Tree.fromJson(jsonResponse['data'] as Map<String, dynamic>);
       }
     }
-    throw Exception('수목 상세 정보 로드 실패: ${response.body}');
+    throw Exception('수목 상세 정보 로드 실패: ${response.statusCode}');
   }
 
   // CRUD Operations
   Future<Tree> updateTree(int id, CreateTreeRequest request) async {
-    final url = Uri.parse('$baseUrl/trees/$id');
-    final headers = await getHeaders();
-    final response = await http.put(url, headers: headers, body: jsonEncode(request.toJson()));
+    final Uri url = Uri.parse('$baseUrl/trees/$id');
+    final Map<String, String> headers = await getHeaders();
+    final http.Response response = await http.put(url, headers: headers, body: jsonEncode(request.toJson()));
 
     if (response.statusCode == 200) {
       invalidateTreeCache();
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      return Tree.fromJson(jsonResponse['data']);
+      final Map<String, dynamic> jsonResponse = 
+          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+      return Tree.fromJson(jsonResponse['data'] as Map<String, dynamic>);
     }
     checkAuthError(response.statusCode);
-    throw Exception('수목 수정 실패: ${response.body}');
+    throw Exception('수목 수정 실패: ${response.statusCode}');
   }
 
   Future<void> deleteTree(int id) async {
-    final url = Uri.parse('$baseUrl/trees/$id');
-    final headers = await getHeaders();
-    final response = await http.delete(url, headers: headers);
+    final Uri url = Uri.parse('$baseUrl/trees/$id');
+    final Map<String, String> headers = await getHeaders();
+    final http.Response response = await http.delete(url, headers: headers);
 
     if (response.statusCode == 200) {
       invalidateTreeCache();
       return;
     }
     checkAuthError(response.statusCode);
-    throw Exception('수목 삭제 실패: ${response.body}');
+    throw Exception('수목 삭제 실패: ${response.statusCode}');
   }
 
   Future<Tree> createTree(CreateTreeRequest request) async {
-    final url = Uri.parse('$baseUrl/trees');
-    final headers = await getHeaders();
-    final response = await http.post(url, headers: headers, body: jsonEncode(request.toJson()));
+    final Uri url = Uri.parse('$baseUrl/trees');
+    final Map<String, String> headers = await getHeaders();
+    final http.Response response = await http.post(url, headers: headers, body: jsonEncode(request.toJson()));
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       invalidateTreeCache();
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      return Tree.fromJson(jsonResponse['data']);
+      final Map<String, dynamic> jsonResponse = 
+          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+      return Tree.fromJson(jsonResponse['data'] as Map<String, dynamic>);
     }
     checkAuthError(response.statusCode);
-    throw Exception('수목 생성 실패: ${response.body}');
+    throw Exception('이미 서버에서 오류가 발생했습니다 (${response.statusCode})');
   }
 }

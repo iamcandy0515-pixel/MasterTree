@@ -32,7 +32,7 @@ mixin BulkMediaMixin on ChangeNotifier {
 
   /// Helper to ensure a quiz entry exists in the local map
   Map<String, dynamic> createInitialQuizEntry(int qNum) {
-    return {
+    return <String, dynamic>{
       'question_number': qNum,
       'question': [],
       'explanation': [],

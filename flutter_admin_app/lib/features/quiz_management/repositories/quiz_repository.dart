@@ -8,24 +8,24 @@ class QuizRepository extends BaseRepository with QuizRepositoryMixin {
 
   /// Basic CRUD: Update or Insert a single quiz question
   Future<Map<String, dynamic>> upsertQuizQuestion(Map<String, dynamic> data) async {
-    final url = Uri.parse('$baseUrl/quiz/upsert');
-    final headers = await getHeaders();
-    final response = await http.post(
+    final Uri url = Uri.parse('$baseUrl/quiz/upsert');
+    final Map<String, String> headers = await getHeaders();
+    final http.Response response = await http.post(
       url,
       headers: headers,
       body: jsonEncode(data),
     );
 
-    final jsonResponse = parseJsonResponse(response);
-    return jsonResponse['data'];
+    final Map<String, dynamic> jsonResponse = parseJsonResponse(response);
+    return (jsonResponse['data'] as Map<String, dynamic>?) ?? <String, dynamic>{};
   }
 
   /// Delete a single quiz question by ID
   Future<void> deleteQuiz(int id) async {
-    final headers = await getHeaders();
-    final uri = Uri.parse('$baseUrl/quiz/$id');
+    final Map<String, String> headers = await getHeaders();
+    final Uri uri = Uri.parse('$baseUrl/quiz/$id');
 
-    final resp = await http.delete(uri, headers: headers);
+    final http.Response resp = await http.delete(uri, headers: headers);
     parseJsonResponse(resp); // Generic error check and parsing
   }
 
@@ -34,13 +34,13 @@ class QuizRepository extends BaseRepository with QuizRepositoryMixin {
     required List<dynamic> quizItems,
     required Map<String, dynamic> examFilter,
   }) async {
-    final headers = await getHeaders();
-    final uri = Uri.parse('$baseUrl/quiz/upsert-batch');
+    final Map<String, String> headers = await getHeaders();
+    final Uri uri = Uri.parse('$baseUrl/quiz/upsert-batch');
 
-    final resp = await http.post(
+    final http.Response resp = await http.post(
       uri,
       headers: headers,
-      body: jsonEncode({'quizItems': quizItems, 'examFilter': examFilter}),
+      body: jsonEncode(<String, dynamic>{'quizItems': quizItems, 'examFilter': examFilter}),
     );
 
     parseJsonResponse(resp);
@@ -49,17 +49,17 @@ class QuizRepository extends BaseRepository with QuizRepositoryMixin {
 
   /// Bulk Recommendation Logic persistence
   Future<void> upsertRelatedBulk(Map<int, List<int>> relatedMap) async {
-    final headers = await getHeaders();
-    final uri = Uri.parse('$baseUrl/quiz/upsert-related-bulk');
+    final Map<String, String> headers = await getHeaders();
+    final Uri uri = Uri.parse('$baseUrl/quiz/upsert-related-bulk');
 
-    final serializableMap = relatedMap.map(
-      (key, value) => MapEntry(key.toString(), value),
+    final Map<String, List<int>> serializableMap = relatedMap.map(
+      (int key, List<int> value) => MapEntry<String, List<int>>(key.toString(), value),
     );
 
-    final resp = await http.post(
+    final http.Response resp = await http.post(
       uri,
       headers: headers,
-      body: jsonEncode({'relatedMap': serializableMap}),
+      body: jsonEncode(<String, dynamic>{'relatedMap': serializableMap}),
     );
 
     parseJsonResponse(resp);

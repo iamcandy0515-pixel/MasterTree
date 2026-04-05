@@ -111,7 +111,7 @@ class QuizExtractionService {
     return quizzes.map((quiz) {
       final qNum = quiz['question_number'];
 
-      return {
+      return <String, dynamic>{
         'question_number': qNum,
         'content_blocks': quiz['question'] ?? [],
         'explanation_blocks': quiz['explanation'] ?? [],

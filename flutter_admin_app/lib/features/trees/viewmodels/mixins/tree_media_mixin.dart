@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+﻿import 'package:flutter/foundation.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_admin_app/core/utils/web_utils.dart';
 import 'package:flutter_admin_app/core/api/node_api.dart';
@@ -8,7 +8,7 @@ import 'package:flutter_admin_app/features/trees/repositories/master_tree_media_
 mixin TreeMediaMixin on ChangeNotifier {
   final MasterTreeMediaRepository _mediaRepo = MasterTreeMediaRepository();
 
-  final List<TreeImage> _uploadedImages = [];
+  final List<TreeImage> _uploadedImages = <TreeImage>[];
   bool _isUploading = false;
   String _selectedImageType = 'main';
 
@@ -22,8 +22,10 @@ mixin TreeMediaMixin on ChangeNotifier {
   }
 
   void removeImage(int index) {
-    _uploadedImages.removeAt(index);
-    notifyListeners();
+    if (index >= 0 && index < _uploadedImages.length) {
+      _uploadedImages.removeAt(index);
+      notifyListeners();
+    }
   }
 
   void updateImageHint(int index, String hint) {
@@ -50,12 +52,12 @@ mixin TreeMediaMixin on ChangeNotifier {
       _isUploading = true;
       notifyListeners();
 
-      final bytes = await WebUtils.readFileAsBytes(file);
+      final Uint8List? bytes = await WebUtils.readFileAsBytes(file);
       if (bytes == null) throw Exception('파일을 읽을 수 없습니다.');
 
-      final publicUrl = await _mediaRepo.uploadImageFromBytes(
-        Uint8List.fromList(bytes),
-        kIsWeb ? (file as dynamic).name : 'dropped_file',
+      final String publicUrl = await _mediaRepo.uploadImageFromBytes(
+        bytes,
+        kIsWeb ? (file as dynamic).name.toString() : 'dropped_file',
       );
 
       _uploadedImages.add(
@@ -76,20 +78,20 @@ mixin TreeMediaMixin on ChangeNotifier {
 
   Future<void> pickAndUploadImage() async {
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.image,
         allowMultiple: false,
       );
 
       if (result == null || result.files.isEmpty) return;
 
-      final file = result.files.first;
+      final PlatformFile file = result.files.first;
       if (file.bytes == null) return;
 
       _isUploading = true;
       notifyListeners();
 
-      final publicUrl = await _mediaRepo.uploadImageFromBytes(
+      final String publicUrl = await _mediaRepo.uploadImageFromBytes(
         file.bytes!,
         file.name,
       );
@@ -120,8 +122,8 @@ mixin TreeMediaMixin on ChangeNotifier {
       notifyListeners();
 
       bool imageFound = false;
-      await WebUtils.pasteImageFromClipboard((bytes, name, type) async {
-        final publicUrl = await _mediaRepo.uploadImageFromBytes(
+      await WebUtils.pasteImageFromClipboard((List<int> bytes, String name, String type) async {
+        final String publicUrl = await _mediaRepo.uploadImageFromBytes(
           Uint8List.fromList(bytes),
           name,
         );
@@ -134,6 +136,7 @@ mixin TreeMediaMixin on ChangeNotifier {
         ),
       );
         imageFound = true;
+        notifyListeners();
       });
 
       _isUploading = false;

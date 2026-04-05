@@ -9,10 +9,7 @@ export class SettingsController {
             const data = await settingsService.getEntryCode();
             successResponse(res, { entryCode: data || "1234" });
         } catch (error: any) {
-            // If table doesn't exist, we might get an error.
-            // But let's assume it works or we fallback
             if (error.code === "42P01") {
-                // undefined_table
                 successResponse(
                     res,
                     { entryCode: "1234" },
@@ -29,7 +26,6 @@ export class SettingsController {
             const { entryCode } = req.body;
             if (!entryCode) {
                 return errorResponse(res, "Entry code is required", 400);
-                return;
             }
 
             const updated = await settingsService.updateEntryCode(entryCode);
@@ -42,6 +38,7 @@ export class SettingsController {
             errorResponse(res, error.message || "Failed to update entry code");
         }
     }
+
     static async getUserAppUrl(req: Request, res: Response) {
         try {
             const data = await settingsService.getUserAppUrl();
@@ -103,7 +100,6 @@ export class SettingsController {
     static async updateGoogleDriveFolderUrl(req: Request, res: Response) {
         try {
             const { url } = req.body;
-            // Allow empty string if user wants to clear it
             if (url === undefined) {
                 return errorResponse(res, "URL is required", 400);
             }
@@ -197,14 +193,39 @@ export class SettingsController {
                 return errorResponse(res, "URL is required", 400);
             }
 
-            // 구글 드라이브 및 기타 외부 URL을 HEAD로 요청하여 생존 확인
             const response = await axios.head(url, { timeout: 5000 });
             const isValid = response.status >= 200 && response.status < 400;
             
             successResponse(res, { isValid });
         } catch (error: any) {
-            // timeout, CORS (서버에서는 안 걸림), 404 등등의 에러 처리
             successResponse(res, { isValid: false });
+        }
+    }
+
+    static async getNotice(req: Request, res: Response) {
+        try {
+            const data = await settingsService.getNotice();
+            successResponse(res, { notice: data || "" });
+        } catch (error: any) {
+            errorResponse(res, error.message || "Failed to get user notice");
+        }
+    }
+
+    static async updateNotice(req: Request, res: Response) {
+        try {
+            const { notice } = req.body;
+            if (notice === undefined) {
+                return errorResponse(res, "Notice is required", 400);
+            }
+
+            const updated = await settingsService.updateNotice(notice);
+            successResponse(
+                res,
+                { notice: updated },
+                "User notice updated successfully",
+            );
+        } catch (error: any) {
+            errorResponse(res, error.message || "Failed to update user notice");
         }
     }
 }

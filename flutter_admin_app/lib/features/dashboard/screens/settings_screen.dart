@@ -4,7 +4,7 @@ import '../viewmodels/settings_viewmodel.dart';
 import '../widgets/settings_entry_code_card.dart';
 import '../widgets/settings_qr_card.dart';
 import '../widgets/settings_drive_card.dart';
-import '../widgets/settings_server_control_card.dart';
+import '../widgets/settings_notice_card.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -83,18 +83,12 @@ class _SettingsContent extends StatelessWidget {
 
                   const SizedBox(height: 32),
 
-                  // Section 4: Server Control
-                  _buildSectionHeader('시스템 설정 및 제어', Icons.settings_remote),
+                  // Section 4: User App Notice (New)
+                  _buildSectionHeader('사용자 앱 공지사항 설정', Icons.notifications_active_outlined),
                   const SizedBox(height: 16),
-                  const SettingsServerControlCard(),
+                  SettingsNoticeCard(initialNotice: vm.userNotice),
 
                   const SizedBox(height: 48),
-
-                  /*
-                  // LEGACY: Old Settings UI Section (Commented for lightweight refactoring)
-                  // Previously about 400 lines of hardcoded cards and logic
-                  // ...
-                  */
                 ],
               ),
             ),
@@ -118,4 +112,3 @@ class _SettingsContent extends StatelessWidget {
     );
   }
 }
-

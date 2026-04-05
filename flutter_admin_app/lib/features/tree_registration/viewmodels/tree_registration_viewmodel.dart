@@ -46,7 +46,7 @@ class TreeRegistrationViewModel extends ChangeNotifier {
     nameKrController.dispose();
     scientificNameController.dispose();
     descriptionController.dispose();
-    for (var c in distractorControllers) {
+    for (final TextEditingController c in distractorControllers) {
       c.dispose();
     }
     super.dispose();
@@ -111,13 +111,16 @@ class TreeRegistrationViewModel extends ChangeNotifier {
 
   Future<void> pasteImageFromClipboard() async {
     try {
-      await WebUtils.pasteImageFromClipboard((bytes, name, type) async {
-        _isUploading = true; notifyListeners();
-        final compressedBytes = await ImageProcessingUtil.compressImage(Uint8List.fromList(bytes));
+      await WebUtils.pasteImageFromClipboard((List<int> bytes, String name, String type) async {
+        _isUploading = true; 
+        notifyListeners();
+        final Uint8List uint8Bytes = Uint8List.fromList(bytes);
+        final compressedBytes = await ImageProcessingUtil.compressImage(uint8Bytes);
         final publicUrl = await _repo.uploadImageByBytes(compressedBytes, name);
 
         _taggedImages[_activeTag] = TreeImage(imageType: _activeTag, imageUrl: publicUrl, hint: '');
-        _isUploading = false; notifyListeners();
+        _isUploading = false; 
+        notifyListeners();
       });
     } catch (e) {
       debugPrint('Error pasting image: $e');
@@ -173,8 +176,8 @@ class TreeRegistrationViewModel extends ChangeNotifier {
         habit: _selectedHabit!,
         images: _taggedImages.values.toList(),
         quizDistractors: distractorControllers
-            .map((c) => c.text.trim())
-            .where((t) => t.isNotEmpty)
+            .map((TextEditingController c) => c.text.trim())
+            .where((String t) => t.isNotEmpty)
             .toList(),
         isAutoQuizEnabled: true,
       );
@@ -199,7 +202,7 @@ class TreeRegistrationViewModel extends ChangeNotifier {
     _selectedHabit = null;
     _taggedImages.clear();
     _activeTag = 'main';
-    for (var c in distractorControllers) {
+    for (final TextEditingController c in distractorControllers) {
       c.clear();
     }
     notifyListeners();

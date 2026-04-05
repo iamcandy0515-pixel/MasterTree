@@ -47,7 +47,7 @@ class _SettingsEntryCodeCardState extends State<SettingsEntryCodeCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '현재 설정된 접속 코드',
+            '입장코드',
             style: TextStyle(color: Colors.white70, fontSize: 14),
           ),
           const SizedBox(height: 12),
@@ -77,7 +77,7 @@ class _SettingsEntryCodeCardState extends State<SettingsEntryCodeCard> {
                 ),
               ),
               const SizedBox(width: 16),
-              ElevatedButton(
+              TextButton(
                 onPressed: vm.isLoading
                     ? null
                     : () async {
@@ -93,24 +93,23 @@ class _SettingsEntryCodeCardState extends State<SettingsEntryCodeCard> {
                           // Error handled in VM
                         }
                       },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFCCFF00),
-                  foregroundColor: Colors.black87,
+                style: TextButton.styleFrom(
+                  foregroundColor: const Color(0xFFCCFF00),
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 16,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    horizontal: 20,
+                    vertical: 12,
                   ),
                 ),
                 child: vm.isLoading && vm.entryCode != _controller.text
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black87),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFCCFF00)),
                       )
-                    : const Text('변경 저장'),
+                    : const Text(
+                        '저장',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
               ),
             ],
           ),
@@ -124,4 +123,3 @@ class _SettingsEntryCodeCardState extends State<SettingsEntryCodeCard> {
     );
   }
 }
-

@@ -1,4 +1,4 @@
-import 'package:flutter_admin_app/features/trees/models/tree.dart';
+﻿import 'package:flutter_admin_app/features/trees/models/tree.dart';
 
 class TreeRegistrationRequest {
   final String nameKr;
@@ -16,18 +16,18 @@ class TreeRegistrationRequest {
     this.category,
     this.description,
     required this.habit,
-    this.images = const [],
-    this.quizDistractors = const [],
+    this.images = const <TreeImage>[],
+    this.quizDistractors = const <String>[],
     this.isAutoQuizEnabled = true,
   });
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => <String, dynamic>{
     'name_kr': nameKr,
     'scientific_name': scientificName,
     'category': category,
     'description': description,
     'habit': habit,
-    'images': images.map((e) => e.toJson()).toList(),
+    'images': images.map((TreeImage e) => e.toJson()).toList(),
     'quiz_distractors': quizDistractors,
     'is_auto_quiz_enabled': isAutoQuizEnabled,
   };

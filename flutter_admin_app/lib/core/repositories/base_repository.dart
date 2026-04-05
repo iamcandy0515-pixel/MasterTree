@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_admin_app/core/globals.dart';
 import 'package:flutter_admin_app/features/auth/screens/login_screen.dart';
@@ -8,14 +7,13 @@ import 'package:flutter_admin_app/core/api/node_api.dart';
 abstract class BaseRepository {
   final String baseUrl;
 
-  BaseRepository()
-      : baseUrl = NodeApi.baseUrl;
+  BaseRepository() : baseUrl = NodeApi.baseUrl;
 
   /// Auth Token을 포함한 공통 헤더 생성
   Future<Map<String, String>> getHeaders() async {
     final session = Supabase.instance.client.auth.currentSession;
     final token = session?.accessToken ?? '';
-    return {
+    return <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     };
@@ -25,14 +23,15 @@ abstract class BaseRepository {
   void checkAuthError(int statusCode) {
     if (statusCode == 401 || statusCode == 403) {
       Supabase.instance.client.auth.signOut();
+
       final context = globalNavigatorKey.currentContext;
       if (context != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('로그인이 만료되었습니다. 다시 로그인 해주세요.')),
         );
-        Navigator.pushAndRemoveUntil(
+        Navigator.pushAndRemoveUntil<void>(
           context,
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          MaterialPageRoute<void>(builder: (_) => const LoginScreen()),
           (Route<dynamic> route) => false,
         );
       }

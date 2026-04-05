@@ -65,7 +65,7 @@ class _SimilarQuizReviewDialogState extends State<SimilarQuizReviewDialog> {
           final exam = item['quiz_exams'] as Map<String, dynamic>?;
           final category = item['quiz_categories'] as Map<String, dynamic>?;
 
-          return {
+          return <String, dynamic>{
             'id': item['id'],
             'year': exam?['year'],
             'round': exam?['round'],

@@ -22,7 +22,7 @@ class TreeGroupRepository extends BaseRepository {
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
       if (jsonResponse['success'] == true) {
-        return {
+        return <String, dynamic>{
           'groups': (jsonResponse['data'] as List)
               .map((e) => TreeGroup.fromJson(e))
               .toList(),

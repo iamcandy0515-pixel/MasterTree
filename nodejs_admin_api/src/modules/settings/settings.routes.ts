@@ -61,4 +61,10 @@ router.post(
     SettingsController.validateUrl,
 );
 
+// GET /api/settings/notice (Public for User App)
+router.get("/notice", SettingsController.getNotice);
+
+// POST /api/settings/notice
+router.post("/notice", verifyAdmin, SettingsController.updateNotice);
+
 export default router;

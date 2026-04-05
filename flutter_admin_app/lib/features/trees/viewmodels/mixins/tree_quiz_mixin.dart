@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 mixin TreeQuizMixin on ChangeNotifier {
-  final List<TextEditingController> distractorControllers = [
+  final List<TextEditingController> distractorControllers = <TextEditingController>[
     TextEditingController(),
     TextEditingController(),
     TextEditingController(),
@@ -11,13 +11,13 @@ mixin TreeQuizMixin on ChangeNotifier {
   bool get isAutoQuizEnabled => _isAutoQuizEnabled;
 
   void initializeQuiz(List<String> distractors, bool isAutoQuiz) {
-    for (var controller in distractorControllers) {
+    for (final TextEditingController controller in distractorControllers) {
       controller.dispose();
     }
     distractorControllers.clear();
     
     if (distractors.isNotEmpty) {
-      for (var distractor in distractors) {
+      for (final String distractor in distractors) {
         distractorControllers.add(TextEditingController(text: distractor));
       }
     } else {
@@ -36,7 +36,7 @@ mixin TreeQuizMixin on ChangeNotifier {
   }
 
   void removeDistractor(int index) {
-    if (distractorControllers.length > 1) {
+    if (index >= 0 && index < distractorControllers.length && distractorControllers.length > 1) {
       distractorControllers[index].dispose();
       distractorControllers.removeAt(index);
       notifyListeners();
@@ -49,7 +49,7 @@ mixin TreeQuizMixin on ChangeNotifier {
   }
 
   void clearQuiz() {
-    for (var controller in distractorControllers) {
+    for (final TextEditingController controller in distractorControllers) {
       controller.clear();
     }
     _isAutoQuizEnabled = true;
@@ -57,7 +57,7 @@ mixin TreeQuizMixin on ChangeNotifier {
   }
 
   void disposeQuiz() {
-    for (var controller in distractorControllers) {
+    for (final TextEditingController controller in distractorControllers) {
       controller.dispose();
     }
   }

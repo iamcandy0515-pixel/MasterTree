@@ -19,7 +19,7 @@ class QuizAiRepository extends BaseRepository with QuizRepositoryMixin {
     final response = await http.post(
       url,
       headers: headers,
-      body: jsonEncode({
+      body: jsonEncode(<String, dynamic>{
         'rawText': rawText,
         'currentQuizBlocks': currentQuizBlocks,
       }),
@@ -42,7 +42,7 @@ class QuizAiRepository extends BaseRepository with QuizRepositoryMixin {
     final response = await http.post(
       url,
       headers: headers,
-      body: jsonEncode({
+      body: jsonEncode(<String, dynamic>{
         'questionText': questionText,
         'explanation': explanation,
         'count': count,
@@ -67,7 +67,7 @@ class QuizAiRepository extends BaseRepository with QuizRepositoryMixin {
     final response = await http.post(
       url,
       headers: headers,
-      body: jsonEncode({
+      body: jsonEncode(<String, dynamic>{
         'questionText': questionText,
         'correctOption': correctOption,
       }),
@@ -88,7 +88,7 @@ class QuizAiRepository extends BaseRepository with QuizRepositoryMixin {
     final response = await http.post(
       url,
       headers: headers,
-      body: jsonEncode({'questionText': questionText, 'limit': limit}),
+      body: jsonEncode(<String, dynamic>{'questionText': questionText, 'limit': limit}),
     );
 
     final jsonResponse = parseJsonResponse(response);

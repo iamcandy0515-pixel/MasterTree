@@ -17,7 +17,7 @@ class QuizDriveRepository extends BaseRepository with QuizRepositoryMixin {
     final response = await http.post(
       url,
       headers: headers,
-      body: jsonEncode({'keyword': keyword}),
+      body: jsonEncode(<String, dynamic>{'keyword': keyword}),
     );
 
     final jsonResponse = parseJsonResponse(response);
@@ -39,7 +39,7 @@ class QuizDriveRepository extends BaseRepository with QuizRepositoryMixin {
     final response = await http.post(
       url,
       headers: headers,
-      body: jsonEncode({
+      body: jsonEncode(<String, dynamic>{
         'fileId': fileId,
         'subject': subject,
         'year': year,
@@ -61,7 +61,7 @@ class QuizDriveRepository extends BaseRepository with QuizRepositoryMixin {
     final response = await http.post(
       url,
       headers: headers,
-      body: jsonEncode({
+      body: jsonEncode(<String, dynamic>{
         'fileId': fileId,
         'questionNumber': questionNumber,
         'optionsCount': optionsCount,
@@ -86,7 +86,7 @@ class QuizDriveRepository extends BaseRepository with QuizRepositoryMixin {
     final resp = await http.post(
       uri,
       headers: headers,
-      body: jsonEncode({
+      body: jsonEncode(<String, dynamic>{
         'fileId': fileId,
         'startNumber': startNumber,
         'endNumber': endNumber,
