@@ -1,0 +1,9 @@
+{
+  "tables": null,
+  "error": {
+    "code": "PGRST205",
+    "details": null,
+    "hint": null,
+    "message": "Could not find the table 'public.pg_catalog.pg_tables' in the schema cache"
+  }
+}

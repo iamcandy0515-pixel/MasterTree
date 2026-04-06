@@ -2,54 +2,37 @@ import { supabase } from "../../../config/supabaseClient";
 
 export class StatsUserService {
     async getUserPerformanceStats(userId: string) {
-        // 1. Fetch total published questions and tree count
-        const { data: questions } = await supabase
-            .from("quiz_questions")
-            .select("id, exam_id");
+        // 1. Fetch total published counts for basis
+        const [{ count: questionCount }, { count: treeCount }] = await Promise.all([
+            supabase.from("quiz_questions").select("*", { count: "exact", head: true }),
+            supabase.from("trees").select("*", { count: "exact", head: true })
+        ]);
 
-        const { count: treeCount } = await supabase
-            .from("trees")
-            .select("*", { count: "exact", head: true });
+        const { data: questions } = await supabase.from("quiz_questions").select("id, exam_id");
+        const examQuestionIds = new Set((questions || []).filter(q => q.exam_id !== null).map(q => q.id));
 
-        const totalExamIds = (questions || [])
-            .filter((q) => q.exam_id !== null)
-            .map((q) => q.id);
-
-        // 2. Fetch user's attempts
-        const { data: attempts } = await supabase
-            .from("quiz_attempts")
-            .select("question_id, tree_id, is_correct")
+        // 2. Fetch user's summarized latest results (Pre-aggregated by user_id/question_id)
+        const { data: summaries } = await supabase
+            .from("user_quiz_summary" as any)
+            .select("question_id, tree_id, is_last_correct, exam_id")
             .eq("user_id", userId);
 
-        // 3. Process General Quizzes (Tree Quizzes & non-exam questions)
-        const solvedGeneralSet = new Set();
-        let generalCorrect = 0;
-        let generalWrong = 0;
+        let generalSolved = 0, generalCorrect = 0;
+        let examSolved = 0, examCorrect = 0;
 
-        // 4. Process Past Exams (exam_id is not null)
-        const solvedExamSet = new Set();
-        let examCorrect = 0;
-        let examWrong = 0;
-
-        const examQuestionIds = new Set(totalExamIds);
-
-        attempts?.forEach((att) => {
-            if (att.question_id && examQuestionIds.has(att.question_id)) {
-                solvedExamSet.add(att.question_id);
-                if (att.is_correct) examCorrect++;
-                else examWrong++;
+        summaries?.forEach((s: any) => {
+            const isExam = s.exam_id !== null || (s.question_id && examQuestionIds.has(s.question_id));
+            
+            if (isExam) {
+                examSolved++;
+                if (s.is_last_correct) examCorrect++;
             } else {
-                // Treat as General Quiz (Tree Quiz)
-                const id = att.tree_id ? `t_${att.tree_id}` : att.question_id ? `q_${att.question_id}` : null;
-                if (id) {
-                    solvedGeneralSet.add(id);
-                    if (att.is_correct) generalCorrect++;
-                    else generalWrong++;
-                }
+                generalSolved++;
+                if (s.is_last_correct) generalCorrect++;
             }
         });
 
-        // 5. Fetch user info
+        // 3. Fetch user info
         let userInfo = null;
         try {
             const { data } = await supabase.auth.admin.getUserById(userId);
@@ -66,15 +49,15 @@ export class StatsUserService {
             user: userInfo,
             quiz: {
                 totalCount: treeCount || 0,
-                solvedCount: solvedGeneralSet.size,
+                solvedCount: generalSolved,
                 correctCount: generalCorrect,
-                wrongCount: generalWrong,
+                wrongCount: generalSolved - generalCorrect,
             },
             pastExam: {
-                totalCount: totalExamIds.length,
-                solvedCount: solvedExamSet.size,
+                totalCount: Array.from(examQuestionIds).length,
+                solvedCount: examSolved,
                 correctCount: examCorrect,
-                wrongCount: examWrong,
+                wrongCount: examSolved - examCorrect,
             },
         };
     }

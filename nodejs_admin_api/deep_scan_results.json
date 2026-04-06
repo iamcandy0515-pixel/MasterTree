@@ -1,0 +1,22 @@
+{
+  "tree_images_root": [
+    {
+      "name": "quizzes",
+      "id": null,
+      "updated_at": null,
+      "created_at": null,
+      "last_accessed_at": null,
+      "metadata": null
+    },
+    {
+      "name": "trees",
+      "id": null,
+      "updated_at": null,
+      "created_at": null,
+      "last_accessed_at": null,
+      "metadata": null
+    }
+  ],
+  "leaf_folder_sample": [],
+  "all_tables": null
+}

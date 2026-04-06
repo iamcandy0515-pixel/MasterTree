@@ -1,0 +1,18 @@
+{
+  "buckets": [
+    {
+      "id": "tree-images",
+      "name": "tree-images",
+      "owner": "",
+      "public": true,
+      "type": "STANDARD",
+      "file_size_limit": null,
+      "allowed_mime_types": null,
+      "created_at": "2026-02-06T23:29:29.667Z",
+      "updated_at": "2026-02-06T23:29:29.667Z"
+    }
+  ],
+  "trees_files_sample": [],
+  "quizzes_files_sample": [],
+  "leaf_images_data": "Could not find the table 'public.leaf_images' in the schema cache"
+}

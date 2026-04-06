@@ -20,6 +20,9 @@ export class QuizAttemptService {
             .from("quiz_attempts")
             .insert(attemptRows as any[]);
         if (insErr) throw new Error(`Insert attempts failed: ${insErr.message}`);
+        
+        // Update Statistics Summary (Upsert)
+        await this.syncSummary(userId, attempts);
 
         const correctCount = attemptRows.filter((a) => a.is_correct).length;
         const totalQuestions = attemptRows.length;
@@ -79,6 +82,9 @@ export class QuizAttemptService {
         const { error: insErr } = await supabase.from("quiz_attempts").insert(attemptRows as any[]);
         if (insErr) throw new Error(`Batch insert failed: ${insErr.message}`);
 
+        // Update Statistics Summary (Upsert)
+        await this.syncSummary(userId, allFiltered);
+
         const correctCount = attemptRows.filter((a) => a.is_correct).length;
         const { data: currentSession } = await supabase.from("quiz_sessions").select("correct_count, total_questions").eq("id", sessionId).single();
 
@@ -89,6 +95,34 @@ export class QuizAttemptService {
         }).eq("id", sessionId);
 
         return { success: true, count: attemptRows.length, filtered: attempts.length - allFiltered.length };
+    }
+
+    /**
+     * Sync latest attempt result to user_quiz_summary table.
+     */
+    private async syncSummary(userId: string, attempts: any[]) {
+        const summaryRows = attempts.map(a => ({
+            user_id: userId,
+            question_id: a.question_id,
+            is_last_correct: a.is_correct,
+            tree_id: a.tree_id || null,
+            updated_at: new Date().toISOString()
+        })).filter(r => r.question_id !== undefined && r.question_id !== null);
+
+        if (summaryRows.length === 0) return;
+
+        // Upsert: latest attempt in batch wins for the same question
+        const uniqueSummaries = Array.from(
+            new Map(summaryRows.map(s => [s.question_id, s])).values()
+        );
+
+        const { error } = await supabase
+            .from("user_quiz_summary" as any)
+            .upsert(uniqueSummaries, { onConflict: 'user_id, question_id' });
+        
+        if (error) {
+            console.error(`[SyncSummary] Failed to upsert:`, error.message);
+        }
     }
 }
 

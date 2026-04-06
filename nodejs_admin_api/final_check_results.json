@@ -1,0 +1,476 @@
+{
+  "quiz_json_samples": [
+    {
+      "id": 361,
+      "content_blocks": [
+        {
+          "type": "text",
+          "content": "15. 1/25000의 지도에서 종단기울기가 8%, 실제 높이가 10m 인 노선의 양각기의 폭을 구하시오(단, 양각기 폭 단위는 mm 로 표기할 것)."
+        }
+      ],
+      "explanation_blocks": [
+        {
+          "type": "text",
+          "content": "풀이순서: 경사도 공식을 이용하여 실제 거리를 구하고, 실제 거리와 축척을 이용하여 양각기 폭을 계산한다.\n\n공식 및 계산식: 경사 = (등고선의 높이 / 실제거리) * 100, 양각기폭 = 실제거리 * 축척\n\n공식 및 계산식 적용:\n경사 8% = (10m / 실제거리) * 100  → 실제거리 = (10 / 8) * 100 = 125m\n양각기폭 = 125m * (1/25000) = 0.005m = 5mm\n\n정답: 5 mm"
+        }
+      ]
+    },
+    {
+      "id": 369,
+      "content_blocks": [
+        {
+          "type": "text",
+          "content": "8. 법정축적법의 정의를 쓰고 Kameraltaxe 법의 공식을 적으시오."
+        }
+      ],
+      "explanation_blocks": [
+        {
+          "type": "text",
+          "content": "풀이순서: 법정축적법은 현실림을 법정림 상태로 유도하기 위한 벌채량 계산 방법이며, Kameraltaxe 법은 그 초기 방법 중 하나입니다.\n\n정답: 법정축적법 정의: 각 작업급에 대한 현실림의 축적과 생장량, 법정축적을 이용하여 표준벌채량을 계산하고 현실림을 법정림 상태로 유도하는 방법이다. Kameraltaxe 정의 : kameraltaxe법은 법정축적법 중에서 가장 먼저 만들어진 방법으로 개벌작업과 택벌작업에 다같이 적용된다.\n\n공식 및 계산식 적용: 표준연벌채량 = 현실연간생장량 + (현실축적 - 법정축적) / 갱정기"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "content_blocks": [
+        {
+          "type": "text",
+          "content": "01 면적 100ha, 임도 총연장 2km, 임도효율이 10일 경우 평균집재거리를 구하시오."
+        }
+      ],
+      "explanation_blocks": [
+        {
+          "type": "text",
+          "content": "풀이순서: 임도밀도 공식을 이용하여 임도밀도를 구하고, 이를 활용하여 평균집재거리를 계산한다.\n공식: 임도밀도 = 총임도거리(m) / 총면적(ha), 평균집재거리(km) = 임도효율 / 임도밀도\n공식대입 및 계산: 임도밀도 = 2000m / 100ha = 20m/ha, 평균집재거리 = 10 / 20 = 0.5km\n정답: 0.5km"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "content_blocks": [
+        {
+          "type": "text",
+          "content": "04 임도설계도면 작성 전 준비작업 4단계를 적으시오."
+        }
+      ],
+      "explanation_blocks": [
+        {
+          "type": "text",
+          "content": "임도설계도면 작성 전 준비작업 4단계는 예비 조사, 답사, 예측, 실측입니다."
+        }
+      ]
+    },
+    {
+      "id": 367,
+      "content_blocks": [
+        {
+          "type": "text",
+          "content": "6. 이령림의 연령 측정방법 중에서 면적령을 설명하시오."
+        }
+      ],
+      "explanation_blocks": [
+        {
+          "type": "text",
+          "content": "풀이순서: 면적령은 이령림의 임령을 결정하는 방법 중 하나이며, 각 이령임분이 차지하는 면적을 고려하여 가중평균으로 임령을 추정합니다.\n\n정답: 각 이령임분이 차지하고 있는 면적을 고려한 가중평균에 의하여 구한다."
+        }
+      ]
+    },
+    {
+      "id": 379,
+      "content_blocks": [
+        {
+          "type": "text",
+          "content": "3. 임목수확장비인 하베스터와 프로세서의 차이점에 대해 설명하시오."
+        }
+      ],
+      "explanation_blocks": [
+        {
+          "type": "text",
+          "content": "풀이순서: 하베스터와 프로세서의 기능 차이점 비교\n정답: 하베스터는 벌목이 가능하지만, 프로세서는 벌목이 불가능하다."
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "content_blocks": [
+        {
+          "type": "text",
+          "content": "09 사유림 경영지도원칙 중 우리나라와 같은 산림자원 부족의 경우 필요한 지도원칙을\n적으시오."
+        }
+      ],
+      "explanation_blocks": [
+        {
+          "type": "text",
+          "content": "사유림 경영지도원칙 중 우리나라와 같이 산림자원이 부족한 경우 필요한 지도원칙은 생산성의 원칙입니다."
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "content_blocks": [
+        {
+          "type": "text",
+          "content": "06 횡단 측량이 필요한 곳 3군데를 쓰시오."
+        }
+      ],
+      "explanation_blocks": [
+        {
+          "type": "text",
+          "content": "횡단 측량은 중심선의 각 측점, 지형이 급변하는 지점, 구조물 설치 지점에서 필요합니다. 이 외에도 추가적으로 곡선 시점과 종점, 지형, 지물이 특이한 곳 등이 있습니다."
+        }
+      ]
+    },
+    {
+      "id": 36,
+      "content_blocks": [
+        {
+          "type": "text",
+          "content": "옆도랑 형태 3가지를 적으시오."
+        }
+      ],
+      "explanation_blocks": [
+        {
+          "type": "text",
+          "content": "옆도랑의 일반적인 형태는 V자형, 사다리꼴형, L형이 있습니다. U자형도 사용될 수 있지만, 위에 제시된 세 가지 형태가 가장 흔하게 사용됩니다. 정답은 V자형, 사다리꼴형, L형입니다."
+        }
+      ]
+    },
+    {
+      "id": 748,
+      "content_blocks": [
+        {
+          "type": "text",
+          "content": "01 컴퍼스 측량방법 3가지 쓰시오."
+        }
+      ],
+      "explanation_blocks": [
+        {
+          "type": "text",
+          "content": "풀이순서: 컴퍼스 측량방법 3가지\n\n정답: ① 사출법, ② 교차법, ③ 도선법"
+        }
+      ]
+    }
+  ],
+  "trees_files": [
+    {
+      "name": "1770436288292.jpg",
+      "id": "80463bf9-de78-4287-a5be-ffdde0d348db",
+      "updated_at": "2026-02-07T03:51:28.822Z",
+      "created_at": "2026-02-07T03:51:28.822Z",
+      "last_accessed_at": "2026-02-07T03:51:28.822Z",
+      "metadata": {
+        "eTag": "\"50c21fb0cdcb3e4f6945cf05640e40cc\"",
+        "size": 99031,
+        "mimetype": "application/octet-stream",
+        "cacheControl": "max-age=3600",
+        "lastModified": "2026-02-07T03:51:29.000Z",
+        "contentLength": 99031,
+        "httpStatusCode": 200
+      }
+    },
+    {
+      "name": "1770436403742.jpg",
+      "id": "538dee46-1645-4ff8-8c7c-be460a3706f2",
+      "updated_at": "2026-02-07T03:53:24.126Z",
+      "created_at": "2026-02-07T03:53:24.126Z",
+      "last_accessed_at": "2026-02-07T03:53:24.126Z",
+      "metadata": {
+        "eTag": "\"849f5b1bc1e6f0c8b9409005eba565d1\"",
+        "size": 43384,
+        "mimetype": "application/octet-stream",
+        "cacheControl": "max-age=3600",
+        "lastModified": "2026-02-07T03:53:25.000Z",
+        "contentLength": 43384,
+        "httpStatusCode": 200
+      }
+    },
+    {
+      "name": "1770440729436.jpg",
+      "id": "614a7528-0965-4a90-8ab4-9501c13b7ffe",
+      "updated_at": "2026-02-07T05:05:30.071Z",
+      "created_at": "2026-02-07T05:05:30.071Z",
+      "last_accessed_at": "2026-02-07T05:05:30.071Z",
+      "metadata": {
+        "eTag": "\"b6f1fe40a56d9779f15861851d2959a3\"",
+        "size": 67006,
+        "mimetype": "application/octet-stream",
+        "cacheControl": "max-age=3600",
+        "lastModified": "2026-02-07T05:05:31.000Z",
+        "contentLength": 67006,
+        "httpStatusCode": 200
+      }
+    },
+    {
+      "name": "1770440772307.jpg",
+      "id": "2f46a340-a015-46ae-b414-227e94ce553d",
+      "updated_at": "2026-02-07T05:06:12.807Z",
+      "created_at": "2026-02-07T05:06:12.807Z",
+      "last_accessed_at": "2026-02-07T05:06:12.807Z",
+      "metadata": {
+        "eTag": "\"bdbc81f5e7a63b4ecf6492690b3532d7\"",
+        "size": 63031,
+        "mimetype": "application/octet-stream",
+        "cacheControl": "max-age=3600",
+        "lastModified": "2026-02-07T05:06:13.000Z",
+        "contentLength": 63031,
+        "httpStatusCode": 200
+      }
+    },
+    {
+      "name": "1770440800240.jpg",
+      "id": "aac52e91-2160-4fd3-a05e-94e05a6b546c",
+      "updated_at": "2026-02-07T05:06:40.759Z",
+      "created_at": "2026-02-07T05:06:40.759Z",
+      "last_accessed_at": "2026-02-07T05:06:40.759Z",
+      "metadata": {
+        "eTag": "\"fbd2c06bda49e56962bf93ca0df4191a\"",
+        "size": 71199,
+        "mimetype": "application/octet-stream",
+        "cacheControl": "max-age=3600",
+        "lastModified": "2026-02-07T05:06:41.000Z",
+        "contentLength": 71199,
+        "httpStatusCode": 200
+      }
+    },
+    {
+      "name": "1770635361605.jpg",
+      "id": "3afc2660-84d0-4713-8e5c-8d4d6275a0dd",
+      "updated_at": "2026-02-09T11:09:22.403Z",
+      "created_at": "2026-02-09T11:09:22.403Z",
+      "last_accessed_at": "2026-02-09T11:09:22.403Z",
+      "metadata": {
+        "eTag": "\"2358fcdcf10778f210f83245a711a00e\"",
+        "size": 20412,
+        "mimetype": "application/octet-stream",
+        "cacheControl": "max-age=3600",
+        "lastModified": "2026-02-09T11:09:23.000Z",
+        "contentLength": 20412,
+        "httpStatusCode": 200
+      }
+    },
+    {
+      "name": "1770636179769.jpg",
+      "id": "eb120954-4c58-423e-b05a-f22ba7ca8416",
+      "updated_at": "2026-02-09T11:23:00.473Z",
+      "created_at": "2026-02-09T11:23:00.473Z",
+      "last_accessed_at": "2026-02-09T11:23:00.473Z",
+      "metadata": {
+        "eTag": "\"849f5b1bc1e6f0c8b9409005eba565d1\"",
+        "size": 43384,
+        "mimetype": "application/octet-stream",
+        "cacheControl": "max-age=3600",
+        "lastModified": "2026-02-09T11:23:01.000Z",
+        "contentLength": 43384,
+        "httpStatusCode": 200
+      }
+    },
+    {
+      "name": "1770893875245.jpg",
+      "id": "7e441e8f-b401-4895-b2c2-34b6f5b0e4f1",
+      "updated_at": "2026-02-12T10:57:55.969Z",
+      "created_at": "2026-02-12T10:57:55.969Z",
+      "last_accessed_at": "2026-02-12T10:57:55.969Z",
+      "metadata": {
+        "eTag": "\"5356903e6a3ea23f82ba3e5401bf603d\"",
+        "size": 385699,
+        "mimetype": "application/octet-stream",
+        "cacheControl": "max-age=3600",
+        "lastModified": "2026-02-12T10:57:56.000Z",
+        "contentLength": 385699,
+        "httpStatusCode": 200
+      }
+    },
+    {
+      "name": "1770893875921.jpg",
+      "id": "c2aba7a9-5534-46a1-802b-9be06572666e",
+      "updated_at": "2026-02-12T10:57:56.307Z",
+      "created_at": "2026-02-12T10:57:56.307Z",
+      "last_accessed_at": "2026-02-12T10:57:56.307Z",
+      "metadata": {
+        "eTag": "\"c6dfc15a03d9547bce9979bf6cd3ac5c\"",
+        "size": 200274,
+        "mimetype": "application/octet-stream",
+        "cacheControl": "max-age=3600",
+        "lastModified": "2026-02-12T10:57:57.000Z",
+        "contentLength": 200274,
+        "httpStatusCode": 200
+      }
+    },
+    {
+      "name": "1770893876243.jpg",
+      "id": "af33b599-94dd-489f-8a35-bc7c8afb5275",
+      "updated_at": "2026-02-12T10:57:56.780Z",
+      "created_at": "2026-02-12T10:57:56.780Z",
+      "last_accessed_at": "2026-02-12T10:57:56.780Z",
+      "metadata": {
+        "eTag": "\"c8be09867df57262fe895f8aff6bba24\"",
+        "size": 608455,
+        "mimetype": "application/octet-stream",
+        "cacheControl": "max-age=3600",
+        "lastModified": "2026-02-12T10:57:57.000Z",
+        "contentLength": 608455,
+        "httpStatusCode": 200
+      }
+    },
+    {
+      "name": "1770893876713.jpg",
+      "id": "00b8999f-c246-4d6b-87e3-112b5bf7a0a4",
+      "updated_at": "2026-02-12T10:57:57.209Z",
+      "created_at": "2026-02-12T10:57:57.209Z",
+      "last_accessed_at": "2026-02-12T10:57:57.209Z",
+      "metadata": {
+        "eTag": "\"88446f6d162ef6a0e90f8e86b8387c6f\"",
+        "size": 643048,
+        "mimetype": "application/octet-stream",
+        "cacheControl": "max-age=3600",
+        "lastModified": "2026-02-12T10:57:58.000Z",
+        "contentLength": 643048,
+        "httpStatusCode": 200
+      }
+    },
+    {
+      "name": "1770893877127.jpg",
+      "id": "4c1d35ba-4582-4d09-bb02-82525a47da51",
+      "updated_at": "2026-02-12T10:57:57.588Z",
+      "created_at": "2026-02-12T10:57:57.588Z",
+      "last_accessed_at": "2026-02-12T10:57:57.588Z",
+      "metadata": {
+        "eTag": "\"47b15b02214bce56be8a0237f81830f8\"",
+        "size": 199866,
+        "mimetype": "application/octet-stream",
+        "cacheControl": "max-age=3600",
+        "lastModified": "2026-02-12T10:57:58.000Z",
+        "contentLength": 199866,
+        "httpStatusCode": 200
+      }
+    },
+    {
+      "name": "1770893877545.jpg",
+      "id": "64478d7d-c14a-48e5-8fb8-d188258dfe6a",
+      "updated_at": "2026-02-12T10:57:57.923Z",
+      "created_at": "2026-02-12T10:57:57.923Z",
+      "last_accessed_at": "2026-02-12T10:57:57.923Z",
+      "metadata": {
+        "eTag": "\"e68a8bf9dfa06824815fac76f990d37b\"",
+        "size": 235008,
+        "mimetype": "application/octet-stream",
+        "cacheControl": "max-age=3600",
+        "lastModified": "2026-02-12T10:57:58.000Z",
+        "contentLength": 235008,
+        "httpStatusCode": 200
+      }
+    },
+    {
+      "name": "1770893889390.jpg",
+      "id": "f6e55605-af93-4663-a20f-b626405bae69",
+      "updated_at": "2026-02-12T10:58:09.932Z",
+      "created_at": "2026-02-12T10:58:09.932Z",
+      "last_accessed_at": "2026-02-12T10:58:09.932Z",
+      "metadata": {
+        "eTag": "\"5356903e6a3ea23f82ba3e5401bf603d\"",
+        "size": 385699,
+        "mimetype": "application/octet-stream",
+        "cacheControl": "max-age=3600",
+        "lastModified": "2026-02-12T10:58:10.000Z",
+        "contentLength": 385699,
+        "httpStatusCode": 200
+      }
+    },
+    {
+      "name": "1770893889886.jpg",
+      "id": "e29649ae-b988-46a2-b200-f4c72890b0be",
+      "updated_at": "2026-02-12T10:58:10.358Z",
+      "created_at": "2026-02-12T10:58:10.358Z",
+      "last_accessed_at": "2026-02-12T10:58:10.358Z",
+      "metadata": {
+        "eTag": "\"c6dfc15a03d9547bce9979bf6cd3ac5c\"",
+        "size": 200274,
+        "mimetype": "application/octet-stream",
+        "cacheControl": "max-age=3600",
+        "lastModified": "2026-02-12T10:58:11.000Z",
+        "contentLength": 200274,
+        "httpStatusCode": 200
+      }
+    },
+    {
+      "name": "1770893890345.jpg",
+      "id": "56081c8f-e4f0-48aa-8a92-6cc2f875e943",
+      "updated_at": "2026-02-12T10:58:11.084Z",
+      "created_at": "2026-02-12T10:58:11.084Z",
+      "last_accessed_at": "2026-02-12T10:58:11.084Z",
+      "metadata": {
+        "eTag": "\"c8be09867df57262fe895f8aff6bba24\"",
+        "size": 608455,
+        "mimetype": "application/octet-stream",
+        "cacheControl": "max-age=3600",
+        "lastModified": "2026-02-12T10:58:12.000Z",
+        "contentLength": 608455,
+        "httpStatusCode": 200
+      }
+    },
+    {
+      "name": "1770893891075.jpg",
+      "id": "5584ff8a-b585-4668-a10b-180eed26c5fd",
+      "updated_at": "2026-02-12T10:58:11.646Z",
+      "created_at": "2026-02-12T10:58:11.646Z",
+      "last_accessed_at": "2026-02-12T10:58:11.646Z",
+      "metadata": {
+        "eTag": "\"88446f6d162ef6a0e90f8e86b8387c6f\"",
+        "size": 643048,
+        "mimetype": "application/octet-stream",
+        "cacheControl": "max-age=3600",
+        "lastModified": "2026-02-12T10:58:12.000Z",
+        "contentLength": 643048,
+        "httpStatusCode": 200
+      }
+    },
+    {
+      "name": "1770893891576.jpg",
+      "id": "a0734116-911e-498c-9ae2-ade5ebe9e5bc",
+      "updated_at": "2026-02-12T10:58:12.089Z",
+      "created_at": "2026-02-12T10:58:12.089Z",
+      "last_accessed_at": "2026-02-12T10:58:12.089Z",
+      "metadata": {
+        "eTag": "\"47b15b02214bce56be8a0237f81830f8\"",
+        "size": 199866,
+        "mimetype": "application/octet-stream",
+        "cacheControl": "max-age=3600",
+        "lastModified": "2026-02-12T10:58:12.000Z",
+        "contentLength": 199866,
+        "httpStatusCode": 200
+      }
+    },
+    {
+      "name": "1770893892043.jpg",
+      "id": "1fdc13f4-de30-4e1e-a0bb-2035d6796621",
+      "updated_at": "2026-02-12T10:58:12.498Z",
+      "created_at": "2026-02-12T10:58:12.498Z",
+      "last_accessed_at": "2026-02-12T10:58:12.498Z",
+      "metadata": {
+        "eTag": "\"e68a8bf9dfa06824815fac76f990d37b\"",
+        "size": 235008,
+        "mimetype": "application/octet-stream",
+        "cacheControl": "max-age=3600",
+        "lastModified": "2026-02-12T10:58:13.000Z",
+        "contentLength": 235008,
+        "httpStatusCode": 200
+      }
+    },
+    {
+      "name": "1770995337116.jpg",
+      "id": "79552c68-9e95-4475-a011-859d91e3e079",
+      "updated_at": "2026-02-13T15:09:04.703Z",
+      "created_at": "2026-02-13T15:09:04.703Z",
+      "last_accessed_at": "2026-02-13T15:09:04.703Z",
+      "metadata": {
+        "eTag": "\"4593c0f71fd7bde56ba484a99f730542-2\"",
+        "size": 5703852,
+        "mimetype": "application/octet-stream",
+        "cacheControl": "max-age=3600",
+        "lastModified": "2026-02-13T15:09:05.000Z",
+        "contentLength": 5703852,
+        "httpStatusCode": 200
+      }
+    }
+  ]
+}

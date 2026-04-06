@@ -1,0 +1,66 @@
+[
+  {
+    "name": "id",
+    "type": "number"
+  },
+  {
+    "name": "exam_id",
+    "type": "number"
+  },
+  {
+    "name": "category_id",
+    "type": "number"
+  },
+  {
+    "name": "raw_source_text",
+    "type": "object"
+  },
+  {
+    "name": "raw_source_image_url",
+    "type": "object"
+  },
+  {
+    "name": "content_blocks",
+    "type": "object"
+  },
+  {
+    "name": "hint_blocks",
+    "type": "object"
+  },
+  {
+    "name": "options",
+    "type": "object"
+  },
+  {
+    "name": "correct_option_index",
+    "type": "number"
+  },
+  {
+    "name": "explanation_blocks",
+    "type": "object"
+  },
+  {
+    "name": "difficulty",
+    "type": "number"
+  },
+  {
+    "name": "status",
+    "type": "string"
+  },
+  {
+    "name": "created_at",
+    "type": "string"
+  },
+  {
+    "name": "question_number",
+    "type": "number"
+  },
+  {
+    "name": "related_quiz_ids",
+    "type": "object"
+  },
+  {
+    "name": "embedding",
+    "type": "string"
+  }
+]

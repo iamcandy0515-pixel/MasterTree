@@ -1,0 +1,34 @@
+{
+  "trees": [
+    "id",
+    "name_kr",
+    "name_en",
+    "scientific_name",
+    "description",
+    "difficulty",
+    "created_by",
+    "created_at",
+    "category",
+    "shape",
+    "quiz_distractors",
+    "is_auto_quiz_enabled"
+  ],
+  "quiz_questions": [
+    "id",
+    "exam_id",
+    "category_id",
+    "raw_source_text",
+    "raw_source_image_url",
+    "content_blocks",
+    "hint_blocks",
+    "options",
+    "correct_option_index",
+    "explanation_blocks",
+    "difficulty",
+    "status",
+    "created_at",
+    "question_number",
+    "related_quiz_ids",
+    "embedding"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "leaf_images": "ERROR: Could not find the table 'public.leaf_images' in the schema cache",
+  "bark_images": "ERROR: Could not find the table 'public.bark_images' in the schema cache",
+  "shape_images": "ERROR: Could not find the table 'public.shape_images' in the schema cache",
+  "quiz_questions": [
+    "id",
+    "exam_id",
+    "category_id",
+    "raw_source_text",
+    "raw_source_image_url",
+    "content_blocks",
+    "hint_blocks",
+    "options",
+    "correct_option_index",
+    "explanation_blocks",
+    "difficulty",
+    "status",
+    "created_at",
+    "question_number",
+    "related_quiz_ids",
+    "embedding"
+  ]
+}

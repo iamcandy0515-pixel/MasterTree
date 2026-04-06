@@ -1,0 +1,22 @@
+{
+  "quiz_sample": [],
+  "tree_sample": [
+    {
+      "id": 81,
+      "name_kr": "신갈나무",
+      "name_en": null,
+      "scientific_name": "Quercus mongolica",
+      "description": "[구분] 활엽수 / 낙엽 교목\n[성상] 낙엽 교목, 수고 20m 내외\n[수형] 둥근 수형\n[동정·유사종 구별 요약] 잎 뒷면에 털 많고 도토리 자루 거의 없음 → 졸참과 구별",
+      "difficulty": 1,
+      "created_by": null,
+      "created_at": "2026-02-07T23:08:23.0708+00:00",
+      "category": "활엽수, 낙엽수",
+      "shape": "낙엽수",
+      "quiz_distractors": [
+        "상수리나무",
+        "갈참나무"
+      ],
+      "is_auto_quiz_enabled": true
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "results": {
+    "users": 8,
+    "user_stats": null,
+    "exams": null,
+    "categories": null,
+    "quiz_questions": 896,
+    "quiz_attempts": 469,
+    "trees": 78,
+    "user_quiz_summary": 0,
+    "tree_details": null,
+    "leaf_images": null,
+    "bark_images": null,
+    "shape_images": null,
+    "tree_tags": null,
+    "tree_tag_mappings": null
+  },
+  "treeDetails": null
+}

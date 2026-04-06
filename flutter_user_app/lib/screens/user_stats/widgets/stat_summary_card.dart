@@ -21,7 +21,7 @@ class StatSummaryCard extends StatelessWidget {
     final int solved = data['solvedCount'] ?? 0;
     final int correct = data['correctCount'] ?? 0;
     final int wrong = data['wrongCount'] ?? 0;
-    final double progress = total > 0 ? solved / total : 0.0;
+    final double progress = total > 0 ? (correct / total) : 0.0; // Mastery rate based on total questions
     final double accuracy = solved > 0 ? (correct / solved) * 100 : 0.0;
 
     return Container(
@@ -57,7 +57,7 @@ class StatSummaryCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  '진행률 ($solved / $total)',
+                  '지식 습득률 (Mastery: $correct / $total)',
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: AppColors.textMuted,
@@ -88,10 +88,10 @@ class StatSummaryCard extends StatelessWidget {
           const SizedBox(height: 24),
           Row(
             children: [
-              _SimpleStat(label: '정답', value: '$correct', color: Colors.greenAccent),
-              _SimpleStat(label: '오답', value: '$wrong', color: Colors.redAccent),
+              _SimpleStat(label: '습득 완료', value: '$correct', color: Colors.greenAccent),
+              _SimpleStat(label: '도전 중', value: '${solved - correct}', color: Colors.orangeAccent),
               _SimpleStat(
-                label: '정답률',
+                label: '정답률(최근)',
                 value: '${accuracy.toStringAsFixed(0)}%',
                 color: Colors.white,
               ),
