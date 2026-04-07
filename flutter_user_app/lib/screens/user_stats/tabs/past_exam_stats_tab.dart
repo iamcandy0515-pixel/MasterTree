@@ -3,26 +3,77 @@ import '../widgets/stat_summary_card.dart';
 
 import '../../../core/design_system.dart';
 
-class PastExamStatsTab extends StatelessWidget {
+class PastExamStatsTab extends StatefulWidget {
   final Map<String, dynamic> stats;
   final List<Map<String, dynamic>> exams;
 
   const PastExamStatsTab({super.key, required this.stats, required this.exams});
 
   @override
+  State<PastExamStatsTab> createState() => _PastExamStatsTabState();
+}
+
+class _PastExamStatsTabState extends State<PastExamStatsTab> {
+  String selectedSubject = '산림기사'; // [User Request] 디폴트
+  String selectedYear = '전체';
+  String selectedRound = '전체';
+
+  @override
   Widget build(BuildContext context) {
+    // 1. 과목, 년도, 회차 목록 정적/동적 추출
+    final subjects = ['산림기사', '산림산업기사']; // [User Request] '전체' 제거
+    final years = {'전체', ...widget.exams.map((e) => _parseYear(e['subject_name']))}.toList();
+    final rounds = {'전체', ...widget.exams.map((e) => _parseRound(e['subject_name']))}.toList();
+
+    // 2. 필터링 및 정렬
+    final filteredExams = widget.exams.where((e) {
+      final name = e['subject_name']?.toString() ?? '';
+      final subjectMatch = name.contains(selectedSubject); // '전체' 없으므로 직접 매칭
+      final yearMatch = selectedYear == '전체' || name.contains('${selectedYear}년');
+      final roundMatch = selectedRound == '전체' || name.contains('${selectedRound}회');
+      return subjectMatch && yearMatch && roundMatch;
+    }).toList();
+
+    // [User Request] 과목별 내림차순 정렬
+    filteredExams.sort((a, b) {
+      final String nameA = a['subject_name']?.toString() ?? '';
+      final String nameB = b['subject_name']?.toString() ?? '';
+      return nameB.compareTo(nameA); // 내림차순
+    });
+
+    // 3. 과목별, 회차별 실시간 집계
+    int totalCount = 0;
+    int masteredCount = 0;
+    for (var exam in filteredExams) {
+      totalCount += (exam['total_count'] as num?)?.toInt() ?? 0;
+      masteredCount += (exam['mastered_count'] as num?)?.toInt() ?? 0;
+    }
+    double accuracyRate = totalCount > 0 ? (masteredCount / totalCount) * 100 : 0.0;
+
+    final filteredSummary = {
+      'totalCount': totalCount,
+      'masteredCount': masteredCount,
+      'accuracyRate': accuracyRate,
+    };
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // 필터링된 결과로 상단 통계도 실시간 업데이트
           StatSummaryCard(
-            title: '기출 문제 학습 성과',
-            data: Map<String, dynamic>.from(stats['pastExam'] as Map? ?? <String, dynamic>{}),
+            title: '기출 문제 학습 성과 ($selectedSubject)',
+            data: filteredSummary,
             accentColor: Colors.orangeAccent,
             icon: Icons.analytics,
           ),
           const SizedBox(height: 30),
+          
+          // --- 필터 섹션 ---
+          _buildFilterSection(subjects, years, rounds),
+          const SizedBox(height: 15),
+
           const Text(
             '회차별 학습 현황',
             style: TextStyle(
@@ -32,7 +83,7 @@ class PastExamStatsTab extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 15),
-          if (exams.isEmpty)
+          if (filteredExams.isEmpty)
             const Center(
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 40),
@@ -40,11 +91,97 @@ class PastExamStatsTab extends StatelessWidget {
               ),
             )
           else
-            ...exams.map((exam) => _buildExamCard(exam)).toList(),
+            ...filteredExams.map((exam) => _buildExamCard(exam)).toList(),
           const SizedBox(height: 40),
         ],
       ),
     );
+  }
+
+  Widget _buildFilterSection(List<String> subjects, List<String> years, List<String> rounds) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          const Text('조건', style: TextStyle(color: AppColors.textMuted, fontWeight: FontWeight.bold)),
+          const SizedBox(width: 12),
+          Expanded(
+            flex: 2,
+            child: _buildDropdown(
+              value: selectedSubject,
+              items: subjects,
+              onChanged: (v) => setState(() => selectedSubject = v!),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: _buildDropdown(
+              value: selectedYear,
+              items: years,
+              onChanged: (v) => setState(() => selectedYear = v!),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: _buildDropdown(
+              value: selectedRound,
+              items: rounds,
+              onChanged: (v) => setState(() => selectedRound = v!),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDropdown({
+    required String value,
+    required List<String> items,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceDark,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: value,
+          isExpanded: true,
+          dropdownColor: AppColors.surfaceDark,
+          style: const TextStyle(color: Colors.white, fontSize: 13),
+          icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.primary, size: 18),
+          onChanged: onChanged,
+          items: items.map((item) {
+            return DropdownMenuItem(value: item, child: Text(item));
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  // --- 파싱 헬퍼 ---
+  String _parseSubject(dynamic name) {
+    final s = name?.toString() ?? '';
+    // 예: "산림기사 2013년 1회" -> "산림기사"
+    final parts = s.split(' ');
+    return parts.isNotEmpty ? parts[0] : '알수없음';
+  }
+
+  String _parseYear(dynamic name) {
+    final s = name?.toString() ?? '';
+    // 예: "2013년" 찾기
+    final match = RegExp(r'(\d+)년').firstMatch(s);
+    return match?.group(1) ?? '전체';
+  }
+
+  String _parseRound(dynamic name) {
+    final s = name?.toString() ?? '';
+    // 예: "1회" 찾기
+    final match = RegExp(r'(\d+)회').firstMatch(s);
+    return match?.group(1) ?? '전체';
   }
 
   Widget _buildExamCard(Map<String, dynamic> exam) {

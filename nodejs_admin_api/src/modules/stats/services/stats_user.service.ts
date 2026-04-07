@@ -65,7 +65,9 @@ export class StatsUserService {
             .from("user_exam_session_stats")
             .select("*")
             .eq("user_id", userId)
-            .order("updated_at", { ascending: false });
+            // Skip sessions with no progress
+            .or('mastered_count.gt.0,in_progress_count.gt.0')
+            .order("subject_name", { ascending: false });
         
         if (error) throw error;
         return data || [];

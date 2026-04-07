@@ -1,4 +1,4 @@
-import { supabase } from "../../../config/supabaseClient";
+﻿import { supabase } from "../../../config/supabaseClient";
 import { quizSessionService } from "./quiz_session.service";
 import { maintenanceService } from "../../system/services/maintenance.service";
 
@@ -206,3 +206,5 @@ export class QuizAttemptService {
 }
 
 export const quizAttemptService = new QuizAttemptService();
+
+

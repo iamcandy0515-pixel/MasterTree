@@ -17,12 +17,14 @@ class StatSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // API Mapping
     final int total = (data['totalCount'] as num?)?.toInt() ?? 0;
-    final int solved = (data['solvedCount'] as num?)?.toInt() ?? 0;
-    final int correct = (data['correctCount'] as num?)?.toInt() ?? 0;
-    // final int wrong = (data['wrongCount'] as num?)?.toInt() ?? 0; // Removed unused
-    final double progress = total > 0 ? (correct / total) : 0.0; // Mastery rate based on total questions
-    final double accuracy = solved > 0 ? (correct / solved) * 100 : 0.0;
+    final int mastered = (data['masteredCount'] as num?)?.toInt() ?? 0;
+    final int inProgress = total - mastered; // [Logic] 도전중 = 전체 - 습득완료
+    final double accuracy = (data['accuracyRate'] as num?)?.toDouble() ?? 0.0;
+    
+    // Progress for mastery rate: mastered/total
+    final double progress = total > 0 ? (mastered / total) : 0.0;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -57,7 +59,7 @@ class StatSummaryCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  '지식 습득률 (Mastery: $correct / $total)',
+                  '지식 습득률 (Mastery: $mastered / $total)',
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: AppColors.textMuted,
@@ -88,10 +90,10 @@ class StatSummaryCard extends StatelessWidget {
           const SizedBox(height: 24),
           Row(
             children: [
-              _SimpleStat(label: '습득 완료', value: '$correct', color: Colors.greenAccent),
-              _SimpleStat(label: '도전 중', value: '${solved - correct}', color: Colors.orangeAccent),
+              _SimpleStat(label: '습득 완료', value: '$mastered', color: Colors.greenAccent),
+              _SimpleStat(label: '도전 중', value: '$inProgress', color: Colors.orangeAccent),
               _SimpleStat(
-                label: '정답률(최근)',
+                label: '정답률',
                 value: '${accuracy.toStringAsFixed(0)}%',
                 color: Colors.white,
               ),
