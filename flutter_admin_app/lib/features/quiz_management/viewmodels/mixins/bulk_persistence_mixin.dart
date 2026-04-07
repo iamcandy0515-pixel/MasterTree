@@ -36,8 +36,8 @@ mixin BulkPersistenceMixin on ChangeNotifier {
       if (json != null) {
         final Map<int, Map<String, dynamic>> extractedQuizzes = {};
         final data = jsonDecode(json) as Map<String, dynamic>;
-        data.forEach((k, v) {
-          extractedQuizzes[int.parse(k)] = Map<String, dynamic>.from(v);
+        data.forEach((k, dynamic v) {
+          extractedQuizzes[int.parse(k)] = Map<String, dynamic>.from(v as Map);
         });
         return extractedQuizzes;
       }

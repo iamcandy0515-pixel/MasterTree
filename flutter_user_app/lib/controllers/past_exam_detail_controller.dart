@@ -16,13 +16,13 @@ class PastExamDetailController {
   String explanationText = '';
   String hintText = '';
 
-  List<dynamic> contentBlocks = [];
-  List<dynamic> explanationBlocks = [];
+  List<dynamic> contentBlocks = <dynamic>[];
+  List<dynamic> explanationBlocks = <dynamic>[];
 
-  List<String> options = [];
+  List<String> options = <String>[];
   int correctOptionIndex = 0;
 
-  List<Map<String, dynamic>> similarQuizzes = [];
+  List<Map<String, dynamic>> similarQuizzes = <Map<String, dynamic>>[];
 
   int? selectedOptionIndex;
   bool isAnswered = false;
@@ -34,7 +34,7 @@ class PastExamDetailController {
 
     // 분석을 위해 큐에 추가 (배치를 위해)
     if (quizId != null) {
-      ApiService.addPendingAttempt({
+      ApiService.addPendingAttempt(<String, dynamic>{
         'question_id': quizId!,
         'category_id': categoryId,
         'is_correct': (index == correctOptionIndex),
@@ -56,17 +56,17 @@ class PastExamDetailController {
     onUpdate();
 
     try {
-      final supabase = Supabase.instance.client;
-      final response = await supabase
+      final SupabaseClient supabase = Supabase.instance.client;
+      final Map<String, dynamic> response = await supabase
           .from('quiz_questions')
-          .select('*, quiz_exams(year, round), quiz_categories(id, name)')
+          .select<PostgrestMap>('*, quiz_exams(year, round), quiz_categories(id, name)')
           .eq('id', quizId)
           .single();
 
-      final exam = response['quiz_exams'] as Map<String, dynamic>?;
-      final category = response['quiz_categories'] as Map<String, dynamic>?;
+      final Map<String, dynamic>? exam = response['quiz_exams'] as Map<String, dynamic>?;
+      final Map<String, dynamic>? category = response['quiz_categories'] as Map<String, dynamic>?;
 
-      quizId = quizId;
+      this.quizId = quizId;
       categoryId = category?['id'] as int?;
 
       subject = category?['name']?.toString() ?? '-';
@@ -76,70 +76,71 @@ class PastExamDetailController {
           response['question_number']?.toString() ?? response['id'].toString();
 
       // Parse content
-      contentBlocks = response['content_blocks'] as List<dynamic>? ?? [];
+      contentBlocks = response['content_blocks'] as List<dynamic>? ?? <dynamic>[];
       if (contentBlocks.isNotEmpty) {
-        final firstText = contentBlocks.firstWhere(
-          (b) => b['type'] == 'text',
+        final dynamic firstText = contentBlocks.firstWhere(
+          (dynamic b) => (b as Map<String, dynamic>)['type'] == 'text',
           orElse: () => null,
         );
-        questionText = formatText(firstText?['content'] ?? '');
+        questionText = formatText((firstText as Map<String, dynamic>?)?['content']?.toString() ?? '');
       }
 
       explanationBlocks =
-          response['explanation_blocks'] as List<dynamic>? ?? [];
+          response['explanation_blocks'] as List<dynamic>? ?? <dynamic>[];
       if (explanationBlocks.isNotEmpty) {
-        final firstText = explanationBlocks.firstWhere(
-          (b) => b['type'] == 'text',
+        final dynamic firstText = explanationBlocks.firstWhere(
+          (dynamic b) => (b as Map<String, dynamic>)['type'] == 'text',
           orElse: () => null,
         );
         explanationText = formatExplanation(
-          formatText(firstText?['content'] ?? ''),
+          formatText((firstText as Map<String, dynamic>?)?['content']?.toString() ?? ''),
         );
       }
 
-      final hintBlocks = response['hint_blocks'] as List<dynamic>?;
+      final List<dynamic>? hintBlocks = response['hint_blocks'] as List<dynamic>?;
       if (hintBlocks != null && hintBlocks.isNotEmpty) {
         hintText = formatText(
           hintBlocks
               .map(
-                (h) =>
+                (dynamic h) =>
                     h is Map ? (h['content']?.toString() ?? '') : h.toString(),
               )
               .join('\n'),
         );
       }
 
-      final optionsData = response['options'] as List<dynamic>? ?? [];
-      correctOptionIndex = response['correct_option_index'] ?? 0;
+      final List<dynamic> optionsData = response['options'] as List<dynamic>? ?? <dynamic>[];
+      correctOptionIndex = (response['correct_option_index'] as int?) ?? 0;
       options = optionsData
-          .map((o) => formatText(o['content']?.toString() ?? ''))
+          .map((dynamic o) => formatText((o as Map<String, dynamic>)['content']?.toString() ?? ''))
           .toList();
 
       // Fetch similar quizzes by ID if available, fallback to category search
       // Fetch similar quizzes only by explicit IDs
-      final relatedIds = response['related_quiz_ids'] as List<dynamic>? ?? [];
+      final List<dynamic> relatedIds = response['related_quiz_ids'] as List<dynamic>? ?? <dynamic>[];
       if (relatedIds.isNotEmpty) {
-        final similarResponse = await supabase
+        final List<dynamic> similarResponse = await supabase
             .from('quiz_questions')
-            .select('*, quiz_exams(year, round, title), quiz_categories(name)')
+            .select<PostgrestList>('*, quiz_exams(year, round, title), quiz_categories(name)')
             .filter('id', 'in', relatedIds)
             .limit(10);
-        similarQuizzes = List<Map<String, dynamic>>.from(similarResponse);
+        
+        similarQuizzes = similarResponse.map((dynamic e) => Map<String, dynamic>.from(e as Map)).toList();
 
         // 연도 및 회차 내림차순(최신순) 정렬
-        similarQuizzes.sort((a, b) {
-          final yearA = a['quiz_exams']?['year'] ?? 0;
-          final yearB = b['quiz_exams']?['year'] ?? 0;
+        similarQuizzes.sort((Map<String, dynamic> a, Map<String, dynamic> b) {
+          final dynamic yearA = (a['quiz_exams'] as Map<String, dynamic>?)?['year'] ?? 0;
+          final dynamic yearB = (b['quiz_exams'] as Map<String, dynamic>?)?['year'] ?? 0;
           if (yearA != yearB) {
-            return yearB.compareTo(yearA);
+            return (yearB as int).compareTo(yearA as int);
           } else {
-            final roundA = a['quiz_exams']?['round'] ?? 0;
-            final roundB = b['quiz_exams']?['round'] ?? 0;
-            return roundB.compareTo(roundA);
+            final dynamic roundA = (a['quiz_exams'] as Map<String, dynamic>?)?['round'] ?? 0;
+            final dynamic roundB = (b['quiz_exams'] as Map<String, dynamic>?)?['round'] ?? 0;
+            return (roundB as int).compareTo(roundA as int);
           }
         });
       } else {
-        similarQuizzes = [];
+        similarQuizzes = <Map<String, dynamic>>[];
       }
 
       isLoading = false;
@@ -162,8 +163,8 @@ class PastExamDetailController {
     if (text.isEmpty) return text;
     // 계산문제 키워드: '풀이순서', '공식', '공식대입 및 계산', '정답' 앞에는 줄바꿈 추가
     String result = text;
-    final keywords = ['풀이순서', '공식', '공식대입 및 계산', '정답'];
-    for (var kw in keywords) {
+    final List<String> keywords = <String>['풀이순서', '공식', '공식대입 및 계산', '정답'];
+    for (final String kw in keywords) {
       // 키워드 앞에 줄바꿈을 추가하여 구분
       result = result.replaceAll(kw, '\n$kw');
     }

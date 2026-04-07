@@ -12,11 +12,11 @@ class UserStatsListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String name = user['name'] ?? '알 수 없음';
-    final String email = user['email'] ?? '';
+    final String name = (user['name'] as String? ?? '알 수 없음');
+    final String email = (user['email'] as String? ?? '');
     final String status = user['status'] == 'admin' ? '[관]' : '[사]';
-    final int treeCount = user['tree_quiz_count'] ?? 0;
-    final int examCount = user['exam_quiz_count'] ?? 0;
+    final int treeCount = (user['tree_quiz_count'] as int? ?? 0);
+    final int examCount = (user['exam_quiz_count'] as int? ?? 0);
 
     final lastLoginStr = user['last_login']?.toString();
     String timeStr = '-';
@@ -29,11 +29,11 @@ class UserStatsListItem extends StatelessWidget {
 
     return ListTile(
       onTap: () {
-        Navigator.push(
+        Navigator.push<dynamic>(
           context,
-          MaterialPageRoute(
+          MaterialPageRoute<dynamic>(
             builder: (_) =>
-                UserDetailStatsScreen(userId: user['id'], userName: name),
+                UserDetailStatsScreen(userId: (user['id'] as String), userName: name),
           ),
         );
       },

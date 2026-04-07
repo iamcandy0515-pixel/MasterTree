@@ -144,7 +144,7 @@ class LookalikeTreeColumn extends StatelessWidget {
   }
 
   void _showFullScreenImage(BuildContext context, String url, String title) {
-    showDialog(
+    showDialog<dynamic>(
       context: context,
       builder: (context) => Dialog(
         backgroundColor: Colors.black,
@@ -244,7 +244,7 @@ class _OptimizedNetworkImageState extends State<OptimizedNetworkImage> {
           ),
         ),
       ),
-      errorWidget: (context, url, error) => Container(
+      errorWidget: (context, url, dynamic error) => Container(
         color: Colors.grey[850],
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

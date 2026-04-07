@@ -9,9 +9,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
 
+  // [1] 빌드 시 주입된 변수(--dart-define)가 있으면 우선 사용, 없으면 .env 사용
+  final String supabaseUrl = String.fromEnvironment('SUPABASE_URL', defaultValue: dotenv.get('SUPABASE_URL'));
+  final String supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: dotenv.get('SUPABASE_ANON_KEY'));
+
   await Supabase.initialize(
-    url: dotenv.get('SUPABASE_URL'),
-    anonKey: dotenv.get('SUPABASE_ANON_KEY'),
+    url: supabaseUrl,
+    anonKey: supabaseAnonKey,
   );
 
   runApp(const MyApp());

@@ -7,24 +7,24 @@ class BulkDataUtility {
   ) {
     final newItem = Map<String, dynamic>.from(item);
     
-    final data = newItem[field];
-    List blocks;
+    final dynamic data = newItem[field];
+    List<dynamic> blocks;
     if (data is List) {
-      blocks = List.from(data);
+      blocks = List<dynamic>.from(data);
     } else if (data is String && data.isNotEmpty) {
-      blocks = [{'type': 'text', 'content': data}];
+      blocks = <dynamic>[{'type': 'text', 'content': data}];
     } else {
-      blocks = [];
+      blocks = <dynamic>[];
     }
     
-    int firstTextIdx = blocks.indexWhere((b) => b is Map && b['type'] == 'text');
+    int firstTextIdx = blocks.indexWhere((dynamic b) => b is Map && b['type'] == 'text');
     final newBlock = {'type': 'text', 'content': value};
 
     if (firstTextIdx >= 0) {
       // Replace existing text blocks with a single new one (or merge/manage)
       // Standard rule: clear all text blocks and put one, or replace the first one.
       // Current implementation in original: remove all text blocks, insert one.
-      blocks.removeWhere((b) => b['type'] == 'text');
+      blocks.removeWhere((dynamic b) => b['type'] == 'text');
       blocks.insert(firstTextIdx.clamp(0, blocks.length), newBlock);
     } else {
       blocks.insert(0, newBlock);
@@ -40,8 +40,8 @@ class BulkDataUtility {
     String value,
   ) {
     final newItem = Map<String, dynamic>.from(item);
-    final options = List<String>.from(newItem['options'] ?? []);
-    final rawIdx = newItem['correct_option_index'];
+    final options = List<dynamic>.from(newItem['options'] as Iterable? ?? <dynamic>[]);
+    final dynamic rawIdx = newItem['correct_option_index'];
     final cIdx = rawIdx is int ? rawIdx : int.tryParse(rawIdx?.toString() ?? '0') ?? 0;
     
     if (options.length >= 2) {
@@ -61,7 +61,7 @@ class BulkDataUtility {
     
     bool checkBlocks(dynamic data) {
       if (data is! List) return false;
-      return data.any((b) => b is Map && b['type'] == 'image');
+      return data.any((dynamic b) => b is Map && b['type'] == 'image');
     }
 
     if (field != null) {

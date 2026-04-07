@@ -59,7 +59,7 @@ class SmartTagImageSection extends StatelessWidget {
                 activeTag: vm.activeTag,
                 image: vm.taggedImages[vm.activeTag],
                 isUploading: vm.isUploading,
-                onPickImage: (file) => vm.handleImageUpload(file),
+                onPickImage: (dynamic file) => (vm.handleImageUpload as dynamic)(file),
                 onPasteImage: vm.pasteImageFromClipboard,
                 onSearchGoogle: () async {
                   try {

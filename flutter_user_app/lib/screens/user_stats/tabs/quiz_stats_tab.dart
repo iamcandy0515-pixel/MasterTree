@@ -15,7 +15,7 @@ class QuizStatsTab extends StatelessWidget {
         children: [
           StatSummaryCard(
             title: '수목 식별 퀴즈 성과',
-            data: stats['quiz'] ?? {},
+            data: Map<String, dynamic>.from(stats['quiz'] as Map? ?? <String, dynamic>{}),
             accentColor: AppColors.primary,
             icon: Icons.analytics,
           ),

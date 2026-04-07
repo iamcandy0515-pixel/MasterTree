@@ -23,13 +23,13 @@ class QuizExtractionService {
 
     final Map<int, Map<String, dynamic>> results = {};
     for (var item in batchData) {
-      final qNumRaw = item['question_number'];
+      final dynamic qNumRaw = item['question_number'];
       final qNum = qNumRaw is int
           ? qNumRaw
           : int.tryParse(qNumRaw?.toString() ?? '') ?? 0;
       if (qNum <= 0) continue;
 
-      results[qNum] = _mapExtractedItem(item, qNum);
+      results[qNum] = _mapExtractedItem(item as Map<String, dynamic>, qNum);
     }
     return results;
   }
@@ -45,13 +45,13 @@ class QuizExtractionService {
         .replaceAll(RegExp(r'\n{3,}'), '\n\n')
         .trim();
 
-    final Map<String, dynamic> mappedItem = {
+    final Map<String, dynamic> mappedItem = <String, dynamic>{
       'question_number': qNum,
-      'question': item['content_blocks'] ?? item['question'] ?? [],
-      'explanation': item['explanation_blocks'] ?? item['explanation'] ?? [],
+      'question': item['content_blocks'] ?? item['question'] ?? <dynamic>[],
+      'explanation': item['explanation_blocks'] ?? item['explanation'] ?? <dynamic>[],
       'hint': _processHintToBlocks(item),
       'correct_option_index': _toInt(item['correct_option_index']),
-      'options': item['options'] ?? [],
+      'options': item['options'] ?? <dynamic>[],
     };
 
     _ensureBlocks(mappedItem, 'question', item['question']);
@@ -77,9 +77,9 @@ class QuizExtractionService {
       return item['hint_blocks'];
     }
     final hint = (item['hint'] ?? '').toString();
-    if (hint.isEmpty) return [];
-    return [
-      {'type': 'text', 'content': hint}
+    if (hint.isEmpty) return <dynamic>[];
+    return <dynamic>[
+      <String, dynamic>{'type': 'text', 'content': hint}
     ];
   }
 
@@ -94,12 +94,12 @@ class QuizExtractionService {
     dynamic fallback,
   ) {
     if (item[field] is String) {
-      item[field] = [
-        {'type': 'text', 'content': item[field]},
+      item[field] = <dynamic>[
+        <String, dynamic>{'type': 'text', 'content': item[field]},
       ];
     } else if (item[field] is! List || (item[field] as List).isEmpty) {
-      item[field] = [
-        {'type': 'text', 'content': fallback?.toString() ?? ''},
+      item[field] = <dynamic>[
+        <String, dynamic>{'type': 'text', 'content': fallback?.toString() ?? ''},
       ];
     }
   }
@@ -109,16 +109,16 @@ class QuizExtractionService {
     List<Map<String, dynamic>> quizzes,
   ) {
     return quizzes.map((quiz) {
-      final qNum = quiz['question_number'];
+      final dynamic qNum = quiz['question_number'];
 
       return <String, dynamic>{
         'question_number': qNum,
-        'content_blocks': quiz['question'] ?? [],
-        'explanation_blocks': quiz['explanation'] ?? [],
+        'content_blocks': quiz['question'] ?? <dynamic>[],
+        'explanation_blocks': quiz['explanation'] ?? <dynamic>[],
         'correct_option_index': quiz['correct_option_index'],
         'options': quiz['options'],
         'status': 'active',
-        'hint_blocks': quiz['hint'] ?? [],
+        'hint_blocks': quiz['hint'] ?? <dynamic>[],
       };
     }).toList();
   }

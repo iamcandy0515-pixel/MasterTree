@@ -74,8 +74,8 @@ class TreeGroupManagementViewModel extends ChangeNotifier {
       _groups = result['groups'] as List<TreeGroup>;
       final meta = result['meta'] as Map<String, dynamic>;
 
-      _totalCount = meta['total'] ?? 0;
-      _totalPages = meta['totalPages'] ?? 1;
+      _totalCount = (meta['total'] as int? ?? 0);
+      _totalPages = (meta['totalPages'] as int? ?? 1);
 
       // Local filtering fallback if server-side search is not fully implemented in DB
       /*

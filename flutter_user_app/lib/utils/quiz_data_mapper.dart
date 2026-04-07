@@ -8,16 +8,17 @@ class QuizDataMapper {
     final random = Random();
 
     for (int i = 0; i < data.length; i++) {
-      final tree = data[i];
-      final String correctName = tree['name_kr'] as String;
+      final Map<String, dynamic> tree = Map<String, dynamic>.from(data[i] as Map);
+      final String correctName = (tree['name_kr'] as String?) ?? '이름 없음';
       Map<String, String> hintsMap = {};
       String questionImageUrl = '';
 
-      final List<dynamic> images = tree['tree_images'] ?? [];
-      for (var img in images) {
-        final type = img['image_type'];
-        final hint = img['hint'];
-        final url = img['image_url'];
+      final List<dynamic> images = (tree['tree_images'] as List<dynamic>?) ?? <dynamic>[];
+      for (final dynamic imgRaw in images) {
+        final Map<String, dynamic> img = Map<String, dynamic>.from(imgRaw as Map);
+        final String? type = img['image_type'] as String?;
+        final dynamic hint = img['hint'];
+        final String? url = img['image_url'] as String?;
 
         if (url != null && url.isNotEmpty) {
           if (type == 'main' || questionImageUrl.isEmpty) {
@@ -25,24 +26,24 @@ class QuizDataMapper {
           }
         }
 
-        String? koreanKey = _getTypeKey(type);
+        final String? koreanKey = _getTypeKey(type);
         if (koreanKey != null && hint != null && hint.toString().trim().isNotEmpty) {
           hintsMap[koreanKey] = hint.toString();
         }
       }
 
       List<String> options = [correctName];
-      final distractorData = tree['quiz_distractors'];
+      final dynamic distractorData = tree['quiz_distractors'];
       if (distractorData is List && distractorData.isNotEmpty) {
-        List<String> manual = distractorData.map((e) => e.toString()).toList();
+        final List<String> manual = distractorData.map((dynamic e) => e.toString()).toList();
         manual.shuffle(random);
         options.addAll(manual.take(2));
       } else {
-        List<dynamic> others = List.from(data)..removeAt(i);
+        final List<dynamic> others = List<dynamic>.from(data)..removeAt(i);
         others.shuffle(random);
         if (others.length >= 2) {
-          options.add(others[0]['name_kr']);
-          options.add(others[1]['name_kr']);
+          options.add((Map<String, dynamic>.from(others[0] as Map))['name_kr'] as String);
+          options.add((Map<String, dynamic>.from(others[1] as Map))['name_kr'] as String);
         }
       }
 
@@ -53,9 +54,9 @@ class QuizDataMapper {
       options.shuffle(random);
       loadedQuestions.add(
         QuizQuestion(
-          id: tree['id'] is int ? tree['id'] : int.tryParse(tree['id'].toString()) ?? 0,
+          id: tree['id'] is int ? tree['id'] as int : int.tryParse(tree['id'].toString()) ?? 0,
           imageUrl: ApiService.getProxyImageUrl(questionImageUrl),
-          description: tree['description'] ?? '설명이 없습니다.',
+          description: (tree['description'] as String?) ?? '설명이 없습니다.',
           correctAnswerIndex: options.indexOf(correctName),
           options: options,
           hints: hintsMap,
@@ -78,14 +79,14 @@ class QuizDataMapper {
   }
 
   static List<QuizQuestion> getDummyData() {
-    return [
+    return <QuizQuestion>[
       QuizQuestion(
         id: 1,
         description: '소나무는 한국을 대표하는 상록수로, 잎이 2개씩 뭉쳐나며 붉은빛이 도는 수피가 특징입니다.',
         imageUrl: 'https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&q=80&w=800',
-        options: ['소나무', '잣나무', '전나무'],
+        options: <String>['소나무', '잣나무', '전나무'],
         correctAnswerIndex: 0,
-        hints: {'잎': '2개씩 뭉쳐남', '수피': '붉은색 거북등', '전체': '애국가 소나무'},
+        hints: <String, String>{'잎': '2개씩 뭉쳐남', '수피': '붉은색 거북등', '전체': '애국가 소나무'},
       ),
     ];
   }

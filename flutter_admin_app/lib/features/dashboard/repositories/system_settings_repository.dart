@@ -11,9 +11,10 @@ class SystemSettingsRepository extends BaseRepository {
     try {
       final response = await http.get(url, headers: headers);
       if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+        final Map<String, dynamic> jsonResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
         if (jsonResponse['success'] == true) {
-          return (jsonResponse['data'][dataKey] as T?) ?? defaultValue;
+          final Map<String, dynamic>? data = jsonResponse['data'] as Map<String, dynamic>?;
+          return (data?[dataKey] as T?) ?? defaultValue;
         }
       }
       checkAuthError(response.statusCode);
@@ -30,9 +31,10 @@ class SystemSettingsRepository extends BaseRepository {
     final response = await http.post(url, headers: headers, body: jsonEncode(body));
 
     if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      final Map<String, dynamic> jsonResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
       if (jsonResponse['success'] == true) {
-        return (jsonResponse['data'][dataKey] as T);
+        final Map<String, dynamic> data = jsonResponse['data'] as Map<String, dynamic>;
+        return (data[dataKey] as T);
       }
     }
     checkAuthError(response.statusCode);
@@ -90,7 +92,7 @@ class SystemSettingsRepository extends BaseRepository {
       final response = await http.post(url, headers: headers, body: jsonEncode(<String, dynamic>{'url': urlString}));
 
       if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+        final Map<String, dynamic> jsonResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
         if (jsonResponse['success'] == true) {
           return jsonResponse['data']['isValid'] == true;
         }

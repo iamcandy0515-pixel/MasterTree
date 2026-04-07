@@ -75,9 +75,9 @@ class ManagementControlBar extends StatelessWidget {
   Widget _buildAddButton(BuildContext context, TreeGroupManagementViewModel vm) {
     return InkWell(
       onTap: () async {
-        await Navigator.push(
+        await Navigator.push<dynamic>(
           context,
-          MaterialPageRoute(builder: (context) => const TreeGroupEditScreen()),
+          MaterialPageRoute<dynamic>(builder: (context) => const TreeGroupEditScreen()),
         );
         vm.loadGroups();
       },

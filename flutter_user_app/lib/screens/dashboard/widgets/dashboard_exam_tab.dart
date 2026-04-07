@@ -18,9 +18,9 @@ class DashboardExamTab extends StatelessWidget {
             '기출 문제를 풀고 실전 감각을 익히세요',
             Icons.history_edu,
             Colors.blueAccent,
-            () => Navigator.push(
+            () => Navigator.push<void>(
               context,
-              MaterialPageRoute(builder: (_) => const PastExamListScreen()),
+              MaterialPageRoute<void>(builder: (BuildContext _) => const PastExamListScreen()),
             ),
           ),
           const SizedBox(height: 16),

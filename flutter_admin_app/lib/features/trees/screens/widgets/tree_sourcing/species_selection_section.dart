@@ -74,9 +74,9 @@ class SpeciesSelectionSection extends StatelessWidget {
   ) {
     return InkWell(
       onTap: () async {
-        final result = await Navigator.push(
+        final dynamic result = await Navigator.push<dynamic>(
           context,
-          MaterialPageRoute(
+          MaterialPageRoute<dynamic>(
             builder: (context) => ChangeNotifierProvider.value(
               value: vm,
               child: TreeSourcingDetailScreen(tree: tree),

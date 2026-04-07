@@ -16,9 +16,9 @@ class DashboardHeader extends StatelessWidget {
       automaticallyImplyLeading: false,
       titleSpacing: 0,
       leading: IconButton(
-        onPressed: () => Navigator.pushReplacement(
+        onPressed: () => Navigator.pushReplacement<void, void>(
           context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          MaterialPageRoute<void>(builder: (BuildContext context) => const LoginScreen()),
         ),
         icon: const Icon(
           Icons.logout_rounded,

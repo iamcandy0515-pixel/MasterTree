@@ -32,7 +32,7 @@ class FullscreenImageViewer extends StatelessWidget {
             placeholder: (context, url) => const Center(
               child: CircularProgressIndicator(color: Color(0xFF2BEE8C)),
             ),
-            errorWidget: (context, url, error) => Center(
+            errorWidget: (context, url, dynamic error) => Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [

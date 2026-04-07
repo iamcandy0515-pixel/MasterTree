@@ -30,11 +30,11 @@ class _TreeDetailSheetState extends State<TreeDetailSheet> {
 
   Future<void> _loadImageData() async {
     try {
-      final treeId = widget.tree['id'];
+      final dynamic treeId = widget.tree['id'];
       if (treeId == null) throw Exception('Tree ID is missing');
 
       // [방식 A] 서버에서 상세 정보를 다시 가져옵니다 (이미지 및 힌트 포함)
-      final fullTree = await ApiService.getTreeOne(treeId);
+      final Map<String, dynamic>? fullTree = await ApiService.getTreeOne(treeId as int);
       
       if (mounted) {
         if (fullTree != null) {
@@ -42,8 +42,8 @@ class _TreeDetailSheetState extends State<TreeDetailSheet> {
           _imageData = TreeListController.processImageData(fullTree);
           
           // 가벼운 로딩을 위해 썸네일 프리칭
-          for (var tag in _tags) {
-            final thumbUrl = _imageData[tag]?['thumbnail_url'] ?? _imageData[tag]?['image_url'];
+          for (final String tag in _tags) {
+            final String? thumbUrl = _imageData[tag]?['thumbnail_url'] ?? _imageData[tag]?['image_url'];
             if (thumbUrl != null) {
               precacheImage(NetworkImage(ApiService.getProxyImageUrl(thumbUrl, width: 200)), context);
             }
@@ -78,7 +78,7 @@ class _TreeDetailSheetState extends State<TreeDetailSheet> {
           TreePartSelector(
             tags: _tags,
             selectedTag: _selectedTag,
-            onTagSelected: (tag) => setState(() => _selectedTag = tag),
+            onTagSelected: (String tag) => setState(() => _selectedTag = tag),
           ),
           const SizedBox(height: 12),
           Expanded(
@@ -87,13 +87,13 @@ class _TreeDetailSheetState extends State<TreeDetailSheet> {
               child: _isLoading 
                 ? const TreeDetailSkeleton()
                 : SingleChildScrollView(
-                    key: ValueKey(_selectedTag),
+                    key: ValueKey<String>(_selectedTag),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         TreeHeroSection(
-                          name: (_fullTree ?? widget.tree)['name_kr'] ?? '이름 없음',
-                          scientificName: (_fullTree ?? widget.tree)['scientific_name'] ?? 'N/A',
+                          name: ((_fullTree ?? widget.tree)['name_kr'] as String?) ?? '이름 없음',
+                          scientificName: ((_fullTree ?? widget.tree)['scientific_name'] as String?) ?? 'N/A',
                           imageUrl: ApiService.getProxyImageUrl(
                             _imageData[_selectedTag]?['image_url'] ?? 
                             'https://picsum.photos/seed/${widget.tree['id']}/600/600',

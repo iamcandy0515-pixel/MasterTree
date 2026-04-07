@@ -67,6 +67,7 @@ export interface QuizUserTables {
       session_id?: number
       time_taken_ms?: number | null
       user_answer?: string | null
+      tree_id?: number | null
       user_id?: string
     }
     Relationships: [

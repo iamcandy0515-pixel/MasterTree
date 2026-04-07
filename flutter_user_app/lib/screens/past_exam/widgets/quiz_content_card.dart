@@ -16,7 +16,10 @@ class QuizContentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasImages = contentBlocks.any((b) => b['type'] == 'image');
+    final bool hasImages = contentBlocks.any((dynamic b) {
+      final Map<String, dynamic> block = Map<String, dynamic>.from(b as Map);
+      return block['type'] == 'image';
+    });
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

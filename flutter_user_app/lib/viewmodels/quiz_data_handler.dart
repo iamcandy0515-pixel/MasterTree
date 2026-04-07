@@ -8,23 +8,25 @@ mixin QuizDataHandler {
     final random = Random();
 
     for (int i = 0; i < data.length; i++) {
-      final tree = data[i];
-      final String correctName = tree['name_kr'] as String;
-      Map<String, String> hintsMap = {};
+      final Map<String, dynamic> tree = Map<String, dynamic>.from(data[i] as Map);
+      final String correctName = tree['name_kr']?.toString() ?? '이름 없음';
+      Map<String, String> hintsMap = <String, String>{};
       String questionImageUrl = '';
       String? questionThumbnailUrl;
 
-      final List<dynamic> images = tree['tree_images'] ?? [];
-      for (var img in images) {
-        final type = img['image_type'];
-        final hint = img['hint'];
-        final url = img['image_url'];
-        final thumb = img['thumbnail_url'];
+      final List<dynamic> images = (tree['tree_images'] as List<dynamic>?) ?? <dynamic>[];
+      for (final dynamic imgRaw in images) {
+        final Map<String, dynamic> img = Map<String, dynamic>.from(imgRaw as Map);
+        final dynamic type = img['image_type'];
+        final dynamic hint = img['hint'];
+        final dynamic url = img['image_url'];
+        final dynamic thumb = img['thumbnail_url'];
 
-        if (url != null && url.isNotEmpty) {
-          if (type == 'main' || questionImageUrl.isEmpty) {
-            questionImageUrl = url;
-            questionThumbnailUrl = thumb;
+        if (url != null && url.toString().isNotEmpty) {
+          final String urlStr = url.toString();
+          if (type.toString() == 'main' || questionImageUrl.isEmpty) {
+            questionImageUrl = urlStr;
+            questionThumbnailUrl = thumb?.toString();
           }
         }
 
@@ -49,9 +51,9 @@ mixin QuizDataHandler {
       }
 
       List<String> options = [correctName];
-      final distractorData = tree['quiz_distractors'];
+      final dynamic distractorData = tree['quiz_distractors'];
       if (distractorData is List && distractorData.isNotEmpty) {
-        List<String> manual = distractorData.map((e) => e.toString()).toList();
+        final List<String> manual = distractorData.map((dynamic e) => e.toString()).toList();
         manual.shuffle(random);
         options.addAll(manual.take(3));
       }
@@ -69,14 +71,14 @@ mixin QuizDataHandler {
       final int correctIdx = options.indexOf(correctName);
 
       loadedQuestions.add(QuizQuestion(
-        id: tree['id'] is int ? tree['id'] : int.tryParse(tree['id'].toString()) ?? 0,
+        id: (tree['id'] is int) ? (tree['id'] as int) : (int.tryParse(tree['id']?.toString() ?? '0') ?? 0),
         // 450px 너비로 리사이징 요청 (성능/부하 최적화)
         imageUrl: TreeService.getProxyImageUrl(questionImageUrl, width: 450),
         thumbnailUrl: TreeService.getProxyImageUrl(questionThumbnailUrl, width: 300),
         correctAnswerIndex: correctIdx,
         options: options,
         hints: hintsMap,
-        description: tree['description'] ?? '$correctName에 대한 상세 설명 정보가 없습니다.',
+        description: tree['description']?.toString() ?? '$correctName에 대한 상세 설명 정보가 없습니다.',
       ));
     }
 
@@ -85,13 +87,13 @@ mixin QuizDataHandler {
   }
 
   List<QuizQuestion> getDummyQuestions() {
-    return [
+    return <QuizQuestion>[
       QuizQuestion(
         id: 1,
         imageUrl: 'https://images.unsplash.com/photo-1542273917363-3b1817f69a2d',
         correctAnswerIndex: 0,
-        options: ['소나무', '은행나무', '단풍나무', '벚나무'],
-        hints: {'전체': '사계절 내내 푸른 바늘잎나무입니다.', '잎': '바늘 모양의 잎이 2개씩 뭉쳐 납니다.'},
+        options: <String>['소나무', '은행나무', '단풍나무', '벚나무'],
+        hints: <String, String>{'전체': '사계절 내내 푸른 바늘잎나무입니다.', '잎': '바늘 모양의 잎이 2개씩 뭉쳐 납니다.'},
         description: '소나무는 한국을 대표하는 나무로, 척박한 땅에서도 잘 자랍니다.',
       ),
     ];

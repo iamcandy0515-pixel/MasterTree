@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'web_utils_stub.dart' if (dart.library.html) 'web_utils_web.dart';
 
 class WebUtils {
@@ -9,7 +10,7 @@ class WebUtils {
     Object Function(int) factory,
   ) => WebUtilsPlatform.registerViewFactory(viewId, factory);
 
-  static dynamic createDropZoneElement({
+  static Object createDropZoneElement({
     required void Function() onDragOver,
     required void Function() onDragLeave,
     required void Function(dynamic files) onDrop,
@@ -25,6 +26,6 @@ class WebUtils {
     Function(List<int> bytes, String name, String type) onImageReady,
   ) => WebUtilsPlatform.pasteImageFromClipboard(onImageReady);
 
-  static Future<List<int>?> readFileAsBytes(dynamic file) =>
+  static Future<Uint8List?> readFileAsBytes(dynamic file) =>
       WebUtilsPlatform.readFileAsBytes(file);
 }

@@ -24,8 +24,8 @@ mixin QuizReviewActionHandler on State<QuizReviewDetailScreen> {
   /// 이미지 업로드 핸들러
   Future<void> handleImageUpload(QuizReviewDetailViewModel vm, dynamic img, String field) async {
     try {
-      final bytes = await img.readAsBytes();
-      await vm.uploadImage(bytes, img.name, field);
+      final Uint8List bytes = (await img.readAsBytes()) as Uint8List;
+      await vm.uploadImage(bytes, (img.name as String), field);
       if (!mounted) return;
       SnackBarUtil.showFloating(context, '이미지 업로드 완료');
     } catch (e) {
@@ -75,10 +75,10 @@ mixin QuizReviewActionHandler on State<QuizReviewDetailScreen> {
     try {
       final related = await vm.recommendSimilar(widget.quizId);
       if (!mounted) return;
-      await showDialog(
+      await showDialog<dynamic>(
         context: context,
         builder: (context) => SimilarQuizReviewDialog(
-          quiz: {
+          quiz: <String, dynamic>{
             'id': widget.quizId,
             'question_number': vm.questionNo,
             'content_blocks': vm.contentBlocks,
@@ -86,7 +86,7 @@ mixin QuizReviewActionHandler on State<QuizReviewDetailScreen> {
           },
           selectedYear: vm.year,
           selectedRound: vm.round,
-          initialRecommendations: related.map((e) => e as Map<String, dynamic>).toList(),
+          initialRecommendations: (related as List).map((dynamic e) => e as Map<String, dynamic>).toList(),
           quizRepo: QuizRepository(),
           onUpdate: (updatedList) {
             vm.selectedRelatedIds = updatedList.map((e) => e['id'] as int).toList();
@@ -102,7 +102,7 @@ mixin QuizReviewActionHandler on State<QuizReviewDetailScreen> {
 
   /// AI 검수 결과 다이얼로그 표시
   void _showReviewResultDialog(BuildContext context, Map<String, dynamic> result) {
-    showDialog(
+    showDialog<dynamic>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF1A2E24),
@@ -114,7 +114,7 @@ mixin QuizReviewActionHandler on State<QuizReviewDetailScreen> {
               _buildReviewRow('일관성', result['is_consistent'] == true ? '✅ 일치' : '❌ 불일치'),
               const SizedBox(height: 12),
               const Text('분석 내용:', style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold)),
-              Text(result['reason'] ?? '내용 없음', style: const TextStyle(color: Colors.white)),
+              Text((result['reason'] as String? ?? '내용 없음'), style: const TextStyle(color: Colors.white)),
             ],
           ),
         ),

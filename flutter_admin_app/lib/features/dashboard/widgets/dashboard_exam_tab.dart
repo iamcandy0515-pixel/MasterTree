@@ -9,7 +9,7 @@ class DashboardExamTab extends StatelessWidget {
   const DashboardExamTab({super.key});
 
   void _navigateTo(BuildContext context, Widget screen) {
-    Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+    Navigator.push<dynamic>(context, MaterialPageRoute<dynamic>(builder: (_) => screen));
   }
 
   @override

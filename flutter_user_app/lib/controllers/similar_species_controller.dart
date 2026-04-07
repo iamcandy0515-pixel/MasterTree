@@ -26,40 +26,40 @@ class SimilarSpeciesController {
     onUpdate();
 
     try {
-      final groups = await ApiService.getTreeGroups();
-      allComparisons = groups.map((g) {
-        final members = g['tree_group_members'] as List<dynamic>? ?? [];
-        final String tree1 = members.isNotEmpty && members[0]['trees'] != null
-            ? members[0]['trees']['name_kr']
+      final List<Map<String, dynamic>> groups = await ApiService.getTreeGroups();
+      allComparisons = groups.map((Map<String, dynamic> g) {
+        final List<dynamic> members = g['tree_group_members'] as List<dynamic>? ?? <dynamic>[];
+        final String tree1 = (members.isNotEmpty && (members[0] as Map<String, dynamic>)['trees'] != null)
+            ? (members[0] as Map<String, dynamic>)['trees']['name_kr']?.toString() ?? '미지정'
             : '미지정';
-        final String tree2 = members.length > 1 && members[1]['trees'] != null
-            ? members[1]['trees']['name_kr']
+        final String tree2 = (members.length > 1 && (members[1] as Map<String, dynamic>)['trees'] != null)
+            ? (members[1] as Map<String, dynamic>)['trees']['name_kr']?.toString() ?? '미지정'
             : '미지정';
 
         String? img1;
         String? img2;
 
-        if (members.isNotEmpty && members[0]['trees'] != null) {
-          final images = members[0]['trees']['tree_images'] as List<dynamic>?;
+        if (members.isNotEmpty && (members[0] as Map<String, dynamic>)['trees'] != null) {
+          final List<dynamic>? images = (members[0] as Map<String, dynamic>)['trees']['tree_images'] as List<dynamic>?;
           if (images != null && images.isNotEmpty) {
-            img1 = images.firstWhere(
-              (i) => i['image_type'] == 'main',
+            img1 = (images.firstWhere(
+              (dynamic i) => (i as Map<String, dynamic>)['image_type'] == 'main',
               orElse: () => images[0],
-            )['image_url'];
+            ) as Map<String, dynamic>)['image_url']?.toString();
           }
         }
 
-        if (members.length > 1 && members[1]['trees'] != null) {
-          final images = members[1]['trees']['tree_images'] as List<dynamic>?;
+        if (members.length > 1 && (members[1] as Map<String, dynamic>)['trees'] != null) {
+          final List<dynamic>? images = (members[1] as Map<String, dynamic>)['trees']['tree_images'] as List<dynamic>?;
           if (images != null && images.isNotEmpty) {
-            img2 = images.firstWhere(
-              (i) => i['image_type'] == 'main',
+            img2 = (images.firstWhere(
+              (dynamic i) => (i as Map<String, dynamic>)['image_type'] == 'main',
               orElse: () => images[0],
-            )['image_url'];
+            ) as Map<String, dynamic>)['image_url']?.toString();
           }
         }
 
-        return {
+        return <String, dynamic>{
           'id': g['id'],
           'group_name': g['group_name'],
           'tree1': tree1,
@@ -81,11 +81,11 @@ class SimilarSpeciesController {
 
   List<Map<String, dynamic>> get _filteredList {
     if (searchQuery.isEmpty) return allComparisons;
-    return allComparisons.where((item) {
-      final groupName = (item['group_name'] ?? '').toString().toLowerCase();
-      final tree1 = (item['tree1'] ?? '').toString().toLowerCase();
-      final tree2 = (item['tree2'] ?? '').toString().toLowerCase();
-      final query = searchQuery.toLowerCase();
+    return allComparisons.where((Map<String, dynamic> item) {
+      final String groupName = (item['group_name'] ?? '').toString().toLowerCase();
+      final String tree1 = (item['tree1'] ?? '').toString().toLowerCase();
+      final String tree2 = (item['tree2'] ?? '').toString().toLowerCase();
+      final String query = searchQuery.toLowerCase();
       return groupName.contains(query) ||
           tree1.contains(query) ||
           tree2.contains(query);

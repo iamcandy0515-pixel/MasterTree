@@ -114,9 +114,9 @@ class _LoginContentState extends State<_LoginContent> {
       final success = await vm.signIn(email, password);
       // Check mounted before using context
       if (context.mounted && success) {
-        Navigator.pushReplacement(
+        Navigator.pushReplacement<dynamic, dynamic>(
           context,
-          MaterialPageRoute(builder: (_) => const DashboardScreen()),
+          MaterialPageRoute<dynamic>(builder: (_) => const DashboardScreen()),
         );
       }
     } catch (e) {

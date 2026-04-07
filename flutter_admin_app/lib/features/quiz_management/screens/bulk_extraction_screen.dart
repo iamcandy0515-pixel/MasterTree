@@ -159,7 +159,7 @@ class _BulkExtractionScreenState extends State<BulkExtractionScreen> {
   }
 
   void _showResult(Map<String, int> stats) {
-    showDialog(context: context, builder: (_) => BulkExtractionResultDialog(stats: stats, surfaceDark: surfaceDark));
+    showDialog<dynamic>(context: context, builder: (_) => BulkExtractionResultDialog(stats: stats, surfaceDark: surfaceDark));
   }
 
   void _showFloatingMessage(BuildContext context, String msg) {

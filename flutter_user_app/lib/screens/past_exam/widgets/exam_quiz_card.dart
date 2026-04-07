@@ -26,10 +26,10 @@ class ExamQuizCard extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: () {
-            Navigator.push(
+            Navigator.push<void>(
               context,
-              MaterialPageRoute(
-                builder: (_) => PastExamDetailScreen(quizId: quiz['id']),
+              MaterialPageRoute<void>(
+                builder: (BuildContext _) => PastExamDetailScreen(quizId: quiz['id'] as int),
               ),
             );
           },

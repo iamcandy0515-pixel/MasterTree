@@ -40,9 +40,9 @@ class QuizActionFooter extends StatelessWidget {
               if (vm.hasNext) {
                 vm.nextQuestion();
               } else {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (_) => QuizResultScreen(
+                Navigator.of(context).pushReplacement<void, void>(
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext _) => QuizResultScreen(
                       correctCount: vm.correctCount,
                       accumulatedHintCount: vm.accumulatedHintCount,
                       solvedCount: vm.solvedCount,

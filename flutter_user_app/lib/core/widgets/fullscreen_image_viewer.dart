@@ -31,10 +31,10 @@ class FullscreenImageViewer extends StatelessWidget {
           maxScale: 4.0,
           child: CachedNetworkImage(
             imageUrl: ApiService.getProxyImageUrl(imageUrl),
-            placeholder: (context, url) => const Center(
+            placeholder: (BuildContext context, String url) => const Center(
               child: CircularProgressIndicator(color: AppColors.primary),
             ),
-            errorWidget: (context, url, error) => Center(
+            errorWidget: (BuildContext context, String url, dynamic error) => Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [

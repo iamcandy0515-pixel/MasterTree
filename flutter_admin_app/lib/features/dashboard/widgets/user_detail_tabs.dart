@@ -22,14 +22,14 @@ class GeneralStatsTab extends StatelessWidget {
           const SizedBox(height: 24),
           StatCard(
             title: '수목 퀴즈 학습 요약',
-            data: stats['quiz'] ?? {},
+            data: (stats['quiz'] as Map<String, dynamic>? ?? <String, dynamic>{}),
             accentColor: primaryColor,
             icon: Icons.school,
           ),
           const SizedBox(height: 16),
           StatCard(
             title: '기출 문제 학습 요약',
-            data: stats['pastExam'] ?? {},
+            data: (stats['pastExam'] as Map<String, dynamic>? ?? <String, dynamic>{}),
             accentColor: Colors.orangeAccent,
             icon: Icons.history_edu,
           ),
@@ -39,8 +39,8 @@ class GeneralStatsTab extends StatelessWidget {
   }
 
   Widget _buildWelcomeSection() {
-    final user = stats['user'];
-    final name = user?['name'] ?? '사용자';
+    final dynamic user = stats['user'];
+    final dynamic name = user?['name'] ?? '사용자';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -79,10 +79,10 @@ class StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int total = data['totalCount'] ?? 0;
-    final int solved = data['solvedCount'] ?? 0;
-    final int correct = data['correctCount'] ?? 0;
-    final int wrong = data['wrongCount'] ?? 0;
+    final int total = (data['totalCount'] as int? ?? 0);
+    final int solved = (data['solvedCount'] as int? ?? 0);
+    final int correct = (data['correctCount'] as int? ?? 0);
+    final int wrong = (data['wrongCount'] as int? ?? 0);
     final double progress = total > 0 ? solved / total : 0.0;
     final double accuracy = solved > 0 ? (correct / solved) * 100 : 0.0;
 

@@ -104,7 +104,7 @@ class _QuizExplanationCardState extends State<QuizExplanationCard> {
     const primaryColor = Color(0xFF2BEE8C);
     const surfaceDark = Color(0xFF1A2E24);
     const aiColor = Color(0xFF8B5CF6);
-    final imageBlocks = widget.blocks.where((b) => b is Map && b['type'] == 'image').toList();
+    final imageBlocks = widget.blocks.where((dynamic b) => b is Map && b['type'] == 'image').toList();
     final hasImages = imageBlocks.isNotEmpty;
 
     return Column(

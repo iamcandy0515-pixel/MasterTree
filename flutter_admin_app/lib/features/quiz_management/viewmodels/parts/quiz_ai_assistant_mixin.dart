@@ -48,7 +48,7 @@ mixin QuizAiAssistantMixin on ChangeNotifier {
   }
 
   Future<Map<String, dynamic>> reviewExplanationInternal(String explanationText, Map<String, dynamic>? extractedBlock) async {
-    final rawText = extractedBlock?['raw_source_text'] ?? '';
+    final String rawText = (extractedBlock?['raw_source_text'] as String?) ?? '';
     if (rawText.isEmpty || explanationText.isEmpty) throw '원문 텍스트 또는 해설 내용이 없습니다.';
 
     _isReviewing = true;

@@ -26,31 +26,31 @@ class DashboardBottomNav extends StatelessWidget {
       ),
       child: BottomNavigationBar(
         currentIndex: controller.currentIndex,
-        onTap: (index) {
+        onTap: (int index) {
           controller.currentIndex = index;
           onUpdate();
 
           if (index == 1) {
-            Navigator.push(
+            Navigator.push<void>(
               context,
-              MaterialPageRoute(builder: (_) => const QuizScreen()),
-            ).then((_) {
+              MaterialPageRoute<void>(builder: (BuildContext context) => const QuizScreen()),
+            ).then((dynamic _) {
               controller.currentIndex = 0;
               onUpdate();
             });
           } else if (index == 2) {
-            Navigator.push(
+            Navigator.push<void>(
               context,
-              MaterialPageRoute(builder: (_) => const PastExamListScreen()),
-            ).then((_) {
+              MaterialPageRoute<void>(builder: (BuildContext context) => const PastExamListScreen()),
+            ).then((dynamic _) {
               controller.currentIndex = 0;
               onUpdate();
             });
           } else if (index == 3) {
-            Navigator.push(
+            Navigator.push<void>(
               context,
-              MaterialPageRoute(builder: (_) => const UserStatsScreen()),
-            ).then((_) {
+              MaterialPageRoute<void>(builder: (BuildContext context) => const UserStatsScreen()),
+            ).then((dynamic _) {
               controller.currentIndex = 0;
               onUpdate();
             });

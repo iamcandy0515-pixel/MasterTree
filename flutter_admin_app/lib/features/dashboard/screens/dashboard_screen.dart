@@ -43,16 +43,16 @@ class _DashboardScreenState extends State<_DashboardContent> {
   }
 
   void _navigateTo(Widget screen) {
-    Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+    Navigator.push<dynamic>(context, MaterialPageRoute<dynamic>(builder: (_) => screen));
   }
 
   Future<void> _handleSignOut() async {
     final vm = context.read<DashboardViewModel>();
     final success = await vm.signOut();
     if (success && mounted) {
-      Navigator.pushAndRemoveUntil(
+      Navigator.pushAndRemoveUntil<dynamic>(
         context,
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
+        MaterialPageRoute<dynamic>(builder: (_) => const LoginScreen()),
         (route) => false,
       );
     }

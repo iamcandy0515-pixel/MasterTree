@@ -20,9 +20,9 @@ class TreeGroupListItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 4),
       child: InkWell(
         onTap: () async {
-          await Navigator.push(
+          await Navigator.push<dynamic>(
             context,
-            MaterialPageRoute(builder: (context) => TreeGroupEditScreen(group: group)),
+            MaterialPageRoute<dynamic>(builder: (context) => TreeGroupEditScreen(group: group)),
           );
           vm.loadGroups();
         },
@@ -146,7 +146,7 @@ class TreeGroupListItem extends StatelessWidget {
   }
 
   void _confirmDeletion(BuildContext context) {
-    showDialog(
+    showDialog<dynamic>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF1E2518),

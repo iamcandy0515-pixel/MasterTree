@@ -25,8 +25,9 @@ class QuizAiRepository extends BaseRepository with QuizRepositoryMixin {
       }),
     );
 
-    final jsonResponse = parseJsonResponse(response);
-    return jsonResponse['data']['reviewResult'] ?? {};
+    final Map<String, dynamic> jsonResponse = parseJsonResponse(response);
+    final Map<String, dynamic>? data = jsonResponse['data'] as Map<String, dynamic>?;
+    return (data?['reviewResult'] as Map<String, dynamic>?) ?? <String, dynamic>{};
   }
 
   Future<List<String>> generateHints(
@@ -49,8 +50,9 @@ class QuizAiRepository extends BaseRepository with QuizRepositoryMixin {
       }),
     );
 
-    final jsonResponse = parseJsonResponse(response);
-    final results = List<String>.from(jsonResponse['data']['hints']);
+    final Map<String, dynamic> jsonResponse = parseJsonResponse(response);
+    final Map<String, dynamic>? data = jsonResponse['data'] as Map<String, dynamic>?;
+    final List<String> results = List<String>.from((data?['hints'] as Iterable<dynamic>?) ?? <dynamic>[]);
     _hintCache[cacheKey] = results;
     return results;
   }
@@ -73,8 +75,9 @@ class QuizAiRepository extends BaseRepository with QuizRepositoryMixin {
       }),
     );
 
-    final jsonResponse = parseJsonResponse(response);
-    final results = List<String>.from(jsonResponse['data']['distractors']);
+    final Map<String, dynamic> jsonResponse = parseJsonResponse(response);
+    final Map<String, dynamic>? data = jsonResponse['data'] as Map<String, dynamic>?;
+    final List<String> results = List<String>.from((data?['distractors'] as Iterable<dynamic>?) ?? <dynamic>[]);
     _distractorCache[cacheKey] = results;
     return results;
   }
@@ -91,7 +94,12 @@ class QuizAiRepository extends BaseRepository with QuizRepositoryMixin {
       body: jsonEncode(<String, dynamic>{'questionText': questionText, 'limit': limit}),
     );
 
-    final jsonResponse = parseJsonResponse(response);
-    return jsonResponse['data']['related'] ?? jsonResponse['data'] as List<dynamic>;
+    final Map<String, dynamic> jsonResponse = parseJsonResponse(response);
+    final Map<String, dynamic>? data = jsonResponse['data'] as Map<String, dynamic>?;
+    
+    if (data != null && data['related'] != null) {
+      return data['related'] as List<dynamic>;
+    }
+    return (data?['items'] as List<dynamic>?) ?? <dynamic>[];
   }
 }

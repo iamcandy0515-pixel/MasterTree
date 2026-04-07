@@ -34,9 +34,9 @@ mixin BulkMediaMixin on ChangeNotifier {
   Map<String, dynamic> createInitialQuizEntry(int qNum) {
     return <String, dynamic>{
       'question_number': qNum,
-      'question': [],
-      'explanation': [],
-      'options': [],
+      'question': <dynamic>[],
+      'explanation': <dynamic>[],
+      'options': <dynamic>[],
     };
   }
 }

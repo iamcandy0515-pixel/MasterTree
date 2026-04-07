@@ -47,19 +47,24 @@ class RelatedQuizSection extends StatelessWidget {
   }
 
   Widget _buildRelatedQuizCard(Map<String, dynamic> quiz) {
-    final exam = quiz['quiz_exams'] as Map<String, dynamic>?;
-    final year = exam?['year'] ?? '-';
-    final round = exam?['round'] ?? '-';
-    final qNo = quiz['question_number'] ?? '-';
-    final subject = quiz['quiz_categories']?['name'] ?? '-';
+    final Map<String, dynamic>? exam = quiz['quiz_exams'] as Map<String, dynamic>?;
+    final String year = exam?['year']?.toString() ?? '-';
+    final String round = exam?['round']?.toString() ?? '-';
+    final String qNo = quiz['question_number']?.toString() ?? '-';
+    final Map<String, dynamic>? category = quiz['quiz_categories'] as Map<String, dynamic>?;
+    final String subject = category?['name']?.toString() ?? '-';
 
-    final blocks = quiz['content_blocks'] as List<dynamic>?;
+    final List<dynamic>? blocks = quiz['content_blocks'] as List<dynamic>?;
     String qText = '내용 없음';
     if (blocks != null && blocks.isNotEmpty) {
-      final textBlock = blocks.firstWhere(
-        (b) => b['type'] == 'text',
-        orElse: () => {'content': ''},
+      final dynamic found = blocks.firstWhere(
+        (dynamic b) {
+          final Map<String, dynamic> block = Map<String, dynamic>.from(b as Map);
+          return block['type'] == 'text';
+        },
+        orElse: () => <String, dynamic>{'content': ''},
       );
+      final Map<String, dynamic> textBlock = Map<String, dynamic>.from(found as Map);
       qText = textBlock['content']?.toString() ?? '내용 없음';
     }
     qText = qText.replaceAll('\n', ' ').trim();

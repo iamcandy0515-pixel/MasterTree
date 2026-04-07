@@ -32,24 +32,24 @@ class _QuestionAndExplanationModuleState
 
     try {
       final reviewData = await vm.reviewExplanationAction(explanationText);
-      final isAligned = reviewData['isAligned'] ?? false;
-      final score = reviewData['confidenceScore'] ?? 0;
-      final suggestions = reviewData['suggestedFixes'] ?? [];
-      final reviewNotes = reviewData['reviewNotes'] ?? '';
+      final dynamic isAligned = reviewData['isAligned'] ?? false;
+      final dynamic score = reviewData['confidenceScore'] ?? 0;
+      final dynamic suggestions = reviewData['suggestedFixes'] ?? <dynamic>[];
+      final dynamic reviewNotes = reviewData['reviewNotes'] ?? '';
 
       if (mounted) {
-        showDialog(
+        showDialog<dynamic>(
           context: context,
           builder: (context) => AIReviewResultDialog(
-            isAligned: isAligned,
-            score: score,
-            reviewNotes: reviewNotes,
-            suggestions: suggestions,
+            isAligned: isAligned as bool? ?? false,
+            score: score as int? ?? 0,
+            reviewNotes: reviewNotes as String? ?? '',
+            suggestions: suggestions as List<dynamic>? ?? <dynamic>[],
             primaryColor: primaryColor,
             cardDark: cardDark,
             onApplyFirstSuggestion: () {
-              if (suggestions.isNotEmpty) {
-                widget.explanationController.text = suggestions.first;
+              if ((suggestions as List?)?.isNotEmpty ?? false) {
+                widget.explanationController.text = (suggestions as List).first.toString();
               }
             },
           ),

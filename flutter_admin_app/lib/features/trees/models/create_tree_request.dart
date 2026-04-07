@@ -23,7 +23,7 @@ class CreateTreeRequest {
     this.isAutoQuizEnabled = true,
   });
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => <String, dynamic>{
     'name_kr': nameKr,
     'name_en': nameEn,
     'scientific_name': scientificName,

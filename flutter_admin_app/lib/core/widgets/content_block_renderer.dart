@@ -23,7 +23,7 @@ class ContentBlockRenderer extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: blocks.map((block) {
+      children: blocks.map((dynamic block) {
         if (block is! Map) {
           final text = block?.toString() ?? '';
           if (text.trim().isEmpty) return const SizedBox.shrink();
@@ -39,9 +39,9 @@ class ContentBlockRenderer extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: spacing),
             child: GestureDetector(
               onTap: () {
-                Navigator.push(
+                Navigator.push<dynamic>(
                   context,
-                  MaterialPageRoute(
+                  MaterialPageRoute<dynamic>(
                     builder: (context) =>
                         FullscreenImageViewer(imageUrl: content),
                   ),
@@ -61,7 +61,7 @@ class ContentBlockRenderer extends StatelessWidget {
                       ),
                     ),
                   ),
-                  errorWidget: (context, url, error) => Container(
+                  errorWidget: (context, url, dynamic error) => Container(
                     height: 100,
                     color: Colors.white10,
                     child: const Center(

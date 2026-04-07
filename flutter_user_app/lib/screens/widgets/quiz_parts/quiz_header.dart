@@ -28,7 +28,7 @@ class QuizHeader extends StatelessWidget {
                   child: IconButton(
                     onPressed: () {
                       ApiService.syncPendingAttempts();
-                      Navigator.pop(context);
+                      Navigator.pop<void>(context);
                     },
                     icon: const Icon(
                       Icons.arrow_back_ios_new,
@@ -51,9 +51,9 @@ class QuizHeader extends StatelessWidget {
                     onPressed: () async {
                       await ApiService.syncPendingAttempts();
                       if (context.mounted) {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (_) => const UserStatsScreen(initialIndex: 1),
+                        Navigator.of(context).pushReplacement<void, void>(
+                          MaterialPageRoute<void>(
+                            builder: (BuildContext _) => const UserStatsScreen(initialIndex: 1),
                           ),
                         );
                       }

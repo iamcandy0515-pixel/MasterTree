@@ -51,9 +51,9 @@ class TreeListItem extends StatelessWidget {
 
   void _navigateToDetail(BuildContext context) async {
     final vm = context.read<TreeListViewModel>();
-    final result = await Navigator.push(
+    final dynamic result = await Navigator.push<dynamic>(
       context,
-      MaterialPageRoute(builder: (_) => TreeDetailScreen(tree: tree)),
+      MaterialPageRoute<dynamic>(builder: (_) => TreeDetailScreen(tree: tree)),
     );
     if (result == true) vm.fetchTrees();
   }

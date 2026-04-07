@@ -19,33 +19,38 @@ class SupabaseService {
     String? osVersion,
     bool forceLogout = false,
   }) async {
-    final cleanPhone = phone.replaceAll('-', '');
+    final String cleanPhone = phone.replaceAll('-', '');
     
     // 1. Check if user already has a specific email in public.users
-    final existingUser = await client
+    final Map<String, dynamic>? existingUserRaw = await client
         .from('users')
-        .select('id, email, last_device_id, last_device_model')
+        .select<PostgrestMap?>('id, email, last_device_id, last_device_model')
         .eq('phone', cleanPhone)
         .maybeSingle();
 
+    final Map<String, dynamic>? existingUser = (existingUserRaw != null) 
+        ? Map<String, dynamic>.from(existingUserRaw) 
+        : null;
+
     if (existingUser != null && deviceId != null && !forceLogout) {
-      final lastDeviceId = existingUser['last_device_id'];
+      final dynamic lastDeviceId = existingUser['last_device_id'];
       if (lastDeviceId != null && lastDeviceId != deviceId) {
         throw 'ALREADY_LOGGED_IN:${existingUser['last_device_model'] ?? '다른 기기'}';
       }
     }
 
     // 2. Priority: Registered Email -> Fallback: Virtual Email
-    final targetEmail = existingUser?['email'] ?? 'u$cleanPhone@mastertree.app';
+    final dynamic targetEmailRaw = existingUser?['email'] ?? 'u$cleanPhone@mastertree.app';
+    final String targetEmail = targetEmailRaw.toString();
 
-    final response = await client.auth.signInWithPassword(
+    final AuthResponse response = await client.auth.signInWithPassword(
       email: targetEmail,
       password: systemFixedPassword,
     );
 
     // 3. Register/Update Session in DB
     if (response.user != null && deviceId != null) {
-      await client.from('users').update({
+      await client.from('users').update(<String, dynamic>{
         'last_session_id': response.session?.accessToken.substring(0, 50),
         'last_device_id': deviceId,
         'last_device_model': deviceModel,
@@ -72,7 +77,7 @@ class SupabaseService {
         uuid = android.id; // Consistent UUID for same hardware
       } else if (Platform.isIOS) {
         final ios = await deviceInfo.iosInfo;
-        model = ios.name ?? ios.model;
+        model = ios.name;
         os = 'iOS ${ios.systemVersion}';
         uuid = ios.identifierForVendor ?? 'Unknown-iOS-ID';
       }
@@ -93,17 +98,17 @@ class SupabaseService {
     required String name,
     required String email,
   }) async {
-    final cleanPhone = phone.replaceAll('-', '');
+    final String cleanPhone = phone.replaceAll('-', '');
     
     // Use the provided real email if available, otherwise fallback to virtual
-    final targetEmail = (email.isNotEmpty && email.contains('@')) 
+    final String targetEmail = (email.isNotEmpty && email.contains('@')) 
         ? email 
         : 'u$cleanPhone@mastertree.app';
 
     return await client.auth.signUp(
       email: targetEmail,
       password: systemFixedPassword,
-      data: {
+      data: <String, dynamic>{
         'name': name,
         'user_email': email,
       },
@@ -112,17 +117,18 @@ class SupabaseService {
 
   /// Get user status after sign in
   static Future<String> reloadUserStatus() async {
-    final user = client.auth.currentUser;
+    final User? user = client.auth.currentUser;
     if (user == null) return 'none';
 
     // Fetch latest status from users table
-    final response = await client
+    final Map<String, dynamic>? response = await client
         .from('users')
-        .select('status')
+        .select<PostgrestMap?>('status')
         .eq('auth_id', user.id)
         .maybeSingle();
 
-    return response?['status'] ?? 'pending';
+    final String status = (response?['status'] as String?) ?? 'pending';
+    return status;
   }
 
   /// Get current session
@@ -135,21 +141,24 @@ class SupabaseService {
   static Future<List<Map<String, dynamic>>> getTrees() async {
     try {
       // Fetch all trees
-      final treesResponse = await client.from('trees').select('*').order('name_kr');
-
-      final trees = List<Map<String, dynamic>>.from(treesResponse);
+      final List<dynamic> treesRaw = await client.from('trees').select<PostgrestList>('*').order('name_kr');
+      final List<Map<String, dynamic>> trees = treesRaw
+          .map((dynamic e) => Map<String, dynamic>.from(e as Map))
+          .toList();
 
       // Fetch main images for all trees
-      for (var tree in trees) {
-        final imageResponse = await client
+      for (final Map<String, dynamic> tree in trees) {
+        final Map<String, dynamic>? mainImg = await client
             .from('tree_images')
-            .select('image_url')
+            .select<PostgrestMap?>('image_url, thumbnail_url')
             .eq('tree_id', tree['id'])
             .eq('image_type', 'main')
             .maybeSingle();
 
-        if (imageResponse != null && imageResponse['image_url'] != null) {
-          tree['image_url'] = imageResponse['image_url'];
+        if (mainImg != null && mainImg['image_url'] != null) {
+          tree['image_url'] = mainImg['image_url'];
+          // 썸네일도 있다면 함께 캐싱
+          tree['thumbnail_url'] = mainImg['thumbnail_url'];
         }
       }
 
@@ -165,20 +174,20 @@ class SupabaseService {
     String name,
     String phone,
   ) async {
-    final cleanPhone = phone.replaceAll('-', '');
+    final String cleanPhone = phone.replaceAll('-', '');
     // 1. Exact match check
-    final response = await client
+    final Map<String, dynamic>? response = await client
         .from('users')
-        .select()
+        .select<PostgrestMap?>('*')
         .eq('name', name)
         .eq('phone', cleanPhone)
         .maybeSingle();
 
     // 3. Robustness check: if not found, check if the phone is already taken by someone else
     if (response == null) {
-      final phoneCheck = await client
+      final Map<String, dynamic>? phoneCheck = await client
           .from('users')
-          .select('id, name')
+          .select<PostgrestMap?>('id, name')
           .eq('phone', cleanPhone)
           .maybeSingle();
 
@@ -193,7 +202,7 @@ class SupabaseService {
   /// Update user's auth_id after successful login
   static Future<void> updateUserAuthId(dynamic userId, String authId) async {
     try {
-      await client.from('users').update({'auth_id': authId}).eq('id', userId);
+      await client.from('users').update(<String, dynamic>{'auth_id': authId}).eq('id', userId);
     } catch (e) {
       debugPrint('Error updating user auth_id: $e');
     }
@@ -207,10 +216,10 @@ class SupabaseService {
     required String entryCode,
     String? authId,
   }) async {
-    final cleanPhone = phone.replaceAll('-', '');
-    return await client
+    final String cleanPhone = phone.replaceAll('-', '');
+    final Map<String, dynamic> response = await client
         .from('users')
-        .insert({
+        .insert(<String, dynamic>{
           'name': name,
           'phone': cleanPhone,
           'email': email,
@@ -218,23 +227,26 @@ class SupabaseService {
           'status': 'pending', // Always pending for new users
           'auth_id': authId,
         })
-        .select()
+        .select<PostgrestMap>('*')
         .single();
+    
+    return response;
   }
 
   /// Fetch the global/required entry code from the Admin API
   static Future<String> fetchGlobalEntryCode() async {
-    final url = '${AppConstants.apiUrl}/settings/entry-code';
+    final String url = '${AppConstants.apiUrl}/settings/entry-code';
     try {
       debugPrint('Fetching entry code from: $url');
-      final response = await http.get(Uri.parse(url));
+      final http.Response response = await http.get(Uri.parse(url));
       debugPrint('Response Status: ${response.statusCode}');
       if (response.statusCode == 200) {
-        final data = jsonDecode(utf8.decode(response.bodyBytes));
+        final dynamic dataRaw = jsonDecode(utf8.decode(response.bodyBytes));
+        final Map<String, dynamic> data = Map<String, dynamic>.from(dataRaw as Map);
         debugPrint('Response Data: $data');
         if (data['success'] == true) {
-          final code = data['data']['entryCode'];
-          if (code != null) return code;
+          final dynamic code = (data['data'] as Map<String, dynamic>)['entryCode'];
+          if (code != null) return code.toString();
         }
       } else {
         debugPrint('Failed to load entry code: ${response.statusCode}');

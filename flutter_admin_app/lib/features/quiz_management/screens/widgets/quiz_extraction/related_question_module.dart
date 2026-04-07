@@ -100,7 +100,7 @@ class _RelatedQuestionModuleState extends State<RelatedQuestionModule> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    related['source'] ?? '출처 없음',
+                    (related['source'] as String? ?? '출처 없음'),
                     style: const TextStyle(
                       color: primaryColor,
                       fontSize: 10,
@@ -109,7 +109,7 @@ class _RelatedQuestionModuleState extends State<RelatedQuestionModule> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    related['question'] ?? '',
+                    (related['question'] as String? ?? ''),
                     style: const TextStyle(color: Colors.white, fontSize: 13),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

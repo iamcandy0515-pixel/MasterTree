@@ -9,9 +9,19 @@ export const QuizFormatter = {
         const paths: string[] = [];
         if (!Array.isArray(blocks)) return paths;
         blocks.forEach(b => {
-            if (b && b.type === "image" && typeof b.content === "string") {
-                const match = b.content.match(/quizzes\/[^?]+/);
-                if (match) paths.push(match[0]);
+            if (b && b.type === "image") {
+                const imgUrl = b.image_url || b.content;
+                if (typeof imgUrl === "string") {
+                    // Cloudinary public_id 추출 시도 (tree-images/quizzes/... 형태)
+                    const cloudMatch = imgUrl.match(/(tree-images\/quizzes\/[^?./]+)/);
+                    if (cloudMatch) {
+                        paths.push(cloudMatch[1]);
+                    } else {
+                        // Legacy Supabase path 추출 시도
+                        const supabaseMatch = imgUrl.match(/quizzes\/[^?]+/);
+                        if (supabaseMatch) paths.push(supabaseMatch[0]);
+                    }
+                }
             }
         });
         return paths;

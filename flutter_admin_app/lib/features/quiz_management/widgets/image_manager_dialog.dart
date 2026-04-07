@@ -103,9 +103,9 @@ class _ImageManagerDialogState extends State<ImageManagerDialog> {
   @override
   Widget build(BuildContext context) {
     final quiz = widget.viewModel.extractedQuizzes[widget.qNum];
-    final data = quiz?[widget.field];
-    final List blocks = data is List ? List.from(data) : [];
-    final imageBlocks = blocks.where((b) => b is Map && b['type'] == 'image').toList();
+    final dynamic data = quiz?[widget.field];
+    final List<dynamic> blocks = data is List ? List<dynamic>.from(data as Iterable) : <dynamic>[];
+    final imageBlocks = blocks.where((dynamic b) => b is Map && b['type'] == 'image').toList();
 
     return AlertDialog(
       backgroundColor: surfaceDark,

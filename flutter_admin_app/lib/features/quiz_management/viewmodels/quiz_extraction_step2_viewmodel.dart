@@ -65,7 +65,7 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier
 
   Map<String, dynamic> populateExtractedQuiz() {
     if (validatedQuizData == null) throw '문제를 먼저 추출해주세요.';
-    _correctOptionIndex = validatedQuizData!['correct_option_index'] ?? 0;
+    _correctOptionIndex = validatedQuizData!['correct_option_index'] as int? ?? 0;
     notifyListeners();
     return validatedQuizData!;
   }
@@ -82,16 +82,16 @@ class QuizExtractionStep2ViewModel extends ChangeNotifier
     _isSaving = true; notifyListeners();
 
     try {
-      final data = {
+      final Map<String, dynamic> data = <String, dynamic>{
         'raw_source_text': validatedQuizData!['raw_source_text'],
         'subject': _initialSubject,
         'year': _initialYear,
         'round': _initialRound,
         'question_number': _selectedQuestion,
-        'content_blocks': [{'type': 'text', 'content': questionText}],
-        'explanation_blocks': [{'type': 'text', 'content': explanationText}],
-        'hint_blocks': hintTexts.take(_hintsCount).map((t) => {'type': 'text', 'content': t}).toList(),
-        'options': optionTexts.take(4).map((t) => {'type': 'text', 'content': t}).toList(),
+        'content_blocks': <dynamic>[<String, dynamic>{'type': 'text', 'content': questionText}],
+        'explanation_blocks': <dynamic>[<String, dynamic>{'type': 'text', 'content': explanationText}],
+        'hint_blocks': hintTexts.take(_hintsCount).map((String t) => <String, dynamic>{'type': 'text', 'content': t}).toList(),
+        'options': optionTexts.take(4).map((String t) => <String, dynamic>{'type': 'text', 'content': t}).toList(),
         'correct_option_index': _correctOptionIndex,
         'difficulty': 1,
       };

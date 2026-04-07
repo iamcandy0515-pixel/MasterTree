@@ -34,9 +34,9 @@ class QuizReviewDetailViewModel extends ChangeNotifier {
   String questionNo = '';
 
   // Blocks & Data
-  List<dynamic> contentBlocks = [];
-  List<dynamic> explanationBlocks = [];
-  List<dynamic> hintBlocks = [];
+  List<dynamic> contentBlocks = <dynamic>[];
+  List<dynamic> explanationBlocks = <dynamic>[];
+  List<dynamic> hintBlocks = <dynamic>[];
   String questionText = '';
   String explanationText = '';
   String hintText = '';
@@ -59,9 +59,9 @@ class QuizReviewDetailViewModel extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-      final response = await Supabase.instance.client
+      final dynamic response = await Supabase.instance.client
           .from('quiz_questions')
-          .select('*, quiz_exams(year, round), quiz_categories(name)')
+          .select<PostgrestList>('*, quiz_exams(year, round), quiz_categories(name)')
           .eq('id', quizId)
           .single();
 
@@ -74,30 +74,30 @@ class QuizReviewDetailViewModel extends ChangeNotifier {
       questionNo = response['question_number']?.toString() ?? response['id'].toString();
 
       selectedRelatedIds = (response['related_quiz_ids'] as List<dynamic>?)
-              ?.map((e) => int.parse(e.toString())).toList() ?? [];
+              ?.map((dynamic e) => int.tryParse(e.toString()) ?? 0).toList().cast<int>() ?? <int>[];
 
       if (selectedRelatedIds.isNotEmpty) {
         await loadRelatedQuizzesMetadata();
       }
 
-      contentBlocks = response['content_blocks'] as List<dynamic>? ?? [];
+      contentBlocks = response['content_blocks'] as List<dynamic>? ?? <dynamic>[];
       questionText = _extractTextFromBlocks(contentBlocks);
 
-      explanationBlocks = response['explanation_blocks'] as List<dynamic>? ?? [];
+      explanationBlocks = response['explanation_blocks'] as List<dynamic>? ?? <dynamic>[];
       explanationText = _extractTextFromBlocks(explanationBlocks);
 
-      hintBlocks = response['hint_blocks'] as List<dynamic>? ?? [];
+      hintBlocks = response['hint_blocks'] as List<dynamic>? ?? <dynamic>[];
       hintText = _extractTextFromBlocks(hintBlocks);
 
-      final options = response['options'] as List<dynamic>? ?? [];
-      correctOptionIndex = response['correct_option_index'] ?? 0;
+      final options = response['options'] as List<dynamic>? ?? <dynamic>[];
+      correctOptionIndex = (response['correct_option_index'] as int) ?? 0;
       incorrectOptions.clear();
       for (int i = 0; i < options.length; i++) {
-        final content = options[i]['content'] ?? '';
+        final dynamic content = options[i]['content'] ?? '';
         if (i == correctOptionIndex) {
-          correctOption = content;
+          correctOption = content as String? ?? '';
         } else {
-          incorrectOptions.add(content);
+          incorrectOptions.add(content as String? ?? '');
         }
       }
       _isLoading = false;
@@ -121,7 +121,7 @@ class QuizReviewDetailViewModel extends ChangeNotifier {
       final newExp = _updateTextInBlocks(explanationBlocks, explanationText);
       final newHint = [{'type': 'text', 'content': hintText}];
 
-      await _repository.upsertQuizQuestion({
+      await _repository.upsertQuizQuestion(<String, dynamic>{
         'id': quizId,
         'subject': subject,
         'year': int.tryParse(year),
@@ -147,10 +147,10 @@ class QuizReviewDetailViewModel extends ChangeNotifier {
   }
 
   List<dynamic> _updateTextInBlocks(List<dynamic> blocks, String text) {
-    final newBlocks = List.from(blocks);
-    int idx = newBlocks.indexWhere((b) => b is String || (b is Map && b['type'] == 'text'));
+    final List<dynamic> newBlocks = List<dynamic>.from(blocks);
+    int idx = newBlocks.indexWhere((dynamic b) => b is String || (b is Map && b['type'] == 'text'));
     if (idx != -1) {
-      newBlocks.removeWhere((b) => b is String || (b is Map && b['type'] == 'text'));
+      newBlocks.removeWhere((dynamic b) => b is String || (b is Map && b['type'] == 'text'));
       newBlocks.insert(idx.clamp(0, newBlocks.length), {'type': 'text', 'content': text});
     } else {
       newBlocks.insert(0, {'type': 'text', 'content': text});
@@ -160,16 +160,16 @@ class QuizReviewDetailViewModel extends ChangeNotifier {
 
   Future<void> loadRelatedQuizzesMetadata() async {
     try {
-      final response = await Supabase.instance.client
+      final dynamic response = await Supabase.instance.client
           .from('quiz_questions')
-          .select('id, question_number, quiz_exams(year, round, title), quiz_categories(name), content_blocks')
+          .select<PostgrestList>('id, question_number, quiz_exams(year, round, title), quiz_categories(name), content_blocks')
           .filter('id', 'in', selectedRelatedIds);
       
-      relatedQuizzesMetadata = List<Map<String, dynamic>>.from(response);
+      relatedQuizzesMetadata = List<Map<String, dynamic>>.from(response as List);
       relatedQuizzesMetadata.sort((a, b) {
-        final yearA = a['quiz_exams']?['year'] ?? 0;
-        final yearB = b['quiz_exams']?['year'] ?? 0;
-        return yearA != yearB ? yearB.compareTo(yearA) : (b['quiz_exams']?['round'] ?? 0).compareTo(a['quiz_exams']?['round'] ?? 0);
+        final dynamic yearA = a['quiz_exams']?['year'] ?? 0;
+        final dynamic yearB = b['quiz_exams']?['year'] ?? 0;
+        return yearA != yearB ? (yearB as num).compareTo(yearA as num) : ((b['quiz_exams']?['round'] ?? 0) as num).compareTo((a['quiz_exams']?['round'] ?? 0) as num);
       });
       notifyListeners();
     } catch (e) { 

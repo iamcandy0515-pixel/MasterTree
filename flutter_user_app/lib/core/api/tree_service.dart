@@ -21,20 +21,21 @@ class TreeService {
     final url = Uri.parse('${AppConstants.apiUrl}/trees').replace(queryParameters: queryParams);
 
     try {
-      final jsonResponse = await BaseApiService.get(url);
+      final Map<String, dynamic> jsonResponse = await BaseApiService.get(url);
       if (jsonResponse['success'] == true) {
-        final List<dynamic> data = jsonResponse['data'];
-        return data.map((e) {
-          final tree = Map<String, dynamic>.from(e);
-          final images = tree['tree_images'] as List<dynamic>?;
+        final List<dynamic> data = jsonResponse['data'] as List<dynamic>;
+        return data.map<Map<String, dynamic>>((dynamic e) {
+          final Map<String, dynamic> tree = Map<String, dynamic>.from(e as Map);
+          final List<dynamic>? images = tree['tree_images'] as List<dynamic>?;
           if (images != null && images.isNotEmpty) {
-            final mainImg = images.firstWhere(
-              (img) => img['image_type'] == 'main',
+            final dynamic mainImg = images.firstWhere(
+              (dynamic img) => (img as Map<String, dynamic>)['image_type'] == 'main',
               orElse: () => images[0],
             );
-            tree['image_url'] = mainImg['image_url'];
+            final Map<String, dynamic> mainImgMap = mainImg as Map<String, dynamic>;
+            tree['image_url'] = mainImgMap['image_url'];
             // 썸네일 URL 데이터가 있으면 함께 매핑 (최적화 1단계)
-            tree['thumbnail_url'] = mainImg['thumbnail_url'];
+            tree['thumbnail_url'] = mainImgMap['thumbnail_url'];
           }
           return tree;
         }).toList();
@@ -47,11 +48,11 @@ class TreeService {
   }
 
   static Future<Map<String, dynamic>?> getTreeOne(int id) async {
-    final url = Uri.parse('${AppConstants.apiUrl}/trees/$id');
+    final Uri url = Uri.parse('${AppConstants.apiUrl}/trees/$id');
     try {
-      final jsonResponse = await BaseApiService.get(url);
+      final Map<String, dynamic> jsonResponse = await BaseApiService.get(url);
       if (jsonResponse['success'] == true) {
-        return Map<String, dynamic>.from(jsonResponse['data']);
+        return Map<String, dynamic>.from(jsonResponse['data'] as Map);
       }
     } catch (e) {
       debugPrint('TreeService.getTreeOne Error: $e');
@@ -60,18 +61,19 @@ class TreeService {
   }
 
   static Future<List<Map<String, dynamic>>> getTreeImages(int treeId) async {
-    final url = Uri.parse('${AppConstants.apiUrl}/trees?search=$treeId&minimal=false');
+    final Uri url = Uri.parse('${AppConstants.apiUrl}/trees?search=$treeId&minimal=false');
     try {
-      final jsonResponse = await BaseApiService.get(url);
-      if (jsonResponse['success'] == true && jsonResponse['data'].isNotEmpty) {
-        return List<Map<String, dynamic>>.from(
-          jsonResponse['data'][0]['tree_images'] ?? [],
-        );
+      final Map<String, dynamic> jsonResponse = await BaseApiService.get(url);
+      final List<dynamic> data = (jsonResponse['data'] as List<dynamic>?) ?? <dynamic>[];
+      if (jsonResponse['success'] == true && data.isNotEmpty) {
+        final Map<String, dynamic> firstItem = Map<String, dynamic>.from(data[0] as Map);
+        final List<dynamic> images = (firstItem['tree_images'] as List<dynamic>?) ?? <dynamic>[];
+        return images.map((dynamic e) => Map<String, dynamic>.from(e as Map)).toList();
       }
     } catch (e) {
       debugPrint('TreeService.getTreeImages Error: $e');
     }
-    return [];
+    return <Map<String, dynamic>>[];
   }
 
   static String getProxyImageUrl(String? url, {int? width, int? height}) {

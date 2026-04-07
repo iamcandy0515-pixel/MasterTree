@@ -18,18 +18,18 @@ class DashboardStatsSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Expanded(
-                  child: _buildTextStatItem('수목', stats['totalTrees'] ?? 0, '종'),
+                  child: _buildTextStatItem('수목', (stats['totalTrees'] as int? ?? 0), '종'),
                 ),
                 _buildStatDivider(),
                 Expanded(
                   child:
-                      _buildTextStatItem('기출', stats['totalQuizzes'] ?? 0, '문'),
+                      _buildTextStatItem('기출', (stats['totalQuizzes'] as int? ?? 0), '문'),
                 ),
                 _buildStatDivider(),
                 Expanded(
                   child: _buildTextStatItem(
                     '유사',
-                    stats['totalSimilarGroups'] ?? 0,
+                    (stats['totalSimilarGroups'] as int? ?? 0),
                     '조합',
                   ),
                 ),

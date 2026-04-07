@@ -7,7 +7,7 @@ import 'dart:typed_data';
 class WebUtilsPlatform {
   static void downloadFile(String data, String filename) {
     final bytes = utf8.encode(data);
-    final blob = html.Blob([bytes]);
+    final blob = html.Blob(<dynamic>[bytes]);
     final url = html.Url.createObjectUrlFromBlob(blob);
     // ignore: unused_local_variable
     final anchor =
@@ -25,7 +25,7 @@ class WebUtilsPlatform {
     ui.platformViewRegistry.registerViewFactory(viewId, factory);
   }
 
-  static dynamic createDropZoneElement({
+  static Object createDropZoneElement({
     required void Function() onDragOver,
     required void Function() onDragLeave,
     required void Function(dynamic files) onDrop,
@@ -85,7 +85,7 @@ class WebUtilsPlatform {
     }
   }
 
-  static Future<List<int>?> readFileAsBytes(dynamic file) async {
+  static Future<Uint8List?> readFileAsBytes(dynamic file) async {
     if (file is! html.File) return null;
     final reader = html.FileReader();
     reader.readAsArrayBuffer(file);

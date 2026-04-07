@@ -14,7 +14,7 @@ class PastExamStatsTab extends StatelessWidget {
         children: [
           StatSummaryCard(
             title: '기출 문제 학습 성과',
-            data: stats['pastExam'] ?? {},
+            data: Map<String, dynamic>.from(stats['pastExam'] as Map? ?? <String, dynamic>{}),
             accentColor: Colors.orangeAccent,
             icon: Icons.analytics,
           ),

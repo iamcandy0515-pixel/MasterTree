@@ -91,7 +91,7 @@ class _QuizContentCardState extends State<QuizContentCard> {
   Widget build(BuildContext context) {
     const primaryColor = Color(0xFF2BEE8C);
     const surfaceDark = Color(0xFF1A2E24);
-    final imageBlocks = widget.blocks.where((b) => b is Map && b['type'] == 'image').toList();
+    final imageBlocks = widget.blocks.where((dynamic b) => b is Map && b['type'] == 'image').toList();
     final hasImages = imageBlocks.isNotEmpty;
 
     return Column(
@@ -201,8 +201,8 @@ class _QuizContentCardState extends State<QuizContentCard> {
         children: [
           ...images.map((entry) {
             final index = entry.key;
-            final imageUrl = entry.value['content'];
-
+            final String imageUrl = entry.value['content'] as String? ?? '';
+ 
             return Container(
               margin: const EdgeInsets.only(bottom: 12),
               decoration: BoxDecoration(
@@ -220,7 +220,9 @@ class _QuizContentCardState extends State<QuizContentCard> {
                         alignment: Alignment.centerLeft,
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(maxHeight: 600),
-                          child: Image.network(imageUrl),
+                          child: (imageUrl.startsWith('http') || imageUrl.startsWith('blob'))
+                              ? Image.network(imageUrl)
+                              : Text('Invalid Image URL: $imageUrl', style: const TextStyle(color: Colors.redAccent)),
                         ),
                       ),
                     ),

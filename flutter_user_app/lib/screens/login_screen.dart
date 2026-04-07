@@ -43,11 +43,11 @@ class _LoginContentState extends State<_LoginContent> {
   Future<void> _handleLogin(AuthViewModel vm) async {
     await vm.handleLogin(
       formKey: _formKey,
-      onSuccess: () => Navigator.pushReplacement(
+      onSuccess: () => Navigator.pushReplacement<void, void>(
         context,
-        MaterialPageRoute(builder: (_) => const DashboardScreen()),
+        MaterialPageRoute<void>(builder: (BuildContext context) => const DashboardScreen()),
       ),
-      onError: (message) => _showErrorDialog(message, vm),
+      onError: (String message) => _showErrorDialog(message, vm),
     );
   }
 
@@ -72,10 +72,10 @@ class _LoginContentState extends State<_LoginContent> {
       return;
     }
 
-    showDialog(
+    showDialog<void>(
       context: context,
       barrierDismissible: !showRefresh,
-      builder: (context) => AlertDialog(
+      builder: (BuildContext context) => AlertDialog(
         backgroundColor: AppColors.surfaceDark,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
@@ -102,7 +102,7 @@ class _LoginContentState extends State<_LoginContent> {
           if (showRefresh)
             TextButton.icon(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop<void>(context);
                 _handleLogin(vm);
               },
               icon: const Icon(Icons.refresh, color: AppColors.primary),
@@ -110,7 +110,7 @@ class _LoginContentState extends State<_LoginContent> {
             )
           else
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop<void>(context),
               child: const Text('확인', style: TextStyle(color: AppColors.primary)),
             ),
         ],
@@ -119,9 +119,9 @@ class _LoginContentState extends State<_LoginContent> {
   }
 
   void _showConflictDialog(String deviceModel, AuthViewModel vm) {
-    showDialog(
+    showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (BuildContext context) => AlertDialog(
         backgroundColor: AppColors.surfaceDark,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
@@ -137,19 +137,19 @@ class _LoginContentState extends State<_LoginContent> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop<void>(context),
             child: const Text('취소', style: TextStyle(color: Colors.white60)),
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop<void>(context);
               vm.handleLogin(
                 formKey: _formKey,
-                onSuccess: () => Navigator.pushReplacement(
+                onSuccess: () => Navigator.pushReplacement<void, void>(
                   context,
-                  MaterialPageRoute(builder: (_) => const DashboardScreen()),
+                  MaterialPageRoute<void>(builder: (BuildContext context) => const DashboardScreen()),
                 ),
-                onError: (msg) => _showErrorDialog(msg, vm),
+                onError: (String msg) => _showErrorDialog(msg, vm),
                 forceLogout: true,
               );
             },

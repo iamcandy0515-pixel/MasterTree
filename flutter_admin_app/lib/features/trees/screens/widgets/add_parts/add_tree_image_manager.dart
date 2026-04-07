@@ -40,11 +40,12 @@ class _AddTreeImageManagerState extends State<AddTreeImageManager> {
       return WebUtils.createDropZoneElement(
         onDragOver: () { if (!_isDragging) setState(() => _isDragging = true); },
         onDragLeave: () { if (_isDragging) setState(() => _isDragging = false); },
-        onDrop: (files) async {
+        onDrop: (dynamic files) async {
           setState(() => _isDragging = false);
-          if (files != null && files.isNotEmpty && (files[0] as dynamic).type.startsWith('image/')) {
+          final List? fileList = files as List?;
+          if (fileList != null && fileList.isNotEmpty && ((fileList[0] as dynamic).type as String).startsWith('image/')) {
             try {
-              await context.read<AddTreeViewModel>().handleDroppedFiles(files[0]);
+              await context.read<AddTreeViewModel>().handleDroppedFiles(fileList[0]);
               if (mounted) _showInfo('이미지가 수신되었습니다.');
             } catch (e) { if (mounted) _showError('업로드 실패: $e'); }
           }

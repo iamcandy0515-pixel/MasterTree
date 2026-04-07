@@ -15,17 +15,17 @@ class TreeGroup {
   factory TreeGroup.fromJson(Map<String, dynamic> json) {
     return TreeGroup(
       id: json['id']?.toString() ?? '',
-      name: json['group_name'] ?? json['name'] ?? '',
-      description: json['description'] ?? '',
+      name: (json['group_name'] as String?) ?? (json['name'] as String?) ?? '',
+      description: (json['description'] as String?) ?? '',
       members:
           (json['tree_group_members'] as List<dynamic>?)
-              ?.map((e) => TreeGroupMember.fromJson(e))
+              ?.map((dynamic e) => TreeGroupMember.fromJson(e as Map<String, dynamic>))
               .toList() ??
-          [],
+          <TreeGroupMember>[],
     );
   }
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => <String, dynamic>{
     'group_name': name,
     'description': description,
   };
@@ -81,7 +81,7 @@ class TreeGroupMember {
 
   factory TreeGroupMember.fromJson(Map<String, dynamic> json) {
     final treeData = json['trees'] as Map<String, dynamic>?;
-    final imagesList = treeData?['tree_images'] as List<dynamic>? ?? [];
+    final imagesList = treeData?['tree_images'] as List<dynamic>? ?? <dynamic>[];
 
     final Map<String, String> typesMap = {};
     final Map<String, String> thumbMap = {};
@@ -106,23 +106,23 @@ class TreeGroupMember {
       }
     }
 
-    final String? rawRepUrl = json['image_url'] ?? _getRepresentativeImageUrl(imagesList);
-    final repUrl = _ensurePngForPlaceholder(rawRepUrl);
+    final String? rawRepUrl = (json['image_url'] as String?) ?? _getRepresentativeImageUrl(imagesList);
+    final String? repUrl = _ensurePngForPlaceholder(rawRepUrl);
 
     return TreeGroupMember(
       id: json['id']?.toString(),
       treeId: (json['tree_id'] ?? '').toString(),
       treeName: treeData != null
-          ? (treeData['name_kr'] ?? '알 수 없는 수목')
+          ? (treeData['name_kr']?.toString() ?? '알 수 없는 수목')
           : '알 수 없는 수목',
-      keyCharacteristics: json['key_characteristics'] ?? '',
+      keyCharacteristics: (json['key_characteristics'] as String?) ?? '',
       imageUrl: repUrl, // Raw URL (handled by UI)
       imageTypes: typesMap,
       thumbnailTypes: thumbMap,
       imageHints: hintsMap,
       displayOrder: int.tryParse(json['sort_order']?.toString() ?? '0') ?? 0,
       isAutoQuizEnabled: treeData != null
-          ? (treeData['is_auto_quiz_enabled'] ?? true)
+          ? ((treeData['is_auto_quiz_enabled'] as bool?) ?? true)
           : true,
     );
   }
@@ -154,15 +154,15 @@ class TreeGroupMember {
     if (images.isNotEmpty) {
       for (var img in images) {
         if (img is Map && img['image_type'] == 'main') {
-          return img['image_url'];
+          return img['image_url'] as String?;
         }
       }
-      return images[0]['image_url'];
+      return images[0]['image_url'] as String?;
     }
     return null;
   }
 
-  Map<String, dynamic> toJson(String groupId) => {
+  Map<String, dynamic> toJson(String groupId) => <String, dynamic>{
     'group_id': groupId,
     'tree_id': int.tryParse(treeId) ?? 0,
     'key_characteristics': keyCharacteristics,

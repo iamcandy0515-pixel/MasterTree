@@ -83,7 +83,7 @@ class SettingsServerControlCard extends StatelessWidget {
   }
 
   void _showConfirm(BuildContext context, String title, Future<void> Function() action) {
-    showDialog(
+    showDialog<dynamic>(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF1A2E24),

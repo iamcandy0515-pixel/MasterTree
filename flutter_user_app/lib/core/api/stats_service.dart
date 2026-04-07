@@ -6,9 +6,9 @@ class StatsService {
   static Future<Map<String, dynamic>> getUserStats() async {
     final url = Uri.parse('${AppConstants.apiUrl}/stats/user');
     try {
-      final jsonResponse = await BaseApiService.get(url);
+      final Map<String, dynamic> jsonResponse = await BaseApiService.get(url);
       if (jsonResponse['success'] == true) {
-        return Map<String, dynamic>.from(jsonResponse['data'] ?? {});
+        return Map<String, dynamic>.from((jsonResponse['data'] as Map<dynamic, dynamic>?) ?? <String, dynamic>{});
       }
       throw Exception('Failed to load stats: ${jsonResponse['message']}');
     } catch (e) {
@@ -20,9 +20,9 @@ class StatsService {
   static Future<Map<String, dynamic>> getUserPerformanceStats() async {
     final url = Uri.parse('${AppConstants.apiUrl}/stats/performance');
     try {
-      final jsonResponse = await BaseApiService.get(url);
+      final Map<String, dynamic> jsonResponse = await BaseApiService.get(url);
       if (jsonResponse['success'] == true) {
-        return Map<String, dynamic>.from(jsonResponse['data'] ?? {});
+        return Map<String, dynamic>.from((jsonResponse['data'] as Map<dynamic, dynamic>?) ?? <String, dynamic>{});
       }
       throw Exception('상태 코드: ${jsonResponse['message']}');
     } catch (e) {
@@ -36,9 +36,9 @@ class GroupService {
   static Future<List<Map<String, dynamic>>> getTreeGroups() async {
     final url = Uri.parse('${AppConstants.apiUrl}/tree-groups');
     try {
-      final jsonResponse = await BaseApiService.get(url);
+      final Map<String, dynamic> jsonResponse = await BaseApiService.get(url);
       if (jsonResponse['success'] == true) {
-        return List<Map<String, dynamic>>.from(jsonResponse['data'] ?? []);
+        return List<Map<String, dynamic>>.from((jsonResponse['data'] as Iterable<dynamic>?) ?? <dynamic>[]);
       }
       throw Exception('Failed to load groups: ${jsonResponse['message']}');
     } catch (e) {
@@ -50,9 +50,9 @@ class GroupService {
   static Future<Map<String, dynamic>> getTreeGroup(String id) async {
     final url = Uri.parse('${AppConstants.apiUrl}/tree-groups/$id');
     try {
-      final jsonResponse = await BaseApiService.get(url);
+      final Map<String, dynamic> jsonResponse = await BaseApiService.get(url);
       if (jsonResponse['success'] == true) {
-        return Map<String, dynamic>.from(jsonResponse['data'] ?? {});
+        return Map<String, dynamic>.from((jsonResponse['data'] as Map<dynamic, dynamic>?) ?? <String, dynamic>{});
       }
       throw Exception('Failed to load group: ${jsonResponse['message']}');
     } catch (e) {

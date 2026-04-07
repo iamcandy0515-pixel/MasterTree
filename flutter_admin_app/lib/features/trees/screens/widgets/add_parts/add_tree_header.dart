@@ -71,7 +71,7 @@ class _DeleteButton extends StatelessWidget {
   }
 
   void _confirmDelete(BuildContext context, AddTreeViewModel vm) {
-    showDialog(
+    showDialog<dynamic>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF2A2A2A),

@@ -210,7 +210,7 @@ class SettingsViewModel extends ChangeNotifier {
       await _repository.restartAdminServer();
     } catch (_) {
     } finally {
-      await Future.delayed(const Duration(seconds: 3));
+      await Future<void>.delayed(const Duration(seconds: 3));
       _isLoading = false;
       notifyListeners();
     }

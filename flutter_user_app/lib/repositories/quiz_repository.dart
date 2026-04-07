@@ -21,7 +21,7 @@ class QuizRepository {
     required bool isCorrect,
     required int userAnswer,
   }) {
-    ApiService.addPendingAttempt({
+    ApiService.addPendingAttempt(<String, dynamic>{
       'tree_id': treeId,
       'is_correct': isCorrect,
       'user_answer': userAnswer,

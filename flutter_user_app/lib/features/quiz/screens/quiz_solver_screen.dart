@@ -112,23 +112,24 @@ class _QuizSolverScreenState extends State<QuizSolverScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    QuizContentRenderer(content: currentQ['content']),
+                    QuizContentRenderer(content: currentQ['content'] as String? ?? ''),
                     const SizedBox(height: 32),
-                    ...List.generate((currentQ['options'] as List).length, (index) {
+                    ...List.generate((currentQ['options'] as List<dynamic>).length, (int index) {
+                      final List<dynamic> options = currentQ['options'] as List<dynamic>;
                       return QuizOptionCard(
                         index: index,
-                        text: currentQ['options'][index],
+                        text: options[index]?.toString() ?? '',
                         isSelected: _controller.selectedOptionIndex == index,
                         isAnswerSubmitted: _controller.isAnswerSubmitted,
-                        correctIndex: currentQ['correct_index'],
+                        correctIndex: (currentQ['correct_index'] as int?) ?? 0,
                         onTap: () => setState(() => _controller.selectOption(index)),
                       );
                     }),
                     if (_controller.isAnswerSubmitted) ...[
                       const SizedBox(height: 32),
                       QuizExplanationCard(
-                        isCorrect: _controller.selectedOptionIndex == currentQ['correct_index'],
-                        explanation: currentQ['explanation'],
+                        isCorrect: _controller.selectedOptionIndex == ((currentQ['correct_index'] as int?) ?? 0),
+                        explanation: currentQ['explanation']?.toString() ?? '',
                       ),
                     ],
                   ],

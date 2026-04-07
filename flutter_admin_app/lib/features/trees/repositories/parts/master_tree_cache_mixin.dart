@@ -1,6 +1,6 @@
 
 mixin MasterTreeCacheMixin {
-  static final Map<String, dynamic> _treeCache = {};
+  static final Map<String, dynamic> _treeCache = <String, dynamic>{};
   static final Map<String, DateTime> _cacheExpiries = {};
   static const Duration _defaultTTL = Duration(minutes: 5);
 

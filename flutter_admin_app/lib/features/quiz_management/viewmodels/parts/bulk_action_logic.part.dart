@@ -24,13 +24,15 @@ extension BulkActionLogic on BulkSimilarManagementViewModel {
       if (qText.isNotEmpty) {
         try {
           final result = await _aiRepo.recommendRelated(questionText: qText, limit: 10);
-          final filteredResult = (result).where((r) => r['id'] != quizId).toList();
+          final filteredResult = (result).where((dynamic r) => r['id'] != quizId).toList();
           
-          filteredResult.sort((a, b) {
-            final yA = a['year'] ?? 0;
-            final yB = b['year'] ?? 0;
+          filteredResult.sort((dynamic a, dynamic b) {
+            final int yA = (a as Map)['year'] as int? ?? 0;
+            final int yB = (b as Map)['year'] as int? ?? 0;
             if (yA != yB) return yB.compareTo(yA);
-            return (b['round'] ?? 0).compareTo(a['round'] ?? 0);
+            final int rA = (a as Map)['round'] as int? ?? 0;
+            final int rB = (b as Map)['round'] as int? ?? 0;
+            return rB.compareTo(rA);
           });
 
           _tempRecommendations[quizId] = List<Map<String, dynamic>>.from(filteredResult);
@@ -43,7 +45,7 @@ extension BulkActionLogic on BulkSimilarManagementViewModel {
       }
       // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
       notifyListeners();
-      await Future.delayed(const Duration(milliseconds: 300));
+      await Future<void>.delayed(const Duration(milliseconds: 300));
     }
 
     _isProcessing = false;
@@ -94,7 +96,7 @@ extension BulkActionLogic on BulkSimilarManagementViewModel {
   String getFullQuizText(Map<String, dynamic> quiz) {
     final blocks = quiz['content_blocks'] as List?;
     if (blocks == null || blocks.isEmpty) return '';
-    return blocks.map((block) {
+    return blocks.map((dynamic block) {
       if (block is Map<String, dynamic> && block['type'] == 'text') return block['content']?.toString() ?? '';
       return (block is String) ? block : '';
     }).where((text) => text.isNotEmpty).join('\n').trim();

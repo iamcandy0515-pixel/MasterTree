@@ -37,13 +37,20 @@ Dart 2.19.6 환경에서 컴파일 오류가 없는 검증된 버전입니다.
 *   `cached_network_image`: `^3.2.3`
 *   `flutter_dotenv`: `^5.1.0`
 
-## 4. 빈번한 빌드 에러 및 해결 방법 (Troubleshooting)
+## 4. 백엔드 연동 사양 (Backend Integration Spec)
 
-### 4.1 "Unsupported class file major version 65"
+Flutter 3.7.12 클라이언트와 연동되는 관리자 API의 핵심 연동 버전입니다.
+
+*   **Cloudinary SDK**: `v2.9.0` (Node.js Admin API 전용) - **검증 완료**
+*   **이미지 최적화**: Cloudinary `f_auto, q_auto` 파라미터를 통한 HTTP 렌더링 (Flutter direct SDK 미사용)
+
+## 5. 빈번한 빌드 에러 및 해결 방법 (Troubleshooting)
+
+### 5.1 "Unsupported class file major version 65"
 *   **원인**: Java 21 환경에서 Gradle 7.5를 실행할 때 발생하는 버전 불일치 에러.
 *   **해결**: 시스템에 설치된 **Java 17** 경로를 확인하고 `JAVA_HOME`을 해당 경로로 변경 후 재빌드.
 
-### 4.2 "Duplicate Class" (라이브러리 충돌)
+### 5.2 "Duplicate Class" (라이브러리 충돌)
 *   **원인**: 일부 플러그인이 상위 버전의 AndroidX 라이브러리를 강제 참조할 때 발생.
 *   **해결**: `flutter_user_app/android/app/build.gradle` 하단에 아래 전략 추가:
     ```gradle
@@ -55,7 +62,7 @@ Dart 2.19.6 환경에서 컴파일 오류가 없는 검증된 버전입니다.
     }
     ```
 
-### 4.3 한글 깨짐 이슈 (Encoding)
+### 5.3 한글 깨짐 이슈 (Encoding)
 *   **원인**: Windows 터미널 기본 인코딩(MS949)과 소스코드(UTF-8) 불일치.
 *   **해결**: 터미널 실행 시 항상 `chcp 65001`을 입력하여 UTF-8 환경으로 전환.
 

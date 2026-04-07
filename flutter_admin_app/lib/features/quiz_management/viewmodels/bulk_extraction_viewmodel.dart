@@ -133,14 +133,14 @@ class BulkExtractionViewModel extends ChangeNotifier
 
   Future<bool> _appendImageUrlToQuiz(int qNum, String field, String url) async {
     final item = _extractedQuizzes.putIfAbsent(qNum, () => createInitialQuizEntry(qNum));
-    final data = item[field];
-    List blocks;
+    final dynamic data = item[field];
+    List<dynamic> blocks;
     if (data is List) {
-      blocks = List.from(data);
+      blocks = List<dynamic>.from(data);
     } else if (data is String && data.isNotEmpty) {
-      blocks = [{'type': 'text', 'content': data}];
+      blocks = <dynamic>[{'type': 'text', 'content': data}];
     } else {
-      blocks = [];
+      blocks = <dynamic>[];
     }
     blocks.add({'type': 'image', 'content': url});
     item[field] = blocks;
@@ -154,15 +154,15 @@ class BulkExtractionViewModel extends ChangeNotifier
   /// Get image blocks for a field
   List<Map<String, dynamic>> getImages(int qNum, String field) {
     if (!_extractedQuizzes.containsKey(qNum)) return [];
-    final blocks = _extractedQuizzes[qNum]![field];
+    final dynamic blocks = _extractedQuizzes[qNum]![field];
     if (blocks is! List) return [];
-    return blocks.where((b) => b is Map && b['type'] == 'image').cast<Map<String, dynamic>>().toList();
+    return blocks.where((dynamic b) => b is Map && b['type'] == 'image').cast<Map<String, dynamic>>().toList();
   }
 
   void removeImage(int qNum, String field, int index) {
     if (!_extractedQuizzes.containsKey(qNum)) return;
-    final data = _extractedQuizzes[qNum]![field];
-    List blocks = data is List ? List.from(data) : [];
+    final dynamic data = _extractedQuizzes[qNum]![field];
+    List<dynamic> blocks = data is List ? List<dynamic>.from(data) : <dynamic>[];
     if (index >= 0 && index < blocks.length) {
       blocks.removeAt(index);
       _extractedQuizzes[qNum]![field] = blocks;
@@ -192,8 +192,8 @@ class BulkExtractionViewModel extends ChangeNotifier
       final batchData = extractionService.prepareBatchForDatabase(entries);
 
       final success = await _quizRepo.upsertBatch(
-        quizItems: batchData,
-        examFilter: {'subject': subject, 'year': year, 'round': round},
+        quizItems: batchData as List<Map<String, dynamic>>,
+        examFilter: <String, dynamic>{'subject': subject, 'year': year, 'round': round},
       );
 
       if (success) {

@@ -96,10 +96,10 @@ class TreeListController {
   static Map<String, Map<String, String?>> processImageData(
     Map<String, dynamic> tree,
   ) {
-    final List<dynamic> data = tree['tree_images'] ?? [];
+    final List<dynamic> data = (tree['tree_images'] as List<dynamic>?) ?? <dynamic>[];
 
     // UI 태그 명칭과 서버 image_type 간의 매핑 정의
-    final tagMapping = {
+    final Map<String, List<String>> tagMapping = {
       '대표': ['main', 'representative'],
       '잎': ['leaf'],
       '수피': ['bark', 'branch', 'twig', 'stem'], // 수피 및 가지 정보 포함
@@ -109,25 +109,26 @@ class TreeListController {
 
     Map<String, Map<String, String?>> imageData = {};
 
-    for (var entry in tagMapping.entries) {
-      final koreanTag = entry.key;
-      final targetTypes = entry.value;
+    for (final MapEntry<String, List<String>> entry in tagMapping.entries) {
+      final String koreanTag = entry.key;
+      final List<String> targetTypes = entry.value;
 
       // 해당 태그에 해당하는 모든 이미지 필터링
-      final images = data
-          .where((img) => targetTypes.contains(img['image_type']))
+      final List<dynamic> images = data
+          .where((dynamic img) => targetTypes.contains((img as Map<String, dynamic>)['image_type']))
           .toList();
 
       String? imageUrl;
       String? thumbnailUrl;
-      List<String> hints = [];
+      final List<String> hints = <String>[];
 
-      for (var img in images) {
+      for (final dynamic imgRaw in images) {
+        final Map<String, dynamic> img = Map<String, dynamic>.from(imgRaw as Map);
         // 첫 번째 이미지 URL 및 썸네일을 대표로 선택
         imageUrl ??= img['image_url']?.toString();
         thumbnailUrl ??= img['thumbnail_url']?.toString();
 
-        final hint = img['hint']?.toString();
+        final String? hint = img['hint']?.toString();
         if (hint != null && hint.isNotEmpty && hint != '자료없음') {
           if (!hints.contains(hint)) {
             hints.add(hint);

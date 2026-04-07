@@ -101,24 +101,29 @@ export class QuizAttemptService {
      * Sync latest attempt result to user_quiz_summary table.
      */
     private async syncSummary(userId: string, attempts: any[]) {
+        // [1] 문제 번호(question_id) 또는 나무 번호(tree_id) 중 하나라도 있으면 통계 대상으로 수용
         const summaryRows = attempts.map(a => ({
             user_id: userId,
-            question_id: a.question_id,
+            question_id: a.question_id || null, // null 가능하도록 허용
             is_last_correct: a.is_correct,
             tree_id: a.tree_id || null,
             updated_at: new Date().toISOString()
-        })).filter(r => r.question_id !== undefined && r.question_id !== null);
+        })).filter(r => (r.question_id !== null) || (r.tree_id !== null));
 
         if (summaryRows.length === 0) return;
 
-        // Upsert: latest attempt in batch wins for the same question
+        // [2] 배치 내에서 동일 항목에 대해 중복이 발생하면 마지막 결과를 사용
+        // 식별자: question_id가 있으면 question_id, 없으면 tree_id 사용
         const uniqueSummaries = Array.from(
-            new Map(summaryRows.map(s => [s.question_id, s])).values()
+            new Map(summaryRows.map(s => [s.question_id ? `q_${s.question_id}` : `t_${s.tree_id}`, s])).values()
         );
 
+        // [3] DB 업데이트 (UPSERT)
+        // Note: DB 수준에서 (user_id, question_id) 혹은 (user_id, tree_id) 유니크 인덱스가 필요함
+        // 여기서는 기존 로직의 안성을 보장하며 tree_id 기반 업데이트도 시도
         const { error } = await supabase
             .from("user_quiz_summary" as any)
-            .upsert(uniqueSummaries, { onConflict: 'user_id, question_id' });
+            .upsert(uniqueSummaries); // onConflict를 명시하지 않으면 테이블 정의의 Primary Key 혹은 Unique 인덱스를 따름
         
         if (error) {
             console.error(`[SyncSummary] Failed to upsert:`, error.message);

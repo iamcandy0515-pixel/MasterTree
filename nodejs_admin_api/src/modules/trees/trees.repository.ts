@@ -150,6 +150,13 @@ export class TreeRepository {
     }
 
     /**
+     * Fetches images for a specific tree for cleanup
+     */
+    async findImagesByTreeId(treeId: number) {
+        return await supabase.from("tree_images").select("image_url").eq("tree_id", treeId);
+    }
+
+    /**
      * Fetches all trees with images for CSV Export
      */
     async findAllForExport() {

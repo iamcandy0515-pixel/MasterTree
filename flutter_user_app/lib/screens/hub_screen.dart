@@ -32,9 +32,9 @@ class _HubScreenState extends State<HubScreen> {
         setState(() {});
         // After initialization, if not logged in, redirect to login
         if (!_controller.isLoading && !SupabaseService.isLoggedIn) {
-          Navigator.pushReplacement(
+          Navigator.pushReplacement<void, void>(
             context,
-            MaterialPageRoute(builder: (context) => const LoginScreen()),
+            MaterialPageRoute<void>(builder: (BuildContext context) => const LoginScreen()),
           );
         }
       }
@@ -42,18 +42,18 @@ class _HubScreenState extends State<HubScreen> {
   }
 
   void _onLogout() {
-    Navigator.pushReplacement(
+    Navigator.pushReplacement<void, void>(
       context,
-      MaterialPageRoute(
-        builder: (context) => const LoginScreen(),
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) => const LoginScreen(),
       ),
     );
   }
 
   void _onStatsTap() {
-    Navigator.push(
+    Navigator.push<void>(
       context,
-      MaterialPageRoute(builder: (_) => const UserStatsScreen()),
+      MaterialPageRoute<void>(builder: (BuildContext context) => const UserStatsScreen()),
     );
   }
 
@@ -95,10 +95,10 @@ class _HubScreenState extends State<HubScreen> {
                             icon: Icons.menu_book,
                             title: '수목 도감',
                             subtitle: '전체 수목 리스트 및 상세 정보',
-                            onTap: () => Navigator.push(
+                            onTap: () => Navigator.push<void>(
                               context,
-                              MaterialPageRoute(
-                                builder: (context) => const TreeListScreen(),
+                              MaterialPageRoute<void>(
+                                builder: (BuildContext context) => const TreeListScreen(),
                               ),
                             ),
                           ),
@@ -107,10 +107,10 @@ class _HubScreenState extends State<HubScreen> {
                             icon: Icons.school,
                             title: '수목 / 퀴즈',
                             subtitle: '단계별 퀴즈를 통한 지식 습득',
-                            onTap: () => Navigator.push(
+                            onTap: () => Navigator.push<void>(
                               context,
-                              MaterialPageRoute(
-                                builder: (context) => const QuizScreen(),
+                              MaterialPageRoute<void>(
+                                builder: (BuildContext context) => const QuizScreen(),
                               ),
                             ),
                           ),
@@ -119,10 +119,10 @@ class _HubScreenState extends State<HubScreen> {
                             icon: Icons.history_edu,
                             title: '기출 / 학습',
                             subtitle: '연도별 회차별 기출문제 대비',
-                            onTap: () => Navigator.push(
+                            onTap: () => Navigator.push<void>(
                               context,
-                              MaterialPageRoute(
-                                builder: (context) =>
+                              MaterialPageRoute<void>(
+                                builder: (BuildContext context) =>
                                     const PastExamListScreen(),
                               ),
                             ),
@@ -132,10 +132,10 @@ class _HubScreenState extends State<HubScreen> {
                             icon: Icons.compare_arrows,
                             title: '유사(혼동)수목',
                             subtitle: '헷갈리기 쉬운 유사 수목 정밀 분석',
-                            onTap: () => Navigator.push(
+                            onTap: () => Navigator.push<void>(
                               context,
-                              MaterialPageRoute(
-                                builder: (context) =>
+                              MaterialPageRoute<void>(
+                                builder: (BuildContext context) =>
                                     const SimilarSpeciesListScreen(),
                               ),
                             ),

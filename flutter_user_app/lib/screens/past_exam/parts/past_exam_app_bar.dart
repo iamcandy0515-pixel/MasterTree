@@ -29,9 +29,9 @@ class PastExamAppBar extends StatelessWidget implements PreferredSizeWidget {
           onPressed: () async {
             await ApiService.syncPendingAttempts();
             if (context.mounted) {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (_) => const UserStatsScreen(initialIndex: 2),
+              Navigator.of(context).pushReplacement<void, void>(
+                MaterialPageRoute<void>(
+                  builder: (BuildContext _) => const UserStatsScreen(initialIndex: 2),
                 ),
               );
             }

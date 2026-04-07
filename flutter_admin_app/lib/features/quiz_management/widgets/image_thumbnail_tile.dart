@@ -28,9 +28,9 @@ class ImageThumbnailTile extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () {
-              Navigator.push(
+              Navigator.push<dynamic>(
                 context,
-                MaterialPageRoute(
+                MaterialPageRoute<dynamic>(
                   builder: (context) => FullscreenImageViewer(
                     imageUrl: imageUrl,
                     title: title,

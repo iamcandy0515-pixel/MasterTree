@@ -110,8 +110,9 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler {
       _isExistingUser = (user != null);
 
       if (_isExistingUser == true) {
-        final status = user?['status'];
-        if (['expired', 'denied', 'rejected'].contains(status)) throw 'status_denied';
+        final dynamic statusRaw = user?['status'];
+        final String status = statusRaw?.toString() ?? '';
+        if (<String>['expired', 'denied', 'rejected'].contains(status)) throw 'status_denied';
         if (status != 'approved') throw 'status_pending';
         if (isLinkExpired(user)) throw 'status_expired';
 

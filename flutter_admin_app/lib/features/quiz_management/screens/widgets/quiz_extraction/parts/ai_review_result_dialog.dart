@@ -66,7 +66,7 @@ class AIReviewResultDialog extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               ...suggestions.map<Widget>(
-                (s) => Padding(
+                (dynamic s) => Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: Text(
                     '- $s',

@@ -17,10 +17,10 @@ class StatSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int total = data['totalCount'] ?? 0;
-    final int solved = data['solvedCount'] ?? 0;
-    final int correct = data['correctCount'] ?? 0;
-    final int wrong = data['wrongCount'] ?? 0;
+    final int total = (data['totalCount'] as num?)?.toInt() ?? 0;
+    final int solved = (data['solvedCount'] as num?)?.toInt() ?? 0;
+    final int correct = (data['correctCount'] as num?)?.toInt() ?? 0;
+    // final int wrong = (data['wrongCount'] as num?)?.toInt() ?? 0; // Removed unused
     final double progress = total > 0 ? (correct / total) : 0.0; // Mastery rate based on total questions
     final double accuracy = solved > 0 ? (correct / solved) * 100 : 0.0;
 

@@ -19,13 +19,13 @@ class DriveFile {
 
   factory DriveFile.fromJson(Map<String, dynamic> json) {
     return DriveFile(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      mimeType: json['mimeType'] ?? '',
-      webContentLink: json['webContentLink'],
-      createdTime: json['createdTime'],
-      size: json['size'],
-      iconLink: json['iconLink'],
+      id: json['id'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      mimeType: json['mimeType'] as String? ?? '',
+      webContentLink: json['webContentLink'] as String?,
+      createdTime: json['createdTime'] as String?,
+      size: json['size'] as String?,
+      iconLink: json['iconLink'] as String?,
     );
   }
 }

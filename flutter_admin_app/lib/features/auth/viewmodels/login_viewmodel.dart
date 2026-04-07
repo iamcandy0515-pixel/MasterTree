@@ -43,12 +43,15 @@ class LoginViewModel extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
         if (data['success'] == true) {
-          final session = data['data']['session'];
+          final Map<String, dynamic>? responseData = data['data'] as Map<String, dynamic>?;
+          final Map<String, dynamic>? session = responseData?['session'] as Map<String, dynamic>?;
+          
           if (session != null) {
+            final String refreshToken = (session['refresh_token'] as String?) ?? '';
             // Manually set the session in the local Supabase client using refresh_token
-            await Supabase.instance.client.auth.setSession(session['refresh_token']);
+            await Supabase.instance.client.auth.setSession(refreshToken);
             
             // Save credentials locally
             try {

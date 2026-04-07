@@ -32,7 +32,7 @@ class QuizService {
   }) async {
     final url = Uri.parse('${AppConstants.apiUrl}/user-quiz/submit');
     try {
-      final jsonResponse = await BaseApiService.post(url, {
+      final Map<String, dynamic> jsonResponse = await BaseApiService.post(url, {
         'session_id': sessionId,
         'attempts': attempts,
       });
@@ -47,7 +47,7 @@ class QuizService {
     if (attempts.isEmpty) return true;
     final url = Uri.parse('${AppConstants.apiUrl}/user-quiz/batch');
     try {
-      final jsonResponse = await BaseApiService.post(url, {'attempts': attempts});
+      final Map<String, dynamic> jsonResponse = await BaseApiService.post(url, {'attempts': attempts});
       return jsonResponse['success'] == true;
     } catch (e) {
       debugPrint('QuizService.submitBatchAttempts Error: $e');
@@ -61,12 +61,12 @@ class QuizService {
   }) async {
     final url = Uri.parse('${AppConstants.apiUrl}/user-quiz/generate');
     try {
-      final jsonResponse = await BaseApiService.post(url, {
+      final Map<String, dynamic> jsonResponse = await BaseApiService.post(url, <String, dynamic>{
         'mode': mode,
         'limit': limit,
       });
       if (jsonResponse['success'] == true) {
-        return Map<String, dynamic>.from(jsonResponse['data'] ?? {});
+        return Map<String, dynamic>.from((jsonResponse['data'] as Map<dynamic, dynamic>?) ?? <String, dynamic>{});
       }
       throw Exception('세션 생성 실패: ${jsonResponse['message']}');
     } catch (e) {

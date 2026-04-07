@@ -51,17 +51,15 @@ class _SimilarQuizReviewDialogState extends State<SimilarQuizReviewDialog> {
   Future<void> _fetchStoredRecommendations(List<int> ids) async {
     setState(() => _isLoading = true);
     try {
-      final response = await Supabase.instance.client
+      final dynamic response = await Supabase.instance.client
           .from('quiz_questions')
-          .select(
+          .select<PostgrestList>(
             'id, question_number, quiz_exams(year, round, title), quiz_categories(name), content_blocks',
           )
           .filter('id', 'in', ids);
 
       if (mounted) {
-        final List<Map<String, dynamic>> fetched = (response as List).map((
-          item,
-        ) {
+        final List<Map<String, dynamic>> fetched = (response as List).map((dynamic item) {
           final exam = item['quiz_exams'] as Map<String, dynamic>?;
           final category = item['quiz_categories'] as Map<String, dynamic>?;
 
@@ -71,17 +69,17 @@ class _SimilarQuizReviewDialogState extends State<SimilarQuizReviewDialog> {
             'round': exam?['round'],
             'subject': category?['name'],
             'question_number': item['question_number'],
-            'question': _getFullQuizText(item),
+            'question': _getFullQuizText(item as Map<String, dynamic>),
           };
-        }).toList();
+        }).toList().cast<Map<String, dynamic>>();
 
         // Sort by year/round desc
         fetched.sort((a, b) {
-          final yearA = a['year'] ?? 0;
-          final yearB = b['year'] ?? 0;
+          final int yearA = (a['year'] as int?) ?? 0;
+          final int yearB = (b['year'] as int?) ?? 0;
           if (yearA != yearB) return yearB.compareTo(yearA);
-          final roundA = a['round'] ?? 0;
-          final roundB = b['round'] ?? 0;
+          final int roundA = (a['round'] as int?) ?? 0;
+          final int roundB = (b['round'] as int?) ?? 0;
           return roundB.compareTo(roundA);
         });
 
@@ -102,7 +100,7 @@ class _SimilarQuizReviewDialogState extends State<SimilarQuizReviewDialog> {
     if (blocks == null || blocks.isEmpty) return '';
 
     return blocks
-        .map((block) {
+        .map((dynamic block) {
           if (block is Map<String, dynamic> && block['type'] == 'text') {
             return block['content']?.toString() ?? '';
           } else if (block is String) {

@@ -53,7 +53,7 @@ class BulkQuizListView extends StatelessWidget {
   }
 
   void _showReviewDialog(BuildContext context, BulkSimilarManagementViewModel vm, Map<String, dynamic> quiz) {
-    showDialog(
+    showDialog<dynamic>(
       context: context,
       builder: (context) => SimilarQuizReviewDialog(
         quiz: quiz,

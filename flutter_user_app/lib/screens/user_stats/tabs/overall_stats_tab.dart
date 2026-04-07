@@ -14,18 +14,18 @@ class OverallStatsTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _WelcomeSection(user: stats['user']),
+          _WelcomeSection(user: stats['user'] as Map<String, dynamic>?),
           const SizedBox(height: 24),
           StatSummaryCard(
             title: '수목 퀴즈 학습 요약',
-            data: stats['quiz'] ?? {},
+            data: Map<String, dynamic>.from(stats['quiz'] as Map? ?? <String, dynamic>{}),
             accentColor: AppColors.primary,
             icon: Icons.school,
           ),
           const SizedBox(height: 16),
           StatSummaryCard(
             title: '기출 문제 학습 요약',
-            data: stats['pastExam'] ?? {},
+            data: Map<String, dynamic>.from(stats['pastExam'] as Map? ?? <String, dynamic>{}),
             accentColor: Colors.orangeAccent,
             icon: Icons.history_edu,
           ),
@@ -42,7 +42,7 @@ class _WelcomeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final name = user?['name'] ?? '사용자';
+    final String name = user?['name']?.toString() ?? '사용자';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

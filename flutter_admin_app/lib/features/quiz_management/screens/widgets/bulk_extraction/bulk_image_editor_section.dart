@@ -286,7 +286,7 @@ class _BulkImageEditorSectionState extends State<BulkImageEditorSection> {
         children: [
           ...images.asMap().entries.map((entry) {
             final index = entry.key;
-            final imageUrl = entry.value['content'];
+            final String imageUrl = entry.value['content'] as String? ?? '';
 
             return Container(
               margin: const EdgeInsets.only(bottom: 12),

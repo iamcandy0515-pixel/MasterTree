@@ -10,7 +10,8 @@ mixin AuthLogicHandler {
   bool isLinkExpired(Map<String, dynamic>? user) {
     if (user?['expired_at'] != null) {
       try {
-        final expiredAt = DateTime.parse(user!['expired_at']);
+        final String expiredAtStr = user!['expired_at']?.toString() ?? '';
+        final DateTime expiredAt = DateTime.parse(expiredAtStr);
         return DateTime.now().isAfter(expiredAt);
       } catch (e) {
         debugPrint('Expiration check error: $e');
@@ -51,10 +52,10 @@ mixin AuthLogicHandler {
           final authResponse = await SupabaseService.signUpPermanent(
             phone,
             name: name,
-            email: user['email'] ?? '',
+            email: user['email']?.toString() ?? '',
           );
           if (authResponse.user != null) {
-            await SupabaseService.updateUserAuthId(user['id'], authResponse.user!.id);
+            await SupabaseService.updateUserAuthId(user['id'] as int, authResponse.user!.id);
             // After sign up, sync session as well
             await SupabaseService.signInPermanent(
               phone,

@@ -31,10 +31,10 @@ class TreeHeroSection extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           child: GestureDetector(
             onTap: () {
-              Navigator.push(
+              Navigator.push<void>(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => FullscreenImageViewer(
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => FullscreenImageViewer(
                     imageUrl: imageUrl,
                     title: '$name ($tag)',
                   ),
@@ -48,12 +48,12 @@ class TreeHeroSection extends StatelessWidget {
                   imageUrl: imageUrl,
                   fit: BoxFit.cover,
                   memCacheWidth: 800,
-                  placeholder: (context, url) => Center(
+                  placeholder: (BuildContext context, String url) => Center(
                     child: CircularProgressIndicator(
                       color: AppColors.primary.withOpacity(0.2),
                     ),
                   ),
-                  errorWidget: (context, url, error) => const Icon(Icons.error, color: Colors.white24),
+                  errorWidget: (BuildContext context, String url, dynamic error) => const Icon(Icons.error, color: Colors.white24),
                 ),
                 Container(
                   decoration: BoxDecoration(

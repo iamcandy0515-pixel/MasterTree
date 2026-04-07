@@ -12,7 +12,7 @@ class ExamRepository {
   }) async {
     try {
       // Data Query 
-      var baseQuery = _supabase.from('quiz_questions').select('''
+      PostgrestFilterBuilder<PostgrestList> baseQuery = _supabase.from('quiz_questions').select<PostgrestList>('''
         *,
         quiz_exams!inner(year, round, title),
         quiz_categories!inner(name)
@@ -28,12 +28,12 @@ class ExamRepository {
         baseQuery = baseQuery.eq('quiz_exams.round', int.parse(session));
       }
 
-      final data = await baseQuery
+      final List<dynamic> data = await baseQuery
           .order('question_number', ascending: true)
           .range(from, to);
 
-      // Count Query (Note: Supabase returns count but for inner joins, sometimes manual calculation of result set is safer or easier for total filtering)
-      var countQuery = _supabase.from('quiz_questions').select(
+      // Count Query 
+      PostgrestFilterBuilder<PostgrestList> countQuery = _supabase.from('quiz_questions').select<PostgrestList>(
         'id, quiz_exams!inner(year, round), quiz_categories!inner(name)',
       );
       
@@ -47,11 +47,11 @@ class ExamRepository {
         countQuery = countQuery.eq('quiz_exams.round', int.parse(session));
       }
 
-      final allIds = await countQuery;
-      final totalCount = (allIds as List).length;
+      final PostgrestList allIds = await countQuery;
+      final int totalCount = allIds.length;
 
-      return {
-        'questions': List<Map<String, dynamic>>.from(data),
+      return <String, dynamic>{
+        'questions': data.map((dynamic e) => Map<String, dynamic>.from(e as Map)).toList(),
         'totalItems': totalCount,
       };
     } catch (e) {

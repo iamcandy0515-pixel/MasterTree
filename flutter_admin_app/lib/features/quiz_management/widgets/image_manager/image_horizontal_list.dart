@@ -30,11 +30,11 @@ class ImageHorizontalList extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         itemCount: imageBlocks.length,
         itemBuilder: (context, index) {
-          final block = imageBlocks[index];
+          final dynamic block = imageBlocks[index];
           final realIndex = allBlocks.indexOf(block);
           
           return ImagePreviewItem(
-            imageUrl: block['content'],
+            imageUrl: (block['content'] as String),
             title: '${field == 'question' ? '문제' : '해설'} 이미지',
             onRemove: () {
               viewModel.removeImage(qNum, field, realIndex);

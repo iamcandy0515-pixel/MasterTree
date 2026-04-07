@@ -60,19 +60,19 @@ class TreePartContent extends StatelessWidget {
           TreeAttributeRow(
             icon: Icons.category,
             label: '구분',
-            content: tree['category'] ?? '미분류',
+            content: tree['category']?.toString() ?? '미분류',
           ),
           const SizedBox(height: 16),
           TreeAttributeRow(
             icon: Icons.filter_vintage,
             label: '수형',
-            content: tree['shape'] ?? '정보 없음',
+            content: tree['shape']?.toString() ?? '정보 없음',
           ),
           const SizedBox(height: 16),
           TreeAttributeRow(
             icon: Icons.description,
             label: '상세 설명',
-            content: tree['description'] ?? '설명 없음',
+            content: tree['description']?.toString() ?? '설명 없음',
           ),
         ],
       ),

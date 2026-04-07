@@ -16,7 +16,7 @@ class QuizDashboardController {
 
     try {
       final data = await ApiService.getUserPerformanceStats();
-      final pastExam = data['pastExam'] as Map<String, dynamic>? ?? {};
+      final Map<String, dynamic> pastExam = data['pastExam'] as Map<String, dynamic>? ?? <String, dynamic>{};
       
       final dynamic solvedVal = pastExam['solvedCount'];
       final int solved = (solvedVal is num) ? solvedVal.toInt() : 0;
@@ -34,8 +34,9 @@ class QuizDashboardController {
       }
       
       // Parse real trends from API if available
-      final List<dynamic> recentTrends = data['recentTrends'] as List<dynamic>? ?? [];
-      trends = recentTrends.map((t) {
+      final List<dynamic> recentTrends = (data['recentTrends'] as List<dynamic>?) ?? <dynamic>[];
+      trends = recentTrends.map((dynamic tRaw) {
+        final Map<String, dynamic> t = Map<String, dynamic>.from(tRaw as Map);
         final dynamic score = t['total_score'];
         if (score is num) return score.toDouble();
         return 0.0;

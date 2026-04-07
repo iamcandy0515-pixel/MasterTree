@@ -118,15 +118,15 @@ class _MoreMenu extends StatelessWidget {
       final results = await vm.importData(file.bytes!, file.name);
 
       if (context.mounted && results != null) {
-        final success = results['success'] ?? 0;
-        final failed = results['failed'] ?? 0;
+        final int success = (results['success'] as int?) ?? 0;
+        final int failed = (results['failed'] as int?) ?? 0;
         _showImportResult(context, success, failed);
       }
     }
   }
 
   void _showImportResult(BuildContext context, int success, int failed) {
-    showDialog(
+    showDialog<dynamic>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('가져오기 완료'),

@@ -21,7 +21,7 @@ class QuizDriveRepository extends BaseRepository with QuizRepositoryMixin {
     );
 
     final jsonResponse = parseJsonResponse(response);
-    final results = List<Map<String, dynamic>>.from(jsonResponse['data']);
+    final results = List<Map<String, dynamic>>.from((jsonResponse['data'] as Iterable<dynamic>));
     
     // Cache for 10 minutes or simple map storage (per app lifecycle)
     _searchCache[keyword] = results;
@@ -69,7 +69,7 @@ class QuizDriveRepository extends BaseRepository with QuizRepositoryMixin {
     );
 
     final jsonResponse = parseJsonResponse(response);
-    return jsonResponse['data'];
+    return jsonResponse['data'] as Map<String, dynamic>;
   }
 
   Future<List<dynamic>> extractBatch({
@@ -97,6 +97,6 @@ class QuizDriveRepository extends BaseRepository with QuizRepositoryMixin {
     );
 
     final jsonResponse = parseJsonResponse(resp);
-    return jsonResponse['data']['batchData'] ?? [];
+    return (jsonResponse['data'] as Map<String, dynamic>)['batchData'] as List<dynamic>? ?? <dynamic>[];
   }
 }

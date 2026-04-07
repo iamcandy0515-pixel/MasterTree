@@ -17,7 +17,7 @@ class ImageThumbnailList extends StatelessWidget {
   Widget build(BuildContext context) {
     if (blocks.isEmpty) return const SizedBox.shrink();
 
-    final imageBlocks = blocks.where((b) => b['type'] == 'image').toList();
+    final imageBlocks = blocks.where((dynamic b) => b['type'] == 'image').toList();
     if (imageBlocks.isEmpty) return const SizedBox.shrink();
 
     return SizedBox(
@@ -26,12 +26,12 @@ class ImageThumbnailList extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         itemCount: imageBlocks.length,
         itemBuilder: (context, index) {
-          final block = imageBlocks[index];
+          final dynamic block = imageBlocks[index];
           final realIndex = blocks.indexOf(block);
           final title = field == 'question' ? '문제 이미지' : '정답 및 해설 이미지';
 
           return ImageThumbnailTile(
-            imageUrl: block['content'],
+            imageUrl: (block['content'] as String),
             title: title,
             onDelete: () => onRemove(realIndex),
           );

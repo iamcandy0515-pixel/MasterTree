@@ -37,10 +37,10 @@ class QuizImageDisplay extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           child: GestureDetector(
             onTap: () {
-              Navigator.push(
+              Navigator.push<void>(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => FullscreenImageViewer(
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => FullscreenImageViewer(
                     imageUrl: imageUrl,
                     title: '수목 식별 이미지',
                   ),
@@ -59,9 +59,9 @@ class QuizImageDisplay extends StatelessWidget {
                     fit: BoxFit.cover,
                     memCacheWidth: 450,
                     // [최적화] 썸네일을 먼저 보여주는 프로그레시브 로딩
-                    placeholder: (context, url) => thumbnailUrl != null 
+                    placeholder: (BuildContext context, String url) => thumbnailUrl != null 
                       ? Image.network(
-                          ApiService.getProxyImageUrl(thumbnailUrl, width: 300),
+                          ApiService.getProxyImageUrl(thumbnailUrl!, width: 300),
                           fit: BoxFit.cover,
                         )
                       : const Center(
@@ -70,7 +70,7 @@ class QuizImageDisplay extends StatelessWidget {
                             strokeWidth: 2,
                           ),
                         ),
-                    errorWidget: (context, url, error) => _buildErrorWidget(),
+                    errorWidget: (BuildContext context, String url, dynamic error) => _buildErrorWidget(),
                   ),
                 ),
 

@@ -21,24 +21,22 @@ class QuizSolverController {
 
     try {
       // 기출문제 모드면 'pastExam', 아니면 'normal' (수목퀴즈)
-      // QuizSolverScreen에서 전달받은 mode가 'random' 이더라도 
-      // 기출문제 질문을 가져오기 위해 'pastExam' 모드를 기본으로 사용하거나 
-      // 전달받은 모드가 있으면 해당 모드를 사용하도록 수정
-      final data = await ApiService.generateQuizSession(
+      final Map<String, dynamic> data = await ApiService.generateQuizSession(
         mode: mode == 'random' || mode == 'weakness' ? 'pastExam' : mode,
         limit: 10,
       );
 
-      sessionId = data['session_id'];
-      final List<dynamic> rawQs = data['questions'] ?? [];
+      sessionId = data['session_id'] as int?;
+      final List<dynamic> rawQs = (data['questions'] as List<dynamic>?) ?? <dynamic>[];
 
-      questions = rawQs.map((q) {
+      questions = rawQs.map((dynamic qRaw) {
+        final Map<String, dynamic> q = Map<String, dynamic>.from(qRaw as Map);
         // 현재 UI 구조가 단일 String을 기대하므로 블록들을 문자열로 병합
-        String content = _flattenBlocks(q['content_blocks']);
-        String explanation = _flattenBlocks(q['explanation_blocks']);
-        List<String> options = (q['options'] as List).map((o) => _flattenBlocks([o])).toList();
+        final String content = _flattenBlocks(q['content_blocks']);
+        final String explanation = _flattenBlocks(q['explanation_blocks']);
+        final List<String> options = (q['options'] as List<dynamic>).map((dynamic o) => _flattenBlocks(<dynamic>[o])).toList();
 
-        return {
+        return <String, dynamic>{
           'id': q['id'],
           'category_id': q['category_id'],
           'content': content,
@@ -61,7 +59,8 @@ class QuizSolverController {
     if (blocks == null) return '';
     if (blocks is String) return blocks;
     if (blocks is List) {
-      return blocks.map((b) {
+      final List<dynamic> blockList = blocks;
+      return blockList.map((dynamic b) {
         if (b is Map && b.containsKey('content')) {
           return b['content'].toString();
         }
@@ -74,7 +73,7 @@ class QuizSolverController {
   bool get isLastQuestion => questions.isEmpty ? true : currentQuestionIndex >= questions.length - 1;
   double get progress {
     if (questions.isEmpty) return 0.0;
-    double val = (currentQuestionIndex + 1) / questions.length;
+    final double val = (currentQuestionIndex + 1) / questions.length;
     return val.isFinite ? val : 0.0;
   }
   Map<String, dynamic> get currentQuestion => questions[currentQuestionIndex];
@@ -88,8 +87,8 @@ class QuizSolverController {
     if (selectedOptionIndex == null || isAnswerSubmitted) return;
     isAnswerSubmitted = true;
 
-    final q = currentQuestion;
-    final isCorrect = selectedOptionIndex == q['correct_index'];
+    final Map<String, dynamic> q = currentQuestion;
+    final bool isCorrect = selectedOptionIndex == (q['correct_index'] as int);
 
     // 1. 서버에 즉시 저장 시도 (Phase 3 요구사항)
     ApiService.submitQuizAttempt(
@@ -102,7 +101,7 @@ class QuizSolverController {
     );
 
     // 2. 오프라인 대비 및 배치 동기화를 위해 기존 큐에도 추가 (중복 방지는 서버가 처리)
-    ApiService.addPendingAttempt({
+    ApiService.addPendingAttempt(<String, dynamic>{
       'session_id': sessionId,
       'question_id': q['id'],
       'category_id': q['category_id'],

@@ -51,10 +51,10 @@ class VisualComparisonSection extends StatelessWidget {
   Widget _buildImageHalf(BuildContext context, String name, String imageUrl, {required bool isLeft}) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
+        Navigator.push<void>(
           context,
-          MaterialPageRoute(
-            builder: (context) => FullscreenImageViewer(imageUrl: imageUrl, title: name),
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) => FullscreenImageViewer(imageUrl: imageUrl, title: name),
           ),
         );
       },
@@ -65,14 +65,14 @@ class VisualComparisonSection extends StatelessWidget {
               ApiService.getProxyImageUrl(imageUrl),
               fit: BoxFit.cover,
               cacheWidth: 500,
-              loadingBuilder: (context, child, loadingProgress) {
+              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                 if (loadingProgress == null) return child;
                 return Container(
                   color: Colors.white.withOpacity(0.05),
                   child: const Center(child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary)),
                 );
               },
-              errorBuilder: (context, error, stackTrace) {
+              errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
                 return Container(
                   color: Colors.white.withOpacity(0.05),
                   child: const Center(child: Icon(Icons.broken_image_outlined, color: Colors.white24, size: 40)),

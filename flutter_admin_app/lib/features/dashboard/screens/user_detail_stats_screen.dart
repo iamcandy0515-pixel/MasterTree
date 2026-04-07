@@ -100,7 +100,7 @@ class _UserDetailStatsContent extends StatelessWidget {
         children: [
           StatCard(
             title: title,
-            data: data ?? {},
+            data: (data as Map<String, dynamic>?) ?? <String, dynamic>{},
             accentColor: color,
             icon: icon,
           ),

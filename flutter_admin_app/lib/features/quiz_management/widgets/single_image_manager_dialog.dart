@@ -70,7 +70,7 @@ class _SingleQuizImageManagerDialogState
 
   @override
   Widget build(BuildContext context) {
-    final List blocks = widget.viewModel.extractedBlock?[widget.field] ?? [];
+    final List<dynamic> blocks = widget.viewModel.extractedBlock?[widget.field] as List<dynamic>? ?? <dynamic>[];
 
     return AlertDialog(
       backgroundColor: surfaceDark,

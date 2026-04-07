@@ -27,15 +27,16 @@ class ContentBlockRenderer extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: blocks.map((block) {
-        if (block is! Map) {
-          final text = block?.toString() ?? '';
+      children: blocks.map((dynamic blockRaw) {
+        if (blockRaw is! Map) {
+          final String text = blockRaw?.toString() ?? '';
           if (text.trim().isEmpty) return const SizedBox.shrink();
           return _buildTextBlock(text);
         }
 
-        final type = block['type'] as String?;
-        final content = block['content']?.toString() ?? '';
+        final Map<String, dynamic> block = Map<String, dynamic>.from(blockRaw);
+        final String? type = block['type'] as String?;
+        final String content = block['content']?.toString() ?? '';
 
         if (type == 'image') {
           if (hideImages) return const SizedBox.shrink();
@@ -43,10 +44,10 @@ class ContentBlockRenderer extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: spacing),
             child: GestureDetector(
               onTap: () {
-                Navigator.push(
+                Navigator.push<void>(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) =>
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) =>
                         FullscreenImageViewer(imageUrl: content),
                   ),
                 );
@@ -55,7 +56,7 @@ class ContentBlockRenderer extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 child: CachedNetworkImage(
                   imageUrl: ApiService.getProxyImageUrl(content),
-                  placeholder: (context, url) => Container(
+                  placeholder: (BuildContext context, String url) => Container(
                     height: 200,
                     color: Colors.white10,
                     child: const Center(
@@ -65,7 +66,7 @@ class ContentBlockRenderer extends StatelessWidget {
                       ),
                     ),
                   ),
-                  errorWidget: (context, url, error) => Container(
+                  errorWidget: (BuildContext context, String url, dynamic error) => Container(
                     height: 100,
                     width: double.infinity,
                     color: Colors.white10,

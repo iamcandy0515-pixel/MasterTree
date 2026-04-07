@@ -12,9 +12,9 @@ class TreeGroupPreviewAction extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () {
-        Navigator.push(
+        Navigator.push<dynamic>(
           context,
-          MaterialPageRoute(
+          MaterialPageRoute<dynamic>(
             builder: (context) => TreeLookalikeDetailScreen(group: group),
           ),
         );

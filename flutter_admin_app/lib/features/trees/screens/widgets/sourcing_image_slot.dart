@@ -30,8 +30,8 @@ class SourcingImageSlot extends StatelessWidget {
     final isMissing = vm.fileMissing[key] ?? false;
 
     // Resolve display content
-    final stagedData = vm.pendingImages[key];
-    final displayItem =
+    final dynamic stagedData = vm.pendingImages[key];
+    final dynamic displayItem =
         stagedData ??
         (isThumb
             ? (existing?.thumbnailUrl?.isNotEmpty == true ? existing : null)
@@ -259,7 +259,7 @@ class SourcingImageSlot extends StatelessWidget {
             ),
           ),
         ),
-        errorWidget: (context, url, error) => Center(
+        errorWidget: (context, url, dynamic error) => Center(
           child: Icon(
             Icons.warning_amber_rounded,
             color: Colors.red.withOpacity(0.5),
@@ -275,7 +275,7 @@ class SourcingImageSlot extends StatelessWidget {
   Future<void> _showUrlInputDialog(BuildContext context) async {
     final controller = TextEditingController();
     final key = '${type}_${isThumb ? 'thumb' : 'original'}';
-    final current = vm.pendingImages[key] ?? vm.getImageByType(type);
+    final dynamic current = vm.pendingImages[key] ?? vm.getImageByType(type);
 
     if (current is TreeImage) {
       controller.text =

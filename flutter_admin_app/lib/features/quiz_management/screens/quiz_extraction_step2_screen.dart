@@ -110,7 +110,7 @@ class _QuizExtractionStep2ScreenContentState
   }
 
   void _showErrorDialog(String error) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF1E1E1E),
@@ -153,7 +153,7 @@ class _QuizExtractionStep2ScreenContentState
   }
 
   void _showLoading() {
-    showDialog(
+    showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (_) => const Center(child: CircularProgressIndicator(color: primaryColor)),
@@ -161,22 +161,35 @@ class _QuizExtractionStep2ScreenContentState
   }
 
   void _updateControllers(Map<String, dynamic> block, QuizExtractionStep2ViewModel vm) {
-    if (block['content_blocks']?.isNotEmpty ?? false) {
-      _questionController.text = block['content_blocks'].first['content'] ?? '';
+    if (block['content_blocks'] != null) {
+      final List contentBlocks = block['content_blocks'] as List? ?? <dynamic>[];
+      if (contentBlocks.isNotEmpty) {
+        _questionController.text = (contentBlocks.first['content'] as String? ?? '');
+      }
     }
-    if (block['explanation_blocks']?.isNotEmpty ?? false) {
-      _explanationController.text = block['explanation_blocks'].first['content'] ?? '';
+    if (block['explanation_blocks'] != null) {
+      final List explanationBlocks = block['explanation_blocks'] as List? ?? <dynamic>[];
+      if (explanationBlocks.isNotEmpty) {
+        _explanationController.text = (explanationBlocks.first['content'] as String? ?? '');
+      }
     }
     if (block['options'] != null) {
-      final options = block['options'] as List;
-      final correctIdx = block['correct_option_index'] ?? 0;
-      final incorrect = options.where((o) => options.indexOf(o) != correctIdx).toList();
-      _optionControllers[0].text = options.length > correctIdx ? (options[correctIdx]['content'] ?? '') : '';
-      _optionControllers[1].text = incorrect.isNotEmpty ? (incorrect.first['content'] ?? '') : '';
+      final List options = block['options'] as List? ?? <dynamic>[];
+      final int correctIdx = block['correct_option_index'] as int? ?? 0;
+      final List incorrect = options.where((dynamic o) => options.indexOf(o) != correctIdx).toList();
+      
+      if (options.length > correctIdx) {
+        _optionControllers[0].text = options[correctIdx]['content'] as String? ?? '';
+      }
+      if (incorrect.isNotEmpty) {
+        _optionControllers[1].text = incorrect.first['content'] as String? ?? '';
+      }
     }
-    final hintBlocks = block['hint_blocks'] as List? ?? [];
-    for (int i = 0; i < vm.hintsCount; i++) {
-      _hintControllers[i].text = i < hintBlocks.length ? (hintBlocks[i]['content'] ?? '') : '';
+    final List hintBlocks = block['hint_blocks'] as List? ?? <dynamic>[];
+    for (int i = 0; i < 5; i++) {
+      if (i < _hintControllers.length) {
+        _hintControllers[i].text = i < hintBlocks.length ? (hintBlocks[i]['content'] as String? ?? '') : '';
+      }
     }
   }
 

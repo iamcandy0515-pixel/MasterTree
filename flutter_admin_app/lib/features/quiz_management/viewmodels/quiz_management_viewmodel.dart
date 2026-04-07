@@ -98,7 +98,7 @@ class QuizManagementViewModel extends ChangeNotifier {
     try {
       final supabase = Supabase.instance.client;
 
-      var baseQuery = supabase.from('quiz_questions').select('''
+      var baseQuery = supabase.from('quiz_questions').select<PostgrestList>('''
         *,
         quiz_exams!inner(year, round, title),
         quiz_categories!inner(name)
@@ -111,21 +111,21 @@ class QuizManagementViewModel extends ChangeNotifier {
       final from = (_currentPage - 1) * _itemsPerPage;
       final to = from + _itemsPerPage - 1;
 
-      final response = await baseQuery
+      final dynamic response = await baseQuery
           .order('question_number', ascending: true)
           .range(from, to)
           .timeout(const Duration(seconds: 15));
 
       // Count calculation
-      final allIds = await supabase
+      final dynamic allIds = await supabase
           .from('quiz_questions')
-          .select('id, quiz_exams!inner(year, round), quiz_categories!inner(name)')
+          .select<PostgrestList>('id, quiz_exams!inner(year, round), quiz_categories!inner(name)')
           .like('quiz_categories.name', '%$_selectedSubject%')
           .eq('quiz_exams.year', int.parse(_selectedYear!))
           .eq('quiz_exams.round', int.parse(_selectedSession!));
 
       final totalItems = (allIds as List).length;
-      _quizzes = List<Map<String, dynamic>>.from(response);
+      _quizzes = List<Map<String, dynamic>>.from(response as List);
       _totalPages = (totalItems / _itemsPerPage).ceil();
       if (_totalPages == 0) _totalPages = 1;
 

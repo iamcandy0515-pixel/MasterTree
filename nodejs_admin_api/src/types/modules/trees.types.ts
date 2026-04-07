@@ -49,6 +49,7 @@ export type TreeTables = {
       quiz_distractors?: string[] | null
       scientific_name?: string | null
       shape?: string | null
+      family_name?: string | null
     }
     Relationships: []
   }
@@ -70,6 +71,7 @@ export type TreeTables = {
       id?: never
       image_type?: string | null
       image_url?: string | null
+      thumbnail_url?: string | null
       is_quiz_enabled?: boolean
       tree_id: number
       uploaded_by?: string | null
@@ -80,6 +82,7 @@ export type TreeTables = {
       id?: never
       image_type?: string | null
       image_url?: string | null
+      thumbnail_url?: string | null
       is_quiz_enabled?: boolean
       tree_id?: number
       uploaded_by?: string | null

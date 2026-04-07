@@ -12,13 +12,13 @@ class SimilarSpeciesCard extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => Navigator.push(
+        onTap: () => Navigator.push<void>(
           context,
-          MaterialPageRoute(
-            builder: (context) => SpeciesComparisonDetailScreen(
-              tree1: item['tree1']!,
-              tree2: item['tree2']!,
-              groupId: item['id'].toString(),
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) => SpeciesComparisonDetailScreen(
+              tree1: item['tree1']?.toString() ?? '',
+              tree2: item['tree2']?.toString() ?? '',
+              groupId: item['id']?.toString() ?? '',
             ),
           ),
         ),
@@ -32,7 +32,7 @@ class SimilarSpeciesCard extends StatelessWidget {
           ),
           child: Row(
             children: [
-              _buildImageStack(item['count'] ?? 0),
+              _buildImageStack((item['count'] as num?)?.toInt() ?? 0),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
@@ -42,7 +42,7 @@ class SimilarSpeciesCard extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            item['group_name'] ??
+                            item['group_name']?.toString() ??
                                 '${item['tree1']} vs ${item['tree2']}',
                             style: const TextStyle(
                               fontSize: 14,
@@ -70,7 +70,7 @@ class SimilarSpeciesCard extends StatelessWidget {
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
-                            item['desc']!,
+                            item['desc']?.toString() ?? '',
                             style: const TextStyle(
                               color: AppColors.primary,
                               fontSize: 11,

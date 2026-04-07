@@ -96,8 +96,21 @@ export class TreeService {
         }
 
         // Choice 1.A: Re-sync images by delete-and-insert
+        // [Refinement] Fetch existing image public_ids for Cloudinary cleanup before DB deletion
+        const { data: oldImages } = await treeRepository.findImagesByTreeId(id);
         const { error: deleteError } = await treeRepository.deleteImagesByTreeId(id);
         if (deleteError) throw deleteError;
+
+        // Cloudinary Cleanup (Async, Non-blocking for UI)
+        if (oldImages && (oldImages as any[]).length > 0) {
+            const publicIds = (oldImages as any[]).map(img => img.image_url).filter(url => url?.includes("cloudinary"));
+            // Extract public_id from URL if stored as URL
+            const extractedIds = publicIds.map(url => url.match(/(tree-images\/trees\/[^?./]+)/)?.[1]).filter(Boolean) as string[];
+            if (extractedIds.length > 0) {
+                const { UploadService } = require("../uploads/uploads.service");
+                UploadService.deleteFromStorage(extractedIds).catch((e: any) => logger.warn(`[Cleanup] Update cleanup failed for tree ${id}:`, e));
+            }
+        }
 
         if (dto.images && dto.images.length > 0) {
             const imageRecords = dto.images.map(img => ({ ...img, tree_id: id, uploaded_by: userId }));
@@ -109,14 +122,28 @@ export class TreeService {
     }
 
     /**
-     * Deletes a tree and its images automatically (via DB cascade or explicit call)
+     * Deletes a tree and its images automatically (via DB cascade and explicit Cloudinary call)
      */
     static async delete(id: number) {
+        // [Refinement] Fetch images for Cloudinary cleanup before deletion
+        const { data: images } = await treeRepository.findImagesByTreeId(id);
+        
         const { error } = await treeRepository.deleteTree(id);
         if (error) {
             logger.error(`[TreeService] Failed to delete tree ${id}:`, error);
             throw error;
         }
+
+        // Cloudinary Cleanup (Async)
+        if (images && (images as any[]).length > 0) {
+            const publicIds = (images as any[]).map(img => img.image_url).filter(url => url?.includes("cloudinary"));
+            const extractedIds = publicIds.map(url => url.match(/(tree-images\/trees\/[^?./]+)/)?.[1]).filter(Boolean) as string[];
+            if (extractedIds.length > 0) {
+                const { UploadService } = require("../uploads/uploads.service");
+                UploadService.deleteFromStorage(extractedIds).catch((e: any) => logger.warn(`[Cleanup] Delete cleanup failed for tree ${id}:`, e));
+            }
+        }
+
         return true;
     }
 

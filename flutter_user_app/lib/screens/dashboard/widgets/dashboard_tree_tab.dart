@@ -20,9 +20,9 @@ class DashboardTreeTab extends StatelessWidget {
             '모든 수목 정보를 확인하세요.',
             Icons.menu_book,
             AppColors.primary,
-            () => Navigator.push(
+            () => Navigator.push<void>(
               context,
-              MaterialPageRoute(builder: (_) => const TreeListScreen()),
+              MaterialPageRoute<void>(builder: (BuildContext _) => const TreeListScreen()),
             ),
           ),
           const SizedBox(height: 10),
@@ -32,9 +32,9 @@ class DashboardTreeTab extends StatelessWidget {
             '오늘의 퀴즈로 실력을 테스트하세요.',
             Icons.school,
             Colors.orangeAccent,
-            () => Navigator.push(
+            () => Navigator.push<void>(
               context,
-              MaterialPageRoute(builder: (_) => const QuizScreen()),
+              MaterialPageRoute<void>(builder: (BuildContext _) => const QuizScreen()),
             ),
           ),
           const SizedBox(height: 10),
@@ -44,9 +44,9 @@ class DashboardTreeTab extends StatelessWidget {
             '헷갈리는 수목들을 비교 학습하세요.',
             Icons.compare_arrows,
             Colors.purpleAccent,
-            () => Navigator.push(
+            () => Navigator.push<void>(
               context,
-              MaterialPageRoute(builder: (_) => const SimilarSpeciesListScreen()),
+              MaterialPageRoute<void>(builder: (BuildContext _) => const SimilarSpeciesListScreen()),
             ),
           ),
           const SizedBox(height: 16),

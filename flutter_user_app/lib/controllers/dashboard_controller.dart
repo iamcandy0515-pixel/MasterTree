@@ -24,11 +24,11 @@ class DashboardController {
 
     // 2. 서버에서 최신 정보 가져오기
     try {
-      final stats = await ApiService.getUserStats();
+      final Map<String, dynamic> stats = await ApiService.getUserStats();
       statsNotifier.value = {
-        'treeCount': stats['totalTrees'] ?? 0,
-        'quizCount': stats['totalQuizzes'] ?? 0,
-        'similarCount': stats['totalSimilarGroups'] ?? 0,
+        'treeCount': (stats['totalTrees'] as num?)?.toInt() ?? 0,
+        'quizCount': (stats['totalQuizzes'] as num?)?.toInt() ?? 0,
+        'similarCount': (stats['totalSimilarGroups'] as num?)?.toInt() ?? 0,
       };
 
       await _saveStatsToCache();

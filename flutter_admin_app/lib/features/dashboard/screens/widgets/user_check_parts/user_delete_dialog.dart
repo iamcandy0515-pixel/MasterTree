@@ -48,7 +48,7 @@ class UserDeleteDialog extends StatelessWidget {
   }
 
   static void show(BuildContext context, String userName, VoidCallback onConfirm) {
-    showDialog(
+    showDialog<dynamic>(
       context: context,
       builder: (context) => UserDeleteDialog(userName: userName, onConfirm: onConfirm),
     );

@@ -148,15 +148,15 @@ class _SpeciesComparisonDetailScreenState extends State<SpeciesComparisonDetailS
   }
 
   void _showKeyPointsPopup() {
-    showDialog(
+    showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (BuildContext context) => AlertDialog(
         backgroundColor: AppColors.surfaceDark,
         title: const Text('핵심 요점 식별법', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         content: SingleChildScrollView(
-          child: Text(_controller.groupData?['description'] ?? '정보가 없습니다.', style: const TextStyle(color: Colors.white, height: 1.5)),
+          child: Text(_controller.groupData?['description']?.toString() ?? '정보가 없습니다.', style: const TextStyle(color: Colors.white, height: 1.5)),
         ),
-        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('닫기', style: TextStyle(color: AppColors.primary)))],
+        actions: [TextButton(onPressed: () => Navigator.pop<void>(context), child: const Text('닫기', style: TextStyle(color: AppColors.primary)))],
       ),
     );
   }

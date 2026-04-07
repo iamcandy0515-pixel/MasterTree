@@ -77,7 +77,7 @@ mixin QuizFileHandlerMixin on ChangeNotifier {
 
     try {
       final result = await _repository.validateDriveFile(targetFileId, subject: subject, year: year, round: round);
-      final valData = result['validation'];
+      final dynamic valData = result['validation'];
 
       if (valData is Map) {
         final sbj = valData['extracted_subject']?.toString() ?? '';
@@ -86,7 +86,7 @@ mixin QuizFileHandlerMixin on ChangeNotifier {
         final filterParts = [sbj, yr, rd].where((e) => e.isNotEmpty).toList();
         _extractedFilterRawString = filterParts.isNotEmpty ? filterParts.join(', ') : null;
 
-        if (!(valData['filter_matched'] ?? true)) {
+        if (!((valData['filter_matched'] as bool?) ?? true)) {
           final String mismatchReason = valData['mismatch_reason']?.toString() ?? '';
           throw mismatchReason.isNotEmpty ? mismatchReason : 'AI 판독 결과 문제가 확인되지 않았습니다.';
         }
@@ -107,12 +107,14 @@ mixin QuizFileHandlerMixin on ChangeNotifier {
     notifyListeners();
     try {
       final result = await _repository.extractDriveFile(_selectedFileId!, questionNumber, hintsCount);
-      final extractedData = result['extractedData'];
-      if (extractedData is Map && (extractedData['error']?.toString().isNotEmpty ?? false)) throw extractedData['error'];
+      final dynamic extractedData = result['extractedData'];
+      if (extractedData is Map && (extractedData['error']?.toString().isNotEmpty ?? false)) {
+        throw extractedData['error'].toString();
+      }
 
       final dataBlocks = extractedData['data'] as List?;
       if (dataBlocks != null && dataBlocks.isNotEmpty) {
-        _validatedQuizData = dataBlocks.first;
+        _validatedQuizData = (dataBlocks.first as Map<String, dynamic>?);
         return _validatedQuizData!;
       } else {
         throw '해당 문제 번호가 존재하지 않거나 추출에 실패했습니다.';

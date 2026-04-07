@@ -42,11 +42,11 @@ class QuizListItem extends StatelessWidget {
           color: Colors.transparent,
           child: InkWell(
             onTap: () {
-              Navigator.push(
+              Navigator.push<dynamic>(
                 context,
-                MaterialPageRoute(
-                    builder: (_) => QuizReviewDetailScreen(quizId: quiz['id'])),
-              ).then((_) => viewModel.fetchQuizzes());
+                MaterialPageRoute<dynamic>(
+                    builder: (_) => QuizReviewDetailScreen(quizId: (quiz['id'] as int))),
+              ).then((dynamic _) => viewModel.fetchQuizzes());
             },
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -75,7 +75,7 @@ class QuizListItem extends StatelessWidget {
                     icon: const Icon(Icons.delete_outline,
                         color: NeoColors.error, size: 22),
                     onPressed: () =>
-                        _handleDelete(context, viewModel, quiz['id']),
+                        _handleDelete(context, viewModel, (quiz['id'] as int)),
                     style: IconButton.styleFrom(
                       backgroundColor: NeoColors.error.withOpacity(0.1),
                       padding: const EdgeInsets.all(8),
@@ -93,9 +93,9 @@ class QuizListItem extends StatelessWidget {
   String _extractQuestionText(Map<String, dynamic> quiz) {
     String qText = '문제 내용 없음';
     try {
-      final blocks = quiz['content_blocks'];
+      final dynamic blocks = quiz['content_blocks'];
       if (blocks != null && blocks is List && blocks.isNotEmpty) {
-        final firstBlock = blocks[0];
+        final dynamic firstBlock = blocks[0];
         if (firstBlock is String) {
           qText = firstBlock;
         } else if (firstBlock is Map && firstBlock.containsKey('content')) {
@@ -104,13 +104,13 @@ class QuizListItem extends StatelessWidget {
         qText = qText.replaceFirst(RegExp(r'^\s*\d+[\.\s]+'), '').trim();
       }
     } catch (_) {}
-    final qNum = quiz['question_number'];
+    final dynamic qNum = quiz['question_number'];
     return qNum != null ? '$qNum번 $qText' : qText;
   }
 
   void _handleDelete(
       BuildContext context, QuizManagementViewModel viewModel, int id) {
-    showDialog(
+    showDialog<dynamic>(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: surfaceDark,

@@ -55,8 +55,8 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
     try {
       final result = await _mediaRepo.getDriveLinks(_selectedTree!.nameKr);
       if (result['success'] == true) {
-        final Map<String, dynamic> original = result['original'] ?? {};
-        final Map<String, dynamic> thumb = result['thumb'] ?? {};
+        final Map<String, dynamic> original = (result['original'] as Map<String, dynamic>? ?? <String, dynamic>{});
+        final Map<String, dynamic> thumb = (result['thumb'] as Map<String, dynamic>? ?? <String, dynamic>{});
 
         final types = ['main', 'leaf', 'bark', 'fruit', 'flower'];
 
@@ -64,7 +64,7 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
           final dbImage = getImageByType(type);
 
           // Original Link Sync
-          final driveOriginalUrl = original[type];
+          final dynamic driveOriginalUrl = original[type];
           if (driveOriginalUrl != null) {
             _fileMissing.remove('${type}_original');
             // 수동 또는 DB 정보와 다를 때(신규 포함) 스테이징
@@ -73,11 +73,11 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
                 type,
                 TreeImage(
                   imageType: type,
-                  imageUrl: driveOriginalUrl,
+                  imageUrl: driveOriginalUrl as String? ?? '',
                   thumbnailUrl: dbImage?.thumbnailUrl,
                 ),
                 // DB와 일치하면 'db', 아니면 'google' (이미지 존재 시)
-                source: (dbImage != null && dbImage.imageUrl == driveOriginalUrl) ? 'db' : 'google',
+                source: (dbImage != null && dbImage.imageUrl == (driveOriginalUrl as String? ?? '')) ? 'db' : 'google',
               );
             }
           } else if (dbImage != null && dbImage.imageUrl.isNotEmpty) {
@@ -85,10 +85,10 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
           }
 
           // Thumbnail Link Sync
-          final driveThumbUrl = thumb[type];
+          final dynamic driveThumbUrl = thumb[type];
           if (driveThumbUrl != null) {
             _fileMissing.remove('${type}_thumb');
-            if (isManual || dbImage == null || dbImage.thumbnailUrl != driveThumbUrl) {
+            if (isManual || dbImage == null || dbImage.thumbnailUrl != (driveThumbUrl as String?)) {
               final currentStaged =
                   _pendingImages['${type}_original'] as TreeImage?;
               stageImage(
@@ -96,11 +96,11 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
                 TreeImage(
                   imageType: type,
                   imageUrl: currentStaged?.imageUrl ?? dbImage?.imageUrl ?? '',
-                  thumbnailUrl: driveThumbUrl,
+                  thumbnailUrl: driveThumbUrl as String?,
                 ),
                 isThumbnail: true,
                 // DB와 일치하면 'db', 아니면 'google'
-                source: (dbImage != null && dbImage.thumbnailUrl == driveThumbUrl) ? 'db' : 'google',
+                source: (dbImage != null && dbImage.thumbnailUrl == (driveThumbUrl as String?)) ? 'db' : 'google',
               );
             }
           } else if (dbImage != null &&

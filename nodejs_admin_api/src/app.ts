@@ -34,7 +34,20 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-    origin: true,
+    origin: (origin, callback) => {
+        // [1] 만약 Origin이 명시되지 않은 경우(예: 서버 대 서버 통신) 허용
+        if (!origin) return callback(null, true);
+
+        // [2] 화이트리스트에 포함되어 있거나, 개발 중인 로컬호스트인 경우 허용
+        const isAllowed = allowedOrigins.includes(origin) || origin.includes('localhost') || origin.includes('127.0.0.1');
+
+        if (isAllowed) {
+            callback(null, true);
+        } else {
+            console.error(`🚨 [CORS] Blocked request from unauthorized origin: ${origin}`);
+            callback(new Error("CORS Policy Violation: Origin not allowed"));
+        }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"]

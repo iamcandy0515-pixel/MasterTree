@@ -18,7 +18,10 @@ class ExplanationPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasImages = explanationBlocks.any((b) => b['type'] == 'image');
+    final bool hasImages = explanationBlocks.any((dynamic b) {
+      final Map<String, dynamic> block = Map<String, dynamic>.from(b as Map);
+      return block['type'] == 'image';
+    });
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

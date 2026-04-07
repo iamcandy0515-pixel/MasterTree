@@ -13,7 +13,7 @@ class SyncService {
       final prefs = await SharedPreferences.getInstance();
       final savedData = prefs.getString(_storageKey);
       if (savedData != null) {
-        final List<dynamic> decoded = jsonDecode(savedData);
+        final List<dynamic> decoded = jsonDecode(savedData) as List<dynamic>;
         _pendingAttempts.clear();
         _pendingAttempts.addAll(decoded.cast<Map<String, dynamic>>());
         debugPrint('로컬 캐시 로드됨: ${_pendingAttempts.length}개');

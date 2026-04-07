@@ -34,7 +34,7 @@ class QuizRelatedCard extends StatelessWidget {
         ? startIndex + itemsPerPage
         : relatedQuizzes.length;
     final visibleQuizzes =
-        relatedQuizzes.isEmpty ? [] : relatedQuizzes.sublist(startIndex, endIndex);
+        relatedQuizzes.isEmpty ? <Map<String, dynamic>>[] : relatedQuizzes.sublist(startIndex, endIndex);
 
     return Container(
       width: double.infinity,
@@ -95,7 +95,7 @@ class QuizRelatedCard extends StatelessWidget {
                     style: TextStyle(color: Colors.white24, fontSize: 13)))
           else
             ...visibleQuizzes
-                .map((quiz) => _buildRelatedItem(quiz, primaryColor)),
+                .map((Map<String, dynamic> quiz) => _buildRelatedItem(quiz, primaryColor)),
         ],
       ),
     );
@@ -103,16 +103,16 @@ class QuizRelatedCard extends StatelessWidget {
 
   Widget _buildRelatedItem(Map<String, dynamic> quiz, Color primaryColor) {
     final exam = quiz['quiz_exams'] as Map<String, dynamic>?;
-    final year = exam?['year'] ?? '-';
-    final round = exam?['round'] ?? '-';
-    final qNo = quiz['question_number'] ?? '-';
-    final category = quiz['quiz_categories']?['name'] ?? '-';
+    final dynamic year = exam?['year'] ?? '-';
+    final dynamic round = exam?['round'] ?? '-';
+    final dynamic qNo = quiz['question_number'] ?? '-';
+    final dynamic category = quiz['quiz_categories']?['name'] ?? '-';
 
     String content = '';
     final blocks = quiz['content_blocks'] as List?;
     if (blocks != null && blocks.isNotEmpty) {
-      final textBlock = blocks.firstWhere(
-          (b) => b is Map && b['type'] == 'text',
+      final dynamic textBlock = blocks.firstWhere(
+          (dynamic b) => b is Map && b['type'] == 'text',
           orElse: () => null);
       if (textBlock != null) {
         content =
@@ -146,7 +146,7 @@ class QuizRelatedCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis)),
           IconButton(
               icon: const Icon(Icons.close, color: Colors.white38, size: 16),
-              onPressed: () => onRemoveRelated(quiz['id'])),
+              onPressed: () => onRemoveRelated((quiz['id'] as int))),
         ],
       ),
     );

@@ -4,12 +4,12 @@ import '../constants.dart';
 class SettingsService extends BaseApiService {
   static Future<String> getUserNotification() async {
     try {
-      final response = await BaseApiService.get(
+      final Map<String, dynamic> response = await BaseApiService.get(
         Uri.parse('${AppConstants.apiUrl}/settings/notice'),
       );
       // API returns: { success: true, data: { notice: "message" } }
-      if (response != null && response['success'] == true) {
-        return (response['data']['notice'] as String?) ?? '';
+      if (response['success'] == true) {
+        return ((response['data'] as Map<String, dynamic>)['notice'] as String?) ?? '';
       }
       return '';
     } catch (e) {

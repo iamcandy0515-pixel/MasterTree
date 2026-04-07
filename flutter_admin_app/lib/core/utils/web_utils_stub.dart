@@ -16,16 +16,16 @@ class WebUtilsPlatform {
     // Mobile: No-op
   }
 
-  static dynamic createDropZoneElement({
+  static Object createDropZoneElement({
     required void Function() onDragOver,
     required void Function() onDragLeave,
     required void Function(dynamic files) onDrop,
     required void Function() onClick,
   }) {
-    return null;
+    return Object();
   }
 
-  static Future<List<int>?> readFileAsBytes(dynamic file) async {
+  static Future<Uint8List?> readFileAsBytes(dynamic file) async {
     return null;
   }
 }

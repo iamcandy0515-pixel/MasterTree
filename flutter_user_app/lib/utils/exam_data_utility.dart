@@ -8,7 +8,7 @@ class ExamDataUtility {
       }
     } catch (_) {}
 
-    final qNum = quiz['question_number'];
+    final Object? qNum = quiz['question_number'];
     if (qNum != null) {
       final String qNumStr = qNum.toString().padLeft(2, '0');
       if (qText.startsWith(qNumStr)) {

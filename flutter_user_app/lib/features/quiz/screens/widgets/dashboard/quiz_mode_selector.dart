@@ -23,10 +23,10 @@ class QuizModeSelector extends StatelessWidget {
           title: '랜덤 기출문제 풀기',
           desc: '무작위로 10문제를 뽑아 스피디하게 풉니다.',
           icon: Icons.shuffle,
-          onTap: () => Navigator.push(
+          onTap: () => Navigator.push<void>(
             context,
-            MaterialPageRoute(
-              builder: (_) => const QuizSolverScreen(mode: 'random'),
+            MaterialPageRoute<void>(
+              builder: (BuildContext _) => const QuizSolverScreen(mode: 'random'),
             ),
           ),
         ),
@@ -35,10 +35,10 @@ class QuizModeSelector extends StatelessWidget {
           title: '취약점 집중 공략',
           desc: '내가 가장 많이 틀렸던 유형 위주로 학습합니다.',
           icon: Icons.healing,
-          onTap: () => Navigator.push(
+          onTap: () => Navigator.push<void>(
             context,
-            MaterialPageRoute(
-              builder: (_) => const QuizSolverScreen(mode: 'weakness'),
+            MaterialPageRoute<void>(
+              builder: (BuildContext _) => const QuizSolverScreen(mode: 'weakness'),
             ),
           ),
         ),

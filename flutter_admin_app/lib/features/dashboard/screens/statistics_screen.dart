@@ -92,7 +92,7 @@ class _StatisticsContent extends StatelessWidget {
       separatorBuilder: (_, index) =>
           const Divider(color: Colors.white10, height: 1),
       itemBuilder: (context, index) {
-        return UserStatsListItem(user: users[index]);
+        return UserStatsListItem(user: users[index] as Map<String, dynamic>);
       },
     );
   }

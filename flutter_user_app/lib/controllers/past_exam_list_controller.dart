@@ -27,7 +27,7 @@ class PastExamListController with ExamFilterMixin, ExamPaginationMixin, ExamPers
       final from = (currentPage - 1) * perPage;
       final to = from + perPage - 1;
 
-      final result = await _repository.fetchQuestions(
+      final Map<String, dynamic> result = await _repository.fetchQuestions(
         subject: selectedSubject,
         year: selectedYear,
         session: selectedSession,
@@ -35,8 +35,8 @@ class PastExamListController with ExamFilterMixin, ExamPaginationMixin, ExamPers
         to: to,
       );
 
-      quizzes = result['questions'];
-      totalResults = result['totalItems'];
+      quizzes = List<Map<String, dynamic>>.from(result['questions'] as List);
+      totalResults = result['totalItems'] as int;
       totalPages = (totalResults / perPage).ceil();
       if (totalPages == 0) totalPages = 1;
 

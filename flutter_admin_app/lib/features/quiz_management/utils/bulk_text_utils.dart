@@ -6,7 +6,7 @@ class BulkTextUtils {
     if (blocks == null) return '';
     if (blocks is! List) return blocks.toString();
     
-    return blocks.map((b) {
+    return blocks.map((dynamic b) {
       if (b is Map && b['type'] == 'text') {
         return b['content']?.toString() ?? '';
       } else if (b is String) {

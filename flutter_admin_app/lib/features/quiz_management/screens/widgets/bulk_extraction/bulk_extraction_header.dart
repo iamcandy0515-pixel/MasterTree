@@ -50,7 +50,7 @@ class BulkExtractionHeader extends StatelessWidget {
   }
 
   void _confirmSave(BuildContext context) {
-    showDialog(
+    showDialog<dynamic>(
       context: context,
       builder: (dctx) => AlertDialog(
         backgroundColor: const Color(0xFF1A2E24),

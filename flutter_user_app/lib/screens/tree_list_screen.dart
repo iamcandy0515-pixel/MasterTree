@@ -80,16 +80,16 @@ class _TreeListScreenState extends State<TreeListScreen> {
   }
 
   Widget _buildTreeList(BuildContext context) {
-    final startIndex = _controller.currentPage * TreeListController.itemsPerPage;
-    final pagedTrees = _controller.filteredTrees.skip(startIndex).take(TreeListController.itemsPerPage).toList();
-
+    final int startIndex = _controller.currentPage * TreeListController.itemsPerPage;
+    final List<Map<String, dynamic>> pagedTrees = _controller.filteredTrees.skip(startIndex).take(TreeListController.itemsPerPage).toList();
+ 
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: pagedTrees.length,
-      separatorBuilder: (context, index) => Divider(color: Colors.white.withOpacity(0.05), height: 1),
-      itemBuilder: (context, index) {
-        final tree = pagedTrees[index];
+      separatorBuilder: (BuildContext context, int index) => Divider(color: Colors.white.withOpacity(0.05), height: 1),
+      itemBuilder: (BuildContext context, int index) {
+        final Map<String, dynamic> tree = pagedTrees[index];
         return InkWell(
           onTap: () => _showTreeDetail(context, tree),
           child: Padding(
@@ -103,11 +103,11 @@ class _TreeListScreenState extends State<TreeListScreen> {
                       Row(
                         children: [
                           Text(
-                            tree['name_kr'] ?? '이름 없음',
+                            tree['name_kr']?.toString() ?? '이름 없음',
                             style: const TextStyle(color: AppColors.textLight, fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                           const SizedBox(width: 8),
-                          _buildBadge(tree['category'] ?? '-'),
+                          _buildBadge(tree['category']?.toString() ?? '-'),
                         ],
                       ),
                     ],
@@ -121,7 +121,7 @@ class _TreeListScreenState extends State<TreeListScreen> {
       },
     );
   }
-
+ 
   Widget _buildBadge(String label) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -135,14 +135,13 @@ class _TreeListScreenState extends State<TreeListScreen> {
       ),
     );
   }
-
+ 
   void _showTreeDetail(BuildContext context, Map<String, dynamic> tree) {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => TreeDetailSheet(tree: tree),
+      builder: (BuildContext context) => TreeDetailSheet(tree: tree),
     );
   }
 }
-

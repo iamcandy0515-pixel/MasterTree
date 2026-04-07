@@ -33,13 +33,15 @@ class TreeComparisonProcessor {
       '대표': ['main', 'representative'],
     };
 
-    final targetTypes = typeMap[tag] ?? [];
+    final List<String> targetTypes = typeMap[tag] ?? <String>[];
     try {
-      final img = images.firstWhere(
-        (i) => targetTypes.contains(i['image_type']),
+      final dynamic imgRaw = images.firstWhere(
+        (dynamic i) => targetTypes.contains((i as Map<String, dynamic>)['image_type']),
         orElse: () => null,
       );
-      final String? rawUrl = img?['image_url'];
+      if (imgRaw == null) return null;
+      final Map<String, dynamic> img = Map<String, dynamic>.from(imgRaw as Map);
+      final String? rawUrl = img['image_url']?.toString();
       if (rawUrl == null || rawUrl.isEmpty) return null;
       return ApiService.getProxyImageUrl(rawUrl);
     } catch (e) {

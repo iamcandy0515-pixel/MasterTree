@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -10,11 +9,16 @@ import 'package:flutter_admin_app/features/auth/screens/login_screen.dart';
 
 class NodeApi {
   static String get baseUrl {
-    // [1] 배포 환경이거나 브라우저 주소가 localhost가 아니면 무조건 리얼 서버 사용
-    if (kReleaseMode || !Uri.base.toString().contains('localhost')) {
+    final String currentUrl = Uri.base.toString();
+    final bool isLocal = currentUrl.contains('localhost') || 
+                        currentUrl.contains('127.0.0.1') || 
+                        currentUrl.contains('::1');
+
+    // [1] 배포 모드이거나 로컬 호스트가 아니면 무조건 리얼 서버 사용
+    if (kReleaseMode || !isLocal) {
       return 'https://mastertree-api-final.vercel.app/api';
     }
-    // [2] 로컬 테스트 환경일 때만 localhost 사용
+    // [2] 로컬 테스트 환경일 때만 .env 또는 localhost 사용
     return dotenv.env['NODE_API_URL'] ?? 'http://localhost:5000/api';
   }
 

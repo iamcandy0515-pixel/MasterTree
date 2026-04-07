@@ -64,15 +64,15 @@ extension BulkFilterLogic on BulkSimilarManagementViewModel {
 
     try {
       final supabase = Supabase.instance.client;
-      final response = await supabase
+      final dynamic response = await supabase
           .from('quiz_questions')
-          .select('*, quiz_exams!inner(year, round), quiz_categories!inner(name)')
+          .select<PostgrestList>('*, quiz_exams!inner(year, round), quiz_categories!inner(name)')
           .eq('quiz_exams.year', int.parse(_selectedYear!))
           .eq('quiz_exams.round', int.parse(_selectedRound!))
           .like('quiz_categories.name', '%$_selectedSubject%')
           .order('question_number', ascending: true);
 
-      _quizzes = List<Map<String, dynamic>>.from(response);
+      _quizzes = List<Map<String, dynamic>>.from(response as List);
       for (var q in _quizzes) {
         final relatedIds = q['related_quiz_ids'] as List?;
         _analysisStatus[q['id'] as int] = (relatedIds != null && relatedIds.isNotEmpty) ? 2 : 0;

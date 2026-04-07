@@ -13,16 +13,17 @@ class BaseApiService {
     };
   }
 
-  static dynamic decodeResponse(http.Response response) {
+  static Map<String, dynamic> decodeResponse(http.Response response) {
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      return jsonDecode(utf8.decode(response.bodyBytes));
+      final dynamic decoded = jsonDecode(utf8.decode(response.bodyBytes));
+      return Map<String, dynamic>.from(decoded as Map);
     } else {
       debugPrint('API Error: ${response.statusCode} - ${response.body}');
       throw Exception('API Error: ${response.body}');
     }
   }
 
-  static Future<dynamic> get(Uri url) async {
+  static Future<Map<String, dynamic>> get(Uri url) async {
     try {
       final response = await http.get(url, headers: getHeaders());
       return decodeResponse(response);
@@ -32,7 +33,7 @@ class BaseApiService {
     }
   }
 
-  static Future<dynamic> post(Uri url, dynamic body) async {
+  static Future<Map<String, dynamic>> post(Uri url, dynamic body) async {
     try {
       final response = await http.post(
         url,

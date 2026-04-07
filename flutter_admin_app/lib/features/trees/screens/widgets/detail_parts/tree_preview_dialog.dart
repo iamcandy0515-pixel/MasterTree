@@ -19,7 +19,7 @@ class TreePreviewDialog extends StatefulWidget {
     required Tree tree,
     required Map<String, String> hints,
   }) {
-    showDialog(
+    showDialog<dynamic>(
       context: context,
       builder: (context) => TreePreviewDialog(
         tree: tree,
@@ -158,7 +158,7 @@ class _TreePreviewDialogState extends State<TreePreviewDialog> {
               imageUrl: NodeApi.getProxyImageUrl(image!.imageUrl, width: 600),
               fit: BoxFit.cover,
               placeholder: (_, __) => const Center(child: CircularProgressIndicator(color: NeoColors.acidLime)),
-              errorWidget: (_, __, ___) => const Icon(Icons.broken_image, color: Colors.white24, size: 40),
+              errorWidget: (_, __, dynamic ___) => const Icon(Icons.broken_image, color: Colors.white24, size: 40),
             )
           : Center(
               child: Column(

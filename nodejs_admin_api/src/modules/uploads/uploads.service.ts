@@ -1,105 +1,82 @@
-import { supabase } from "../../config/supabaseClient";
-import sharp from "sharp";
+import { cloudinary } from "../../config/cloudinary";
+import { Readable } from "stream";
 
 export class UploadService {
     /**
-     * Supabase Storage 업로드 (버킷 지정 가능)
-     * 리사이징 및 최적화 기능 포함
+     * Cloudinary 이미지 업로드
+     * f_auto, q_auto 최적화 파라미터를 포함한 URL 반환
      */
     static async uploadToStorage(
         file: Express.Multer.File,
-        bucket: string = "tree-images",
+        _bucket: string = "tree-images", // 호환성을 위해 유지
         folder: string = "trees",
         options: { maxWidth?: number; quality?: number } = {
             maxWidth: 1024,
             quality: 80,
         },
     ) {
-        let buffer = file.buffer;
-        let mimetype = file.mimetype;
-        let originalName = file.originalname;
+        const buffer = file.buffer;
+        const originalName = file.originalname;
 
-        // 이미지 파일인 경우 리사이징 및 최적화 진행
-        if (file.mimetype.startsWith("image/")) {
-            try {
-                const image = sharp(file.buffer);
-                const metadata = await image.metadata();
-
-                // 너무 큰 이미지는 에러 반환 (예: 10MB 이상 또는 해상도가 비정상적으로 높음)
-                if (
-                    file.size > 10 * 1024 * 1024 ||
-                    (metadata.width && metadata.width > 8000)
-                ) {
-                    throw new Error(
-                        "이미지 크기를 1024px 이하로 조정해서 올려주세요.",
-                    );
-                }
-
-                // 리사이징 및 WebP 변환 (용량 절감)
-                buffer = await image
-                    .resize({
-                        width: options.maxWidth,
-                        withoutEnlargement: true,
-                    })
-                    .webp({ quality: options.quality })
-                    .toBuffer();
-
-                mimetype = "image/webp";
-                originalName = originalName.replace(/\.[^/.]+$/, "") + ".webp";
-            } catch (err: any) {
-                // 특정 에러 메시지는 그대로 전달, 그 외는 일반 에러
-                if (err.message.includes("조정해서")) throw err;
-                console.error("Image optimization failed:", err);
-                // 최적화 실패 시 원본 사용 시도 (단, 너무 크면 위에서 차단됨)
-            }
+        // 파일 크기 제한 (10MB)
+        if (file.size > 10 * 1024 * 1024) {
+            throw new Error("파일 크기를 10MB 이하로 업로드해주세요.");
         }
 
         const safeName = originalName.replace(/[^a-zA-Z0-9.\-_]/g, "").substring(0, 50);
-        const fileName = `${folder}/${Date.now()}_${Math.random()
-            .toString(36)
-            .substring(7)}_${safeName || "image.webp"}`;
+        const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}_${safeName || "image"}`;
 
-        /** Storage 업로드 */
-        const { data, error } = await supabase.storage
-            .from(bucket)
-            .upload(fileName, buffer, {
-                contentType: mimetype,
-                upsert: true,
-            });
+        return new Promise<{ publicUrl: string; path: string; size: number; mimetype: string }>((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+                {
+                    folder: `tree-images/${folder}`,
+                    public_id: fileName,
+                    transformation: [
+                        { width: options.maxWidth, crop: "limit" },
+                        { quality: "auto", fetch_format: "auto" }
+                    ],
+                },
+                (error, result) => {
+                    if (error) {
+                        console.error("Cloudinary upload failed:", error);
+                        return reject(new Error("Cloudinary 업로드에 실패했습니다."));
+                    }
+                    if (!result) return reject(new Error("업로드 결과값이 없습니다."));
 
-        if (error) throw error;
+                    // f_auto, q_auto가 포함된 최적화 주소 생성
+                    // Cloudinary의 최신 SDK는 원본 URL에 이미 변환 옵션을 적용할 수 있음
+                    const optimizedUrl = result.secure_url.replace("/upload/", "/upload/f_auto,q_auto/");
 
-        /** Public URL 생성 */
-        const { data: urlData } = supabase.storage
-            .from(bucket)
-            .getPublicUrl(fileName);
+                    resolve({
+                        publicUrl: optimizedUrl,
+                        path: result.public_id,
+                        size: result.bytes,
+                        mimetype: `${result.resource_type}/${result.format}`,
+                    });
+                }
+            );
 
-        return {
-            path: data.path,
-            publicUrl: urlData.publicUrl,
-            size: buffer.length,
-            mimetype: mimetype,
-        };
+            Readable.from(buffer).pipe(uploadStream);
+        });
     }
 
     /**
-     * Supabase Storage 파일 삭제
+     * Cloudinary 파일 삭제
      */
     static async deleteFromStorage(
-        paths: string[],
-        bucket: string = "tree-images",
+        publicIds: string[],
+        _bucket: string = "tree-images",
     ) {
-        if (!paths || paths.length === 0) return;
+        if (!publicIds || publicIds.length === 0) return;
 
-        const { data, error } = await supabase.storage
-            .from(bucket)
-            .remove(paths);
-
-        if (error) {
-            console.error(`[Storage Delete Error]`, error);
+        try {
+            const results = await Promise.all(
+                publicIds.map(id => cloudinary.uploader.destroy(id))
+            );
+            return results;
+        } catch (error) {
+            console.error(`[Cloudinary Delete Error]`, error);
             throw error;
         }
-
-        return data;
     }
 }

@@ -22,6 +22,6 @@ class QuizMediaRepository extends BaseRepository with QuizRepositoryMixin {
     final response = await http.Response.fromStream(streamedResponse);
 
     final jsonResponse = parseJsonResponse(response);
-    return jsonResponse['data']['publicUrl'];
+    return (jsonResponse['data'] as Map<String, dynamic>)['publicUrl'] as String;
   }
 }

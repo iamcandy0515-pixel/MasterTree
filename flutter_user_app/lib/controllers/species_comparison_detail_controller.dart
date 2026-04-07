@@ -33,24 +33,26 @@ class SpeciesComparisonDetailController {
         } else {
           debugPrint('[DEBUG] Match found: ${group['group_name']}');
           groupData = group;
-          final members = group['tree_group_members'] as List;
+          final List<dynamic> members = group['tree_group_members'] as List<dynamic>;
 
           // 이름으로 수목 매칭 (비교 방향 보장)
-          dynamic t1;
-          dynamic t2;
+          Map<String, dynamic>? t1;
+          Map<String, dynamic>? t2;
 
-          for (var member in members) {
-            final tree = member['trees'];
+          for (final dynamic memberRaw in members) {
+            final Map<String, dynamic> member = Map<String, dynamic>.from(memberRaw as Map);
+            final Object? tree = member['trees'];
             if (tree != null) {
-              final name = tree['name_kr']?.toString().trim();
+              final Map<String, dynamic> treeMap = Map<String, dynamic>.from(tree as Map);
+              final String name = treeMap['name_kr']?.toString().trim() ?? '';
               debugPrint(
                 '[DEBUG] Checking member: $name (Target1: ${tree1.trim()}, Target2: ${tree2.trim()})',
               );
               if (name == tree1.trim()) {
-                t1 = tree;
+                t1 = treeMap;
                 debugPrint('[DEBUG] Match found for Tree1: $name');
               } else if (name == tree2.trim()) {
-                t2 = tree;
+                t2 = treeMap;
                 debugPrint('[DEBUG] Match found for Tree2: $name');
               }
             }

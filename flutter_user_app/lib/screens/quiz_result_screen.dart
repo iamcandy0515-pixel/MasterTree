@@ -108,8 +108,8 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
       children: [
         TextButton.icon(
           onPressed: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const QuizScreen()),
+            Navigator.of(context).pushReplacement<void, void>(
+              MaterialPageRoute<void>(builder: (BuildContext _) => const QuizScreen()),
             );
           },
           icon: const Icon(

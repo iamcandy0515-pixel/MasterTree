@@ -40,7 +40,7 @@ class TreeSourcingViewModel extends ChangeNotifier {
   bool _hasChanges = false;
   bool get hasChanges => _hasChanges;
 
-  final Map<String, dynamic> _pendingImages = {};
+  final Map<String, dynamic> _pendingImages = <String, dynamic>{};
   Map<String, dynamic> get pendingImages => _pendingImages;
 
   final Map<String, String> _imageSources = {};

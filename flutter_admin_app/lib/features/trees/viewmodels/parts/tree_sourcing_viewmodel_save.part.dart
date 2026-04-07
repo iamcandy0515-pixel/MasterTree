@@ -21,8 +21,8 @@ extension TreeSourcingSaveExtension on TreeSourcingViewModel {
 
       for (final type in types) {
         final existing = getImageByType(type);
-        final stagedOriginal = _pendingImages['${type}_original'];
-        final stagedThumb = _pendingImages['${type}_thumb'];
+        final dynamic stagedOriginal = _pendingImages['${type}_original'];
+        final dynamic stagedThumb = _pendingImages['${type}_thumb'];
 
         String? finalUrl = existing?.imageUrl;
         String? finalThumb = existing?.thumbnailUrl;

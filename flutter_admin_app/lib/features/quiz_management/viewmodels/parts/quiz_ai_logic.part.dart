@@ -7,7 +7,7 @@ extension QuizAiLogic on QuizReviewDetailViewModel {
     notifyListeners();
     try {
       final rawText = relatedQuizzesMetadata.isNotEmpty 
-          ? _extractTextFromBlocks(relatedQuizzesMetadata.first['content_blocks'] ?? []) 
+          ? _extractTextFromBlocks(relatedQuizzesMetadata.first['content_blocks'] as List<dynamic>? ?? <dynamic>[]) 
           : '';
       final res = await _aiRepo.reviewQuizAlignment(
         rawText, 
@@ -50,7 +50,7 @@ extension QuizAiLogic on QuizReviewDetailViewModel {
       _isRecommending = false;
       // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
       notifyListeners();
-      return related.where((r) => r['id'] != quizId).toList();
+      return related.where((dynamic r) => r['id'] != quizId).toList();
     } catch (e) {
       _isRecommending = false;
       // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member

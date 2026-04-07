@@ -129,7 +129,7 @@ class QuizViewModel extends ChangeNotifier with QuizDataHandler {
     }
 
     // 학습 결과 큐에 추가
-    ApiService.addPendingAttempt({
+    ApiService.addPendingAttempt(<String, dynamic>{
       'tree_id': currentQuestion.id,
       'is_correct': _isCorrect,
       'user_answer': answerIndex,

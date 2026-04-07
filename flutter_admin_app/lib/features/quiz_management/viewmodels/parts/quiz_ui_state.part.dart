@@ -2,7 +2,7 @@ part of '../quiz_review_detail_viewmodel.dart';
 
 extension QuizUiState on QuizReviewDetailViewModel {
   String _extractTextFromBlocks(List<dynamic> blocks) {
-    return blocks.map((b) {
+    return blocks.map((dynamic b) {
       if (b is Map && b['type'] == 'text') return b['content']?.toString() ?? '';
       if (b is String) return b;
       return '';
