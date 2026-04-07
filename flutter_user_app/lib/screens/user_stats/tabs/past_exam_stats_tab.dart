@@ -29,8 +29,8 @@ class _PastExamStatsTabState extends State<PastExamStatsTab> {
     final filteredExams = widget.exams.where((e) {
       final name = e['subject_name']?.toString() ?? '';
       final subjectMatch = name.contains(selectedSubject); // '전체' 없으므로 직접 매칭
-      final yearMatch = selectedYear == '전체' || name.contains('${selectedYear}년');
-      final roundMatch = selectedRound == '전체' || name.contains('${selectedRound}회');
+      final yearMatch = selectedYear == '전체' || name.contains('$selectedYear년');
+      final roundMatch = selectedRound == '전체' || name.contains('$selectedRound회');
       return subjectMatch && yearMatch && roundMatch;
     }).toList();
 
@@ -163,13 +163,6 @@ class _PastExamStatsTabState extends State<PastExamStatsTab> {
   }
 
   // --- 파싱 헬퍼 ---
-  String _parseSubject(dynamic name) {
-    final s = name?.toString() ?? '';
-    // 예: "산림기사 2013년 1회" -> "산림기사"
-    final parts = s.split(' ');
-    return parts.isNotEmpty ? parts[0] : '알수없음';
-  }
-
   String _parseYear(dynamic name) {
     final s = name?.toString() ?? '';
     // 예: "2013년" 찾기
