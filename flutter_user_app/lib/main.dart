@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -7,15 +8,23 @@ import 'package:flutter_user_app/screens/login_screen.dart';
 import 'package:flutter_user_app/core/constants.dart';
 import 'package:flutter_user_app/core/api_service.dart';
 import 'package:flutter_user_app/providers/quiz_provider.dart';
+import 'package:flutter_user_app/utils/app_logger.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Silence all logs in release mode (Safety)
+  if (kReleaseMode) {
+    debugPrint = (String? message, {int? wrapWidth}) {};
+  }
+
   await dotenv.load(fileName: ".env");
 
-  debugPrint('Supabase Init: ${AppConstants.supabaseUrl}');
+  AppLogger.d('Supabase Init: ${AppConstants.supabaseUrl}', tag: 'INIT');
   final key = AppConstants.supabaseAnonKey;
-  debugPrint(
+  AppLogger.d(
     'Key Prefix: ${key.length >= 5 ? key.substring(0, 5) : 'EMPTY'}...',
+    tag: 'INIT',
   );
 
   await Supabase.initialize(

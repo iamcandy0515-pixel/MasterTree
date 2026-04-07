@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'quiz_service.dart';
+import '../../utils/app_logger.dart';
 
 class SyncService {
   static final List<Map<String, dynamic>> _pendingAttempts = [];
@@ -16,10 +16,10 @@ class SyncService {
         final List<dynamic> decoded = jsonDecode(savedData) as List<dynamic>;
         _pendingAttempts.clear();
         _pendingAttempts.addAll(decoded.cast<Map<String, dynamic>>());
-        debugPrint('로컬 캐시 로드됨: ${_pendingAttempts.length}개');
+        AppLogger.d('로컬 캐시 로드됨: ${_pendingAttempts.length}개', tag: 'SYNC');
       }
     } catch (e) {
-      debugPrint('SyncService.init Error: $e');
+      AppLogger.e('SyncService.init Error', error: e);
     }
   }
 
@@ -33,7 +33,7 @@ class SyncService {
         await prefs.setString(_storageKey, jsonEncode(_pendingAttempts));
       }
     } catch (e) {
-      debugPrint('SyncService._persistAttempts Error: $e');
+      AppLogger.e('SyncService._persistAttempts Error', error: e);
     }
   }
 
@@ -41,13 +41,13 @@ class SyncService {
   static void addPendingAttempt(Map<String, dynamic> attempt) {
     _pendingAttempts.add(attempt);
     _persistAttempts(); // 즉시 로컬 저장
-    debugPrint('보류 중인 학습 결과 추가 및 저장됨 (현재: ${_pendingAttempts.length}개)');
+    AppLogger.d('보류 중인 학습 결과 추가 및 저장됨 (현재: ${_pendingAttempts.length}개)', tag: 'SYNC');
   }
 
   /// 보류 중인 모든 학습 결과를 서버로 전송 (동기화)
   static Future<void> syncPendingAttempts() async {
     if (_pendingAttempts.isEmpty) return;
-    debugPrint('학습 결과 동기화 시작 (${_pendingAttempts.length}개)');
+    AppLogger.d('학습 결과 동기화 시작 (${_pendingAttempts.length}개)', tag: 'SYNC');
 
     final attemptsToSync = List<Map<String, dynamic>>.from(_pendingAttempts);
     final success = await QuizService.submitBatchAttempts(attemptsToSync);
@@ -55,9 +55,9 @@ class SyncService {
     if (success) {
       _pendingAttempts.clear();
       await _persistAttempts(); // 전송 성공 시 로컬 캐시 삭제
-      debugPrint('학습 결과 동기화 성공 및 캐시 삭제됨');
+      AppLogger.d('학습 결과 동기화 성공 및 캐시 삭제됨', tag: 'SYNC');
     } else {
-      debugPrint('학습 결과 동기화 실패 (로컬 유지)');
+      AppLogger.d('학습 결과 동기화 실패 (로컬 유지)', tag: 'SYNC');
     }
   }
 }
