@@ -1,4 +1,4 @@
-import './env';
+﻿import './env';
 import { supabase } from './config/supabaseClient';
 
 async function setup() {
@@ -6,7 +6,7 @@ async function setup() {
 
     // 1. Create mapping table
     console.log('1. Creating tree_category_mapping table...');
-    const { error: mapErr } = await supabase.rpc('exec_sql', {
+    const { error: mapErr } = await (supabase as any).rpc('exec_sql', {
         sql_string: `
             CREATE TABLE IF NOT EXISTS tree_category_mapping (
                 id BIGSERIAL PRIMARY KEY,
@@ -31,12 +31,12 @@ async function setup() {
     ];
 
     for (const m of mappings) {
-        await supabase.from('tree_category_mapping').upsert(m, { onConflict: 'original_name' });
+        await (supabase as any).from('tree_category_mapping').upsert(m, { onConflict: 'original_name' });
     }
 
     // 3. Create user_tree_category_stats
     console.log('3. Creating user_tree_category_stats table...');
-    await supabase.rpc('exec_sql', {
+    await (supabase as any).rpc('exec_sql', {
         sql_string: `
             CREATE TABLE IF NOT EXISTS user_tree_category_stats (
                 id BIGSERIAL PRIMARY KEY,
@@ -54,7 +54,7 @@ async function setup() {
 
     // 4. Create user_exam_session_stats
     console.log('4. Creating user_exam_session_stats table...');
-    await supabase.rpc('exec_sql', {
+    await (supabase as any).rpc('exec_sql', {
         sql_string: `
             CREATE TABLE IF NOT EXISTS user_exam_session_stats (
                 id BIGSERIAL PRIMARY KEY,
@@ -73,7 +73,7 @@ async function setup() {
 
     // 5. Create Purge Function
     console.log('5. Creating Purge Function for quiz_attempts...');
-    await supabase.rpc('exec_sql', {
+    await (supabase as any).rpc('exec_sql', {
         sql_string: `
             CREATE OR REPLACE FUNCTION purge_old_quiz_attempts()
             RETURNS void AS $$
