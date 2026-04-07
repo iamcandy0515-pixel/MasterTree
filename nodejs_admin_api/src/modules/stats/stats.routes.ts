@@ -25,6 +25,18 @@ router.get(
     statsController.getUserPerformanceStats.bind(statsController),
 );
 
+router.get(
+    "/categories/:userId",
+    verifyAdmin,
+    statsController.getTreeCategoryStats.bind(statsController),
+);
+
+router.get(
+    "/exams/:userId",
+    verifyAdmin,
+    statsController.getExamSessionStats.bind(statsController),
+);
+
 // Public Route: Users can see general dashboard stats
 router.get(
     "/user",
@@ -36,6 +48,18 @@ router.get(
     "/performance",
     verifyUser,
     statsController.getUserPerformanceStats.bind(statsController),
+);
+
+router.get(
+    "/categories",
+    verifyUser,
+    statsController.getTreeCategoryStats.bind(statsController),
+);
+
+router.get(
+    "/exams",
+    verifyUser,
+    statsController.getExamSessionStats.bind(statsController),
 );
 
 export default router;

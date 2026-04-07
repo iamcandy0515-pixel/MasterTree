@@ -2,77 +2,73 @@ import { supabase } from "../../../config/supabaseClient";
 
 export class StatsUserService {
     async getUserPerformanceStats(userId: string) {
-        // 1. Fetch total published counts for basis
-        const [{ count: questionCount }, { count: treeCount }] = await Promise.all([
-            supabase.from("quiz_questions").select("*", { count: "exact", head: true }),
-            supabase.from("trees").select("*", { count: "exact", head: true })
+        // [Optimized] Fetch basic stats from aggregation tables
+        const [
+            { data: treeStats },
+            { data: examStats },
+            { data: userData }
+        ] = await Promise.all([
+            (supabase as any).from("user_tree_category_stats").select("mastered_count, total_count").eq("user_id", userId),
+            (supabase as any).from("user_exam_session_stats").select("mastered_count, total_count").eq("user_id", userId),
+            (supabase as any).auth.admin.getUserById(userId)
         ]);
 
-        const { data: questions } = await supabase.from("quiz_questions").select("id, exam_id");
-        const examQuestionIds = new Set((questions || []).filter(q => q.exam_id !== null).map(q => q.id));
-
-        // 2. Fetch user's summarized latest results
-        // Bypass: Also check User A's data (test data) for troubleshooting
-        const queryUsers = [userId, "5e2586a5-33ee-40eb-bd6b-616c78802335"];
-        const { data: summaries } = await supabase
-            .from("user_quiz_summary" as any)
-            .select("question_id, tree_id, is_last_correct")
-            .in("user_id", queryUsers);
-
-        let generalSolved = 0, generalCorrect = 0;
-        let examSolved = 0, examCorrect = 0;
-
-        summaries?.forEach((s: any) => {
-            // Count tree-based quizzes as general (Tree Quizzes)
-            if (s.tree_id) {
-                generalSolved++;
-                if (s.is_last_correct) generalCorrect++;
-            } 
-            // Count examination-based quizzes as pastExam
-            else if (s.question_id && examQuestionIds.has(s.question_id)) {
-                examSolved++;
-                if (s.is_last_correct) examCorrect++;
-            }
-        });
-
-        // 3. Fetch user info
-        let userInfo = null;
-        try {
-            const { data } = await supabase.auth.admin.getUserById(userId);
-            if (data?.user) {
-                userInfo = {
-                    name: data.user.user_metadata?.name || data.user.email?.split("@")[0],
-                    email: data.user.email,
-                    lastSignIn: data.user.last_sign_in_at,
-                };
-            }
-        } catch (e) {}
-
-        const summariesCount = summaries?.length || 0;
+        const treeTotal = (treeStats as any[])?.reduce((acc, s) => acc + (s.total_count || 0), 0) || 0;
+        const treeCorrect = (treeStats as any[])?.reduce((acc, s) => acc + (s.mastered_count || 0), 0) || 0;
         
-        // Debug for Hong Gil-dong (or specific test user)
-        if (userId.startsWith('5e25') || summariesCount > 0) {
-            console.log(`\n📊 [StatsEngine] Calculated for User: ${userId}`);
-            console.log(`   - Raw Summaries: ${summariesCount}`);
-            console.log(`   - General: Solved(${generalSolved}), Correct(${generalCorrect})`);
-            console.log(`   - PastExam: Solved(${examSolved}), Correct(${examCorrect})`);
+        const examTotal = (examStats as any[])?.reduce((acc, s) => acc + (s.total_count || 0), 0) || 0;
+        const examCorrect = (examStats as any[])?.reduce((acc, s) => acc + (s.mastered_count || 0), 0) || 0;
+
+        let userInfo = null;
+        if (userData?.user) {
+            userInfo = {
+                name: userData.user.user_metadata?.name || userData.user.email?.split("@")[0],
+                email: userData.user.email,
+                lastSignIn: userData.user.last_sign_in_at,
+            };
         }
 
         return {
             user: userInfo,
             quiz: {
-                totalCount: Number(treeCount || 0),
-                solvedCount: Number(generalSolved),
-                correctCount: Number(generalCorrect),
-                wrongCount: Number(generalSolved - generalCorrect),
+                totalCount: Number(treeTotal),
+                masteredCount: Number(treeCorrect),
+                accuracyRate: treeTotal > 0 ? (treeCorrect / treeTotal) * 100 : 0
             },
             pastExam: {
-                totalCount: Number(Array.from(examQuestionIds).length),
-                solvedCount: Number(examSolved),
-                correctCount: Number(examCorrect),
-                wrongCount: Number(examSolved - examCorrect),
+                totalCount: Number(examTotal),
+                masteredCount: Number(examCorrect),
+                accuracyRate: examTotal > 0 ? (examCorrect / examTotal) * 100 : 0
             },
         };
+    }
+
+    /**
+     * Get detailed tree category statistics for the UI list.
+     */
+    async getTreeCategoryStats(userId: string) {
+        const { data, error } = await (supabase as any)
+            .from("user_tree_category_stats")
+            .select("*")
+            .eq("user_id", userId)
+            .order("category_name", { ascending: true });
+        
+        if (error) throw error;
+        return data || [];
+    }
+
+    /**
+     * Get detailed exam session statistics for the UI list.
+     */
+    async getExamSessionStats(userId: string) {
+        const { data, error } = await (supabase as any)
+            .from("user_exam_session_stats")
+            .select("*")
+            .eq("user_id", userId)
+            .order("updated_at", { ascending: false });
+        
+        if (error) throw error;
+        return data || [];
     }
 }
 

@@ -30,6 +30,34 @@ class StatsService {
       rethrow;
     }
   }
+
+  static Future<List<Map<String, dynamic>>> getTreeCategoryStats() async {
+    final url = Uri.parse('${AppConstants.apiUrl}/stats/categories');
+    try {
+      final Map<String, dynamic> jsonResponse = await BaseApiService.get(url);
+      if (jsonResponse['success'] == true) {
+        return List<Map<String, dynamic>>.from((jsonResponse['data'] as Iterable<dynamic>?) ?? <dynamic>[]);
+      }
+      throw Exception('나무 통계 로드 실패: ${jsonResponse['message']}');
+    } catch (e) {
+      debugPrint('StatsService.getTreeCategoryStats Error: $e');
+      rethrow;
+    }
+  }
+
+  static Future<List<Map<String, dynamic>>> getExamSessionStats() async {
+    final url = Uri.parse('${AppConstants.apiUrl}/stats/exams');
+    try {
+      final Map<String, dynamic> jsonResponse = await BaseApiService.get(url);
+      if (jsonResponse['success'] == true) {
+        return List<Map<String, dynamic>>.from((jsonResponse['data'] as Iterable<dynamic>?) ?? <dynamic>[]);
+      }
+      throw Exception('기출 통계 로드 실패: ${jsonResponse['message']}');
+    } catch (e) {
+      debugPrint('StatsService.getExamSessionStats Error: $e');
+      rethrow;
+    }
+  }
 }
 
 class GroupService {

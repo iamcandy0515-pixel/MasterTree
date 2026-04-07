@@ -57,9 +57,9 @@ export class StatsController {
 
     async getUserDashboardStats(req: Request, res: Response) {
         try {
-            const { count: totalTrees } = await supabase.from("trees").select("*", { count: "exact", head: true });
-            const { count: totalQuizzes } = await supabase.from("quiz_questions").select("*", { count: "exact", head: true });
-            const { count: totalGroups } = await supabase.from("tree_groups").select("*", { count: "exact", head: true });
+            const { count: totalTrees } = await (supabase as any).from("trees").select("*", { count: "exact", head: true });
+            const { count: totalQuizzes } = await (supabase as any).from("quiz_questions").select("*", { count: "exact", head: true });
+            const { count: totalGroups } = await (supabase as any).from("tree_groups").select("*", { count: "exact", head: true });
 
             return successResponse(res, {
                 totalTrees: totalTrees || 0,
@@ -69,6 +69,32 @@ export class StatsController {
         } catch (error) {
             console.error("User Stats Error:", error);
             return errorResponse(res, "Failed to fetch user stats", 500);
+        }
+    }
+
+    async getTreeCategoryStats(req: Request, res: Response) {
+        try {
+            const userId = req.params.userId || (req.query.user_id as string) || (req as any).user?.id;
+            if (!userId) return errorResponse(res, "User ID is required", 400);
+
+            const data = await statsUserService.getTreeCategoryStats(userId);
+            return successResponse(res, data, "Tree category stats retrieved");
+        } catch (error: any) {
+            console.error("Tree Category Stats Error:", error.message);
+            return errorResponse(res, error.message, 500);
+        }
+    }
+
+    async getExamSessionStats(req: Request, res: Response) {
+        try {
+            const userId = req.params.userId || (req.query.user_id as string) || (req as any).user?.id;
+            if (!userId) return errorResponse(res, "User ID is required", 400);
+
+            const data = await statsUserService.getExamSessionStats(userId);
+            return successResponse(res, data, "Exam session stats retrieved");
+        } catch (error: any) {
+            console.error("Exam Session Stats Error:", error.message);
+            return errorResponse(res, error.message, 500);
         }
     }
 }

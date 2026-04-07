@@ -15,6 +15,8 @@ class UserStatsScreen extends StatefulWidget {
 
 class _UserStatsScreenState extends State<UserStatsScreen> {
   Map<String, dynamic>? _stats;
+  List<Map<String, dynamic>> _categoryStats = [];
+  List<Map<String, dynamic>> _examStats = [];
   bool _isLoading = true;
   String? _error;
 
@@ -33,10 +35,18 @@ class _UserStatsScreenState extends State<UserStatsScreen> {
 
     try {
       await ApiService.syncPendingAttempts();
-      final data = await ApiService.getUserPerformanceStats();
+      
+      final results = await Future.wait([
+        ApiService.getUserPerformanceStats(),
+        ApiService.getTreeCategoryStats(),
+        ApiService.getExamSessionStats(),
+      ]);
+
       if (!mounted) return;
       setState(() {
-        _stats = data;
+        _stats = results[0] as Map<String, dynamic>;
+        _categoryStats = results[1] as List<Map<String, dynamic>>;
+        _examStats = results[2] as List<Map<String, dynamic>>;
         _isLoading = false;
       });
     } catch (e) {
@@ -91,8 +101,8 @@ class _UserStatsScreenState extends State<UserStatsScreen> {
             : TabBarView(
                 children: [
                   OverallStatsTab(stats: _stats!),
-                  QuizStatsTab(stats: _stats!),
-                  PastExamStatsTab(stats: _stats!),
+                  QuizStatsTab(stats: _stats!, categories: _categoryStats),
+                  PastExamStatsTab(stats: _stats!, exams: _examStats),
                 ],
               ),
       ),

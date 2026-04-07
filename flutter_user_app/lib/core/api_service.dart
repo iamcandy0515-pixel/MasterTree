@@ -30,6 +30,10 @@ class ApiService {
 
   static Future<Map<String, dynamic>> getUserPerformanceStats() => StatsService.getUserPerformanceStats();
 
+  static Future<List<Map<String, dynamic>>> getTreeCategoryStats() => StatsService.getTreeCategoryStats();
+
+  static Future<List<Map<String, dynamic>>> getExamSessionStats() => StatsService.getExamSessionStats();
+
   // Sync
   static Future<void> init() => SyncService.init();
 

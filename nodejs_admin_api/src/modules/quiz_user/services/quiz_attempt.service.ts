@@ -1,5 +1,6 @@
 import { supabase } from "../../../config/supabaseClient";
 import { quizSessionService } from "./quiz_session.service";
+import { maintenanceService } from "../../system/services/maintenance.service";
 
 export class QuizAttemptService {
     /**
@@ -28,6 +29,12 @@ export class QuizAttemptService {
         const totalQuestions = attemptRows.length;
 
         await quizSessionService.updateSessionStats(userId, sessionId, correctCount, totalQuestions);
+        
+        // Probabilistic Background Maintenance (approx. 5% probability)
+        if (Math.random() < 0.05) {
+            maintenanceService.executeStatsPurge().catch(e => console.error("Purge Error:", e));
+        }
+
         return { correctCount, total: totalQuestions };
     }
 
@@ -98,13 +105,12 @@ export class QuizAttemptService {
     }
 
     /**
-     * Sync latest attempt result to user_quiz_summary table.
+     * Sync latest attempt result to user_quiz_summary table and update aggregation tables.
      */
     private async syncSummary(userId: string, attempts: any[]) {
-        // [1] 문제 번호(question_id) 또는 나무 번호(tree_id) 중 하나라도 있으면 통계 대상으로 수용
         const summaryRows = attempts.map(a => ({
             user_id: userId,
-            question_id: a.question_id || null, // null 가능하도록 허용
+            question_id: a.question_id || null,
             is_last_correct: a.is_correct,
             tree_id: a.tree_id || null,
             updated_at: new Date().toISOString()
@@ -112,21 +118,89 @@ export class QuizAttemptService {
 
         if (summaryRows.length === 0) return;
 
-        // [2] 배치 내에서 동일 항목에 대해 중복이 발생하면 마지막 결과를 사용
-        // 식별자: question_id가 있으면 question_id, 없으면 tree_id 사용
         const uniqueSummaries = Array.from(
             new Map(summaryRows.map(s => [s.question_id ? `q_${s.question_id}` : `t_${s.tree_id}`, s])).values()
         );
 
-        // [3] DB 업데이트 (UPSERT)
-        // Note: DB 수준에서 (user_id, question_id) 혹은 (user_id, tree_id) 유니크 인덱스가 필요함
-        // 여기서는 기존 로직의 안성을 보장하며 tree_id 기반 업데이트도 시도
         const { error } = await supabase
             .from("user_quiz_summary" as any)
-            .upsert(uniqueSummaries); // onConflict를 명시하지 않으면 테이블 정의의 Primary Key 혹은 Unique 인덱스를 따름
+            .upsert(uniqueSummaries);
         
         if (error) {
             console.error(`[SyncSummary] Failed to upsert:`, error.message);
+            return;
+        }
+
+        // [New] Update Aggregation Statistics
+        const hasTreeAttempts = attempts.some(a => a.tree_id);
+        const hasExamAttempts = attempts.some(a => a.question_id);
+
+        if (hasTreeAttempts) {
+            await this.updateTreeCategoryStats(userId);
+        }
+        if (hasExamAttempts) {
+            await this.updateExamSessionStats(userId);
+        }
+    }
+
+    /**
+     * Aggregates tree quiz results by category and updates user_tree_category_stats.
+     */
+    private async updateTreeCategoryStats(userId: string) {
+        try {
+            const { data: treeStats, error: statErr } = await (supabase as any).rpc('get_user_tree_category_stats', { p_user_id: userId });
+            
+            if (statErr) {
+                console.error(`[updateTreeCategoryStats] RPC error:`, statErr.message);
+                return;
+            }
+
+            if (treeStats && treeStats.length > 0) {
+                const upsertRows = treeStats.map((s: any) => ({
+                    user_id: userId,
+                    category_name: s.display_name,
+                    total_count: Number(s.total_count),
+                    mastered_count: Number(s.mastered_count),
+                    in_progress_count: Number(s.in_progress_count),
+                    accuracy_rate: s.total_count > 0 ? (Number(s.mastered_count) / Number(s.total_count)) * 100 : 0,
+                    updated_at: new Date().toISOString()
+                }));
+
+                await (supabase as any).from("user_tree_category_stats").upsert(upsertRows, { onConflict: 'user_id,category_name' });
+            }
+        } catch (err: any) {
+            console.error(`[updateTreeCategoryStats] Error:`, err.message);
+        }
+    }
+
+    /**
+     * Aggregates exam results by session and updates user_exam_session_stats.
+     */
+    private async updateExamSessionStats(userId: string) {
+        try {
+            const { data: examStats, error: statErr } = await (supabase as any).rpc('get_user_exam_session_stats', { p_user_id: userId });
+            
+            if (statErr) {
+                console.error(`[updateExamSessionStats] RPC error:`, statErr.message);
+                return;
+            }
+
+            if (examStats && examStats.length > 0) {
+                const upsertRows = examStats.map((s: any) => ({
+                    user_id: userId,
+                    exam_id: s.exam_id,
+                    subject_name: s.subject_name || s.exam_title,
+                    total_count: Number(s.total_count),
+                    mastered_count: Number(s.mastered_count),
+                    in_progress_count: Number(s.in_progress_count),
+                    accuracy_rate: s.total_count > 0 ? (Number(s.mastered_count) / Number(s.total_count)) * 100 : 0,
+                    updated_at: new Date().toISOString()
+                }));
+
+                await (supabase as any).from("user_exam_session_stats").upsert(upsertRows, { onConflict: 'user_id,exam_id' });
+            }
+        } catch (err: any) {
+            console.error(`[updateExamSessionStats] Error:`, err.message);
         }
     }
 }
