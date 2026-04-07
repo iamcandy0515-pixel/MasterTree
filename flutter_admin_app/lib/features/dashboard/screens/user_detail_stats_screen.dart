@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/user_detail_viewmodel.dart';
-import '../widgets/user_detail_tabs.dart';
+import '../widgets/user_detail/stats_colors.dart';
+import '../widgets/user_detail/admin_overall_stats_tab.dart';
+import '../widgets/user_detail/admin_quiz_stats_tab.dart';
+import '../widgets/user_detail/admin_past_exam_stats_tab.dart';
 
 class UserDetailStatsScreen extends StatelessWidget {
   final String userId;
@@ -33,17 +36,30 @@ class _UserDetailStatsContent extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        backgroundColor: backgroundDark,
+        backgroundColor: StatsColors.background,
         appBar: AppBar(
-          backgroundColor: backgroundDark,
+          backgroundColor: StatsColors.background,
           elevation: 0,
-          title: const Text(
-            '상세 학습 통계',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                '상세 학습 통계',
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              Text(
+                '사용자: $userName',
+                style: const TextStyle(color: StatsColors.textMuted, fontSize: 12),
+              ),
+            ],
           ),
           bottom: const TabBar(
-            indicatorColor: primaryColor,
-            labelColor: primaryColor,
+            indicatorColor: StatsColors.primary,
+            labelColor: StatsColors.primary,
             unselectedLabelColor: Colors.white38,
             indicatorSize: TabBarIndicatorSize.label,
             tabs: [
@@ -61,7 +77,7 @@ class _UserDetailStatsContent extends StatelessWidget {
         ),
         body: vm.isLoading
             ? const Center(
-                child: CircularProgressIndicator(color: primaryColor),
+                child: CircularProgressIndicator(color: StatsColors.primary),
               )
             : vm.error != null
             ? _buildErrorView(vm.error!)
@@ -74,37 +90,11 @@ class _UserDetailStatsContent extends StatelessWidget {
               )
             : TabBarView(
                 children: [
-                  GeneralStatsTab(stats: vm.stats!),
-                  _buildSubTab(
-                    '수목 식별 퀴즈 성과',
-                    vm.stats!['quiz'],
-                    primaryColor,
-                    Icons.school,
-                  ),
-                  _buildSubTab(
-                    '기출 문제 학습 성과',
-                    vm.stats!['pastExam'],
-                    Colors.orangeAccent,
-                    Icons.history_edu,
-                  ),
+                  AdminOverallStatsTab(stats: vm.stats!),
+                  AdminQuizStatsTab(stats: vm.stats!, categories: vm.categoryStats),
+                  AdminPastExamStatsTab(stats: vm.stats!, exams: vm.examStats),
                 ],
               ),
-      ),
-    );
-  }
-
-  Widget _buildSubTab(String title, dynamic data, Color color, IconData icon) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          StatCard(
-            title: title,
-            data: (data as Map<String, dynamic>?) ?? <String, dynamic>{},
-            accentColor: color,
-            icon: icon,
-          ),
-        ],
       ),
     );
   }
@@ -113,10 +103,17 @@ class _UserDetailStatsContent extends StatelessWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: Text(
-          '에러: $error',
-          textAlign: TextAlign.center,
-          style: const TextStyle(color: Colors.redAccent),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, color: Colors.redAccent, size: 48),
+            const SizedBox(height: 16),
+            Text(
+              '에러: $error',
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.redAccent),
+            ),
+          ],
         ),
       ),
     );

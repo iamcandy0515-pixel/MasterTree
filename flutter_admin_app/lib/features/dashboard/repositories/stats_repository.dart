@@ -62,4 +62,40 @@ class StatsRepository extends BaseRepository {
     checkAuthError(response.statusCode);
     throw Exception('사용자 개인 통계 정보를 불러오지 못했습니다: ${response.statusCode}');
   }
+
+  // GET /api/stats/categories/:userId
+  Future<List<Map<String, dynamic>>> getTreeCategoryStats(String userId) async {
+    final Uri url = Uri.parse('$baseUrl/stats/categories/$userId');
+    final Map<String, String> headers = await getHeaders();
+    final http.Response response = await http.get(url, headers: headers);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonResponse =
+          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+      if (jsonResponse['success'] == true) {
+        return List<Map<String, dynamic>>.from(
+            (jsonResponse['data'] as Iterable<dynamic>?) ?? <dynamic>[]);
+      }
+    }
+    checkAuthError(response.statusCode);
+    throw Exception('나무 카테고리 통계를 불러오지 못했습니다: ${response.statusCode}');
+  }
+
+  // GET /api/stats/exams/:userId
+  Future<List<Map<String, dynamic>>> getExamSessionStats(String userId) async {
+    final Uri url = Uri.parse('$baseUrl/stats/exams/$userId');
+    final Map<String, String> headers = await getHeaders();
+    final http.Response response = await http.get(url, headers: headers);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonResponse =
+          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+      if (jsonResponse['success'] == true) {
+        return List<Map<String, dynamic>>.from(
+            (jsonResponse['data'] as Iterable<dynamic>?) ?? <dynamic>[]);
+      }
+    }
+    checkAuthError(response.statusCode);
+    throw Exception('기출문제 세션 통계를 불러오지 못했습니다: ${response.statusCode}');
+  }
 }

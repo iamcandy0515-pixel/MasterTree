@@ -8,10 +8,14 @@ class UserDetailViewModel extends ChangeNotifier {
   UserDetailViewModel(this.userId);
 
   Map<String, dynamic>? _stats;
+  List<Map<String, dynamic>> _categoryStats = [];
+  List<Map<String, dynamic>> _examStats = [];
   bool _isLoading = false;
   String? _error;
 
   Map<String, dynamic>? get stats => _stats;
+  List<Map<String, dynamic>> get categoryStats => _categoryStats;
+  List<Map<String, dynamic>> get examStats => _examStats;
   bool get isLoading => _isLoading;
   String? get error => _error;
 
@@ -21,7 +25,15 @@ class UserDetailViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _stats = await _repository.getUserPerformanceStats(userId);
+      final List results = await Future.wait<dynamic>(<Future<dynamic>>[
+        _repository.getUserPerformanceStats(userId),
+        _repository.getTreeCategoryStats(userId),
+        _repository.getExamSessionStats(userId),
+      ]);
+
+      _stats = results[0] as Map<String, dynamic>;
+      _categoryStats = results[1] as List<Map<String, dynamic>>;
+      _examStats = results[2] as List<Map<String, dynamic>>;
     } catch (e) {
       _error = e.toString();
     } finally {
