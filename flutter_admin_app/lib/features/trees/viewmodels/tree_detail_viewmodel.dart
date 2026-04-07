@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_admin_app/features/trees/models/tree.dart';
 import 'package:flutter_admin_app/features/trees/models/create_tree_request.dart';
 import 'package:flutter_admin_app/features/trees/repositories/master_tree_repository.dart';
@@ -130,7 +130,7 @@ class TreeDetailViewModel extends ChangeNotifier {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('저장 실패: '), backgroundColor: Colors.red),
+          const SnackBar(content: Text('저장 실패: '), backgroundColor: Colors.red),
         );
       }
     } finally {

@@ -192,7 +192,7 @@ class BulkExtractionViewModel extends ChangeNotifier
       final batchData = extractionService.prepareBatchForDatabase(entries);
 
       final success = await _quizRepo.upsertBatch(
-        quizItems: batchData as List<Map<String, dynamic>>,
+        quizItems: batchData,
         examFilter: <String, dynamic>{'subject': subject, 'year': year, 'round': round},
       );
 

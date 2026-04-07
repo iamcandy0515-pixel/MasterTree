@@ -77,7 +77,7 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
                   thumbnailUrl: dbImage?.thumbnailUrl,
                 ),
                 // DB와 일치하면 'db', 아니면 'google' (이미지 존재 시)
-                source: (dbImage != null && dbImage.imageUrl == (driveOriginalUrl as String? ?? '')) ? 'db' : 'google',
+                source: (dbImage != null && dbImage.imageUrl == driveOriginalUrl) ? 'db' : 'google',
               );
             }
           } else if (dbImage != null && dbImage.imageUrl.isNotEmpty) {
@@ -100,7 +100,7 @@ extension TreeSourcingDriveExtension on TreeSourcingViewModel {
                 ),
                 isThumbnail: true,
                 // DB와 일치하면 'db', 아니면 'google'
-                source: (dbImage != null && dbImage.thumbnailUrl == (driveThumbUrl as String?)) ? 'db' : 'google',
+                source: (dbImage != null && dbImage.thumbnailUrl == driveThumbUrl) ? 'db' : 'google',
               );
             }
           } else if (dbImage != null &&

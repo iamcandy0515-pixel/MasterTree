@@ -19,8 +19,12 @@ void main() async {
   AppLogger.d('Admin App Initialized', tag: 'BOOT');
 
   // [1] 빌드 시 주입된 변수(--dart-define)가 있으면 우선 사용, 없으면 .env 사용
-  final String supabaseUrl = String.fromEnvironment('SUPABASE_URL', defaultValue: dotenv.get('SUPABASE_URL'));
-  final String supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: dotenv.get('SUPABASE_ANON_KEY'));
+  final String supabaseUrl = const String.fromEnvironment('SUPABASE_URL').isNotEmpty 
+      ? const String.fromEnvironment('SUPABASE_URL') 
+      : dotenv.get('SUPABASE_URL');
+  final String supabaseAnonKey = const String.fromEnvironment('SUPABASE_ANON_KEY').isNotEmpty 
+      ? const String.fromEnvironment('SUPABASE_ANON_KEY') 
+      : dotenv.get('SUPABASE_ANON_KEY');
 
   await Supabase.initialize(
     url: supabaseUrl,

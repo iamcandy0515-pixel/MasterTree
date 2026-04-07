@@ -27,11 +27,11 @@ extension BulkActionLogic on BulkSimilarManagementViewModel {
           final filteredResult = (result).where((dynamic r) => r['id'] != quizId).toList();
           
           filteredResult.sort((dynamic a, dynamic b) {
-            final int yA = (a as Map)['year'] as int? ?? 0;
-            final int yB = (b as Map)['year'] as int? ?? 0;
+            final int yA = a['year'] as int? ?? 0;
+            final int yB = b['year'] as int? ?? 0;
             if (yA != yB) return yB.compareTo(yA);
-            final int rA = (a as Map)['round'] as int? ?? 0;
-            final int rB = (b as Map)['round'] as int? ?? 0;
+            final int rA = a['round'] as int? ?? 0;
+            final int rB = b['round'] as int? ?? 0;
             return rB.compareTo(rA);
           });
 

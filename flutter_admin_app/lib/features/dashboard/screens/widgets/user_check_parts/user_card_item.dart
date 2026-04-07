@@ -109,10 +109,10 @@ class UserCardItem extends StatelessWidget {
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 10),
-                      const SizedBox(width: 4),
-                      const Text(
+                    children: const [
+                      Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 10),
+                      SizedBox(width: 4),
+                      Text(
                         '중복 가능성',
                         style: TextStyle(color: Colors.redAccent, fontSize: 9, fontWeight: FontWeight.bold),
                       ),

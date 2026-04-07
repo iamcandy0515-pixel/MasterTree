@@ -86,7 +86,7 @@ mixin QuizReviewActionHandler on State<QuizReviewDetailScreen> {
           },
           selectedYear: vm.year,
           selectedRound: vm.round,
-          initialRecommendations: (related as List).map((dynamic e) => e as Map<String, dynamic>).toList(),
+          initialRecommendations: related.map((dynamic e) => e as Map<String, dynamic>).toList(),
           quizRepo: QuizRepository(),
           onUpdate: (updatedList) {
             vm.selectedRelatedIds = updatedList.map((e) => e['id'] as int).toList();

@@ -48,8 +48,8 @@ class _QuestionAndExplanationModuleState
             primaryColor: primaryColor,
             cardDark: cardDark,
             onApplyFirstSuggestion: () {
-              if ((suggestions as List?)?.isNotEmpty ?? false) {
-                widget.explanationController.text = (suggestions as List).first.toString();
+              if (suggestions is List && suggestions.isNotEmpty) {
+                widget.explanationController.text = suggestions.first.toString();
               }
             },
           ),

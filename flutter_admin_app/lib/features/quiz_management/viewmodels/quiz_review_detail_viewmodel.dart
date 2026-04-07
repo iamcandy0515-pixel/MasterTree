@@ -90,7 +90,7 @@ class QuizReviewDetailViewModel extends ChangeNotifier {
       hintText = _extractTextFromBlocks(hintBlocks);
 
       final options = response['options'] as List<dynamic>? ?? <dynamic>[];
-      correctOptionIndex = (response['correct_option_index'] as int) ?? 0;
+      correctOptionIndex = (response['correct_option_index'] as int?) ?? 0;
       incorrectOptions.clear();
       for (int i = 0; i < options.length; i++) {
         final dynamic content = options[i]['content'] ?? '';

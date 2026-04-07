@@ -128,7 +128,7 @@ class _NeoScaleButtonState extends State<_NeoScaleButton> {
                 ),
                 child: Text(
                   widget.label,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
