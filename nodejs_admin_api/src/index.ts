@@ -1,11 +1,8 @@
 import "./env"; // 🚨 ESSENTIAL: Load environment variables before any other imports
 import app from "./app";
-import treesRoutes from "./modules/trees/trees.routes";
-import externalRoutes from "./modules/external/external.routes"; // Import External routes
-import uploadRoutes from "./modules/uploads/uploads.routes";
-import systemRoutes from "./modules/system/system.routes";
+import { silenceConsoleInProduction } from "./utils/logger";
 
-// Feature Routes are managed in app.ts
+silenceConsoleInProduction();
 
 const PORT = process.env.PORT || 3000;
 

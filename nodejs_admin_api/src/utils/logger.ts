@@ -1,51 +1,42 @@
-import { Request, Response } from "express";
+/**
+ * Centralized Logger Utility
+ * Controls output based on NODE_ENV (development vs production)
+ */
 
-const inMemoryLogs: any[] = [];
-const MAX_LOGS = 200;
-
-function addLog(type: string, message: string, colorHex: string) {
-    const time = new Date().toISOString().replace("T", " ").substring(0, 19);
-    inMemoryLogs.unshift({ time, type, msg: message, color: colorHex });
-    if (inMemoryLogs.length > MAX_LOGS) inMemoryLogs.pop();
-}
-
-export const logStore = {
-    getLogs: () => inMemoryLogs,
-    clearLogs: () => {
-        inMemoryLogs.length = 0;
-    },
-};
+const isDev = process.env.NODE_ENV !== 'production';
 
 export const logger = {
-    info: (message: string, context?: unknown) => {
-        addLog("INFO", message, "0xFF3FB950");
-        const timestamp = new Date().toISOString();
-        console.log(
-            `[INFO] [${timestamp}] ${message}`,
-            context ? JSON.stringify(context) : "",
-        );
-    },
-    error: (message: string, error?: unknown) => {
-        addLog("ERROR", message + (error ? ` - ${error}` : ""), "0xFFF85149");
-        const timestamp = new Date().toISOString();
-        console.error(`[ERROR] [${timestamp}] ${message}`, error);
-    },
-    warn: (message: string, context?: unknown) => {
-        addLog("WARN", message, "0xFFFF9800");
-        const timestamp = new Date().toISOString();
-        console.warn(
-            `[WARN] [${timestamp}] ${message}`,
-            context ? JSON.stringify(context) : "",
-        );
-    },
-    debug: (message: string, context?: unknown) => {
-        addLog("DEBUG", message, "0xFF808080");
-        if (process.env.NODE_ENV === "development") {
-            const timestamp = new Date().toISOString();
-            console.debug(
-                `[DEBUG] [${timestamp}] ${message}`,
-                context ? JSON.stringify(context) : "",
-            );
+    info: (message: string, ...args: any[]) => {
+        if (isDev) {
+            console.log(`[INFO] ${message}`, ...args);
         }
     },
+    error: (message: string, error?: any) => {
+        // Errors are usually logged even in production for monitoring, 
+        // but we can sanitize them if needed.
+        console.error(`[ERROR] ${message}`, error || '');
+    },
+    debug: (message: string, ...args: any[]) => {
+        if (isDev) {
+            console.debug(`[DEBUG] ${message}`, ...args);
+        }
+    },
+    warn: (message: string, ...args: any[]) => {
+        if (isDev) {
+            console.warn(`[WARN] ${message}`, ...args);
+        }
+    }
+};
+
+/**
+ * [Advanced] Silence global console.log in production
+ * To be called in app.ts or index.ts
+ */
+export const silenceConsoleInProduction = () => {
+    if (!isDev) {
+        console.log = () => {};
+        console.debug = () => {};
+        console.warn = () => {};
+        // Keep console.error working for critical issues
+    }
 };
