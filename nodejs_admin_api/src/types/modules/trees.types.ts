@@ -60,6 +60,7 @@ export type TreeTables = {
       id: number
       image_type: string | null
       image_url: string | null
+      quizz_source_image_url: string | null
       thumbnail_url: string | null
       is_quiz_enabled: boolean
       tree_id: number
@@ -71,6 +72,7 @@ export type TreeTables = {
       id?: never
       image_type?: string | null
       image_url?: string | null
+      quizz_source_image_url?: string | null
       thumbnail_url?: string | null
       is_quiz_enabled?: boolean
       tree_id: number
@@ -82,6 +84,7 @@ export type TreeTables = {
       id?: never
       image_type?: string | null
       image_url?: string | null
+      quizz_source_image_url?: string | null
       thumbnail_url?: string | null
       is_quiz_enabled?: boolean
       tree_id?: number

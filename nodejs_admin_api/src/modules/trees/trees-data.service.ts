@@ -66,7 +66,7 @@ export class TreeDataService {
 
             IMAGE_TYPES.forEach((type) => {
                 const img = (tree.tree_images || []).find((i: any) => i.image_type === type);
-                row[`${type}_url`] = img?.image_url || "";
+                row[`${type}_url`] = img?.quizz_source_image_url || img?.image_url || "";
                 row[`${type}_thumb_url`] = img?.thumbnail_url || "";
                 row[`${type}_hint`] = img?.hint || "";
             });

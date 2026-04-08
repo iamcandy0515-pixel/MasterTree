@@ -31,6 +31,7 @@ export class TreeRepository {
                     id,
                     image_type,
                     image_url,
+                    quizz_source_image_url,
                     thumbnail_url,
                     hint,
                     is_quiz_enabled
@@ -66,6 +67,7 @@ export class TreeRepository {
                     id,
                     image_type,
                     image_url,
+                    quizz_source_image_url,
                     thumbnail_url,
                     hint,
                     is_quiz_enabled,
@@ -153,7 +155,7 @@ export class TreeRepository {
      * Fetches images for a specific tree for cleanup
      */
     async findImagesByTreeId(treeId: number) {
-        return await supabase.from("tree_images").select("image_url").eq("tree_id", treeId);
+        return await supabase.from("tree_images").select("image_url, quizz_source_image_url").eq("tree_id", treeId);
     }
 
     /**

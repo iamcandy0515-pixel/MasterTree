@@ -125,7 +125,7 @@ class TreeListController {
       for (final dynamic imgRaw in images) {
         final Map<String, dynamic> img = Map<String, dynamic>.from(imgRaw as Map);
         // 첫 번째 이미지 URL 및 썸네일을 대표로 선택
-        imageUrl ??= img['image_url']?.toString();
+        imageUrl ??= (img['quizz_source_image_url'] ?? img['image_url'])?.toString();
         thumbnailUrl ??= img['thumbnail_url']?.toString();
 
         final String? hint = img['hint']?.toString();

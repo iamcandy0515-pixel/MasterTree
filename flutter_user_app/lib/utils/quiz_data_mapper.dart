@@ -18,7 +18,7 @@ class QuizDataMapper {
         final Map<String, dynamic> img = Map<String, dynamic>.from(imgRaw as Map);
         final String? type = img['image_type'] as String?;
         final dynamic hint = img['hint'];
-        final String? url = img['image_url'] as String?;
+        final String? url = (img['quizz_source_image_url'] ?? img['image_url']) as String?;
 
         if (url != null && url.isNotEmpty) {
           if (type == 'main' || questionImageUrl.isEmpty) {

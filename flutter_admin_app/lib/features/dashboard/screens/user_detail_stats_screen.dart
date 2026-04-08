@@ -44,18 +44,9 @@ class _UserDetailStatsContent extends StatelessWidget {
             icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
             onPressed: () => Navigator.pop(context),
           ),
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                '상세 학습 통계',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              Text(
-                '사용자: $userName',
-                style: const TextStyle(color: StatsColors.textMuted, fontSize: 12),
-              ),
-            ],
+          title: const Text(
+            '상세 학습 통계',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
           ),
           bottom: const TabBar(
             indicatorColor: StatsColors.primary,

@@ -31,12 +31,12 @@ android {
     ndkVersion flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = '17'
     }
 
     defaultConfig {
@@ -67,8 +67,14 @@ configurations.all {
         force 'androidx.browser:browser:1.5.0'
         force 'androidx.activity:activity:1.7.2'
         force 'androidx.activity:activity-ktx:1.7.2'
+        force 'androidx.fragment:fragment:1.5.7'
+        force 'androidx.fragment:fragment-ktx:1.5.7'
         force 'androidx.core:core:1.10.1'
         force 'androidx.core:core-ktx:1.10.1'
+        force 'androidx.lifecycle:lifecycle-viewmodel:2.6.1'
+        force 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
+        force 'androidx.lifecycle:lifecycle-runtime:2.6.1'
+        force 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
         
         // Kotlin Version Resolution Strategy (metadata version 1.8.0 -> 1.7.10)
         force 'org.jetbrains.kotlin:kotlin-stdlib:1.7.10'

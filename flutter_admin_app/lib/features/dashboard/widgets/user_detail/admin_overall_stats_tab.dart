@@ -42,7 +42,7 @@ class AdminOverallStatsTab extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '관리자가 확인하는 $name님의 학습 성과',
+          '$name님의 학습 성과',
           style: const TextStyle(
             color: Colors.white,
             fontSize: 20,

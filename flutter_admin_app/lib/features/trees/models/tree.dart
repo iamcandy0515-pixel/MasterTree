@@ -1,9 +1,10 @@
-﻿import 'package:flutter_admin_app/core/api/node_api.dart';
+import 'package:flutter_admin_app/core/api/node_api.dart';
 
 class TreeImage {
   final int? id;
   final String imageType; // 'leaf', 'bark', etc.
   final String imageUrl; // Display URL (Proxied)
+  final String? quizzSourceImageUrl; // Cloudinary optimization URL
   final String? originUrl; // Original URL (RAW)
   final String? thumbnailUrl;
   final String? hint; // Quiz answer hint
@@ -13,6 +14,7 @@ class TreeImage {
     this.id,
     required this.imageType,
     this.imageUrl = '',
+    this.quizzSourceImageUrl,
     this.originUrl,
     this.thumbnailUrl,
     this.hint,
@@ -46,7 +48,7 @@ class TreeImage {
   };
 
   factory TreeImage.fromJson(Map<String, dynamic> json) {
-    final String rawUrl = (json['image_url'] ?? '').toString();
+    final String rawUrl = (json['quizz_source_image_url'] ?? json['image_url'] ?? '').toString();
     final dynamic thumbUrl = json['thumbnail_url'];
 
     return TreeImage(
@@ -56,7 +58,8 @@ class TreeImage {
         return _typeMapping[rawType] ?? rawType;
       })(),
       imageUrl: NodeApi.getProxyImageUrl(rawUrl),
-      originUrl: rawUrl,
+      quizzSourceImageUrl: (json['quizz_source_image_url'] ?? '').toString(),
+      originUrl: (json['image_url'] ?? '').toString(),
       thumbnailUrl: thumbUrl != null ? NodeApi.getProxyImageUrl(thumbUrl as String) : null,
       hint: json['hint'] as String?,
       isQuizEnabled: (json['is_quiz_enabled'] as bool?) ?? true,
@@ -67,6 +70,7 @@ class TreeImage {
     int? id,
     String? imageType,
     String? imageUrl,
+    String? quizzSourceImageUrl,
     String? originUrl,
     String? thumbnailUrl,
     String? hint,
@@ -76,6 +80,7 @@ class TreeImage {
       id: id ?? this.id,
       imageType: imageType ?? this.imageType,
       imageUrl: imageUrl ?? this.imageUrl,
+      quizzSourceImageUrl: quizzSourceImageUrl ?? this.quizzSourceImageUrl,
       originUrl: originUrl ?? this.originUrl,
       thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
       hint: hint ?? this.hint,
@@ -88,6 +93,7 @@ class TreeImage {
     'image_url': (originUrl != null && originUrl!.isNotEmpty) 
         ? originUrl 
         : (imageUrl.isNotEmpty ? imageUrl : null),
+    'quizz_source_image_url': quizzSourceImageUrl,
     'thumbnail_url': thumbnailUrl,
     'hint': hint,
     'is_quiz_enabled': isQuizEnabled,

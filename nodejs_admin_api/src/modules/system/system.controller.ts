@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { exec } from "child_process";
+import { logStore } from "../../utils/logger";
 
 export class SystemController {
     static async restartAdmin(req: Request, res: Response) {
@@ -32,12 +33,10 @@ export class SystemController {
     }
 
     static async getLogs(req: Request, res: Response) {
-        const { logStore } = require("../../utils/logger");
         res.json({ success: true, data: logStore.getLogs() });
     }
 
     static async clearLogs(req: Request, res: Response) {
-        const { logStore } = require("../../utils/logger");
         logStore.clearLogs();
         res.json({ success: true, message: "Logs cleared" });
     }

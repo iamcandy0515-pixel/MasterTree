@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { supabase } from './src/config/supabaseClient';
 
 async function diagnose() {

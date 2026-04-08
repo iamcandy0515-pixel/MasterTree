@@ -90,7 +90,7 @@ class TreeGroupMember {
       if (img is Map) {
         final rawType = (img['image_type']?.toString() ?? 'unknown').toLowerCase().trim();
         final type = _typeMapping[rawType] ?? rawType;
-        final url = img['image_url']?.toString();
+        final url = (img['quizz_source_image_url'] ?? img['image_url'])?.toString();
         final thumb = img['thumbnail_url']?.toString();
         final hint = img['hint']?.toString();
 
@@ -154,10 +154,10 @@ class TreeGroupMember {
     if (images.isNotEmpty) {
       for (var img in images) {
         if (img is Map && img['image_type'] == 'main') {
-          return img['image_url'] as String?;
+          return (img['quizz_source_image_url'] ?? img['image_url']) as String?;
         }
       }
-      return images[0]['image_url'] as String?;
+      return (images[0]['quizz_source_image_url'] ?? images[0]['image_url']) as String?;
     }
     return null;
   }

@@ -19,7 +19,8 @@ mixin QuizDataHandler {
         final Map<String, dynamic> img = Map<String, dynamic>.from(imgRaw as Map);
         final dynamic type = img['image_type'];
         final dynamic hint = img['hint'];
-        final dynamic url = img['image_url'];
+        // Cloudinary 최적화 URL을 우선 사용
+        final dynamic url = img['quizz_source_image_url'] ?? img['image_url'];
         final dynamic thumb = img['thumbnail_url'];
 
         if (url != null && url.toString().isNotEmpty) {

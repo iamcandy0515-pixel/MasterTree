@@ -33,8 +33,8 @@ class TreeService {
               orElse: () => images[0],
             );
             final Map<String, dynamic> mainImgMap = mainImg as Map<String, dynamic>;
-            tree['image_url'] = mainImgMap['image_url'];
-            // 썸네일 URL 데이터가 있으면 함께 매핑 (최적화 1단계)
+            // Cloudinary 최적화 URL을 우선 사용 (없으면 기존 image_url)
+            tree['image_url'] = mainImgMap['quizz_source_image_url'] ?? mainImgMap['image_url'];
             tree['thumbnail_url'] = mainImgMap['thumbnail_url'];
           }
           return tree;
@@ -68,7 +68,12 @@ class TreeService {
       if (jsonResponse['success'] == true && data.isNotEmpty) {
         final Map<String, dynamic> firstItem = Map<String, dynamic>.from(data[0] as Map);
         final List<dynamic> images = (firstItem['tree_images'] as List<dynamic>?) ?? <dynamic>[];
-        return images.map((dynamic e) => Map<String, dynamic>.from(e as Map)).toList();
+        return images.map((dynamic e) {
+          final Map<String, dynamic> img = Map<String, dynamic>.from(e as Map);
+          // UI 레이어에서 일관되게 사용할 수 있도록 이미지 필드 매핑 강화
+          img['image_url'] = img['quizz_source_image_url'] ?? img['image_url'];
+          return img;
+        }).toList();
       }
     } catch (e) {
       debugPrint('TreeService.getTreeImages Error: $e');
@@ -78,6 +83,11 @@ class TreeService {
 
   static String getProxyImageUrl(String? url, {int? width, int? height}) {
     if (url == null || url.isEmpty) return '';
+
+    // [0] Cloudinary URL은 이미 최적화되어 있으므로 그대로 반환 (프록시 불필요)
+    if (url.contains('cloudinary.com')) {
+      return url;
+    }
 
     // [1] Supabase Storage 리사이징 활용 (가장 가벼움)
     if (url.contains('supabase.co/storage/v1/object/public/')) {

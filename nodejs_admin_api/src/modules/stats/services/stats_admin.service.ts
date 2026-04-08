@@ -23,6 +23,13 @@ export class StatsAdminService {
 
         // 2. Currently Active Users (Detailed categorization with stats counts)
         const { data: authUsers } = await supabase.auth.admin.listUsers();
+        
+        // [수정] quiz_attempts 대신 user_quiz_summary 기반으로 집계 (더 정확하고 빠름)
+        const { data: qSummary } = await (supabase as any)
+            .from("user_quiz_summary")
+            .select("user_id, updated_at, tree_id, question_id, is_last_correct");
+
+        // 퀴즈 타입 구분을 위해 문제 데이터 맵핑 필요 (exam_id 유무)
         const { data: questions } = await supabase
             .from("quiz_questions")
             .select("id, exam_id");
@@ -33,54 +40,38 @@ export class StatsAdminService {
                 .map(q => q.id)
         );
 
-        const { data: allAttempts } = await supabase
-            .from("quiz_attempts")
-            .select("user_id, question_id, tree_id, created_at, is_correct")
-            .order("created_at", { ascending: false });
-
-        const userAggregates: Record<string, { last_active: string | null, tree_count: number, exam_count: number, solved_set: Set<string> }> = {};
+        const userAggregates: Record<string, { last_active: string | null, tree_count: number, exam_count: number }> = {};
         
-        // 3. Process Wrong Counts for Ranking
+        // 오답 랭킹을 위한 집계 (이것은 최근 실적 기반)
         const wrongCounts: Record<string, number> = {};
 
-        allAttempts?.forEach(att => {
-            const uid = att.user_id as string;
-            // User stats aggregation
+        qSummary?.forEach((s: any) => {
+            const uid = s.user_id as string;
+            const qId = s.question_id as number;
+            const tId = s.tree_id as number;
+
             if (!userAggregates[uid]) {
                 userAggregates[uid] = { 
-                    last_active: att.created_at, 
+                    last_active: null, 
                     tree_count: 0, 
-                    exam_count: 0,
-                    solved_set: new Set()
+                    exam_count: 0 
                 };
             }
             
-            if (!userAggregates[uid].last_active || new Date(att.created_at as string) > new Date(userAggregates[uid].last_active!)) {
-                userAggregates[uid].last_active = att.created_at as string;
+            // 마지막 활동 시점 업데이트
+            if (!userAggregates[uid].last_active || new Date(s.updated_at) > new Date(userAggregates[uid].last_active!)) {
+                userAggregates[uid].last_active = s.updated_at;
             }
 
-            const qId = att.question_id as number;
-            const tId = att.tree_id as number;
-
-
-            // Past Exam Question (has exam_id)
+            // 건수 합산 (user_quiz_summary는 사용자/문제별 1개 레코드이므로 단순히 COUNT 가능)
             if (qId && examQuestionIds.has(qId)) {
-                const key = `q_${qId}`;
-                if (!userAggregates[att.user_id].solved_set.has(key)) {
-                    userAggregates[att.user_id].solved_set.add(key);
-                    userAggregates[att.user_id].exam_count++;
-                }
-            } else {
-                // Tree Quiz (General Identifier Quiz)
-                const globalId = tId ? `t_${tId}` : qId ? `q_${qId}` : null;
-                if (globalId && !userAggregates[att.user_id].solved_set.has(globalId)) {
-                    userAggregates[att.user_id].solved_set.add(globalId);
-                    userAggregates[att.user_id].tree_count++;
-                }
+                userAggregates[uid].exam_count++;
+            } else if (tId || qId) {
+                userAggregates[uid].tree_count++;
             }
 
-            // Wrong counts aggregation (Global)
-            if (!att.is_correct) {
+            // 오답 랭킹용 집계
+            if (s.is_last_correct === false) {
                 const wrongKey = tId ? `t_${tId}` : (qId ? `q_${qId}` : null);
                 if (wrongKey) {
                     wrongCounts[wrongKey] = (wrongCounts[wrongKey] || 0) + 1;
@@ -95,22 +86,21 @@ export class StatsAdminService {
             .filter((u) => u.user_metadata?.status !== "rejected")
             .map((u) => {
                 const aggregates = userAggregates[u.id];
-                const authLogin = u.last_sign_in_at;
+                // [변경] 활동 시점은 퀴즈 활동 기반 (로그인 기록 제외 요청 반영)
                 const quizActivity = aggregates?.last_active;
-                const finalLastActive = (authLogin && quizActivity) 
-                    ? (new Date(authLogin) > new Date(quizActivity) ? authLogin : quizActivity)
-                    : (authLogin || quizActivity || u.created_at);
+                const finalLastActive = quizActivity || null;
 
                 return {
                     id: u.id,
                     email: u.email,
-                    last_login: finalLastActive,
+                    last_login: finalLastActive || u.last_sign_in_at || u.created_at, // 표시용은 로그인 포함 가능
                     name: u.user_metadata?.name || u.email?.split("@")[0],
                     status: u.user_metadata?.status || "pending",
                     role: u.user_metadata?.role || "user",
                     tree_quiz_count: aggregates?.tree_count || 0,
                     exam_quiz_count: aggregates?.exam_count || 0,
-                    is_active_tab: finalLastActive ? new Date(finalLastActive) > thirtyDaysAgo : false
+                    // [변경] '활동 중인 유저' 기준: 30일 이내 퀴즈 풀이 실적(1건이라도)이 있는 사람
+                    is_active_tab: quizActivity ? new Date(quizActivity) > thirtyDaysAgo : false
                 };
             })
             .sort((a, b) => {

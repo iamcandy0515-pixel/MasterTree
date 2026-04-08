@@ -103,7 +103,7 @@ export class TreeService {
 
         // Cloudinary Cleanup (Async, Non-blocking for UI)
         if (oldImages && (oldImages as any[]).length > 0) {
-            const publicIds = (oldImages as any[]).map(img => img.image_url).filter(url => url?.includes("cloudinary"));
+            const publicIds = (oldImages as any[]).map(img => img.quizz_source_image_url || img.image_url).filter(url => url?.includes("cloudinary"));
             // Extract public_id from URL if stored as URL
             const extractedIds = publicIds.map(url => url.match(/(tree-images\/trees\/[^?./]+)/)?.[1]).filter(Boolean) as string[];
             if (extractedIds.length > 0) {
@@ -136,7 +136,7 @@ export class TreeService {
 
         // Cloudinary Cleanup (Async)
         if (images && (images as any[]).length > 0) {
-            const publicIds = (images as any[]).map(img => img.image_url).filter(url => url?.includes("cloudinary"));
+            const publicIds = (images as any[]).map(img => img.quizz_source_image_url || img.image_url).filter(url => url?.includes("cloudinary"));
             const extractedIds = publicIds.map(url => url.match(/(tree-images\/trees\/[^?./]+)/)?.[1]).filter(Boolean) as string[];
             if (extractedIds.length > 0) {
                 const { UploadService } = require("../uploads/uploads.service");
@@ -162,6 +162,19 @@ export class TreeService {
     // --- Private Helpers ---
 
     private static _mapDtoToTree(dto: CreateTreeDto, nameKr: string, userId: string): any {
+        // [New] Ensure quizz_source_image_url is populated for Cloudinary images
+        if (dto.images) {
+            dto.images.forEach(img => {
+                if (!img.quizz_source_image_url && img.image_url?.includes("cloudinary.com")) {
+                    // f_auto, q_auto가 포함되지 않은 경우 강제 적용 ( defensiveness )
+                    if (!img.image_url.includes("f_auto")) {
+                        img.quizz_source_image_url = img.image_url.replace("/upload/", "/upload/f_auto,q_auto/");
+                    } else {
+                        img.quizz_source_image_url = img.image_url;
+                    }
+                }
+            });
+        }
 
         return {
             name_kr: nameKr,
@@ -175,6 +188,7 @@ export class TreeService {
             created_by: userId,
         };
     }
+
 
     private static _createConflictError(name: string) {
         const error = new Error(`이미 등록된 나무입니다: ${name}`);
