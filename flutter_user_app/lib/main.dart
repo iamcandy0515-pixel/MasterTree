@@ -18,7 +18,7 @@ Future<void> main() async {
     debugPrint = (String? message, {int? wrapWidth}) {};
   }
 
-  await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: "assets/env_config");
 
   AppLogger.d('Supabase Init: ${AppConstants.supabaseUrl}', tag: 'INIT');
   final key = AppConstants.supabaseAnonKey;

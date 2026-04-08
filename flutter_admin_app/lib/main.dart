@@ -15,7 +15,7 @@ void main() async {
     debugPrint = (String? message, {int? wrapWidth}) {};
   }
 
-  await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: "assets/env_config");
   AppLogger.d('Admin App Initialized', tag: 'BOOT');
 
   // [1] 빌드 시 주입된 변수(--dart-define)가 있으면 우선 사용, 없으면 .env 사용

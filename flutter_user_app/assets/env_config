@@ -1,0 +1,6 @@
+# ⚠️ 이 파일은 루트의 .env.master에서 자동 생성되었습니다.
+# 직접 수정하지 마세요! (sync-config.js 실행)
+
+SUPABASE_URL=https://phqnxvehlcvruaavquay.supabase.co
+SUPABASE_ANON_KEY=sb_publishable_WnukhtFt7lgi8O3t1OAJ5Q_YkAmNc93
+API_URL=http://localhost:5000/api

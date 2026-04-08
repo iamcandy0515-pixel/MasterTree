@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import compression from "compression";
+import path from "path";
 
 import treeRoutes from "./modules/trees/trees.routes";
 import treeRegistrationRoutes from "./modules/tree-registration/tree-registration.routes";
@@ -30,7 +31,8 @@ const allowedOrigins = [
     "http://127.0.0.1:5001",
     "http://127.0.0.1:8081",
     "https://mastertree-user-app.vercel.app",
-    "https://mastertree-admin-app.vercel.app"
+    "https://mastertree-admin-app.vercel.app",
+    "https://mastertree-api-final.vercel.app"
 ];
 
 app.use(cors({
@@ -75,4 +77,26 @@ app.use("/api/settings", settingsRoutes); // System Settings (Entry Code)
 app.use("/api/external", externalRoutes);
 app.use("/api/system", systemRoutes);
 
+/** Static Frontend Serving (Unified Monorepo) */
+const publicPath = path.resolve(__dirname, "../public");
+
+// 1. [ADMIN] Serve admin app at /admin
+app.use("/admin", express.static(path.join(publicPath, "admin"), { index: "index.html" }));
+app.get("/admin*", (req, res) => {
+    res.sendFile(path.join(publicPath, "admin", "index.html"));
+});
+
+// 2. [USER] Serve user app at root (/)
+// API가 아닌 모든 다른 경로는 사용자 앱으로 보냄
+app.use("/", express.static(path.join(publicPath, "user"), { index: "index.html" }));
+app.get("*", (req, res) => {
+    // API 경로는 여기서 처리하지 않음 (이미 위에서 처리됨)
+    if (req.url.startsWith("/api")) {
+        return res.status(404).json({ success: false, message: "API endpoint not found" });
+    }
+    res.sendFile(path.join(publicPath, "user", "index.html"));
+});
+
 export default app;
+
+
