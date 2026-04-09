@@ -164,17 +164,33 @@ class SupabaseService {
     await client.from('users').update(<String, dynamic>{'auth_id': authId}).eq('id', userId);
   }
 
-  /// Re-fetches the user status from public.users to ensure synchronization
+  /// Re-fetches the user status and session validity from public.users
   static Future<String> reloadUserStatus() async {
     final user = client.auth.currentUser;
     if (user == null) return 'pending';
 
     final Map<String, dynamic>? data = await client
         .from('users')
-        .select<PostgrestMap?>('status')
+        .select<PostgrestMap?>('status, last_session_id')
         .eq('auth_id', user.id)
         .maybeSingle();
     
-    return data?['status']?.toString() ?? 'pending';
+    if (data == null) return 'pending';
+
+    // Session Conflict Check: If current session token start doesn't match last_session_id in DB
+    final session = client.auth.currentSession;
+    if (session != null) {
+      final String currentToken = session.accessToken;
+      final String shortId = currentToken.length > 20 ? currentToken.substring(0, 20) : "short_session";
+      final String? dbSessionId = data['last_session_id']?.toString();
+      
+      if (dbSessionId != null && dbSessionId != shortId) {
+        // Someone else logged in! Force sign out.
+        await signOut();
+        return 'expired';
+      }
+    }
+    
+    return data['status']?.toString() ?? 'pending';
   }
 }
