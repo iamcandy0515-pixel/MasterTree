@@ -15,25 +15,25 @@
 
 ## 4. 상세 작업 To-Do List
 
-- [ ] **T1. 환경 및 사전 점검**
-  - [ ] `flutter_user_app` 의존성 및 버전 정합성 확인
-  - [ ] 현재 소스 상태에서 `flutter analyze` 수행 (Base line 확보)
+- [x] **T1. 환경 및 사전 점검**
+  - [x] `flutter_user_app` 의존성 및 버전 정합성 확인
+  - [x] 현재 소스 상태에서 `flutter analyze` 수행 (Base line 확보)
 
-- [ ] **T2. `main.dart` 구조 개선 (내비게이션 분기)**
-  - [ ] 초기 진입점을 세션 상태(`onAuthStateChange`)를 감지하는 구조로 변경
-  - [ ] 세션 유효 시 `DashboardScreen`, 무효 시 `LoginScreen`으로 분기 구현
+- [x] **T2. `main.dart` 구조 개선 (내비게이션 분기)**
+  - [x] 초기 진입점을 세션 상태(`onAuthStateChange`)를 감지하는 구조로 변경
+  - [x] 세션 유효 시 `DashboardScreen`, 무효 시 `LoginScreen`으로 분기 구현
 
-- [ ] **T3. `AuthViewModel` 및 자동 로그인 로직 보강**
-  - [ ] 앱 구동 초기화(`initialize`) 단계에서 서버 세션 유효성 검증 추가
-  - [ ] 서버 DB(`users` 테이블)의 `status` 필드를 조회하여 `approved` 상태인지 최종 확인
+- [x] **T3. `AuthViewModel` 및 자동 로그인 로직 보강**
+  - [x] 앱 구동 초기화(`initialize`) 단계에서 서버 세션 유효성 검증 추가
+  - [x] 서버 DB(`users` 테이블)의 `status` 필드를 조회하여 `approved` 상태인지 최종 확인
 
-- [ ] **T4. `SupabaseService` 고도화**
-  - [ ] 세션 만료 또는 중복 로그인 시 예외 메시지 처리 강화
-  - [ ] `last_session_id` 업데이트 로직의 안정성 검토
+- [x] **T4. `SupabaseService` 고도화**
+  - [x] 세션 만료 또는 중복 로그인 시 예외 메시지 처리 강화
+  - [x] `last_session_id` 업데이트 로직의 안정성 검토
 
-- [ ] **T5. 최종 검증 및 사후 점검**
-  - [ ] `flutter analyze`를 통한 최종 린트 에러 제로(0) 확인
-  - [ ] 실제 앱 종료 후 재실행 시 로그인 유지 여부 테스트 수행
+- [x] **T5. 최종 검증 및 사후 점검**
+  - [x] `flutter analyze`를 통한 최종 린트 에러 제로(0) 확인
+  - [x] 실제 앱 종료 후 재실행 시 로그인 유지 여부 테스트 수행
 
 ## 5. 예상 리스크 및 대응
 - **토큰 만료 시나리오**: `BaseApiService`에서 401 응답 시 세션을 클리어하고 로그인 화면으로 튕겨내는 로직 필요.

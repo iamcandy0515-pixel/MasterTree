@@ -4,7 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_user_app/core/design_system.dart';
-import 'package:flutter_user_app/screens/login_screen.dart';
+import 'package:flutter_user_app/core/widgets/auth_wrapper.dart';
 import 'package:flutter_user_app/core/constants.dart';
 import 'package:flutter_user_app/core/api_service.dart';
 import 'package:flutter_user_app/providers/quiz_provider.dart';
@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const LoginScreen(),
+      home: const AuthWrapper(),
     );
   }
 }

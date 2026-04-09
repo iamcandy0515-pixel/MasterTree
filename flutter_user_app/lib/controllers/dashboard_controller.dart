@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_user_app/core/api_service.dart';
+import 'package:flutter_user_app/core/supabase_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardController {
@@ -18,6 +20,18 @@ class DashboardController {
   int currentIndex = 0;
 
   Future<void> init(Function onUpdate) async {
+    // 0. 사용자 상태 확인 (승인 대기/거절 상태 시 자동 로그아웃)
+    try {
+      final String status = await SupabaseService.reloadUserStatus();
+      if (status != 'approved') {
+        debugPrint('User status not approved: $status. Signing out...');
+        await Supabase.instance.client.auth.signOut();
+        return; // StreamBuilder가 LoginScreen으로 전환함
+      }
+    } catch (e) {
+      debugPrint('Error checking user status: $e');
+    }
+
     // 1. 로컬 캐시 먼저 로드
     await _loadCachedStats();
     onUpdate();

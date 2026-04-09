@@ -19,6 +19,10 @@ class BaseApiService {
       return Map<String, dynamic>.from(decoded as Map);
     } else {
       debugPrint('API Error: ${response.statusCode} - ${response.body}');
+      if (response.statusCode == 401) {
+        // 토큰 만료 또는 무효 시 로그아웃 처리
+        Supabase.instance.client.auth.signOut();
+      }
       throw Exception('API Error: ${response.body}');
     }
   }
