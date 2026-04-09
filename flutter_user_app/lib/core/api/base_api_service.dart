@@ -16,7 +16,8 @@ class BaseApiService {
   static Map<String, dynamic> decodeResponse(http.Response response) {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final dynamic decoded = jsonDecode(utf8.decode(response.bodyBytes));
-      return Map<String, dynamic>.from(decoded as Map);
+      if (decoded is Map) return Map<String, dynamic>.from(decoded);
+      return <String, dynamic>{'success': true, 'data': decoded};
     } else {
       debugPrint('API Error: ${response.statusCode} - ${response.body}');
       if (response.statusCode == 401) {

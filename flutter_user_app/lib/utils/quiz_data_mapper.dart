@@ -28,14 +28,17 @@ class QuizDataMapper {
 
         final String? koreanKey = _getTypeKey(type);
         if (koreanKey != null && hint != null && hint.toString().trim().isNotEmpty) {
-          hintsMap[koreanKey] = hint.toString();
+          hintsMap[koreanKey] = hint?.toString() ?? '';
         }
       }
 
       List<String> options = [correctName];
       final dynamic distractorData = tree['quiz_distractors'];
       if (distractorData is List && distractorData.isNotEmpty) {
-        final List<String> manual = distractorData.map((dynamic e) => e.toString()).toList();
+        final List<String> manual = distractorData
+            .map((dynamic e) => e?.toString() ?? '')
+            .where((s) => s.isNotEmpty)
+            .toList();
         manual.shuffle(random);
         options.addAll(manual.take(2));
       } else {

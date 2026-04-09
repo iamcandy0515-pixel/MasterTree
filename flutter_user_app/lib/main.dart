@@ -8,7 +8,6 @@ import 'package:flutter_user_app/core/widgets/auth_wrapper.dart';
 import 'package:flutter_user_app/core/constants.dart';
 import 'package:flutter_user_app/core/api_service.dart';
 import 'package:flutter_user_app/providers/quiz_provider.dart';
-import 'package:flutter_user_app/utils/app_logger.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,26 +27,29 @@ Future<void> main() async {
   final String aUrl = AppConstants.apiUrl;
   
   // 브라우저 보이지 않는 로그로 주소 출력 (디버깅용)
-  print('--- SYSTEM BOOT ---');
-  print('API: $aUrl');
-  print('SUPA: $sUrl');
+  if (kDebugMode) {
+    debugPrint('--- SYSTEM BOOT ---');
+    debugPrint('API: $aUrl');
+    debugPrint('SUPA: $sUrl');
+    debugPrint('BOOT: Initializing Supabase...');
+  }
 
-  print('BOOT: Initializing Supabase...');
   await Supabase.initialize(
     url: sUrl,
     anonKey: AppConstants.supabaseAnonKey,
   );
-  print('BOOT: Supabase DONE.');
+
+  if (kDebugMode) debugPrint('BOOT: Supabase DONE.');
 
   // ApiService.init()을 await 하지 않고 백그라운드에서 실행 (화면 멈춤 방지)
-  print('BOOT: Initializing ApiService (Background)...');
+  if (kDebugMode) debugPrint('BOOT: Initializing ApiService (Background)...');
   ApiService.init().then((_) {
-    print('BOOT: ApiService DONE.');
+    if (kDebugMode) debugPrint('BOOT: ApiService DONE.');
   }).catchError((Object e) {
-    print('BOOT: ApiService ERROR: $e');
+    debugPrint('BOOT: ApiService ERROR: $e');
   });
 
-  print('BOOT: Running App...');
+  if (kDebugMode) debugPrint('BOOT: Running App...');
   runApp(
     MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => QuizProvider())],

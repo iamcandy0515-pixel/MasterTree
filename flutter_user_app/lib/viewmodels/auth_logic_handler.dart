@@ -25,7 +25,7 @@ mixin AuthLogicHandler {
     
     String errorMessage = "";
     if (e is AuthException) {
-      errorMessage = "Auth Error: ${e.message ?? 'No Message'} (${e.statusCode ?? 'No Code'})";
+      errorMessage = "Auth Error: ${e.message} (${e.statusCode})";
     } else if (e is String) {
       errorMessage = e;
     } else {
@@ -56,7 +56,7 @@ mixin AuthLogicHandler {
         forceLogout: forceLogout,
       );
     } on AuthException catch (e) {
-      final String msg = "${e.message ?? 'Unknown'}".toLowerCase();
+      final String msg = e.message.toLowerCase();
       if (msg.contains('invalid login credentials') || msg.contains('400')) {
         try {
           final authResponse = await SupabaseService.signUpPermanent(
@@ -100,7 +100,7 @@ mixin AuthLogicHandler {
     try {
       return await SupabaseService.signUpPermanent(phone: phone, name: name, email: email);
     } on AuthException catch (e) {
-      final String msg = "${e.message ?? 'Unknown'}".toLowerCase();
+      final String msg = e.message.toLowerCase();
       if (msg.contains('already registered') || msg.contains('user_already_exists')) {
         try {
           return await SupabaseService.signInPermanent(
@@ -110,7 +110,7 @@ mixin AuthLogicHandler {
             osVersion: osVersion,
           );
         } on AuthException catch (signInErr) {
-          final String sMsg = "${signInErr.message ?? 'Unknown'}".toLowerCase();
+          final String sMsg = signInErr.message.toLowerCase();
           if (sMsg.contains('invalid login credentials') || sMsg.contains('400')) {
              throw '인증 서버 계정이 이미 존재하지만 비번이 일치하지 않습니다. 관리자 콘솔에서 계정 삭제 후 재시도 바랍니다.';
           }

@@ -2,9 +2,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/supabase_service.dart';
+import '../core/device_info_service.dart';
+import '../core/config_service.dart';
 import 'auth_logic_handler.dart';
+import 'auth_validator.dart';
 
-class AuthViewModel extends ChangeNotifier with AuthLogicHandler {
+class AuthViewModel extends ChangeNotifier with AuthLogicHandler, AuthValidator {
   bool _isLoading = false;
   bool _isCheckingServer = false;
   bool? _isExistingUser;
@@ -19,7 +22,7 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler {
   bool get isLoading => _isLoading;
   bool get isCheckingServer => _isCheckingServer;
   bool? get isExistingUser => _isExistingUser;
-  bool get showEmailField => _isExistingUser == false;
+  bool get isNewUser => _isExistingUser == false;
 
   Future<void> initialize() async => await loadSavedData();
 
@@ -61,11 +64,11 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler {
     _debounceTimer = Timer(const Duration(milliseconds: 600), () async {
       final name = nameController.text.trim();
       final phone = phoneController.text.trim();
-      if (name.length >= 2 && phone.length >= 12) await checkUserStatus(name, phone);
+      if (name.length >= 2 && phone.length >= 12) await _checkUserStatus(name, phone);
     });
   }
 
-  Future<void> checkUserStatus(String name, String phone) async {
+  Future<void> _checkUserStatus(String name, String phone) async {
     if (_isCheckingServer) return;
     _isCheckingServer = true;
     notifyListeners();
@@ -80,27 +83,17 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler {
     }
   }
 
-  String? validateName(String? v) => (v == null || v.trim().isEmpty) ? '이름을 입력해주세요.' : (v.contains(' ') ? '이름에 공백을 포함할 수 없습니다.' : null);
-  String? validatePhone(String? v) => (v == null || v.isEmpty) ? '휴대전화 번호를 입력해주세요.' : (RegExp(r'^010-\d{4}-\d{4}$').hasMatch(v) ? null : "010으로 시작하는 11자리 숫자를 입력해주세요.");
-  String? validateEmail(String? v) => (!showEmailField) ? null : ((v == null || v.isEmpty) ? '이메일을 입력해주세요.' : (RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(v) ? null : '유효한 이메일 형식이 아닙니다.'));
-  String? validateEntryCode(String? v) => (v == null || v.isEmpty) ? '입장코드를 입력해주세요.' : null;
-
   Future<void> handleLogin({
     required GlobalKey<FormState> formKey,
     required VoidCallback onSuccess,
     required Function(String) onError,
     bool forceLogout = false,
   }) async {
-    debugPrint('--- LOGIN: Started (forceLogout: $forceLogout)');
     if (formKey.currentState == null) {
-      debugPrint('--- LOGIN: ERROR - Form state is null');
       onError('시스템 오류: 폼 상태를 찾을 수 없습니다.');
       return;
     }
-    if (!formKey.currentState!.validate()) {
-      debugPrint('--- LOGIN: Validation failed');
-      return;
-    }
+    if (!formKey.currentState!.validate()) return;
     
     _isLoading = true;
     notifyListeners();
@@ -110,87 +103,59 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler {
       final email = emailController.text.trim();
       final entryCode = entryCodeController.text.trim();
 
-      debugPrint('--- LOGIN: Fetching User ($name, $phone)');
       Map<String, dynamic>? user = await checkExistingUser(name, phone);
       _isExistingUser = (user != null);
-      debugPrint('--- LOGIN: _isExistingUser = $_isExistingUser');
 
-      debugPrint('--- LOGIN: Fetching Device Info');
-      final deviceInfo = await SupabaseService.getDeviceInfo();
+      final deviceInfo = await DeviceInfoService.getDeviceInfo();
       final String? deviceId = deviceInfo['uuid'];
-      final String? deviceModel = deviceInfo['model'];
-      final String? osVersion = deviceInfo['os'];
-      debugPrint('--- LOGIN: DeviceId = $deviceId');
-
+      
       if (_isExistingUser == true) {
-        debugPrint('--- LOGIN: Processing Existing User');
-        final dynamic statusRaw = user?['status'];
-        final String status = statusRaw?.toString() ?? '';
-        debugPrint('--- LOGIN: User Status = $status');
-        
+        final String status = user?['status']?.toString() ?? '';
         if (<String>['expired', 'denied', 'rejected'].contains(status)) throw 'status_denied';
         if (status != 'approved') throw 'status_pending';
         if (isLinkExpired(user)) throw 'status_expired';
 
-        debugPrint('--- LOGIN: Validating Entry Code');
-        if (!await SupabaseService.isValidEntryCode(entryCode, user: user)) throw '입장코드가 올바르지 않습니다.';
+        if (!await ConfigService.isValidEntryCode(entryCode, user: user)) throw '입장코드가 올바르지 않습니다.';
         
-        debugPrint('--- LOGIN: Syncing Auth and User...');
-        await syncAuthAndUser(
-          user!, 
-          name, 
-          phone,
+        await syncAuthAndUser(user!, name, phone,
           deviceId: deviceId,
-          deviceModel: deviceModel,
-          osVersion: osVersion,
+          deviceModel: deviceInfo['model'],
+          osVersion: deviceInfo['os'],
           forceLogout: forceLogout,
         );
-        debugPrint('--- LOGIN: Sync DONE');
       } else {
-        debugPrint('--- LOGIN: Processing New User');
-        if (!await SupabaseService.isValidEntryCode(entryCode)) throw '입장코드가 올바르지 않습니다.';
+        if (!await ConfigService.isValidEntryCode(entryCode)) throw '입장코드가 올바르지 않습니다.';
         
-        debugPrint('--- LOGIN: Sign Up / Sign In...');
-        final authRes = await signUpOrSignIn(
-          phone, 
-          name, 
-          email,
+        final authRes = await signUpOrSignIn(phone, name, email,
           deviceId: deviceId,
-          deviceModel: deviceModel,
-          osVersion: osVersion,
+          deviceModel: deviceInfo['model'],
+          osVersion: deviceInfo['os'],
         );
-        debugPrint('--- LOGIN: Auth Action DONE');
         
         if (authRes.user == null) throw '인증 계정 생성 또는 로그인에 실패했습니다.';
 
         final checkAgain = await checkExistingUser(name, phone);
         if (checkAgain == null) {
-          debugPrint('--- LOGIN: Registering User in public.users');
           await SupabaseService.registerUser(
-            name: name, 
-            phone: phone, 
-            email: email, 
-            entryCode: entryCode, 
+            name: name, phone: phone, email: email, entryCode: entryCode, 
             authId: authRes.user!.id,
           );
           throw 'status_pending';
         }
       }
       
-      debugPrint('--- LOGIN: Saving local data');
       await saveData();
-      debugPrint('--- LOGIN: SUCCESS - Calling onSuccess');
       onSuccess();
     } catch (e) {
-      debugPrint('--- LOGIN: CATCH Error - $e');
-      final msg = "$e";
-      if (['status_denied', 'status_pending', 'status_expired'].contains(msg)) { onError(msg); }
-      else if (msg.startsWith('ALREADY_LOGGED_IN:')) {
+      final msg = e.toString();
+      if (['status_denied', 'status_pending', 'status_expired'].contains(msg)) { 
+        onError(msg); 
+      } else if (msg.startsWith('ALREADY_LOGGED_IN:')) {
         onError(msg);
+      } else { 
+        onError(getErrorMessage(e)); 
       }
-      else { onError(getErrorMessage(e)); }
     } finally {
-      debugPrint('--- LOGIN: Finished');
       _isLoading = false;
       notifyListeners();
     }

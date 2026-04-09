@@ -31,8 +31,8 @@ class LoginInputFields extends StatelessWidget {
           validator: vm.validatePhone,
         ),
         Selector<AuthViewModel, bool>(
-          selector: (_, vm) => vm.showEmailField,
-          builder: (context, showEmail, _) {
+          selector: (_, vm) => vm.isNewUser,
+          builder: (context, isNewUser, _) {
             return AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               transitionBuilder: (Widget child, Animation<double> animation) {
@@ -41,7 +41,7 @@ class LoginInputFields extends StatelessWidget {
                   child: SizeTransition(sizeFactor: animation, child: child),
                 );
               },
-              child: showEmail
+              child: isNewUser
                   ? Padding(
                       key: const ValueKey('email_field'),
                       padding: const EdgeInsets.only(top: 12.0),
@@ -49,7 +49,7 @@ class LoginInputFields extends StatelessWidget {
                         controller: vm.emailController,
                         label: '이메일(신규 등록시)',
                         icon: Icons.email_outlined,
-                        validator: vm.validateEmail,
+                        validator: (v) => vm.validateEmail(v, isNewUser: isNewUser),
                       ),
                     )
                   : const SizedBox.shrink(key: ValueKey('email_empty')),

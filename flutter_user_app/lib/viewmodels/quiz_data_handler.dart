@@ -25,7 +25,7 @@ mixin QuizDataHandler {
 
         if (url != null && url.toString().isNotEmpty) {
           final String urlStr = url.toString();
-          if (type.toString() == 'main' || questionImageUrl.isEmpty) {
+          if (type?.toString() == 'main' || questionImageUrl.isEmpty) {
             questionImageUrl = urlStr;
             questionThumbnailUrl = thumb?.toString();
           }
@@ -47,14 +47,17 @@ mixin QuizDataHandler {
         }
 
         if (koreanKey != null && hint != null && hint.toString().trim().isNotEmpty) {
-          hintsMap[koreanKey] = hint.toString();
+          hintsMap[koreanKey] = hint?.toString() ?? '';
         }
       }
 
       List<String> options = [correctName];
       final dynamic distractorData = tree['quiz_distractors'];
       if (distractorData is List && distractorData.isNotEmpty) {
-        final List<String> manual = distractorData.map((dynamic e) => e.toString()).toList();
+        final List<String> manual = distractorData
+            .map((dynamic e) => e?.toString() ?? '')
+            .where((s) => s.isNotEmpty)
+            .toList();
         manual.shuffle(random);
         options.addAll(manual.take(3));
       }

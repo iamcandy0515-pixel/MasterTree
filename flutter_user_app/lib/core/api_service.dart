@@ -3,6 +3,7 @@ import 'api/quiz_service.dart';
 import 'api/stats_service.dart';
 import 'api/sync_service.dart';
 import 'api/settings_service.dart';
+import 'api/group_service.dart';
 
 class ApiService {
   // Tree

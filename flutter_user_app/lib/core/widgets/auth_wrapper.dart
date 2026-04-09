@@ -22,13 +22,11 @@ class AuthWrapper extends StatelessWidget {
 
             // 세션이 이미 발견됨
             if (session != null) {
-              print('Auth: Session DETECTED. Proceeding.');
               return _buildUserStatusChecker();
             }
 
             // 2초가 지났거나, 스트림이 '세션 없음'을 확인해준 경우
             if (timeoutSnapshot.connectionState == ConnectionState.done || !isWaiting) {
-              print('Auth: Timeout or Stream confirmed no session. Showing Login.');
               return const LoginScreen();
             }
 
@@ -43,7 +41,6 @@ class AuthWrapper extends StatelessWidget {
   }
 
   Widget _buildUserStatusChecker() {
-    print('--- AUTH STEP 2: Reloading User Status ---');
     return FutureBuilder<String>(
       future: SupabaseService.reloadUserStatus(),
       builder: (context, statusSnapshot) {
@@ -52,11 +49,11 @@ class AuthWrapper extends StatelessWidget {
           return Scaffold(
             body: Center(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                   const CircularProgressIndicator(color: AppColors.primary),
-                   const SizedBox(height: 16),
-                   const Text('Verifying user status...', style: TextStyle(color: Colors.white70)),
+                 mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                   CircularProgressIndicator(color: AppColors.primary),
+                   SizedBox(height: 16),
+                   Text('Verifying user status...', style: TextStyle(color: Colors.white70)),
                 ],
               ),
             ),
