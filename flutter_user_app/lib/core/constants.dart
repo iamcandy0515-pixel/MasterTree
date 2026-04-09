@@ -1,4 +1,4 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+﻿import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/foundation.dart';
 
 class AppConstants {
@@ -6,12 +6,12 @@ class AppConstants {
       dotenv.env['SUPABASE_URL'] ?? 'https://your-project.supabase.co';
   static String get supabaseAnonKey => dotenv.env['SUPABASE_ANON_KEY'] ?? '';
   static String get apiUrl {
-    // [1] 배포(Release) 모드일 때는 자동으로 실제 운영 API 주소 사용
+    // [1] 諛고룷(Release) 紐⑤뱶???뚮뒗 ?먮룞?쇰줈 ?ㅼ젣 ?댁쁺 API 二쇱냼 ?ъ슜
     if (kReleaseMode) {
-      return 'https://mastertree-api-final.vercel.app/api';
+      return 'https://mastertree-api.vercel.app/api';
     }
-    // [2] 개발(Debug) 모드일 때는 .env 에 설정된 주소 우선 사용 (로컬 테스트용)
-    return dotenv.env['API_URL'] ??
+    // [2] 媛쒕컻(Debug) 紐⑤뱶???뚮뒗 .env ???ㅼ젙??二쇱냼 ?곗꽑 ?ъ슜 (濡쒖뺄 ?뚯뒪?몄슜)
+    return dotenv.env['APP_BASE_URL'] ??
         (kIsWeb ? 'http://localhost:5000/api' : 'http://10.0.2.2:4000/api');
   }
 }

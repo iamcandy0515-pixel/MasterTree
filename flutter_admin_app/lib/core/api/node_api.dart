@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -14,12 +14,12 @@ class NodeApi {
                         currentUrl.contains('127.0.0.1') || 
                         currentUrl.contains('::1');
 
-    // [1] 배포 모드이거나 로컬 호스트가 아니면 무조건 리얼 서버 사용
+    // [1] 諛고룷 紐⑤뱶?닿굅??濡쒖뺄 ?몄뒪?멸? ?꾨땲硫?臾댁“嫄?由ъ뼹 ?쒕쾭 ?ъ슜
     if (kReleaseMode || !isLocal) {
-      return 'https://mastertree-api-final.vercel.app/api';
+      return 'https://mastertree-api.vercel.app/api';
     }
-    // [2] 로컬 테스트 환경일 때만 .env 또는 localhost 사용
-    return dotenv.env['NODE_API_URL'] ?? 'http://localhost:5000/api';
+    // [2] 濡쒖뺄 ?뚯뒪???섍꼍???뚮쭔 .env ?먮뒗 localhost ?ъ슜
+    return dotenv.env['APP_BASE_URL'] ?? 'http://localhost:5000/api';
   }
 
   /// Get headers with Auth Token
@@ -40,7 +40,7 @@ class NodeApi {
       final context = globalNavigatorKey.currentContext;
       if (context != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('로그인이 만료되었습니다. 다시 로그인 해주세요.')),
+          const SnackBar(content: Text('濡쒓렇?몄씠 留뚮즺?섏뿀?듬땲?? ?ㅼ떆 濡쒓렇???댁＜?몄슂.')),
         );
         Navigator.pushAndRemoveUntil<void>(
           context,
@@ -48,7 +48,7 @@ class NodeApi {
           (Route<dynamic> route) => false,
         );
       }
-      throw Exception('인증 만료 (서버 오류: $statusCode)');
+      throw Exception('?몄쬆 留뚮즺 (?쒕쾭 ?ㅻ쪟: $statusCode)');
     }
   }
 
