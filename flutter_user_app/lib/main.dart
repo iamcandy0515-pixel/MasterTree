@@ -18,23 +18,36 @@ Future<void> main() async {
     debugPrint = (String? message, {int? wrapWidth}) {};
   }
 
-  await dotenv.load(fileName: "assets/env_config");
+  try {
+    await dotenv.load(fileName: "assets/env_config");
+  } catch (e) {
+    debugPrint('Config load skip: $e');
+  }
 
-  AppLogger.d('Supabase Init: ${AppConstants.supabaseUrl}', tag: 'INIT');
-  final key = AppConstants.supabaseAnonKey;
-  AppLogger.d(
-    'Key Prefix: ${key.length >= 5 ? key.substring(0, 5) : 'EMPTY'}...',
-    tag: 'INIT',
-  );
+  final String sUrl = AppConstants.supabaseUrl;
+  final String aUrl = AppConstants.apiUrl;
+  
+  // 브라우저 보이지 않는 로그로 주소 출력 (디버깅용)
+  print('--- SYSTEM BOOT ---');
+  print('API: $aUrl');
+  print('SUPA: $sUrl');
 
+  print('BOOT: Initializing Supabase...');
   await Supabase.initialize(
-    url: AppConstants.supabaseUrl,
+    url: sUrl,
     anonKey: AppConstants.supabaseAnonKey,
   );
+  print('BOOT: Supabase DONE.');
 
-  // 로컬 캐시 초기화
-  await ApiService.init();
+  // ApiService.init()을 await 하지 않고 백그라운드에서 실행 (화면 멈춤 방지)
+  print('BOOT: Initializing ApiService (Background)...');
+  ApiService.init().then((_) {
+    print('BOOT: ApiService DONE.');
+  }).catchError((Object e) {
+    print('BOOT: ApiService ERROR: $e');
+  });
 
+  print('BOOT: Running App...');
   runApp(
     MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => QuizProvider())],

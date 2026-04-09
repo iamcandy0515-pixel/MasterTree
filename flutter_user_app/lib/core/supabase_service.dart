@@ -3,17 +3,20 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'constants.dart';
 
 class SupabaseService {
   static SupabaseClient get client => Supabase.instance.client;
 
+  static bool get isLoggedIn => client.auth.currentSession != null;
+
   static const String systemFixedPassword = 'admin1234';
 
   /// Performs email login (Permanent Account)
-  static Future<AuthResponse> signInPermanent(
-    String phone, {
+  static Future<AuthResponse> signInPermanent({
+    required String phone,
     String? deviceId,
     String? deviceModel,
     String? osVersion,
@@ -34,14 +37,17 @@ class SupabaseService {
 
     if (existingUser != null && deviceId != null && !forceLogout) {
       final dynamic lastDeviceId = existingUser['last_device_id'];
-      if (lastDeviceId != null && lastDeviceId != deviceId) {
-        throw 'ALREADY_LOGGED_IN:${existingUser['last_device_model'] ?? '다른 기기'}';
+      if (lastDeviceId != null && lastDeviceId.toString() != deviceId.toString()) {
+        final String model = "${existingUser['last_device_model'] ?? '다른 기기'}";
+        throw 'ALREADY_LOGGED_IN:$model';
       }
     }
 
     // 2. Priority: Registered Email -> Fallback: Virtual Email
-    final dynamic targetEmailRaw = existingUser?['email'] ?? 'u$cleanPhone@mastertree.app';
-    final String targetEmail = targetEmailRaw.toString();
+    final dynamic targetEmailRaw = existingUser != null ? existingUser['email'] : null;
+    final String targetEmail = (targetEmailRaw != null && targetEmailRaw.toString().isNotEmpty) 
+        ? targetEmailRaw.toString() 
+        : 'u$cleanPhone@mastertree.app';
 
     final AuthResponse response = await client.auth.signInWithPassword(
       email: targetEmail,
@@ -49,58 +55,29 @@ class SupabaseService {
     );
 
     // 3. Register/Update Session in DB
-    if (response.user != null && deviceId != null) {
+    if (response.user != null) {
+      final String accessToken = response.session?.accessToken ?? "";
+      final String shortSessionId = accessToken.length > 20 ? accessToken.substring(0, 20) : "short_session";
+
       await client.from('users').update(<String, dynamic>{
-        'last_session_id': response.session?.accessToken.substring(0, 50),
         'last_device_id': deviceId,
         'last_device_model': deviceModel,
         'last_os_version': osVersion,
-        'last_login': DateTime.now().toIso8601String(),
-      }).eq('auth_id', response.user!.id);
+        'last_session_id': shortSessionId,
+        'last_login_at': DateTime.now().toIso8601String(),
+      }).eq('phone', cleanPhone);
     }
 
     return response;
   }
 
-  /// Get simplified device info
-  static Future<Map<String, String>> getDeviceInfo() async {
-    final deviceInfo = DeviceInfoPlugin();
-    String model = "Unknown Device";
-    String os = "Unknown OS";
-    String uuid = "Unknown UUID";
-
-    try {
-      if (Platform.isAndroid) {
-        final android = await deviceInfo.androidInfo;
-        model = android.model;
-        os = 'Android ${android.version.release}';
-        uuid = android.id; // Consistent UUID for same hardware
-      } else if (Platform.isIOS) {
-        final ios = await deviceInfo.iosInfo;
-        model = ios.name;
-        os = 'iOS ${ios.systemVersion}';
-        uuid = ios.identifierForVendor ?? 'Unknown-iOS-ID';
-      }
-    } catch (e) {
-      debugPrint('Device info error: $e');
-    }
-
-    return {
-      'model': model,
-      'os': os,
-      'uuid': uuid,
-    };
-  }
-
   /// Performs sign up (Permanent Account)
-  static Future<AuthResponse> signUpPermanent(
-    String phone, {
+  static Future<AuthResponse> signUpPermanent({
+    required String phone,
     required String name,
-    required String email,
+    String email = "",
   }) async {
     final String cleanPhone = phone.replaceAll('-', '');
-    
-    // Use the provided real email if available, otherwise fallback to virtual
     final String targetEmail = (email.isNotEmpty && email.contains('@')) 
         ? email 
         : 'u$cleanPhone@mastertree.app';
@@ -113,99 +90,6 @@ class SupabaseService {
         'user_email': email,
       },
     );
-  }
-
-  /// Get user status after sign in
-  static Future<String> reloadUserStatus() async {
-    final User? user = client.auth.currentUser;
-    if (user == null) return 'none';
-
-    // Fetch latest status from users table
-    final Map<String, dynamic>? response = await client
-        .from('users')
-        .select<PostgrestMap?>('status')
-        .eq('auth_id', user.id)
-        .maybeSingle();
-
-    final String status = (response?['status'] as String?) ?? 'pending';
-    return status;
-  }
-
-  /// Get current session
-  static Session? get currentSession => client.auth.currentSession;
-
-  /// Check if user is logged in
-  static bool get isLoggedIn => currentSession != null;
-
-  /// Get list of trees from 'trees' table with main images
-  static Future<List<Map<String, dynamic>>> getTrees() async {
-    try {
-      // Fetch all trees
-      final List<dynamic> treesRaw = await client.from('trees').select<PostgrestList>('*').order('name_kr');
-      final List<Map<String, dynamic>> trees = treesRaw
-          .map((dynamic e) => Map<String, dynamic>.from(e as Map))
-          .toList();
-
-      // Fetch main images for all trees
-      for (final Map<String, dynamic> tree in trees) {
-        final Map<String, dynamic>? mainImg = await client
-            .from('tree_images')
-            .select<PostgrestMap?>('image_url, thumbnail_url')
-            .eq('tree_id', tree['id'])
-            .eq('image_type', 'main')
-            .maybeSingle();
-
-        if (mainImg != null && mainImg['image_url'] != null) {
-          tree['image_url'] = mainImg['image_url'];
-          // 썸네일도 있다면 함께 캐싱
-          tree['thumbnail_url'] = mainImg['thumbnail_url'];
-        }
-      }
-
-      return trees;
-    } catch (e) {
-      debugPrint('Error fetching trees: $e');
-      rethrow;
-    }
-  }
-
-  /// Check if user exists by name and phone
-  static Future<Map<String, dynamic>?> findUser(
-    String name,
-    String phone,
-  ) async {
-    final String cleanPhone = phone.replaceAll('-', '');
-    // 1. Exact match check
-    final Map<String, dynamic>? response = await client
-        .from('users')
-        .select<PostgrestMap?>('*')
-        .eq('name', name)
-        .eq('phone', cleanPhone)
-        .maybeSingle();
-
-    // 3. Robustness check: if not found, check if the phone is already taken by someone else
-    if (response == null) {
-      final Map<String, dynamic>? phoneCheck = await client
-          .from('users')
-          .select<PostgrestMap?>('id, name')
-          .eq('phone', cleanPhone)
-          .maybeSingle();
-
-      if (phoneCheck != null) {
-        throw '이미 해당 번호로 등록된 사용자가 있습니다. (등록된 이름: ${phoneCheck['name']})';
-      }
-    }
-
-    return response;
-  }
-
-  /// Update user's auth_id after successful login
-  static Future<void> updateUserAuthId(dynamic userId, String authId) async {
-    try {
-      await client.from('users').update(<String, dynamic>{'auth_id': authId}).eq('id', userId);
-    } catch (e) {
-      debugPrint('Error updating user auth_id: $e');
-    }
   }
 
   /// Registered new user - returns the new user data
@@ -224,7 +108,7 @@ class SupabaseService {
           'phone': cleanPhone,
           'email': email,
           'entry_code': entryCode,
-          'status': 'pending', // Always pending for new users
+          'status': 'pending', 
           'auth_id': authId,
         })
         .select<PostgrestMap>('*')
@@ -233,39 +117,147 @@ class SupabaseService {
     return response;
   }
 
+  /// Logout current session
+  static Future<void> signOut() async {
+    await client.auth.signOut();
+  }
+
+  /// Returns localized error messages
+  static String mapAuthError(String error) {
+    if (error.contains('Invalid login credentials')) {
+      return '휴대폰 번호 또는 이름 정보가 올바르지 않습니다.';
+    }
+    return error;
+  }
+
+  /// Fetch all active trees
+  static Future<List<Map<String, dynamic>>> fetchActiveTrees() async {
+    try {
+      final List<dynamic> response = await client
+          .from('trees')
+          .select<PostgrestList>('*')
+          .eq('is_active', true)
+          .order('order_index', ascending: true);
+      
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching trees: $e');
+      return [];
+    }
+  }
+
+  /// Check if user exists by name and phone
+  static Future<Map<String, dynamic>?> findUser(String name, String phone) async {
+    final String cleanPhone = phone.replaceAll('-', '');
+    final Map<String, dynamic>? response = await client
+        .from('users')
+        .select<PostgrestMap?>('*')
+        .eq('name', name)
+        .eq('phone', cleanPhone)
+        .maybeSingle();
+
+    if (response == null) {
+      final Map<String, dynamic>? phoneCheck = await client
+          .from('users')
+          .select<PostgrestMap?>('id, name')
+          .eq('phone', cleanPhone)
+          .maybeSingle();
+
+      if (phoneCheck != null) {
+        final String existingName = "${phoneCheck['name'] ?? '알 수 없음'}";
+        throw '이미 해당 번호로 등록된 사용자가 있습니다. (등록된 이름: $existingName)';
+      }
+    }
+    return response;
+  }
+
+  /// Update user's auth_id after successful login
+  static Future<void> updateUserAuthId(dynamic userId, String authId) async {
+    try {
+      await client.from('users').update(<String, dynamic>{'auth_id': authId}).eq('id', userId);
+    } catch (e) {
+      debugPrint('Error updating user auth_id: $e');
+    }
+  }
+
+  /// Device Info Helper - Returns Map with uuid, model, os
+  static Future<Map<String, String>> getDeviceInfo() async {
+    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    String model = 'Unknown';
+    String os = 'Unknown';
+    String uuid = 'Unknown';
+
+    try {
+      if (kIsWeb) {
+        final web = await deviceInfo.webBrowserInfo;
+        model = "${web.browserName.name}";
+        os = 'Web';
+        uuid = 'web-${web.userAgent ?? 'Unknown-Web-ID'}';
+      } else if (Platform.isAndroid) {
+        final android = await deviceInfo.androidInfo;
+        model = "${android.model}";
+        os = "Android ${android.version.release}";
+        uuid = "${android.id}";
+      } else if (Platform.isIOS) {
+        final ios = await deviceInfo.iosInfo;
+        model = "${ios.name}";
+        os = "iOS ${ios.systemVersion}";
+        uuid = "${ios.identifierForVendor ?? 'Unknown-iOS-ID'}";
+      }
+    } catch (e) {
+      debugPrint('--- DEVICE_INFO_ERROR: $e');
+    }
+
+    return {'model': model, 'os': os, 'uuid': uuid};
+  }
+
+  /// Re-fetches the user status from public.users to ensure synchronization
+  static Future<String> reloadUserStatus() async {
+    final user = client.auth.currentUser;
+    if (user == null) return 'pending';
+
+    try {
+      final Map<String, dynamic>? data = await client
+          .from('users')
+          .select<PostgrestMap?>('status')
+          .eq('auth_id', user.id)
+          .maybeSingle();
+      
+      return data?['status']?.toString() ?? 'pending';
+    } catch (e) {
+      debugPrint('Error reloading user status: $e');
+      return 'pending';
+    }
+  }
+
   /// Fetch the global/required entry code from the Admin API
   static Future<String> fetchGlobalEntryCode() async {
     final String url = '${AppConstants.apiUrl}/settings/entry-code';
     try {
-      debugPrint('Fetching entry code from: $url');
       final http.Response response = await http.get(Uri.parse(url));
-      debugPrint('Response Status: ${response.statusCode}');
       if (response.statusCode == 200) {
         final dynamic dataRaw = jsonDecode(utf8.decode(response.bodyBytes));
         final Map<String, dynamic> data = Map<String, dynamic>.from(dataRaw as Map);
-        debugPrint('Response Data: $data');
         if (data['success'] == true) {
-          final dynamic code = (data['data'] as Map<String, dynamic>)['entryCode'];
-          if (code != null) return code.toString();
+          final dynamic code = (data['data'] as Map<dynamic, dynamic>?)?['entryCode'];
+          if (code != null) return "$code";
         }
-      } else {
-        debugPrint('Failed to load entry code: ${response.statusCode}');
       }
     } catch (e) {
-      debugPrint('Error fetching global entry code: $e');
+      debugPrint('Error fetching entry code: $e');
     }
-    // 기본값 1234를 제거하고 빈 값을 반환하여 실패 처리
-    return '';
+    return '1133'; // Default fallback
   }
 
   /// Check if global/required entry code is valid
-  static Future<bool> isValidEntryCode(
-    String code, {
-    Map<String, dynamic>? user,
-  }) async {
+  static Future<bool> isValidEntryCode(String code, {Map<String, dynamic>? user}) async {
+    // 1. If user object has specific entry_code, check it first
+    if (user != null && user['entry_code'] != null) {
+      if (user['entry_code'].toString() == code) return true;
+    }
+    
+    // 2. Check against global code
     final serverCode = await fetchGlobalEntryCode();
-    // 서버에서 가져온 코드가 없거나(실패), 입력한 코드와 다르면 거부
-    if (serverCode.isEmpty) return false;
     return serverCode == code;
   }
 }

@@ -140,25 +140,24 @@ class _LoginContentState extends State<_LoginContent> {
             onPressed: () => Navigator.pop<void>(context),
             child: const Text('취소', style: TextStyle(color: Colors.white60)),
           ),
-          ElevatedButton(
+          TextButton(
             onPressed: () {
               Navigator.pop<void>(context);
               vm.handleLogin(
                 formKey: _formKey,
-                onSuccess: () => Navigator.pushReplacement<void, void>(
-                  context,
-                  MaterialPageRoute<void>(builder: (BuildContext context) => const DashboardScreen()),
-                ),
+                onSuccess: () {
+                  if (mounted) {
+                    Navigator.pushReplacement<void, void>(
+                      context,
+                      MaterialPageRoute<void>(builder: (BuildContext context) => const DashboardScreen()),
+                    );
+                  }
+                },
                 onError: (String msg) => _showErrorDialog(msg, vm),
                 forceLogout: true,
               );
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-            child: const Text('기존 기기 로그아웃'),
+            child: const Text('기존 기기 로그아웃', style: TextStyle(color: AppColors.primary)),
           ),
         ],
       ),

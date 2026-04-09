@@ -10,42 +10,61 @@ class AuthWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<AuthState>(
-      stream: Supabase.instance.client.auth.onAuthStateChange,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator(color: AppColors.primary)),
-          );
-        }
+    // [1] 초기 세션 확인을 위한 Future (최대 2초만 대기)
+    return FutureBuilder<void>(
+      future: Future.delayed(const Duration(seconds: 2)),
+      builder: (context, timeoutSnapshot) {
+        return StreamBuilder<AuthState>(
+          stream: Supabase.instance.client.auth.onAuthStateChange,
+          builder: (context, snapshot) {
+            final session = Supabase.instance.client.auth.currentSession;
+            final isWaiting = snapshot.connectionState == ConnectionState.waiting;
 
-        final session = snapshot.data?.session;
-        if (session == null) {
-          return const LoginScreen();
-        }
-
-        // 세션이 있는 경우, 서버에서 유저 상태(status)를 최종 확인
-        return FutureBuilder<String>(
-          future: SupabaseService.reloadUserStatus(),
-          builder: (context, statusSnapshot) {
-            if (statusSnapshot.connectionState == ConnectionState.waiting) {
-              return const Scaffold(
-                body: Center(child: CircularProgressIndicator(color: AppColors.primary)),
-              );
+            // 세션이 이미 발견됨
+            if (session != null) {
+              print('Auth: Session DETECTED. Proceeding.');
+              return _buildUserStatusChecker();
             }
 
-            final String status = statusSnapshot.data ?? 'pending';
-            if (status == 'approved') {
-              return const DashboardScreen();
-            } else {
-              // 승인되지 않은 상태라면 자동으로 로그아웃 처리하고 로그인 화면으로 유도
-              // UI 빌드 도중 signOut을 호출하면 경고가 발생할 수 있으므로 
-              // 포스트 프레임 콜백이나 별도 로직으로 처리하는 것이 이상적이나, 
-              // 여기서는 일단 LoginScreen을 보여주고 내부에서 처리하도록 함.
+            // 2초가 지났거나, 스트림이 '세션 없음'을 확인해준 경우
+            if (timeoutSnapshot.connectionState == ConnectionState.done || !isWaiting) {
+              print('Auth: Timeout or Stream confirmed no session. Showing Login.');
               return const LoginScreen();
             }
+
+            // 아직 2초 전이고 스트림도 대기 중이라면 스피너
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator(color: AppColors.primary)),
+            );
           },
         );
+      },
+    );
+  }
+
+  Widget _buildUserStatusChecker() {
+    print('--- AUTH STEP 2: Reloading User Status ---');
+    return FutureBuilder<String>(
+      future: SupabaseService.reloadUserStatus(),
+      builder: (context, statusSnapshot) {
+        // ... (이하 기존 코드 조각 재구성) ...
+        if (statusSnapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                   const CircularProgressIndicator(color: AppColors.primary),
+                   const SizedBox(height: 16),
+                   const Text('Verifying user status...', style: TextStyle(color: Colors.white70)),
+                ],
+              ),
+            ),
+          );
+        }
+        if (statusSnapshot.hasError) return const LoginScreen();
+        final String status = statusSnapshot.data ?? 'pending';
+        return status == 'approved' ? const DashboardScreen() : const LoginScreen();
       },
     );
   }

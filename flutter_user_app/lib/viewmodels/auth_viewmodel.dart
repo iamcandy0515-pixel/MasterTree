@@ -91,7 +91,17 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler {
     required Function(String) onError,
     bool forceLogout = false,
   }) async {
-    if (!formKey.currentState!.validate()) return;
+    debugPrint('--- LOGIN: Started (forceLogout: $forceLogout)');
+    if (formKey.currentState == null) {
+      debugPrint('--- LOGIN: ERROR - Form state is null');
+      onError('시스템 오류: 폼 상태를 찾을 수 없습니다.');
+      return;
+    }
+    if (!formKey.currentState!.validate()) {
+      debugPrint('--- LOGIN: Validation failed');
+      return;
+    }
+    
     _isLoading = true;
     notifyListeners();
     try {
@@ -100,24 +110,32 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler {
       final email = emailController.text.trim();
       final entryCode = entryCodeController.text.trim();
 
-      // Get Device Info
-      final deviceInfo = await SupabaseService.getDeviceInfo();
-      final deviceId = deviceInfo['uuid'];
-      final deviceModel = deviceInfo['model'];
-      final osVersion = deviceInfo['os'];
-
+      debugPrint('--- LOGIN: Fetching User ($name, $phone)');
       Map<String, dynamic>? user = await checkExistingUser(name, phone);
       _isExistingUser = (user != null);
+      debugPrint('--- LOGIN: _isExistingUser = $_isExistingUser');
+
+      debugPrint('--- LOGIN: Fetching Device Info');
+      final deviceInfo = await SupabaseService.getDeviceInfo();
+      final String? deviceId = deviceInfo['uuid'];
+      final String? deviceModel = deviceInfo['model'];
+      final String? osVersion = deviceInfo['os'];
+      debugPrint('--- LOGIN: DeviceId = $deviceId');
 
       if (_isExistingUser == true) {
+        debugPrint('--- LOGIN: Processing Existing User');
         final dynamic statusRaw = user?['status'];
         final String status = statusRaw?.toString() ?? '';
+        debugPrint('--- LOGIN: User Status = $status');
+        
         if (<String>['expired', 'denied', 'rejected'].contains(status)) throw 'status_denied';
         if (status != 'approved') throw 'status_pending';
         if (isLinkExpired(user)) throw 'status_expired';
 
+        debugPrint('--- LOGIN: Validating Entry Code');
         if (!await SupabaseService.isValidEntryCode(entryCode, user: user)) throw '입장코드가 올바르지 않습니다.';
         
+        debugPrint('--- LOGIN: Syncing Auth and User...');
         await syncAuthAndUser(
           user!, 
           name, 
@@ -127,9 +145,12 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler {
           osVersion: osVersion,
           forceLogout: forceLogout,
         );
+        debugPrint('--- LOGIN: Sync DONE');
       } else {
+        debugPrint('--- LOGIN: Processing New User');
         if (!await SupabaseService.isValidEntryCode(entryCode)) throw '입장코드가 올바르지 않습니다.';
         
+        debugPrint('--- LOGIN: Sign Up / Sign In...');
         final authRes = await signUpOrSignIn(
           phone, 
           name, 
@@ -138,11 +159,13 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler {
           deviceModel: deviceModel,
           osVersion: osVersion,
         );
+        debugPrint('--- LOGIN: Auth Action DONE');
         
         if (authRes.user == null) throw '인증 계정 생성 또는 로그인에 실패했습니다.';
 
         final checkAgain = await checkExistingUser(name, phone);
         if (checkAgain == null) {
+          debugPrint('--- LOGIN: Registering User in public.users');
           await SupabaseService.registerUser(
             name: name, 
             phone: phone, 
@@ -153,16 +176,21 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler {
           throw 'status_pending';
         }
       }
+      
+      debugPrint('--- LOGIN: Saving local data');
       await saveData();
+      debugPrint('--- LOGIN: SUCCESS - Calling onSuccess');
       onSuccess();
     } catch (e) {
-      final msg = e.toString();
+      debugPrint('--- LOGIN: CATCH Error - $e');
+      final msg = "$e";
       if (['status_denied', 'status_pending', 'status_expired'].contains(msg)) { onError(msg); }
       else if (msg.startsWith('ALREADY_LOGGED_IN:')) {
-        onError(msg); // Will be handled by the screen to show modal
+        onError(msg);
       }
       else { onError(getErrorMessage(e)); }
     } finally {
+      debugPrint('--- LOGIN: Finished');
       _isLoading = false;
       notifyListeners();
     }

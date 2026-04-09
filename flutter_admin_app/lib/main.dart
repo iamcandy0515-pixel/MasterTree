@@ -15,19 +15,25 @@ void main() async {
     debugPrint = (String? message, {int? wrapWidth}) {};
   }
 
-  await dotenv.load(fileName: "assets/env_config");
+  try {
+    await dotenv.load(fileName: "assets/env_config");
+  } catch (e) {
+    debugPrint('Error loading env_config: $e');
+  }
+
   AppLogger.d('Admin App Initialized', tag: 'BOOT');
 
-  // [1] 빌드 시 주입된 변수(--dart-define)가 있으면 우선 사용, 없으면 .env 사용
+  // [1] 빌드 시 주입된 변수(--dart-define)가 있으면 우선 사용
   const String envUrl = String.fromEnvironment('SUPABASE_URL');
   const String envKey = String.fromEnvironment('SUPABASE_ANON_KEY');
 
   final String supabaseUrl = envUrl.isNotEmpty 
       ? envUrl 
-      : dotenv.get('SUPABASE_URL');
+      : (dotenv.maybeGet('SUPABASE_URL') ?? '');
+      
   final String supabaseAnonKey = envKey.isNotEmpty 
       ? envKey 
-      : dotenv.get('SUPABASE_ANON_KEY');
+      : (dotenv.maybeGet('SUPABASE_ANON_KEY') ?? '');
 
   await Supabase.initialize(
     url: supabaseUrl,

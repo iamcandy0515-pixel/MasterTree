@@ -54,7 +54,7 @@ class QuizDataMapper {
       options.shuffle(random);
       loadedQuestions.add(
         QuizQuestion(
-          id: tree['id'] is int ? tree['id'] as int : int.tryParse(tree['id'].toString()) ?? 0,
+          id: tree['id'] is int ? tree['id'] as int : int.tryParse(tree['id']?.toString() ?? '0') ?? 0,
           imageUrl: ApiService.getProxyImageUrl(questionImageUrl),
           description: (tree['description'] as String?) ?? '설명이 없습니다.',
           correctAnswerIndex: options.indexOf(correctName),

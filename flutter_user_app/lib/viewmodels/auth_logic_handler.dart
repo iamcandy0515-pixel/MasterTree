@@ -21,7 +21,17 @@ mixin AuthLogicHandler {
   }
 
   String getErrorMessage(dynamic e) {
-    String errorMessage = e.toString();
+    if (e == null) return '알 수 없는 오류가 발생했습니다.';
+    
+    String errorMessage = "";
+    if (e is AuthException) {
+      errorMessage = "Auth Error: ${e.message ?? 'No Message'} (${e.statusCode ?? 'No Code'})";
+    } else if (e is String) {
+      errorMessage = e;
+    } else {
+      errorMessage = "$e";
+    }
+    
     if (errorMessage.contains('users_phone_key') || errorMessage.contains('23505')) {
       return '이미 등록된 번호입니다. 이름을 확인하시거나 기존 정보로 로그인해 주세요.';
     }
@@ -39,34 +49,35 @@ mixin AuthLogicHandler {
   }) async {
     try {
       await SupabaseService.signInPermanent(
-        phone,
+        phone: phone,
         deviceId: deviceId,
         deviceModel: deviceModel,
         osVersion: osVersion,
         forceLogout: forceLogout,
       );
     } on AuthException catch (e) {
-      final errStr = e.toString().toLowerCase();
-      if (errStr.contains('invalid_credentials') || errStr.contains('400')) {
+      final String msg = "${e.message ?? 'Unknown'}".toLowerCase();
+      if (msg.contains('invalid login credentials') || msg.contains('400')) {
         try {
           final authResponse = await SupabaseService.signUpPermanent(
-            phone,
+            phone: phone,
             name: name,
             email: user['email']?.toString() ?? '',
           );
           if (authResponse.user != null) {
-            await SupabaseService.updateUserAuthId(user['id'] as int, authResponse.user!.id);
-            // After sign up, sync session as well
+            await SupabaseService.updateUserAuthId(user['id'], authResponse.user!.id);
+            // After sign up, sync session
             await SupabaseService.signInPermanent(
-              phone,
+              phone: phone,
               deviceId: deviceId,
               deviceModel: deviceModel,
               osVersion: osVersion,
             );
           }
         } on AuthException catch (signUpErr) {
-          if (signUpErr.message.toLowerCase().contains('already registered') || signUpErr.message.toLowerCase().contains('user_already_exists')) {
-            throw '인증 서버에 계정이 이미 존재하지만 비번이 일치하지 않습니다. 관리자 콘솔에서 해당 이메일/번호의 계정을 삭제 후 다시 시도해주세요.';
+          if (signUpErr.message.toLowerCase().contains('already registered') || 
+              signUpErr.message.toLowerCase().contains('user_already_exists')) {
+            throw '인증 서버 계정이 이미 존재하지만 비번이 일치하지 않습니다. 관리자 콘솔에서 계정 삭제 후 재시도 바랍니다.';
           }
           rethrow;
         }
@@ -74,7 +85,6 @@ mixin AuthLogicHandler {
         rethrow;
       }
     } catch (e) {
-      // Re-throw custom error string from SupabaseService
       rethrow;
     }
   }
@@ -88,21 +98,21 @@ mixin AuthLogicHandler {
     String? osVersion,
   }) async {
     try {
-      return await SupabaseService.signUpPermanent(phone, name: name, email: email);
+      return await SupabaseService.signUpPermanent(phone: phone, name: name, email: email);
     } on AuthException catch (e) {
-      final errStr = e.toString().toLowerCase();
-      if (errStr.contains('already registered') || errStr.contains('user_already_exists')) {
+      final String msg = "${e.message ?? 'Unknown'}".toLowerCase();
+      if (msg.contains('already registered') || msg.contains('user_already_exists')) {
         try {
           return await SupabaseService.signInPermanent(
-            phone,
+            phone: phone,
             deviceId: deviceId,
             deviceModel: deviceModel,
             osVersion: osVersion,
           );
         } on AuthException catch (signInErr) {
-          final sErrStr = signInErr.toString().toLowerCase();
-          if (sErrStr.contains('invalid_credentials') || sErrStr.contains('400')) {
-             throw '인증 서버에 계정이 이미 존재하지만 비번이 일치하지 않습니다. 관리자 콘솔에서 해당 이메일/번호의 계정을 삭제 후 다시 시도해주세요.';
+          final String sMsg = "${signInErr.message ?? 'Unknown'}".toLowerCase();
+          if (sMsg.contains('invalid login credentials') || sMsg.contains('400')) {
+             throw '인증 서버 계정이 이미 존재하지만 비번이 일치하지 않습니다. 관리자 콘솔에서 계정 삭제 후 재시도 바랍니다.';
           }
           rethrow;
         }
