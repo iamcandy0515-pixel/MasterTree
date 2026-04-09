@@ -23,7 +23,7 @@ mixin QuizDataHandler {
         final dynamic url = img['quizz_source_image_url'] ?? img['image_url'];
         final dynamic thumb = img['thumbnail_url'];
 
-        if (url != null && url.toString().isNotEmpty) {
+        if (url != null && "$url".isNotEmpty) {
           final String urlStr = url.toString();
           if (type?.toString() == 'main' || questionImageUrl.isEmpty) {
             questionImageUrl = urlStr;

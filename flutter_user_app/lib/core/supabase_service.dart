@@ -30,7 +30,7 @@ class SupabaseService {
 
     if (existingUser != null && deviceId != null && !forceLogout) {
       final dynamic lastDeviceId = existingUser['last_device_id'];
-      if (lastDeviceId != null && lastDeviceId.toString() != deviceId.toString()) {
+      if (lastDeviceId != null && "$lastDeviceId" != "$deviceId") {
         final String model = existingUser['last_device_model']?.toString() ?? '다른 기기';
         throw 'ALREADY_LOGGED_IN:$model';
       }
@@ -38,8 +38,8 @@ class SupabaseService {
 
     // 2. Priority: Registered Email -> Fallback: Virtual Email
     final dynamic targetEmailRaw = existingUser != null ? existingUser['email'] : null;
-    final String targetEmail = (targetEmailRaw != null && targetEmailRaw.toString().isNotEmpty) 
-        ? targetEmailRaw.toString() 
+    final String targetEmail = (targetEmailRaw != null && "$targetEmailRaw".isNotEmpty) 
+        ? "$targetEmailRaw" 
         : 'u$cleanPhone@mastertree.app';
 
     final AuthResponse response = await client.auth.signInWithPassword(

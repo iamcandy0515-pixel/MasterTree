@@ -13,10 +13,16 @@ class SyncService {
       final prefs = await SharedPreferences.getInstance();
       final savedData = prefs.getString(_storageKey);
       if (savedData != null) {
-        final List<dynamic> decoded = jsonDecode(savedData) as List<dynamic>;
-        _pendingAttempts.clear();
-        _pendingAttempts.addAll(decoded.cast<Map<String, dynamic>>());
-        AppLogger.d('로컬 캐시 로드됨: ${_pendingAttempts.length}개', tag: 'SYNC');
+        final dynamic decodedRaw = jsonDecode(savedData);
+        if (decodedRaw is List) {
+          _pendingAttempts.clear();
+          for (final item in decodedRaw) {
+            if (item is Map) {
+              _pendingAttempts.add(Map<String, dynamic>.from(item));
+            }
+          }
+          AppLogger.d('로컬 캐시 로드됨: ${_pendingAttempts.length}개', tag: 'SYNC');
+        }
       }
     } catch (e) {
       AppLogger.e('SyncService.init Error', error: e);
