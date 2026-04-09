@@ -50,7 +50,7 @@ class QuizSolverController {
       onUpdate();
     } catch (e) {
       isLoading = false;
-      errorMessage = e.toString();
+      errorMessage = "$e";
       onUpdate();
     }
   }
@@ -96,7 +96,7 @@ class QuizSolverController {
       sessionId: sessionId,
       categoryId: q['category_id'] as int?,
       isCorrect: isCorrect,
-      userAnswer: selectedOptionIndex.toString(),
+      userAnswer: selectedOptionIndex?.toString() ?? '',
       timeTakenMs: 0, // 추후 필요시 타이머 추가 가능
     );
 
@@ -106,7 +106,7 @@ class QuizSolverController {
       'question_id': q['id'],
       'category_id': q['category_id'],
       'is_correct': isCorrect,
-      'user_answer': selectedOptionIndex.toString(),
+      'user_answer': selectedOptionIndex?.toString() ?? '',
       'time_taken_ms': 0,
       'mode': mode == 'random' || mode == 'weakness' ? 'pastExam' : mode,
     });

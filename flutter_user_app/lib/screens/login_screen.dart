@@ -67,8 +67,9 @@ class _LoginContentState extends State<_LoginContent> {
       title = '기간 만료';
       content = '사용 기간이 만료되었습니다.\n관리자에게 문의해 주세요.';
     } else if (message.startsWith('ALREADY_LOGGED_IN:')) {
-      final deviceModel = message.split(':')[1];
-      _showConflictDialog(deviceModel, vm);
+      final parts = message.split(':');
+      final deviceModel = parts.length > 1 ? parts[1].trim() : '다른 기기';
+      _showConflictDialog(deviceModel.isEmpty ? '다른 기기' : deviceModel, vm);
       return;
     }
 

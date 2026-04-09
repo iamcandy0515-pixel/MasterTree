@@ -50,7 +50,10 @@ class SupabaseService {
     // 3. Register/Update Session in DB
     if (response.user != null) {
       final String accessToken = response.session?.accessToken ?? "";
-      final String shortSessionId = accessToken.length > 20 ? accessToken.substring(0, 20) : "short_session";
+      // 안전한 Substring 처리
+      final String shortSessionId = accessToken.length > 20 
+          ? accessToken.substring(0, 20) 
+          : (accessToken.isNotEmpty ? accessToken : "no_token");
 
       await client.from('users').update(<String, dynamic>{
         'last_device_id': deviceId,
@@ -191,6 +194,7 @@ class SupabaseService {
       }
     }
     
-    return data['status']?.toString() ?? 'pending';
+    final dynamic statusRaw = data['status'];
+    return statusRaw?.toString() ?? 'pending';
   }
 }
