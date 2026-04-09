@@ -27,8 +27,8 @@ class QuizDataMapper {
         }
 
         final String? koreanKey = _getTypeKey(type);
-        if (koreanKey != null && hint != null && hint.toString().trim().isNotEmpty) {
-          hintsMap[koreanKey] = hint?.toString() ?? '';
+        if (koreanKey != null && hint != null && "$hint".trim().isNotEmpty) {
+          hintsMap[koreanKey] = "$hint";
         }
       }
 

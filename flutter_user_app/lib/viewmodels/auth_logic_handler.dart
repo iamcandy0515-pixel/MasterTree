@@ -10,7 +10,7 @@ mixin AuthLogicHandler {
   bool isLinkExpired(Map<String, dynamic>? user) {
     if (user?['expired_at'] != null) {
       try {
-        final String expiredAtStr = user!['expired_at']?.toString() ?? '';
+        final String expiredAtStr = "${user?['expired_at'] ?? ''}";
         final DateTime expiredAt = DateTime.parse(expiredAtStr);
         return DateTime.now().isAfter(expiredAt);
       } catch (e) {
@@ -56,13 +56,13 @@ mixin AuthLogicHandler {
         forceLogout: forceLogout,
       );
     } on AuthException catch (e) {
-      final String msg = e.message.toLowerCase();
+      final String msg = "${e.message}".toLowerCase();
       if (msg.contains('invalid login credentials') || msg.contains('400')) {
         try {
           final authResponse = await SupabaseService.signUpPermanent(
             phone: phone,
             name: name,
-            email: user['email']?.toString() ?? '',
+            email: "${user['email'] ?? ''}",
           );
           if (authResponse.user != null) {
             await SupabaseService.updateUserAuthId(user['id'], authResponse.user!.id);
