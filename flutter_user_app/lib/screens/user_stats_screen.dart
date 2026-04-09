@@ -52,7 +52,7 @@ class _UserStatsScreenState extends State<UserStatsScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _error = e.toString();
+        _error = "$e";
         _isLoading = false;
       });
     }

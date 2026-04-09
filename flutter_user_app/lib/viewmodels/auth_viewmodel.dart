@@ -147,7 +147,7 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler, AuthValidator 
       await saveData();
       onSuccess();
     } catch (e) {
-      final msg = e.toString();
+      final msg = "$e";
       if (['status_denied', 'status_pending', 'status_expired'].contains(msg)) { 
         onError(msg); 
       } else if (msg.startsWith('ALREADY_LOGGED_IN:')) {

@@ -103,7 +103,7 @@ class PastExamDetailController {
           hintBlocks
               .map(
                 (dynamic h) =>
-                    h is Map ? (h['content']?.toString() ?? '') : h.toString(),
+                    h is Map ? "${h['content'] ?? ''}" : "$h",
               )
               .join('\n'),
         );

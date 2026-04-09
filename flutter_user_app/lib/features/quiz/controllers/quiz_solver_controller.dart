@@ -59,15 +59,15 @@ class QuizSolverController {
     if (blocks == null) return '';
     if (blocks is String) return blocks;
     if (blocks is List) {
-      final List<dynamic> blockList = blocks;
-      return blockList.map((dynamic b) {
-        if (b is Map && b.containsKey('content')) {
-          return b['content'].toString();
+      final content = blocks.map((dynamic b) {
+        if (b is Map) {
+          return "${b['content'] ?? ''}";
         }
-        return b.toString();
+        return "$b";
       }).join('\n');
+      return content;
     }
-    return blocks.toString();
+    return "$blocks";
   }
 
   bool get isLastQuestion => questions.isEmpty ? true : currentQuestionIndex >= questions.length - 1;
