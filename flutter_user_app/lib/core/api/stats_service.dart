@@ -8,7 +8,11 @@ class StatsService {
     try {
       final Map<String, dynamic> jsonResponse = await BaseApiService.get(url);
       if (jsonResponse['success'] == true) {
-        return Map<String, dynamic>.from((jsonResponse['data'] as Map<dynamic, dynamic>?) ?? <String, dynamic>{});
+        final dynamic data = jsonResponse['data'];
+        if (data is Map) {
+          return Map<String, dynamic>.from(data);
+        }
+        return <String, dynamic>{};
       }
       throw Exception('Failed to load stats: ${jsonResponse['message']}');
     } catch (e) {
@@ -22,7 +26,11 @@ class StatsService {
     try {
       final Map<String, dynamic> jsonResponse = await BaseApiService.get(url);
       if (jsonResponse['success'] == true) {
-        return Map<String, dynamic>.from((jsonResponse['data'] as Map<dynamic, dynamic>?) ?? <String, dynamic>{});
+        final dynamic data = jsonResponse['data'];
+        if (data is Map) {
+          return Map<String, dynamic>.from(data);
+        }
+        return <String, dynamic>{};
       }
       throw Exception('상태 코드: ${jsonResponse['message']}');
     } catch (e) {
@@ -36,7 +44,11 @@ class StatsService {
     try {
       final Map<String, dynamic> jsonResponse = await BaseApiService.get(url);
       if (jsonResponse['success'] == true) {
-        return List<Map<String, dynamic>>.from((jsonResponse['data'] as Iterable<dynamic>?) ?? <dynamic>[]);
+        final dynamic data = jsonResponse['data'];
+        if (data is Iterable) {
+          return data.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+        }
+        return <Map<String, dynamic>>[];
       }
       throw Exception('나무 통계 로드 실패: ${jsonResponse['message']}');
     } catch (e) {
@@ -50,7 +62,11 @@ class StatsService {
     try {
       final Map<String, dynamic> jsonResponse = await BaseApiService.get(url);
       if (jsonResponse['success'] == true) {
-        return List<Map<String, dynamic>>.from((jsonResponse['data'] as Iterable<dynamic>?) ?? <dynamic>[]);
+        final dynamic data = jsonResponse['data'];
+        if (data is Iterable) {
+          return data.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+        }
+        return <Map<String, dynamic>>[];
       }
       throw Exception('기출 통계 로드 실패: ${jsonResponse['message']}');
     } catch (e) {

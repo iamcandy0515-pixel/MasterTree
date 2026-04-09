@@ -8,7 +8,11 @@ class GroupService {
     try {
       final Map<String, dynamic> jsonResponse = await BaseApiService.get(url);
       if (jsonResponse['success'] == true) {
-        return List<Map<String, dynamic>>.from((jsonResponse['data'] as Iterable<dynamic>?) ?? <dynamic>[]);
+        final dynamic data = jsonResponse['data'];
+        if (data is Iterable) {
+          return data.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+        }
+        return <Map<String, dynamic>>[];
       }
       throw Exception('Failed to load groups: ${jsonResponse['message']}');
     } catch (e) {
@@ -22,7 +26,11 @@ class GroupService {
     try {
       final Map<String, dynamic> jsonResponse = await BaseApiService.get(url);
       if (jsonResponse['success'] == true) {
-        return Map<String, dynamic>.from((jsonResponse['data'] as Map<dynamic, dynamic>?) ?? <String, dynamic>{});
+        final dynamic data = jsonResponse['data'];
+        if (data is Map) {
+          return Map<String, dynamic>.from(data);
+        }
+        return <String, dynamic>{};
       }
       throw Exception('Failed to load group: ${jsonResponse['message']}');
     } catch (e) {

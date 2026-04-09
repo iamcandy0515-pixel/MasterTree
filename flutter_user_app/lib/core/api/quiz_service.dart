@@ -66,7 +66,11 @@ class QuizService {
         'limit': limit,
       });
       if (jsonResponse['success'] == true) {
-        return Map<String, dynamic>.from((jsonResponse['data'] as Map<dynamic, dynamic>?) ?? <String, dynamic>{});
+        final dynamic data = jsonResponse['data'];
+        if (data is Map) {
+          return Map<String, dynamic>.from(data);
+        }
+        return <String, dynamic>{};
       }
       throw Exception('세션 생성 실패: ${jsonResponse['message']}');
     } catch (e) {
