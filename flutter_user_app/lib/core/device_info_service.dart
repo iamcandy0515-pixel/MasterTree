@@ -1,7 +1,11 @@
+import 'dart:math';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DeviceInfoService {
+  static const String _webUuidKey = 'WEB_DEVICE_UUID';
+
   /// Device Info Helper - Returns Map with uuid, model, os
   /// Safe for both Mobile and Web
   static Future<Map<String, String>> getDeviceInfo() async {
@@ -15,7 +19,18 @@ class DeviceInfoService {
         final WebBrowserInfo web = await deviceInfo.webBrowserInfo;
         model = web.browserName.name;
         os = 'Web';
-        uuid = 'web-${web.userAgent ?? 'Unknown-Web-ID'}';
+        
+        // Web: Persistent UUID using SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        String? savedUuid = prefs.getString(_webUuidKey);
+        
+        if (savedUuid == null || savedUuid.isEmpty) {
+          final random = Random();
+          final timestamp = DateTime.now().microsecondsSinceEpoch;
+          savedUuid = 'web-${timestamp}-${random.nextInt(10000)}';
+          await prefs.setString(_webUuidKey, savedUuid);
+        }
+        uuid = savedUuid;
       } else {
         // Mobile (Android/iOS)
         if (defaultTargetPlatform == TargetPlatform.android) {
