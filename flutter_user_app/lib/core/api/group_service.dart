@@ -10,7 +10,7 @@ class GroupService {
       if (jsonResponse['success'] == true) {
         final dynamic data = jsonResponse['data'];
         if (data is Iterable) {
-          return data.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+          return data.map((dynamic e) => Map<String, dynamic>.from(e as Map)).toList();
         }
         return <Map<String, dynamic>>[];
       }

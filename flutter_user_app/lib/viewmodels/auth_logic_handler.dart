@@ -56,7 +56,7 @@ mixin AuthLogicHandler {
         forceLogout: forceLogout,
       );
     } on AuthException catch (e) {
-      final String msg = "${e.message}".toLowerCase();
+      final String msg = e.message.toLowerCase();
       if (msg.contains('invalid login credentials') || msg.contains('400')) {
         try {
           final authResponse = await SupabaseService.signUpPermanent(

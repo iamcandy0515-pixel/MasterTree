@@ -23,19 +23,16 @@ class SupabaseService {
         .select<PostgrestMap?>('id, email, last_device_id, last_device_model')
         .eq('phone', cleanPhone)
         .maybeSingle();
-
     final Map<String, dynamic>? existingUser = (existingUserRaw != null) 
         ? Map<String, dynamic>.from(existingUserRaw) 
         : null;
-
     if (existingUser != null && deviceId != null && !forceLogout) {
       final dynamic lastDeviceId = existingUser['last_device_id'];
-      if (lastDeviceId != null && "$lastDeviceId" != "$deviceId") {
+      if (lastDeviceId != null && lastDeviceId != deviceId) {
         final String model = existingUser['last_device_model']?.toString() ?? '다른 기기';
         throw 'ALREADY_LOGGED_IN:$model';
       }
     }
-
     // 2. Priority: Registered Email -> Fallback: Virtual Email
     final dynamic targetEmailRaw = existingUser != null ? existingUser['email'] : null;
     final String targetEmail = (targetEmailRaw != null && "$targetEmailRaw".isNotEmpty) 

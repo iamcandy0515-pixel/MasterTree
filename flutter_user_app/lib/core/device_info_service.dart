@@ -1,7 +1,7 @@
-import 'dart:math';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 class DeviceInfoService {
   static const String _webUuidKey = 'WEB_DEVICE_UUID';
@@ -16,6 +16,7 @@ class DeviceInfoService {
 
     try {
       if (kIsWeb) {
+        // Web: Identify Browser
         final WebBrowserInfo web = await deviceInfo.webBrowserInfo;
         model = web.browserName.name;
         os = 'Web';
@@ -25,9 +26,8 @@ class DeviceInfoService {
         String? savedUuid = prefs.getString(_webUuidKey);
         
         if (savedUuid == null || savedUuid.isEmpty) {
-          final random = Random();
-          final timestamp = DateTime.now().microsecondsSinceEpoch;
-          savedUuid = 'web-${timestamp}-${random.nextInt(10000)}';
+          // Robust UUID generation using uuid package
+          savedUuid = 'web-${const Uuid().v4()}';
           await prefs.setString(_webUuidKey, savedUuid);
         }
         uuid = savedUuid;
@@ -37,11 +37,13 @@ class DeviceInfoService {
           final AndroidDeviceInfo android = await deviceInfo.androidInfo;
           model = android.model;
           os = "Android ${android.version.release}";
+          // android.id is stable within app installs
           uuid = android.id;
         } else if (defaultTargetPlatform == TargetPlatform.iOS) {
           final IosDeviceInfo ios = await deviceInfo.iosInfo;
           model = ios.name;
           os = "iOS ${ios.systemVersion}";
+          // identifierForVendor is stable for same vendor
           uuid = ios.identifierForVendor ?? 'Unknown-iOS-ID';
         }
       }

@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../core/supabase_service.dart';
 import '../core/device_info_service.dart';
 import '../core/config_service.dart';
+import '../services/session_monitor_service.dart';
 import 'auth_logic_handler.dart';
 import 'auth_validator.dart';
 
@@ -24,7 +25,10 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler, AuthValidator 
   bool? get isExistingUser => _isExistingUser;
   bool get isNewUser => _isExistingUser == false;
 
-  Future<void> initialize() async => await loadSavedData();
+  Future<void> initialize() async {
+    await loadSavedData();
+    _setupSessionMonitor();
+  }
 
   Future<void> loadSavedData() async {
     final prefs = await SharedPreferences.getInstance();
@@ -145,6 +149,7 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler, AuthValidator 
       }
       
       await saveData();
+      _setupSessionMonitor();
       onSuccess();
     } catch (e) {
       final msg = "$e";
@@ -161,8 +166,24 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler, AuthValidator 
     }
   }
 
+  void _setupSessionMonitor() {
+    final session = SupabaseService.client.auth.currentSession;
+    final user = SupabaseService.client.auth.currentUser;
+    if (session != null && user != null) {
+      SessionMonitorService.startMonitoring(
+        authId: user.id,
+        currentSessionId: session.accessToken,
+        onLogoutRequired: () async {
+          await SupabaseService.signOut();
+          notifyListeners(); // Will trigger UI rebuild to LoginScreen
+        },
+      );
+    }
+  }
+
   @override
   void dispose() {
+    SessionMonitorService.stopMonitoring();
     _debounceTimer?.cancel();
     nameController.dispose(); phoneController.dispose();
     emailController.dispose(); entryCodeController.dispose();
