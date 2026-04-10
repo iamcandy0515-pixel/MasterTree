@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_user_app/core/design_system.dart';
-import 'package:flutter_user_app/screens/dashboard_screen.dart';
+
 import 'package:flutter_user_app/viewmodels/auth_viewmodel.dart';
 import 'widgets/login_parts/login_header.dart';
 import 'widgets/login_parts/login_input_fields.dart';
@@ -40,10 +40,9 @@ class _LoginContentState extends State<_LoginContent> {
   Future<void> _handleLogin(AuthViewModel vm) async {
     await vm.handleLogin(
       formKey: _formKey,
-      onSuccess: () => Navigator.pushReplacement<void, void>(
-        context,
-        MaterialPageRoute<void>(builder: (BuildContext context) => const DashboardScreen()),
-      ),
+      onSuccess: () {
+        // AuthWrapper handles reactive switching
+      },
       onError: (String message) => _showErrorDialog(message, vm),
     );
   }
@@ -144,12 +143,7 @@ class _LoginContentState extends State<_LoginContent> {
               vm.handleLogin(
                 formKey: _formKey,
                 onSuccess: () {
-                  if (mounted) {
-                    Navigator.pushReplacement<void, void>(
-                      context,
-                      MaterialPageRoute<void>(builder: (BuildContext context) => const DashboardScreen()),
-                    );
-                  }
+                  // AuthWrapper handles reactive switching
                 },
                 onError: (String msg) => _showErrorDialog(msg, vm),
                 forceLogout: true,
