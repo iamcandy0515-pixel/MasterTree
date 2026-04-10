@@ -12,6 +12,7 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler, AuthValidator 
   bool _isLoading = false;
   bool _isCheckingServer = false;
   bool? _isExistingUser;
+  String _userStatus = 'pending'; // 'approved', 'expired', 'pending'
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController(text: '010-');
@@ -24,10 +25,20 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler, AuthValidator 
   bool get isCheckingServer => _isCheckingServer;
   bool? get isExistingUser => _isExistingUser;
   bool get isNewUser => _isExistingUser == false;
+  String get userStatus => _userStatus;
 
   Future<void> initialize() async {
     await loadSavedData();
+    await checkSessionStatus(); // Initial status check
     _setupSessionMonitor();
+  }
+
+  Future<void> checkSessionStatus() async {
+    _userStatus = await SupabaseService.reloadUserStatus();
+    if (_userStatus == 'expired') {
+      _isExistingUser = null;
+    }
+    notifyListeners();
   }
 
   Future<void> loadSavedData() async {

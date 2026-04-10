@@ -69,11 +69,10 @@ class PastExamDetailController {
       this.quizId = quizId;
       categoryId = category?['id'] as int?;
 
-      subject = category?['name']?.toString() ?? '-';
-      year = exam?['year']?.toString() ?? '-';
-      round = exam?['round']?.toString() ?? '-';
-      questionNo =
-          response['question_number']?.toString() ?? response['id'].toString();
+      subject = "${category?['name'] ?? '-'}";
+      year = "${exam?['year'] ?? '-'}";
+      round = "${exam?['round'] ?? '-'}";
+      questionNo = "${response['question_number'] ?? response['id'] ?? ''}";
 
       // Parse content
       contentBlocks = response['content_blocks'] as List<dynamic>? ?? <dynamic>[];

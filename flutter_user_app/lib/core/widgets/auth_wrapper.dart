@@ -5,17 +5,15 @@ import '../../core/design_system.dart';
 import '../../screens/login_screen.dart';
 import '../../screens/dashboard_screen.dart';
 import '../../viewmodels/auth_viewmodel.dart';
-import '../../core/supabase_service.dart';
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // [핵심] AuthViewModel 인스턴스를 최상위에서 한 번만 생성하여 안정화
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthViewModel()),
+        ChangeNotifierProvider(create: (_) => AuthViewModel()..initialize()),
       ],
       child: StreamBuilder<AuthState>(
         stream: Supabase.instance.client.auth.onAuthStateChange,
@@ -27,17 +25,17 @@ class AuthWrapper extends StatelessWidget {
             return const LoginScreen();
           }
 
-          // 2. 세션이 있다면 사용자 상태(중복 로그인, 차단 여부 등) 서버 실시간 검증
-          return FutureBuilder<String>(
-            future: SupabaseService.reloadUserStatus(),
-            builder: (context, statusSnapshot) {
-              if (statusSnapshot.connectionState == ConnectionState.waiting) {
+          // 2. 세션이 있다면 AuthViewModel을 통해 사용자 상태 관찰 (깜빡임 방지)
+          return Consumer<AuthViewModel>(
+            builder: (context, vm, child) {
+              final status = vm.userStatus;
+
+              // 세션 로딩 중 (초기 1회)
+              if (status == 'pending' && vm.isCheckingServer) {
                 return _buildLoadingScreen('사용자 권한을 확인하고 있습니다...');
               }
 
-              final status = statusSnapshot.data ?? 'pending';
-
-              // 세션 불일치(중복 로그인) 시 로그인 화면으로 튕김 처리
+              // 세션 불일치(중복 로그인) 또는 만료 시 로그인 화면으로 튕김 처리
               if (status == 'expired') {
                 return const LoginScreen();
               }
