@@ -124,9 +124,9 @@ class _SettingsEntryCodeCardState extends State<SettingsEntryCodeCard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: const [
                   Text(
                     '기존 사용자 입장코드 초기화',
                     style: TextStyle(color: Colors.white70, fontSize: 14),
@@ -164,17 +164,21 @@ class _SettingsEntryCodeCardState extends State<SettingsEntryCodeCard> {
                           ),
                         );
 
-                        if (confirmed == true) {
+                        if (confirmed == true && mounted) {
                           final messenger = ScaffoldMessenger.of(context);
                           try {
                             final count = await vm.resetUserEntryCodes();
-                            messenger.showSnackBar(
-                              SnackBar(content: Text('총 $count명의 사용자 코드가 초기화되었습니다.')),
-                            );
+                            if (mounted) {
+                              messenger.showSnackBar(
+                                SnackBar(content: Text('총 $count명의 사용자 코드가 초기화되었습니다.')),
+                              );
+                            }
                           } catch (e) {
-                            messenger.showSnackBar(
-                              SnackBar(content: Text('초기화 실패: $e')),
-                            );
+                            if (mounted) {
+                              messenger.showSnackBar(
+                                SnackBar(content: Text('초기화 실패: $e')),
+                              );
+                            }
                           }
                         }
                       },
