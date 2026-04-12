@@ -24,14 +24,8 @@ class ConfigService {
   }
 
   /// Check if global/required entry code is valid
-  static Future<bool> isValidEntryCode(String code, {Map<String, dynamic>? user}) async {
-    // 1. If user object has specific entry_code, check it first
-    if (user != null && user['entry_code'] != null) {
-      if ("${user['entry_code'] ?? ''}" == code) return true;
-    }
-    
-    // 2. Check against global code
+  static Future<bool> isValidEntryCode(String inputCode) async {
     final serverCode = await fetchGlobalEntryCode();
-    return serverCode == code;
+    return serverCode == inputCode;
   }
 }

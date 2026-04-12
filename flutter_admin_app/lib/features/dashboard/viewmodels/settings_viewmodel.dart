@@ -119,6 +119,23 @@ class SettingsViewModel extends ChangeNotifier {
     }
   }
 
+  Future<int> resetUserEntryCodes() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final count = await _repository.resetUserEntryCodes();
+      _error = null;
+      return count;
+    } catch (e) {
+      _error = "사용자 입장코드 초기화 실패: $e";
+      rethrow;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> updateUserAppUrl(String newUrl) async {
     _isLoading = true;
     notifyListeners();

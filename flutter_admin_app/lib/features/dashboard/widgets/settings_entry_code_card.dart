@@ -118,6 +118,76 @@ class _SettingsEntryCodeCardState extends State<SettingsEntryCodeCard> {
             '* 사용자 앱에서 로그인 시 사용하는 4~6자리 코드입니다.',
             style: TextStyle(color: Colors.white30, fontSize: 12),
           ),
+          const SizedBox(height: 24),
+          const Divider(color: Colors.white10),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '기존 사용자 입장코드 초기화',
+                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    '이미 가입된 사용자의 코드를 위 코드로 맞춥니다.',
+                    style: TextStyle(color: Colors.white24, fontSize: 11),
+                  ),
+                ],
+              ),
+              TextButton(
+                onPressed: vm.isLoading
+                    ? null
+                    : () async {
+                        final confirmed = await showDialog<bool>(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            backgroundColor: const Color(0xFF1A2E24),
+                            title: const Text('입장코드 초기화', style: TextStyle(color: Colors.white)),
+                            content: Text(
+                              '현재 설정된 코드(${vm.entryCode})로 모든 사용자의 정보를 업데이트하시겠습니까?\n이 작업은 되돌릴 수 없습니다.',
+                              style: const TextStyle(color: Colors.white70),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx, false),
+                                child: const Text('취소', style: TextStyle(color: Colors.white54)),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx, true),
+                                child: const Text('초기화 실행', style: TextStyle(color: Color(0xFFCCFF00))),
+                              ),
+                            ],
+                          ),
+                        );
+
+                        if (confirmed == true) {
+                          final messenger = ScaffoldMessenger.of(context);
+                          try {
+                            final count = await vm.resetUserEntryCodes();
+                            messenger.showSnackBar(
+                              SnackBar(content: Text('총 $count명의 사용자 코드가 초기화되었습니다.')),
+                            );
+                          } catch (e) {
+                            messenger.showSnackBar(
+                              SnackBar(content: Text('초기화 실패: $e')),
+                            );
+                          }
+                        }
+                      },
+                child: const Text(
+                  '초기화',
+                  style: TextStyle(
+                    color: Color(0xFFCCFF00),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

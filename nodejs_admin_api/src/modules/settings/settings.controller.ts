@@ -39,6 +39,19 @@ export class SettingsController {
         }
     }
 
+    static async resetUserEntryCodes(req: Request, res: Response) {
+        try {
+            const count = await settingsService.resetAllUserEntryCodes();
+            successResponse(
+                res,
+                { updatedCount: count },
+                `Successfully reset entry codes for ${count} users.`,
+            );
+        } catch (error: any) {
+            errorResponse(res, error.message || "Failed to reset user entry codes");
+        }
+    }
+
     static async getUserAppUrl(req: Request, res: Response) {
         try {
             const data = await settingsService.getUserAppUrl();

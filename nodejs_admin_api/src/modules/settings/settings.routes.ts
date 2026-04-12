@@ -10,6 +10,9 @@ router.get("/entry-code", SettingsController.getEntryCode);
 // POST /api/settings/entry-code
 router.post("/entry-code", verifyAdmin, SettingsController.updateEntryCode);
 
+// POST /api/settings/reset-user-codes
+router.post("/reset-user-codes", verifyAdmin, SettingsController.resetUserEntryCodes);
+
 // GET /api/settings/user-url
 router.get("/user-url", verifyAdmin, SettingsController.getUserAppUrl);
 

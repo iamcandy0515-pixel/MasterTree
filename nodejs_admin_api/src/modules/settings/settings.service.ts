@@ -1,259 +1,62 @@
-import { supabase } from "../../config/supabaseClient";
-import { logger } from "../../utils/logger";
+import { settingsRepository } from "./settings.repository";
 
 export class SettingsService {
-    // Get entry code
+    /**
+     * Adheres strictly to DEVELOPMENT_RULES.md (Rule 1-1, < 200 lines).
+     * Business logic for application settings.
+     */
+
     async getEntryCode() {
-        // Fetch from 'app_settings' table where key = 'entry_code'
-        const { data, error } = await supabase
-            .from("app_settings")
-            .select("value")
-            .eq("key", "entry_code")
-            .single();
-
-        if (error) {
-            // If doesn't exist, return default or create one?
-            if (error.code === "PGRST116") {
-                // Not found, return null or default
-                logger.warn("Entry code not found, returning default '1234'");
-                return "1234";
-            }
-            throw error;
-        }
-
-        return data.value;
+        return (await settingsRepository.getValue("entry_code")) || "1133";
     }
 
-    // Update entry code
     async updateEntryCode(code: string) {
-        // Upsert entry code
-        const { data, error } = await supabase
-            .from("app_settings")
-            .upsert(
-                {
-                    key: "entry_code",
-                    value: code,
-                    description: "앱 입장 코드",
-                    updated_at: new Date().toISOString(),
-
-                },
-                { onConflict: "key" },
-            )
-            .select()
-            .single();
-
-        if (error) {
-            logger.error("Failed to update entry code", error);
-            throw error;
-        }
-
-        return data.value;
+        return await settingsRepository.upsertValue("entry_code", code, "앱 입장 코드");
     }
-    // Get user app url
+
+    async resetAllUserEntryCodes() {
+        const currentCode = await this.getEntryCode();
+        return await settingsRepository.updateAllUsersEntryCode(currentCode);
+    }
+
     async getUserAppUrl() {
-        const { data, error } = await supabase
-            .from("app_settings")
-            .select("value")
-            .eq("key", "user_app_url")
-            .single();
-
-        if (error) {
-            if (error.code === "PGRST116") {
-                // Not found, return default dev url
-                return "http://localhost:8080";
-            }
-            throw error;
-        }
-
-        return data.value;
+        return (await settingsRepository.getValue("user_app_url")) || "http://localhost:8080";
     }
 
-    // Update user app url
     async updateUserAppUrl(url: string) {
-        const { data, error } = await supabase
-            .from("app_settings")
-            .upsert(
-                {
-                    key: "user_app_url",
-                    value: url,
-                    description: "사용자 앱 URL (QR생성용)",
-                    updated_at: new Date().toISOString(),
-
-                },
-                { onConflict: "key" },
-            )
-            .select()
-            .single();
-
-        if (error) {
-            logger.error("Failed to update user app url", error);
-            throw error;
-        }
-
-        return data.value;
+        return await settingsRepository.upsertValue("user_app_url", url, "사용자 앱 URL (QR생성용)");
     }
 
-    // Get Google Drive folder URL (Original Images)
     async getGoogleDriveFolderUrl() {
-        const { data, error } = await supabase
-            .from("app_settings")
-            .select("value")
-            .in("key", ["google_drive_folder_url", "tree_image_drive_url"]) // Fallback keys
-            .order('updated_at', { ascending: false }) // 최신 것 우선
-            .limit(1);
-
-        if (error || !data || data.length === 0) {
-            return "";
-        }
-
-        return data[0].value;
+        return (await settingsRepository.getMultipleValues(["google_drive_folder_url", "tree_image_drive_url"])) || "";
     }
 
-    // Update Google Drive folder URL
     async updateGoogleDriveFolderUrl(url: string) {
-        const { data, error } = await supabase
-            .from("app_settings")
-            .upsert(
-                {
-                    key: "google_drive_folder_url",
-                    value: url,
-                    description: "구글 드라이브 폴더 URL (문제 추출용)",
-                    updated_at: new Date().toISOString(),
-
-                },
-                { onConflict: "key" },
-            )
-            .select()
-            .single();
-
-        if (error) {
-            logger.error("Failed to update google drive folder url", error);
-            throw error;
-        }
-
-        return data.value;
+        return await settingsRepository.upsertValue("google_drive_folder_url", url, "구글 드라이브 폴더 URL (문제 추출용)");
     }
 
-    // Get Thumbnail Drive URL
     async getThumbnailDriveUrl() {
-        const { data, error } = await supabase
-            .from("app_settings")
-            .select("value")
-            .in("key", ["thumbnail_drive_url", "tree_thumbnail_drive_url"]) // Fallback keys
-            .order('updated_at', { ascending: false })
-            .limit(1);
-
-        if (error || !data || data.length === 0) {
-            return "";
-        }
-
-        return data[0].value;
+        return (await settingsRepository.getMultipleValues(["thumbnail_drive_url", "tree_thumbnail_drive_url"])) || "";
     }
 
-    // Update Thumbnail Drive URL
     async updateThumbnailDriveUrl(url: string) {
-        const { data, error } = await supabase
-            .from("app_settings")
-            .upsert(
-                {
-                    key: "thumbnail_drive_url",
-                    value: url,
-                    description: "구글 드라이브 썸네일 폴더 URL",
-                    updated_at: new Date().toISOString(),
-
-                },
-                { onConflict: "key" },
-            )
-            .select()
-            .single();
-
-        if (error) {
-            logger.error("Failed to update thumbnail drive url", error);
-            throw error;
-        }
-
-        return data.value;
+        return await settingsRepository.upsertValue("thumbnail_drive_url", url, "구글 드라이브 썸네일 폴더 URL");
     }
-    // Get Exam Drive URL
+
     async getExamDriveUrl() {
-        const { data, error } = await supabase
-            .from("app_settings")
-            .select("value")
-            .eq("key", "exam_drive_url")
-            .single();
-
-        if (error) {
-            if (error.code === "PGRST116") {
-                return "";
-            }
-            throw error;
-        }
-
-        return data.value;
+        return (await settingsRepository.getValue("exam_drive_url")) || "";
     }
 
-    // Update Exam Drive URL
     async updateExamDriveUrl(url: string) {
-        const { data, error } = await supabase
-            .from("app_settings")
-            .upsert(
-                {
-                    key: "exam_drive_url",
-                    value: url,
-                    description: "구글 드라이브 기출문제 폴더 URL",
-                    updated_at: new Date().toISOString(),
-
-                },
-                { onConflict: "key" },
-            )
-            .select()
-            .single();
-
-        if (error) {
-            logger.error("Failed to update exam drive url", error);
-            throw error;
-        }
-
-        return data.value;
+        return await settingsRepository.upsertValue("exam_drive_url", url, "구글 드라이브 기출문제 폴더 URL");
     }
-    // Get User App Notice
+
     async getNotice() {
-        const { data, error } = await supabase
-            .from("app_settings")
-            .select("value")
-            .eq("key", "user_notice")
-            .single();
-
-        if (error) {
-            if (error.code === "PGRST116") return "";
-            throw error;
-        }
-
-        return data.value;
+        return (await settingsRepository.getValue("user_notice")) || "";
     }
 
-    // Update User App Notice
     async updateNotice(notice: string) {
-        const { data, error } = await supabase
-            .from("app_settings")
-            .upsert(
-                {
-                    key: "user_notice",
-                    value: notice,
-                    description: "사용자 앱 공지사항 안내문",
-                    updated_at: new Date().toISOString(),
-                },
-                { onConflict: "key" },
-            )
-            .select()
-            .single();
-
-        if (error) {
-            logger.error("Failed to update user notice", error);
-            throw error;
-        }
-
-        return data.value;
+        return await settingsRepository.upsertValue("user_notice", notice, "사용자 앱 공지사항 안내문");
     }
 }
 

@@ -82,6 +82,22 @@ class SystemSettingsRepository extends BaseRepository {
   Future<String> getNotice() => _fetchSetting('/settings/notice', defaultValue: '', dataKey: 'notice');
   Future<String> updateNotice(String notice) => _postSetting('/settings/notice', <String, dynamic>{'notice': notice}, dataKey: 'notice', errorPrefix: '공지사항 업데이트 실패');
 
+  // Multi-User Actions
+  Future<int> resetUserEntryCodes() async {
+    final url = Uri.parse('$baseUrl/settings/reset-user-codes');
+    final headers = await getHeaders();
+    final response = await http.post(url, headers: headers);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+      if (jsonResponse['success'] == true) {
+        return (jsonResponse['data']['updatedCount'] as int);
+      }
+    }
+    checkAuthError(response.statusCode);
+    throw Exception('사용자 입장코드 초기화 실패: ${response.body}');
+  }
+
   // URL Validation
   Future<bool> checkUrlStatus(String urlString) async {
     if (urlString.isEmpty || (!urlString.startsWith('http://') && !urlString.startsWith('https://'))) return false;
