@@ -48,13 +48,13 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: const [
-            Icon(Icons.logout_rounded, color: AppColors.primary),
+            Icon(Icons.exit_to_app_rounded, color: AppColors.primary),
             SizedBox(width: 10),
-            Text('로그아웃', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            Text('종료', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           ],
         ),
         content: const Text(
-          '서비스에서 로그아웃 하시겠습니까?\n종료 전 모든 진행 상황이 저장됩니다.',
+          '앱을 종료하시겠습니까?',
           style: TextStyle(color: Colors.white70, height: 1.5),
         ),
         actions: [
@@ -62,16 +62,12 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
             onPressed: () => Navigator.pop(context, false),
             child: const Text('취소', style: TextStyle(color: Colors.white38)),
           ),
-          ElevatedButton(
+          TextButton(
             onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary.withOpacity(0.1),
-              foregroundColor: AppColors.primary,
-              elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            child: const Text(
+              '종료',
+              style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
             ),
-            child: const Text('로그아웃', style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -80,7 +76,7 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
     if (result == true) {
       // ignore: use_build_context_synchronously
       final authVm = context.read<AuthViewModel>();
-      await authVm.clearSavedData();
+      await authVm.handleLogout(); // 세션 종료 및 데이터 정리 수행
       return true;
     }
     return false;

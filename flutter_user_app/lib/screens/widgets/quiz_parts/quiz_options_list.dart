@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/design_system.dart';
 import '../../../viewmodels/quiz_viewmodel.dart';
@@ -75,4 +75,3 @@ class QuizOptionsList extends StatelessWidget {
     );
   }
 }
-

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/design_system.dart';
-import '../../login_screen.dart';
+
 import '../../notification_screen.dart';
 
 class DashboardHeader extends StatelessWidget {
@@ -16,10 +16,7 @@ class DashboardHeader extends StatelessWidget {
       automaticallyImplyLeading: false,
       titleSpacing: 0,
       leading: IconButton(
-        onPressed: () => Navigator.pushReplacement<void, void>(
-          context,
-          MaterialPageRoute<void>(builder: (BuildContext context) => const LoginScreen()),
-        ),
+        onPressed: () => Navigator.maybePop(context),
         icon: const Icon(
           Icons.logout_rounded,
           color: AppColors.textLight,

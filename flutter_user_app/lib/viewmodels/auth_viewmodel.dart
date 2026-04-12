@@ -177,6 +177,13 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler, AuthValidator 
     }
   }
 
+  Future<void> handleLogout() async {
+    SessionMonitorService.stopMonitoring();
+    await SupabaseService.signOut();
+    await clearSavedData();
+    notifyListeners();
+  }
+
   void _setupSessionMonitor() {
     final session = SupabaseService.client.auth.currentSession;
     final user = SupabaseService.client.auth.currentUser;

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 class AppColors {
   static const Color primary = Color(0xFF80F20D);
@@ -76,4 +76,3 @@ class AppTypography {
     fontWeight: FontWeight.w500,
   );
 }
-

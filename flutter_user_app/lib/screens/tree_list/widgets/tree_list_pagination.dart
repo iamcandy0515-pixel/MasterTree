@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../../../core/design_system.dart';
 import '../../../controllers/tree_list_controller.dart';
 
@@ -60,4 +60,3 @@ class TreeListPagination extends StatelessWidget {
     );
   }
 }
-
