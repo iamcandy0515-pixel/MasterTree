@@ -105,6 +105,7 @@ class _UserListBuilder extends StatelessWidget {
               onReject: (id) => vm.rejectUser(id),
               onPending: (id) => vm.pendingUser(id),
               onDelete: (id, name) => _handleDelete(context, vm, id, name),
+              onUpdate: (id, data) => vm.updateUser(id, data),
             );
           },
         );

@@ -20,6 +20,22 @@ mixin AuthLogicHandler {
     return false;
   }
 
+  int? calculateRemainingDays(Map<String, dynamic>? user) {
+    if (user?['expired_at'] == null) return null;
+    try {
+      final DateTime expiredAt = DateTime.parse(user!['expired_at'].toString()).toLocal();
+      final DateTime now = DateTime.now();
+      
+      if (now.isAfter(expiredAt)) return -1; // Expired
+      
+      final Duration diff = expiredAt.difference(now);
+      return diff.inDays;
+    } catch (e) {
+      debugPrint('Remaining days calculation error: $e');
+      return null;
+    }
+  }
+
   String getErrorMessage(dynamic e) {
     if (e == null) return '알 수 없는 오류가 발생했습니다.';
     

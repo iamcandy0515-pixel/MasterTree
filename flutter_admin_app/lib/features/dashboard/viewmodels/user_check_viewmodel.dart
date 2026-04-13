@@ -37,11 +37,12 @@ class UserCheckViewModel extends ChangeNotifier {
           'role': role,
           'status': (u['status'] ?? 'pending').toString(),
           'lastLogin': _formatDate(u['lastLogin']?.toString()),
+          'expiredAt': u['expiredAt']?.toString(), // Raw string
         };
       }).toList();
       _filteredUsers = List<Map<String, dynamic>>.from(_allUsers);
     } catch (e) {
-      debugPrint('Error loading users: ');
+      debugPrint('Error loading users: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -54,7 +55,16 @@ class UserCheckViewModel extends ChangeNotifier {
       // Remove from current list and refresh
       await loadUsers(_currentStatus);
     } catch (e) {
-      debugPrint('Error updating status: ');
+      debugPrint('Error updating status: $e');
+    }
+  }
+
+  Future<void> updateUser(String userId, Map<String, dynamic> updateData) async {
+    try {
+      await _repo.updateUser(userId, updateData);
+      await loadUsers(_currentStatus); // Refresh data
+    } catch (e) {
+      debugPrint('Error updating user: $e');
     }
   }
 

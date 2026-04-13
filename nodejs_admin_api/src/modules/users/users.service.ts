@@ -153,6 +153,7 @@ export class UsersService {
                 ...baseInfo,
                 role: u.role || (u.email?.includes("admin") ? "Master" : "User"),
                 entryCode: u.entry_code,
+                expiredAt: (u as any).expired_at,
             };
         });
 
@@ -199,6 +200,23 @@ export class UsersService {
         }
 
         return data?.user || { id: userId, status };
+    }
+
+    /**
+     * Update User (Admin - Generic)
+     */
+    async updateUser(userId: string, updateData: Partial<{ status: string, name: string, expired_at: string | null }>) {
+        const { error } = await supabase
+            .from('users')
+            .update(updateData)
+            .or(`auth_id.eq.${userId},id.eq.${userId}`);
+
+        if (error) {
+            logger.error(`Failed to update user ${userId}`, error);
+            throw new Error(`Update failed: ${error.message}`);
+        }
+
+        return { id: userId, ...updateData };
     }
 
     /**

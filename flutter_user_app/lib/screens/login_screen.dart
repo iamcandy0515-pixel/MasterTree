@@ -41,9 +41,40 @@ class _LoginContentState extends State<_LoginContent> {
     await vm.handleLogin(
       formKey: _formKey,
       onSuccess: () {
-        // AuthWrapper handles reactive switching
+        // [New] Check for expiration warning (D-3)
+        if (vm.remainingDays != null && vm.remainingDays! >= 0 && vm.remainingDays! <= 3) {
+          _showExpirationWarningDialog(vm.remainingDays!);
+        }
       },
       onError: (String message) => _showErrorDialog(message, vm),
+    );
+  }
+
+  void _showExpirationWarningDialog(int days) {
+    if (!mounted) return;
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.surfaceDark,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: const [
+            Icon(Icons.warning_amber_rounded, color: AppColors.primary),
+            SizedBox(width: 10),
+            Text('만료 임박 안내', style: TextStyle(color: AppColors.textLight)),
+          ],
+        ),
+        content: Text(
+          '서비스 만기일이 $days일 남았습니다.\n기한 연장을 원하시면 관리자에게 문의해 주세요.',
+          style: const TextStyle(color: Colors.white70, height: 1.5),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('확인', style: TextStyle(color: AppColors.primary)),
+          ),
+        ],
+      ),
     );
   }
 

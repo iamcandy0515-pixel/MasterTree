@@ -26,6 +26,12 @@ router.patch(
     UserManagementController.updateUserStatus
 );
 
+router.patch(
+    "/:id",
+    verifyAdmin,
+    UserManagementController.updateUser
+);
+
 router.delete(
     "/:id",
     verifyAdmin,

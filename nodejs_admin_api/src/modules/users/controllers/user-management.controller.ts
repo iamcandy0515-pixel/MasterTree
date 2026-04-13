@@ -48,6 +48,22 @@ export class UserManagementController {
     }
 
     /**
+     * updateUser: Generic user information update
+     */
+    static async updateUser(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const updateData = req.body;
+            if (!id) return errorResponse(res, "User ID is required", 400);
+
+            const result = await usersService.updateUser(id, updateData);
+            return successResponse(res, result, "User updated successfully");
+        } catch (error: any) {
+            return errorResponse(res, error.message, 500);
+        }
+    }
+
+    /**
      * deleteUser: Permanent deletion
      */
     static async deleteUser(req: Request, res: Response) {

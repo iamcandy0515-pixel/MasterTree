@@ -11,6 +11,8 @@ class UserCardItem extends StatelessWidget {
   final Function(String) onPending;
   final Function(String, String) onDelete;
 
+  final Function(String, Map<String, dynamic>) onUpdate;
+
   const UserCardItem({
     super.key,
     required this.user,
@@ -20,6 +22,7 @@ class UserCardItem extends StatelessWidget {
     required this.onReject,
     required this.onPending,
     required this.onDelete,
+    required this.onUpdate,
   });
 
   @override
@@ -28,6 +31,7 @@ class UserCardItem extends StatelessWidget {
     final String initial = name.replaceAll(RegExp(r'\[.*?\]\s*'), '').isNotEmpty
         ? name.replaceAll(RegExp(r'\[.*?\]\s*'), '')[0]
         : '?';
+    final String? expiredAt = user['expiredAt'] as String?;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -137,11 +141,34 @@ class UserCardItem extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Flexible(
-                child: Text(
-                   '최근 활동: ${user['lastLogin'] as String? ?? '정보 없음'}',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 10),
-                  overflow: TextOverflow.ellipsis,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                       '최근 활동: ${user['lastLogin'] as String? ?? '정보 없음'}',
+                      style: TextStyle(color: Colors.grey[600], fontSize: 10),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Text(
+                          '만료일: ${_formatDateShort(expiredAt)}',
+                          style: TextStyle(
+                            color: _isExpired(expiredAt) ? Colors.redAccent : Colors.grey[400],
+                            fontSize: 10,
+                            fontWeight: _isExpired(expiredAt) ? FontWeight.bold : FontWeight.normal,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        InkWell(
+                          onTap: () => _selectDate(context),
+                          child: Icon(Icons.edit_calendar_outlined, color: primaryColor, size: 12),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
               UserActionButtons(
@@ -156,6 +183,57 @@ class UserCardItem extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _formatDateShort(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return '무제한';
+    try {
+      final date = DateTime.parse(dateStr).toLocal();
+      return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+    } catch (e) {
+      return '형식 오류';
+    }
+  }
+
+  bool _isExpired(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return false;
+    try {
+      final date = DateTime.parse(dateStr).toLocal();
+      return DateTime.now().isAfter(date);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime now = DateTime.now();
+    final DateTime initialDate = (user['expiredAt'] != null)
+        ? DateTime.parse(user['expiredAt'].toString()).toLocal()
+        : now.add(const Duration(days: 30));
+
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate.isBefore(now) ? now : initialDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.dark(
+              primary: primaryColor,
+              onPrimary: Colors.black,
+              surface: const Color(0xFF1A1A1A),
+              onSurface: Colors.white,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      onUpdate(user['id'] as String, <String, dynamic>{'expired_at': picked.toIso8601String()});
+    }
   }
 
   Widget _buildStatusBadge(String role, Color color) {

@@ -59,6 +59,25 @@ class UserRepository {
     }
   }
 
+  Future<void> updateUser(String id, Map<String, dynamic> updateData) async {
+    final Uri url = Uri.parse('$_baseUrl/users/$id');
+    final session = Supabase.instance.client.auth.currentSession;
+    final String token = session?.accessToken ?? '';
+
+    final http.Response response = await http.patch(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(updateData),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update user: ${response.statusCode}');
+    }
+  }
+
   Future<void> deleteUser(String id) async {
     final Uri url = Uri.parse('$_baseUrl/users/$id');
     final session = Supabase.instance.client.auth.currentSession;

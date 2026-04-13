@@ -15,6 +15,7 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler, AuthValidator,
   bool _isCheckingServer = false;
   bool? _isExistingUser;
   String _userStatus = 'pending'; // 'approved', 'expired', 'pending'
+  int? _remainingDays;
 
   Timer? _debounceTimer;
 
@@ -23,6 +24,7 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler, AuthValidator,
   bool? get isExistingUser => _isExistingUser;
   bool get isNewUser => _isExistingUser == false;
   String get userStatus => _userStatus;
+  int? get remainingDays => _remainingDays;
 
   Future<void> initialize() async {
     await loadSavedData(onUserStatusLoaded: (status) => _isExistingUser = status);
@@ -89,6 +91,7 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler, AuthValidator,
         if (<String>['expired', 'denied', 'rejected'].contains(status)) throw 'status_denied';
         if (status != 'approved') throw 'status_pending';
         if (isLinkExpired(user)) throw 'status_expired';
+        _remainingDays = calculateRemainingDays(user);
 
         await syncAuthAndUser(user!, name, phone, deviceId: deviceInfo['uuid'],
           deviceModel: deviceInfo['model'], osVersion: deviceInfo['os'], forceLogout: forceLogout);
@@ -125,6 +128,7 @@ class AuthViewModel extends ChangeNotifier with AuthLogicHandler, AuthValidator,
     await SupabaseService.signOut();
     await clearSavedData();
     _isExistingUser = null;
+    _remainingDays = null;
     notifyListeners();
   }
 
