@@ -36,7 +36,7 @@ class UserCheckViewModel extends ChangeNotifier {
           'phone': u['phone']?.toString(),
           'role': role,
           'status': (u['status'] ?? 'pending').toString(),
-          'lastLogin': _formatDate((u['lastLogin'] ?? u['last_login'])?.toString()),
+          'lastLogin': _formatDate((u['lastLogin'] ?? u['last_login'] ?? u['createdAt'] ?? u['created_at'])?.toString()),
           'expiredAt': (u['expiredAt'] ?? u['expired_at'])?.toString(), // Defensive check for both formats
         };
       }).toList();
@@ -89,9 +89,9 @@ class UserCheckViewModel extends ChangeNotifier {
       final DateTime now = DateTime.now();
       final Duration diff = now.difference(date);
       if (diff.inMinutes < 1) return '방금 전';
-      if (diff.inMinutes < 60) return '분 전';
-      if (diff.inHours < 24) return '시간 전';
-      return '--';
+      if (diff.inMinutes < 60) return '${diff.inMinutes}분 전';
+      if (diff.inHours < 24) return '${diff.inHours}시간 전';
+      return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
     } catch (e) {
       return dateStr;
     }
