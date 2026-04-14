@@ -65,16 +65,24 @@ class UserCheckViewModel extends ChangeNotifier {
       final updatedUser = await _repo.updateUser(userId, updateData);
       
       // Update local state immediately for better UX
-      final index = _users.indexWhere((u) => u['id'] == userId);
-      if (index != -1 && updatedUser.isNotEmpty) {
-        _users[index] = {
-          ..._users[index],
+      final allIndex = _allUsers.indexWhere((u) => u['id'] == userId);
+      if (allIndex != -1 && updatedUser.isNotEmpty) {
+        final Map<String, dynamic> mappedUser = {
+          ..._allUsers[allIndex],
           ...updatedUser,
           'lastLogin': _formatDate((updatedUser['lastLogin'] ?? updatedUser['last_login'] ?? updatedUser['createdAt'] ?? updatedUser['created_at'])?.toString()),
           'expiredAt': (updatedUser['expiredAt'] ?? updatedUser['expired_at'])?.toString(),
           'expired_at': (updatedUser['expired_at'] ?? updatedUser['expiredAt'])?.toString(),
         };
-        _filterUsers();
+        
+        _allUsers[allIndex] = mappedUser;
+        
+        // Also update the filtered list if present
+        final filterIndex = _filteredUsers.indexWhere((u) => u['id'] == userId);
+        if (filterIndex != -1) {
+          _filteredUsers[filterIndex] = mappedUser;
+        }
+        
         notifyListeners();
       }
       
