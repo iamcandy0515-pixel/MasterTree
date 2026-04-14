@@ -155,6 +155,7 @@ export class UsersService {
                 role: u.role || (u.email?.includes("admin") ? "Master" : "User"),
                 entryCode: u.entry_code,
                 expiredAt: u.expired_at,
+                expired_at: u.expired_at, // Provide both for frontend safety
             };
         });
 
@@ -207,21 +208,28 @@ export class UsersService {
      * Update User (Admin - Generic)
      */
      async updateUser(userId: string, updateData: TablesUpdate<'users'>) {
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from('users')
             .update(updateData)
-            .or(`auth_id.eq.${userId},id.eq.${userId}`);
+            .or(`auth_id.eq.${userId},id.eq.${userId}`)
+            .select()
+            .maybeSingle();
 
         if (error) {
             logger.error(`Failed to update user ${userId}`, error);
             throw new Error(`Update failed: ${error.message}`);
         }
 
-        return { 
-            id: userId, 
-            ...updateData,
-            // Provide camelCase key for immediate UI feedback if needed
-            expiredAt: (updateData as any).expired_at 
+        if (!data) {
+            throw new Error(`사용자를 찾을 수 없거나 업데이트된 행이 없습니다. (ID: ${userId})`);
+        }
+
+        return {
+            id: data.auth_id || data.id,
+            dbId: data.id,
+            ...data,
+            expiredAt: data.expired_at,
+            expired_at: data.expired_at
         };
     }
 

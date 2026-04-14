@@ -59,7 +59,7 @@ class UserRepository {
     }
   }
 
-  Future<void> updateUser(String id, Map<String, dynamic> updateData) async {
+  Future<Map<String, dynamic>> updateUser(String id, Map<String, dynamic> updateData) async {
     final Uri url = Uri.parse('$_baseUrl/users/$id');
     final session = Supabase.instance.client.auth.currentSession;
     final String token = session?.accessToken ?? '';
@@ -73,7 +73,11 @@ class UserRepository {
       body: jsonEncode(updateData),
     );
 
-    if (response.statusCode != 200) {
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonResponse = 
+          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
+      return (jsonResponse['data'] as Map<String, dynamic>?) ?? <String, dynamic>{};
+    } else {
       throw Exception('Failed to update user: ${response.statusCode}');
     }
   }

@@ -37,7 +37,8 @@ class UserCheckViewModel extends ChangeNotifier {
           'role': role,
           'status': (u['status'] ?? 'pending').toString(),
           'lastLogin': _formatDate((u['lastLogin'] ?? u['last_login'] ?? u['createdAt'] ?? u['created_at'])?.toString()),
-          'expiredAt': (u['expiredAt'] ?? u['expired_at'])?.toString(), // Defensive check for both formats
+          'expiredAt': (u['expiredAt'] ?? u['expired_at'])?.toString(),
+          'expired_at': (u['expired_at'] ?? u['expiredAt'])?.toString(), // Ensure both are present
         };
       }).toList();
       _filteredUsers = List<Map<String, dynamic>>.from(_allUsers);
@@ -61,8 +62,24 @@ class UserCheckViewModel extends ChangeNotifier {
 
   Future<void> updateUser(String userId, Map<String, dynamic> updateData) async {
     try {
-      await _repo.updateUser(userId, updateData);
-      await loadUsers(_currentStatus); // Refresh data
+      final updatedUser = await _repo.updateUser(userId, updateData);
+      
+      // Update local state immediately for better UX
+      final index = _users.indexWhere((u) => u['id'] == userId);
+      if (index != -1 && updatedUser.isNotEmpty) {
+        _users[index] = {
+          ..._users[index],
+          ...updatedUser,
+          'lastLogin': _formatDate((updatedUser['lastLogin'] ?? updatedUser['last_login'] ?? updatedUser['createdAt'] ?? updatedUser['created_at'])?.toString()),
+          'expiredAt': (updatedUser['expiredAt'] ?? updatedUser['expired_at'])?.toString(),
+          'expired_at': (updatedUser['expired_at'] ?? updatedUser['expiredAt'])?.toString(),
+        };
+        _filterUsers();
+        notifyListeners();
+      }
+      
+      // Still refresh to be sure everything is in sync
+      await loadUsers(_currentStatus); 
     } catch (e) {
       debugPrint('Error updating user: $e');
     }
