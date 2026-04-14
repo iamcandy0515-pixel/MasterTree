@@ -1,6 +1,7 @@
 import { supabase } from "../../config/supabaseClient";
-import { LoginDto, UserProfile } from "./users.dto";
+import { LoginDto, UserResponseDto, PaginatedUserResponse } from "./users.dto";
 import { logger } from "../../utils/logger";
+import { TablesUpdate } from "../../types/database.types";
 
 export class UsersService {
     /**
@@ -88,7 +89,7 @@ export class UsersService {
      * List Users (Admin)
      * Fetches from 'public.users' table for accurate server-side filtering and persistence.
      */
-    async listUsers(page: number = 1, limit: number = 50, status?: string, minimal = false) {
+    async listUsers(page: number = 1, limit: number = 50, status?: string, minimal = false): Promise<PaginatedUserResponse> {
         const offset = (page - 1) * limit;
 
         // 1. Fetch from 'public.users' table
@@ -141,7 +142,7 @@ export class UsersService {
                 phone: u.phone,
                 name: u.name || "사용자",
                 status: u.status || "pending",
-                lastLogin: null,
+                lastLogin: u.last_login,
                 createdAt: u.created_at,
                 isDuplicate,
                 duplicateDetails: duplicateMap[u.id] || null,
@@ -153,7 +154,7 @@ export class UsersService {
                 ...baseInfo,
                 role: u.role || (u.email?.includes("admin") ? "Master" : "User"),
                 entryCode: u.entry_code,
-                expiredAt: (u as any).expired_at,
+                expiredAt: u.expired_at,
             };
         });
 
@@ -205,7 +206,7 @@ export class UsersService {
     /**
      * Update User (Admin - Generic)
      */
-    async updateUser(userId: string, updateData: Partial<{ status: string, name: string, expired_at: string | null }>) {
+     async updateUser(userId: string, updateData: TablesUpdate<'users'>) {
         const { error } = await supabase
             .from('users')
             .update(updateData)
@@ -216,7 +217,12 @@ export class UsersService {
             throw new Error(`Update failed: ${error.message}`);
         }
 
-        return { id: userId, ...updateData };
+        return { 
+            id: userId, 
+            ...updateData,
+            // Provide camelCase key for immediate UI feedback if needed
+            expiredAt: (updateData as any).expired_at 
+        };
     }
 
     /**

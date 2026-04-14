@@ -8,6 +8,7 @@ import 'package:flutter_user_app/core/widgets/auth_wrapper.dart';
 import 'package:flutter_user_app/core/constants.dart';
 import 'package:flutter_user_app/core/api_service.dart';
 import 'package:flutter_user_app/providers/quiz_provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -69,7 +70,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.dark,
         scaffoldBackgroundColor: AppColors.backgroundDark,
-        fontFamily: 'Lexend',
+        textTheme: GoogleFonts.lexendTextTheme(ThemeData.dark().textTheme),
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.primary,
           brightness: Brightness.dark,

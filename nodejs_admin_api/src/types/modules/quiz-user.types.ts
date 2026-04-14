@@ -136,4 +136,91 @@ export interface QuizUserTables {
       },
     ]
   }
+  user_quiz_summary: {
+    Row: {
+      user_id: string
+      question_id: number | null
+      tree_id: number | null
+      is_last_correct: boolean
+      updated_at: string
+    }
+    Insert: {
+      user_id: string
+      question_id?: number | null
+      tree_id?: number | null
+      is_last_correct: boolean
+      updated_at?: string
+    }
+    Update: {
+      user_id?: string
+      question_id?: number | null
+      tree_id?: number | null
+      is_last_correct?: boolean
+      updated_at?: string
+    }
+    Relationships: []
+  }
+  user_tree_category_stats: {
+    Row: {
+      user_id: string
+      category_name: string
+      total_count: number
+      mastered_count: number
+      in_progress_count: number
+      accuracy_rate: number
+      updated_at: string
+    }
+    Insert: {
+      user_id: string
+      category_name: string
+      total_count: number
+      mastered_count: number
+      in_progress_count: number
+      accuracy_rate: number
+      updated_at?: string
+    }
+    Update: {
+      user_id?: string
+      category_name?: string
+      total_count?: number
+      mastered_count?: number
+      in_progress_count?: number
+      accuracy_rate?: number
+      updated_at?: string
+    }
+    Relationships: []
+  }
+  user_exam_session_stats: {
+    Row: {
+      user_id: string
+      exam_id: number
+      subject_name: string
+      total_count: number
+      mastered_count: number
+      in_progress_count: number
+      accuracy_rate: number
+      updated_at: string
+    }
+    Insert: {
+      user_id: string
+      exam_id: number
+      subject_name: string
+      total_count: number
+      mastered_count: number
+      in_progress_count: number
+      accuracy_rate: number
+      updated_at?: string
+    }
+    Update: {
+      user_id?: string
+      exam_id?: number
+      subject_name?: string
+      total_count?: number
+      mastered_count?: number
+      in_progress_count?: number
+      accuracy_rate?: number
+      updated_at?: string
+    }
+    Relationships: []
+  }
 }

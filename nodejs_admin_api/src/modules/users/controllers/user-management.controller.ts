@@ -20,9 +20,9 @@ export class UserManagementController {
             // Forward minimal to service
             const result = await usersService.listUsers(page, limit, status, minimal);
 
-            // Extract meta for standardized meta field
-            const meta = (result as any).meta || null;
-            const data = (result as any).data || result;
+            // Access typed properties
+            const meta = result.meta;
+            const data = result.data;
 
             return successResponse(res, { users: data }, "Users retrieved successfully", 200, meta);
         } catch (error: any) {

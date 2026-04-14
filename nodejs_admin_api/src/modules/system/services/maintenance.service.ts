@@ -8,7 +8,7 @@ export class MaintenanceService {
     async executeStatsPurge() {
         try {
             console.log("🧹 [Maintenance] Starting quiz_attempts purge...");
-            const { data, error } = await (supabase as any).rpc("purge_old_attempts");
+            const { data, error } = await supabase.rpc("purge_old_attempts");
             
             if (error) {
                 console.error("❌ [Maintenance] Purge failed:", error.message);

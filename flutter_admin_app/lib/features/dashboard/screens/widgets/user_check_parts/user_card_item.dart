@@ -232,7 +232,9 @@ class UserCardItem extends StatelessWidget {
     );
 
     if (picked != null) {
-      onUpdate(user['id'] as String, <String, dynamic>{'expired_at': picked.toIso8601String()});
+      // Format to YYYY-MM-DD to be safe for DB 'DATE' types
+      final String formattedDate = picked.toIso8601String().split('T')[0];
+      onUpdate(user['id'] as String, <String, dynamic>{'expired_at': formattedDate});
     }
   }
 

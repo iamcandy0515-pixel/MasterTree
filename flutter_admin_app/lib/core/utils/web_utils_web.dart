@@ -19,10 +19,10 @@ class WebUtilsPlatform {
 
   static void registerViewFactory(
     String viewId,
-    Object Function(int) factory,
+    dynamic Function(int) factory,
   ) {
     // ignore: undefined_prefixed_name
-    ui.platformViewRegistry.registerViewFactory(viewId, factory);
+    ui.platformViewRegistry.registerViewFactory(viewId, factory as dynamic);
   }
 
   static Object createDropZoneElement({

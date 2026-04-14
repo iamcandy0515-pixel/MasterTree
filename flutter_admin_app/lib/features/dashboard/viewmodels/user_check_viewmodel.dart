@@ -36,8 +36,8 @@ class UserCheckViewModel extends ChangeNotifier {
           'phone': u['phone']?.toString(),
           'role': role,
           'status': (u['status'] ?? 'pending').toString(),
-          'lastLogin': _formatDate(u['lastLogin']?.toString()),
-          'expiredAt': u['expiredAt']?.toString(), // Raw string
+          'lastLogin': _formatDate((u['lastLogin'] ?? u['last_login'])?.toString()),
+          'expiredAt': (u['expiredAt'] ?? u['expired_at'])?.toString(), // Defensive check for both formats
         };
       }).toList();
       _filteredUsers = List<Map<String, dynamic>>.from(_allUsers);

@@ -25,7 +25,7 @@ export class StatsAdminService {
         const { data: authUsers } = await supabase.auth.admin.listUsers();
         
         // [수정] quiz_attempts 대신 user_quiz_summary 기반으로 집계 (더 정확하고 빠름)
-        const { data: qSummary } = await (supabase as any)
+        const { data: qSummary } = await supabase
             .from("user_quiz_summary")
             .select("user_id, updated_at, tree_id, question_id, is_last_correct");
 
@@ -45,7 +45,7 @@ export class StatsAdminService {
         // 오답 랭킹을 위한 집계 (이것은 최근 실적 기반)
         const wrongCounts: Record<string, number> = {};
 
-        qSummary?.forEach((s: any) => {
+        qSummary?.forEach((s) => {
             const uid = s.user_id as string;
             const qId = s.question_id as number;
             const tId = s.tree_id as number;

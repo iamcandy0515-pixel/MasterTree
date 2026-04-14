@@ -1,4 +1,4 @@
-﻿import { supabase } from "../../../config/supabaseClient";
+import { supabase } from "../../../config/supabaseClient";
 import { quizSessionService } from "./quiz_session.service";
 import { maintenanceService } from "../../system/services/maintenance.service";
 
@@ -19,7 +19,7 @@ export class QuizAttemptService {
 
         const { error: insErr } = await supabase
             .from("quiz_attempts")
-            .insert(attemptRows as any[]);
+            .insert(attemptRows);
         if (insErr) throw new Error(`Insert attempts failed: ${insErr.message}`);
         
         // Update Statistics Summary (Upsert)
@@ -86,7 +86,7 @@ export class QuizAttemptService {
             created_at: a.created_at || new Date().toISOString(),
         }));
 
-        const { error: insErr } = await supabase.from("quiz_attempts").insert(attemptRows as any[]);
+        const { error: insErr } = await supabase.from("quiz_attempts").insert(attemptRows);
         if (insErr) throw new Error(`Batch insert failed: ${insErr.message}`);
 
         // Update Statistics Summary (Upsert)
@@ -123,7 +123,7 @@ export class QuizAttemptService {
         );
 
         const { error } = await supabase
-            .from("user_quiz_summary" as any)
+            .from("user_quiz_summary")
             .upsert(uniqueSummaries);
         
         if (error) {
@@ -148,7 +148,7 @@ export class QuizAttemptService {
      */
     private async updateTreeCategoryStats(userId: string) {
         try {
-            const { data: treeStats, error: statErr } = await (supabase as any).rpc('get_user_tree_category_stats', { p_user_id: userId });
+            const { data: treeStats, error: statErr } = await supabase.rpc('get_user_tree_category_stats', { p_user_id: userId });
             
             if (statErr) {
                 console.error(`[updateTreeCategoryStats] RPC error:`, statErr.message);
@@ -166,7 +166,7 @@ export class QuizAttemptService {
                     updated_at: new Date().toISOString()
                 }));
 
-                await (supabase as any).from("user_tree_category_stats").upsert(upsertRows, { onConflict: 'user_id,category_name' });
+                await supabase.from("user_tree_category_stats").upsert(upsertRows, { onConflict: 'user_id,category_name' });
             }
         } catch (err: any) {
             console.error(`[updateTreeCategoryStats] Error:`, err.message);
@@ -178,7 +178,7 @@ export class QuizAttemptService {
      */
     private async updateExamSessionStats(userId: string) {
         try {
-            const { data: examStats, error: statErr } = await (supabase as any).rpc('get_user_exam_session_stats', { p_user_id: userId });
+            const { data: examStats, error: statErr } = await supabase.rpc('get_user_exam_session_stats', { p_user_id: userId });
             
             if (statErr) {
                 console.error(`[updateExamSessionStats] RPC error:`, statErr.message);
@@ -197,7 +197,7 @@ export class QuizAttemptService {
                     updated_at: new Date().toISOString()
                 }));
 
-                await (supabase as any).from("user_exam_session_stats").upsert(upsertRows, { onConflict: 'user_id,exam_id' });
+                await supabase.from("user_exam_session_stats").upsert(upsertRows, { onConflict: 'user_id,exam_id' });
             }
         } catch (err: any) {
             console.error(`[updateExamSessionStats] Error:`, err.message);

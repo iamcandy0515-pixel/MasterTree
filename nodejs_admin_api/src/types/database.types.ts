@@ -30,6 +30,9 @@ export type Database = {
       quiz_sessions: QuizUserTables["quiz_sessions"]
       quiz_attempts: QuizUserTables["quiz_attempts"]
       quiz_answers: QuizUserTables["quiz_answers"]
+      user_quiz_summary: QuizUserTables["user_quiz_summary"]
+      user_tree_category_stats: QuizUserTables["user_tree_category_stats"]
+      user_exam_session_stats: QuizUserTables["user_exam_session_stats"]
       app_settings: SettingTables["app_settings"]
     }
     Views: {
@@ -46,13 +49,28 @@ export type Database = {
           match_threshold: number
           query_embedding: any
         }
-
         Returns: {
           content_blocks: Json
           id: number
           quiz_exams: Json
           similarity: number
         }[]
+      }
+      get_user_tree_category_stats: {
+        Args: {
+          p_user_id: string
+        }
+        Returns: any[]
+      }
+      get_user_exam_session_stats: {
+        Args: {
+          p_user_id: string
+        }
+        Returns: any[]
+      }
+      purge_old_attempts: {
+        Args: Record<string, never>
+        Returns: any
       }
     }
     Enums: {
